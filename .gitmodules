@@ -3,13 +3,13 @@
 	url = https://github.com/Unity-Technologies/Unity.Mathematics.git
 [submodule "libs/Manifold.Core"]
 	path = libs/Manifold.Core
-	url = git@github.com:RaphaelTetreault/GameCube.Core.git
+	url = https://github.com/RaphaelTetreault/Manifold.Core.git
 [submodule "libs/GameCube.GFZ"]
 	path = libs/GameCube.GFZ
-	url = git@github.com:RaphaelTetreault/GameCube.GFZ.git
+	url = https://github.com/RaphaelTetreault/GameCube.GFZ.git
 [submodule "libs/GameCube.Core"]
 	path = libs/GameCube.Core
-	url = git@github.com:RaphaelTetreault/GameCube.Core.git
+	url = https://github.com/RaphaelTetreault/GameCube.Core.git
 [submodule "libs/GameCube.AmusementVision"]
 	path = libs/GameCube.AmusementVision
-	url = git@github.com:RaphaelTetreault/GameCube.AmusementVision.git
+	url = https://github.com/RaphaelTetreault/GameCube.AmusementVision.git
