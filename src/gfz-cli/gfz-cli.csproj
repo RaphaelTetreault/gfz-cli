@@ -13,4 +13,28 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\libs\GameCube.AmusementVision\src\GameCube.AmusementVision.ARC\GameCube.AmusementVision.ARC.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.AmusementVision\src\GameCube.AmusementVision.LZ\GameCube.AmusementVision.LZ.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.AmusementVision\src\GameCube.AmusementVision\GameCube.AmusementVision.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.Core\src\GameCube.Cheats\GameCube.Cheats.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.Core\src\GameCube.GX.Texture\GameCube.GX.Texture.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.Core\src\GameCube.GX\GameCube.GX.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Camera\GameCube.GFZ.Camera.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.CarData\GameCube.GFZ.CarData.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Cheats\GameCube.GFZ.Cheats.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.FMI\GameCube.GFZ.FMI.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Ghosts\GameCube.GFZ.Ghosts.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GMA\GameCube.GFZ.GMA.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.LZ\GameCube.GFZ.LZ.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.REL\GameCube.GFZ.REL.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Stage\GameCube.GFZ.Stage.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.TPL\GameCube.GFZ.TPL.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ\GameCube.GFZ.csproj" />
+    <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.IO.UnityMath\Manifold.IO.UnityMath.csproj" />
+    <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.IO\Manifold.IO.csproj" />
+    <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold\Manifold.csproj" />
+    <ProjectReference Include="..\..\libs\Unity.Mathematics\src\Unity.Mathematics\Unity.Mathematics.csproj" />
+  </ItemGroup>
+
 </Project>
