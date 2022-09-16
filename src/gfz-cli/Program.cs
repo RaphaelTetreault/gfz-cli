@@ -84,14 +84,19 @@ namespace Manifold.GFZCLI
                 var carData = new CarData();
                 carData.Deserialize(reader);
 
+                // Update path to decompressed file
+                string fileName = Path.GetFileNameWithoutExtension(filePath);
+                string fileDir = Path.GetDirectoryName(filePath);
+                filePath = Path.Combine(fileDir, fileName);
+
                 // Save out 
-                string outputPath = filePath + ".bin";
+                string outputPath = filePath + ".lz";
                 using (var writer = new EndianBinaryWriter(File.Create(outputPath), CarData.endianness))
                 {
                     carData.Serialize(writer);
                     Console.WriteLine($"Created file: {outputPath}");
                 }
-                LzUtility.CompressAvLz(outputPath, GameCube.AmusementVision.GxGame.FZeroGX);
+                LzUtility.CompressAvLzToDisk(outputPath, GameCube.AmusementVision.GxGame.FZeroGX, true);
             }
         }
 
