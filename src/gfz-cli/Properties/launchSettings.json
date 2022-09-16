@@ -5,11 +5,15 @@
     },
     "Profile 1": {
       "commandName": "Project",
-      "commandLineArgs": "--cardata-bin-to-tsv D:\\gfzj01\\game\\cardata"
+      "commandLineArgs": "--cardata-bin-to-tsv D:\\gfzj01\\game\\cardata.lz"
     },
     "Profile 2": {
       "commandName": "Project",
       "commandLineArgs": "--cardata-tsv-to-bin D:\\gfzj01\\game\\cardata.tsv"
+    },
+    "Profile 3": {
+      "commandName": "Project",
+      "commandLineArgs": "--lzc D:\\gfzj01\\game\\cardata"
     }
   }
 }
