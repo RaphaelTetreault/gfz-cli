@@ -36,6 +36,14 @@ namespace Manifold.GFZCLI
                 "Creates a TSV spreadsheet from the values of cardata.lz binary.";
             public const string CarDataFromTSV =
                 "Creates a binary from the values of cardata.tsv spreadsheet.";
+
+
+            public const string Format =
+                "The format used when serializing. Either AX or GX.";
+            public const string LzDecompressTarget =
+                "File or directory to decompress.";
+            public const string LzCompressTarget =
+                "File or directory to compress.";
         }
 
 
