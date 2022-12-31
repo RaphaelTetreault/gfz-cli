@@ -78,7 +78,7 @@ gfz-cli.exe --lzc D:\gfzj01\ --searchPattern *.gma --searchSubdirs
 
 ### Specifying F-Zero AX/GX Formats
 
-By default, `gfz-cli` serializes files in `GX` format. The user can specify which format they wish to serialize to using the ``--format` command. 
+By default, `gfz-cli` serializes files in `GX` format. The user can specify which format they wish to serialize to using the `--format` command. 
 
 Compress a file to to be F-Zero GX compatible explicitly.
 
