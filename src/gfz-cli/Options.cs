@@ -1,11 +1,6 @@
 ﻿using CommandLine;
 using GameCube.AmusementVision;
-using GameCube.GFZ;
-using GameCube.GFZ.LZ;
 using GameCube.GFZ.Stage;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Processing.Processors.Transforms;
 
 namespace Manifold.GFZCLI
 {

@@ -1,7 +1,7 @@
 ﻿namespace Manifold.GFZCLI
 {
     /// <summary>
-    /// Static wrapper to make handle Console verbosity
+    /// Static wrapper to make Console handle verbosity
     /// </summary>
     public static class VerboseConsole
     {

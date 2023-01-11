@@ -4,7 +4,7 @@
 
 ## Operating System
 
-For the purposes of this document, the tool will be referred to as `gfz-cli.exe`. Calling the tool will depending on your operating system. Please review the table below and replace instances of `gfz-cli` with the appropriate call to the program.
+This document provides examples using Windows and calls the `gfz-cli.exe` program. Calling the tool will depending on your operating system. Please review the table below and replace instances of `gfz-cli.exe` with the appropriate call to the program.
 
 | Operating System | Program Call  |
 | ---------------- | ------------- |
@@ -14,19 +14,21 @@ For the purposes of this document, the tool will be referred to as `gfz-cli.exe`
 
 
 
-## Car Data (GX)
+## Car Data (GX only)
 
 This tool provide a way to convert the `cardata.lz` binary to a tab-separated value (TSV) table and a way to convert it back to a binary from an appropriately formatted TSV file.
 
 ### Create spreadsheet to edit vehicle parameters
 
+This command creates a new file called `cardata.tsv` in the same directory as the input file. If `cardata.tsv` already exists there, it will be overwritten.
+
 ```shell
 gfz-cli.exe --cardata-bin-to-tsv D:\gfzj01\game\cardata.lz
 ```
 
-### Convert spreadsheet into `cardata`.lz
+### Convert spreadsheet into `cardata.lz`
 
-Note that this command will create both `cardata` and `cardata.lz`.
+Note that this command will create both `cardata` and `cardata.lz` in the same directory as the input file.
 
 ```shell
 gfz-cli.exe --cardata-tsv-to-bin D:\gfzj01\game\cardata.tsv
@@ -78,15 +80,15 @@ gfz-cli.exe --lzc D:\gfzj01\ --searchPattern *.gma --searchSubdirs
 
 ### Specifying F-Zero AX/GX Formats
 
-By default, `gfz-cli` serializes files in `GX` format. The user can specify which format they wish to serialize to using the `--format` command. 
+By default, `gfz-cli` serializes files in for F-Zero GX (all regions). The user can specify which format they wish to serialize to using the `--format` command. 
 
-Compress a file to to be F-Zero GX compatible explicitly.
+Compress a file to be F-Zero GX compatible explicitly.
 
 ```shell
 gfz-cli.exe --lzc D:\gfzj01\stage\st01.gma --format gx
 ```
 
-Compress a file to to be F-Zero AX compatible.
+Compress a file to be F-Zero AX compatible.
 
 ```shell
 gfz-cli.exe --lzc D:\gfzj01\stage\st01.gma --format ax
