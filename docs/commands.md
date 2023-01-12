@@ -66,13 +66,13 @@ Compress specific `.lz` file.
 gfz-cli.exe --lzc D:\gfzj01\stage\st01.gma
 ```
 
-Compress all `.gma` files in folder.
+Compress files named using the format `st??.gma` in the specified folder. (`?` is a single-character wildcard.)
 
 ```shell
-gfz-cli.exe --lzc D:\gfzj01\stage\ --searchPattern *.gma
+gfz-cli.exe --lzc D:\gfzj01\stage\ --searchPattern st??.gma
 ```
 
-Compress all, for example, `.gma` files in folder and subfolders.
+Compress all `.gma` files in folder and subfolders. (`*` is the variable-length wildcard character.)
 
 ```shell
 gfz-cli.exe --lzc D:\gfzj01\ --searchPattern *.gma --searchSubdirs
