@@ -39,8 +39,14 @@ namespace Manifold.GFZCLI
                 "File or directory to decompress.";
             public const string LzCompressTarget =
                 "File or directory to compress.";
+
+
+            public const string TplUnpack = "TPL Unpack";
+            public const string TplPack = "TPL Pack";
         }
 
+        [Option("overwrite", Required = false, HelpText = "TODO")]
+        public bool OverwriteFiles { get; set; }
 
         [Option("verbose", Required = false, HelpText = Help.Verbose)]
         public bool Verbose { get; set; }
@@ -74,6 +80,21 @@ namespace Manifold.GFZCLI
         public string LzDecompressTarget { get; set; } = string.Empty;
         [Option("lzc", Required = false, HelpText = Help.CarDataFromTSV)]
         public string LzCompressTarget { get; set; } = string.Empty;
+
+
+        [Option("tpl-unpack", Required = false, HelpText = Help.TplUnpack)]
+        public string TplUnpack { get; set; } = string.Empty;
+
+        [Option("tpl-unpack-corrupted-cmpr", Required = false, HelpText = "TODO")]
+        public bool TplUnpackSaveCorruptedTextures{ get; set; }
+
+        [Option("tpl-unpack-mipmaps", Required = false, HelpText = "TODO")]
+        public bool TplUnpackMipmaps { get; set; }
+
+        [Option("tpl-pack", Required = false, HelpText = Help.TplPack)]
+        public string TplPack { get; set; } = string.Empty;
+
+        // TODO: implement/parse image-sharp enum for texture output types (use n64-mksprite impl.)
 
 
         public SearchOption SearchOption => SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;

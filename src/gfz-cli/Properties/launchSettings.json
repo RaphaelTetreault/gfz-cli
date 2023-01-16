@@ -3,17 +3,25 @@
     "gfz-cli": {
       "commandName": "Project"
     },
-    "Profile 1": {
+    "cardata-bin-to-tsv": {
       "commandName": "Project",
       "commandLineArgs": "--cardata-bin-to-tsv D:\\gfzj01\\game\\cardata.lz"
     },
-    "Profile 2": {
+    "cardata-tsv-to-bin": {
       "commandName": "Project",
       "commandLineArgs": "--cardata-tsv-to-bin D:\\gfzj01\\game\\cardata.tsv"
     },
-    "Profile 3": {
+    "lz-compress": {
       "commandName": "Project",
       "commandLineArgs": "--lzc D:\\gfzj01\\game\\cardata"
+    },
+    "tpl-unpack": {
+      "commandName": "Project",
+      "commandLineArgs": "--tpl-unpack D:/gfz-cli-test/bg_win_gx.tpl --verbose --tpl-unpack-mipmaps"
+    },
+    "tpl-pack": {
+      "commandName": "Project",
+      "commandLineArgs": "--tpl-pack D:/gfz-cli-test/79.png --verbose"
     }
   }
 }
