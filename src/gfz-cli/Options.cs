@@ -6,7 +6,27 @@ namespace Manifold.GFZCLI
 {
     public class Options
     {
-        private static class Help
+        internal static class Args
+        {
+
+            public const string OverwriteFiles      = "overwrite";
+            public const string Verbose             = "verbose";
+            public const string InputPath           = "inputPath";
+            public const string OutputPath          = "outputPath";
+            public const string SearchSubdirectories = "searchSubdirs";
+            public const string SearchPattern       = "searchPattern";
+            public const string CarDataBinPath      = "cardata-bin-to-tsv";
+            public const string CarDataTsvPath      = "cardata-tsv-to-bin";
+            public const string SerializationFormat = "format";
+            public const string LzDecompressTarget  = "lzd";
+            public const string LzCompressTarget    = "lzc";
+            public const string TplUnpack           = "tpl-unpack";
+            public const string TplUnpackSaveCorruptedTextures = "tpl-unpack-corrupted-cmpr";
+            public const string TplUnpackMipmaps    = "tpl-unpack-mipmaps";
+            public const string TplPack             = "tpl-pack";
+        }
+
+        internal static class Help
         {
             public const string Verbose =
                 "Set output to verbose messages.";
@@ -45,53 +65,54 @@ namespace Manifold.GFZCLI
             public const string TplPack = "TPL Pack";
         }
 
-        [Option("overwrite", Required = false, HelpText = "TODO")]
+
+        [Option(Args.OverwriteFiles, Required = false, HelpText = "TODO")]
         public bool OverwriteFiles { get; set; }
 
-        [Option("verbose", Required = false, HelpText = Help.Verbose)]
+        [Option(Args.Verbose, Required = false, HelpText = Help.Verbose)]
         public bool Verbose { get; set; }
 
-        [Option('i', "inputPath", Required = false, HelpText = Help.InputPath)]
+        [Option('i', Args.InputPath, Required = false, HelpText = Help.InputPath)]
         public string InputPath { get; set; } = string.Empty;
 
-        [Option('o', "outputPath", Required = false, HelpText = Help.OutputPath)]
+        [Option('o', Args.OutputPath, Required = false, HelpText = Help.OutputPath)]
         public string OutputPath { get; set; } = string.Empty;
 
 
-        [Option('s', "searchSubdirs", Required = false, HelpText = Help.SearchSubdirectories)]
+        [Option('s', Args.SearchSubdirectories, Required = false, HelpText = Help.SearchSubdirectories)]
         public bool SearchSubdirectories { get; set; }
 
-        [Option('p', "searchPattern", Required = false, HelpText = Help.SearchPattern)]
+        [Option('p', Args.SearchPattern, Required = false, HelpText = Help.SearchPattern)]
         public string SearchPattern { get; set; } = string.Empty;
 
 
-        [Option("cardata-bin-to-tsv", Required = false, HelpText = Help.CarDataToTSV)]
+        [Option(Args.CarDataBinPath, Required = false, HelpText = Help.CarDataToTSV)]
         public string CarDataBinPath { get; set; } = string.Empty;
 
-        [Option("cardata-tsv-to-bin", Required = false, HelpText = Help.CarDataFromTSV)]
+        [Option(Args.CarDataTsvPath, Required = false, HelpText = Help.CarDataFromTSV)]
         public string CarDataTsvPath { get; set; } = string.Empty;
 
 
-        [Option("format", Required = false, HelpText = Help.CarDataFromTSV)]
+        [Option(Args.SerializationFormat, Required = false, HelpText = Help.CarDataFromTSV)]
         public string SerializationFormat { get; set; } = string.Empty;
 
 
-        [Option("lzd", Required = false, HelpText = Help.CarDataFromTSV)]
+        [Option(Args.LzDecompressTarget, Required = false, HelpText = Help.CarDataFromTSV)]
         public string LzDecompressTarget { get; set; } = string.Empty;
-        [Option("lzc", Required = false, HelpText = Help.CarDataFromTSV)]
+        [Option(Args.LzCompressTarget, Required = false, HelpText = Help.CarDataFromTSV)]
         public string LzCompressTarget { get; set; } = string.Empty;
 
 
-        [Option("tpl-unpack", Required = false, HelpText = Help.TplUnpack)]
+        [Option(Args.TplUnpack, Required = false, HelpText = Help.TplUnpack)]
         public string TplUnpack { get; set; } = string.Empty;
 
-        [Option("tpl-unpack-corrupted-cmpr", Required = false, HelpText = "TODO")]
-        public bool TplUnpackSaveCorruptedTextures{ get; set; }
+        [Option(Args.TplUnpackSaveCorruptedTextures, Required = false, HelpText = "TODO")]
+        public bool TplUnpackSaveCorruptedTextures { get; set; }
 
-        [Option("tpl-unpack-mipmaps", Required = false, HelpText = "TODO")]
+        [Option(Args.TplUnpackMipmaps, Required = false, HelpText = "TODO")]
         public bool TplUnpackMipmaps { get; set; }
 
-        [Option("tpl-pack", Required = false, HelpText = Help.TplPack)]
+        [Option(Args.TplPack, Required = false, HelpText = Help.TplPack)]
         public string TplPack { get; set; } = string.Empty;
 
         // TODO: implement/parse image-sharp enum for texture output types (use n64-mksprite impl.)

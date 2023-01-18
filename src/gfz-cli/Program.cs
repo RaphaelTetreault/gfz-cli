@@ -9,6 +9,10 @@ using System.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using GameCube.GX.Texture;
+using SixLabors.ImageSharp.Formats.Png;
+
+//using System.Text;
+//using System.Security.Cryptography;
 
 
 // TODO:
@@ -121,7 +125,7 @@ namespace Manifold.GFZCLI
             bool fileExists = File.Exists(path);
             bool dirExists = Directory.Exists(path);
             if (!fileExists && !dirExists)
-                throw new ArgumentException($"Provided file or folder path target {path} does not exist.");
+                throw new ArgumentException($"Provided path target {path} does not exist.");
 
             if (fileExists)
             {
@@ -174,72 +178,85 @@ namespace Manifold.GFZCLI
 
         public static void TplUnpack(Options options)
         {
-            string path = options.TplUnpack;
-            if (string.IsNullOrEmpty(path))
+            string tplInputPath = options.TplUnpack;
+            if (string.IsNullOrEmpty(tplInputPath))
                 return;
 
-            // Ensure input file exists
-            bool fileExists = File.Exists(path);
-            if (!fileExists)
-                throw new ArgumentException($"Target file '{path}' does not exist.");
-
-            // Deserialize the TPL
-            Tpl tpl = new Tpl();
-            using (var reader = new EndianBinaryReader(File.OpenRead(path), Tpl.endianness))
+            string[] filePaths = GetFileOrFiles(options, tplInputPath);
+            int digitsWidth = filePaths.LengthToFormat();
+            for (int i = 0; i < filePaths.Length; i++)
             {
-                tpl.Deserialize(reader);
-                tpl.FileName = Path.GetFileNameWithoutExtension(path);
-            }
+                string path = filePaths[i];
+                Console.WriteLine($"{path}");
 
-            // Create folder named the same thing as the TPL input file
-            string directory = Path.GetDirectoryName(path);
-            directory = Path.Combine(directory, tpl.FileName);
-            Directory.CreateDirectory(directory);
-
-            // Iterate over texture and mipmaps, save to disk
-            int tplIndex = 0;
-            foreach (var textureSeries in tpl.TextureSeries)
-            {
-                tplIndex++;
-                int mipmapIndex = 0;
-                foreach (var textureEntry in textureSeries.Entries)
+                // Deserialize the TPL
+                Tpl tpl = new Tpl();
+                using (var reader = new EndianBinaryReader(File.OpenRead(path), Tpl.endianness))
                 {
-                    bool isMipmap = mipmapIndex > 0;
-                    bool skipMipmaps = isMipmap && !options.TplUnpackMipmaps;
-                    if (skipMipmaps)
+                    tpl.Deserialize(reader);
+                    tpl.FileName = Path.GetFileNameWithoutExtension(path);
+                }
+
+                // Create folder named the same thing as the TPL input file
+                string directory = Path.GetDirectoryName(path);
+                directory = Path.Combine(directory, tpl.FileName);
+                Directory.CreateDirectory(directory);
+
+                // Iterate over texture and mipmaps, save to disk
+                int tplIndex = 0;
+                foreach (var textureSeries in tpl.TextureSeries)
+                {
+                    tplIndex++;
+
+                    if (textureSeries is null)
                         continue;
 
-                    mipmapIndex++;
-
-                    // Optionally bow out of saving texture if it is corrupted.
-                    bool skipCorruptedTexture = textureEntry.IsCorrupted && !options.TplUnpackSaveCorruptedTextures;
-                    if (skipCorruptedTexture)
-                        continue;
-
-                    // Copy contents of GameCube texture into ImageSharp representation
-                    var texture = textureEntry.Texture;
-                    Image<Rgba32> image = new Image<Rgba32>(texture.Width, texture.Height);
-
-                    for (int y = 0; y < texture.Height; y++)
+                    int mipmapIndex = 0;
+                    int entryIndex = -1;
+                    foreach (var textureEntry in textureSeries.Entries)
                     {
-                        for (int x = 0; x < texture.Width; x++)
+                        entryIndex++;
+
+                        bool isMipmap = mipmapIndex > 0;
+                        bool skipMipmaps = isMipmap && !options.TplUnpackMipmaps;
+                        if (skipMipmaps)
+                            continue;
+
+                        mipmapIndex++;
+
+                        // Optionally bow out of saving texture if it is corrupted.
+                        bool skipCorruptedTexture = textureEntry.IsCorrupted && !options.TplUnpackSaveCorruptedTextures;
+                        if (skipCorruptedTexture)
+                            continue;
+
+                        // Copy contents of GameCube texture into ImageSharp representation
+                        var texture = textureEntry.Texture;
+                        Image<Rgba32> image = new Image<Rgba32>(texture.Width, texture.Height);
+
+                        for (int y = 0; y < texture.Height; y++)
                         {
-                            TextureColor pixel = texture[x, y];
-                            image[x, y] = new Rgba32(pixel.r, pixel.g, pixel.b, pixel.a);
+                            for (int x = 0; x < texture.Width; x++)
+                            {
+                                TextureColor pixel = texture[x, y];
+                                image[x, y] = new Rgba32(pixel.r, pixel.g, pixel.b, pixel.a);
+                            }
                         }
+
+                        //var format = PngFormat.Instance;
+                        var encoder = new PngEncoder();
+                        encoder.CompressionLevel = PngCompressionLevel.BestCompression;
+                        string textureHash = textureSeries.MD5TextureHashes[entryIndex];
+                        string fileName = $"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}.png";
+                        string filePath = Path.Combine(directory, fileName);
+
+                        bool skipFileWrite = File.Exists(filePath) && !options.OverwriteFiles;
+                        if (skipFileWrite)
+                            continue;
+
+                        // Save to disk
+                        image.Save(filePath, encoder);
+                        VerboseConsole.WriteLine($"Wrote file: {filePath}");
                     }
-
-                    // Find where to save file
-                    string fileName = $"{tplIndex}-{mipmapIndex}.png";
-                    string filePath = Path.Combine(directory, fileName);
-                    
-                    bool skipFileWrite = File.Exists(filePath) && !options.OverwriteFiles;
-                    if (skipFileWrite)
-                        continue;
-
-                    // Save to disk
-                    image.SaveAsPng(filePath);
-                    VerboseConsole.WriteLine($"Wrote file: {filePath}");
                 }
             }
         }
@@ -255,7 +272,6 @@ namespace Manifold.GFZCLI
                 throw new ArgumentException($"Target file '{path}' does not exist.");
 
             // TEMP: just do 1 file
-
             Image<Rgba32> image = Image.Load<Rgba32>(path);
             Texture texture = new Texture(image.Width, image.Height, TextureFormat.CMPR);
 
@@ -263,7 +279,7 @@ namespace Manifold.GFZCLI
             {
                 for (int x = 0; x < image.Width; x++)
                 {
-                    Rgba32 pixel = image[x,y];
+                    Rgba32 pixel = image[x, y];
                     texture[x, y] = new TextureColor(pixel.R, pixel.G, pixel.B, pixel.A);
                 }
             }
@@ -276,13 +292,13 @@ namespace Manifold.GFZCLI
                 //var encoding = Encoding.EncodingRGB5A3;
                 //var encoding = Encoding.EncodingIA8;
                 //var encoding = Encoding.EncodingIA4;
-                var blocks = texture.CreateTextureDirectColorBlocks(encoding, out int bch, out int bcv);
+                var blocks = Texture.CreateTextureDirectColorBlocks(texture, encoding, out int bch, out int bcv);
                 encoding.WriteTexture(writer, blocks);
 
                 writer.BaseStream.Position = 0;
                 using (var reader = new EndianBinaryReader(writer.BaseStream, Tpl.endianness))
                 {
-                    var blocksCopy = encoding.ReadBlocks<DirectBlock>(reader, blocks.Length, encoding);
+                    var blocksCopy = encoding.ReadBlocks<DirectBlock>(reader, encoding, blocks.Length);
                     Texture textureCopy = Texture.FromDirectBlocks(blocksCopy, bch, bcv);
 
                     // HACK - copy/paste garbage test
@@ -296,6 +312,12 @@ namespace Manifold.GFZCLI
                             imageCopy[x, y] = new Rgba32(pixel.r, pixel.g, pixel.b, pixel.a);
                         }
                     }
+
+                    //var tempStream = new MemoryStream();
+                    //var format = PngFormat.Instance;
+                    //imageCopy.Save(tempStream, format);
+                    //var imageHash = GetMD5HashName(tempStream);
+
                     // Find where to save file
                     string directory = Path.GetDirectoryName(path);
                     string fileName = $"temp.png";
@@ -305,7 +327,74 @@ namespace Manifold.GFZCLI
                     VerboseConsole.WriteLine($"Wrote file: {filePath}");
                 }
             }
+        }
 
+
+        public static bool GetFilesInDirectory(Options options, string path, out string[] files)
+        {
+            files = new string[0];
+
+            bool directoryExists = Directory.Exists(path);
+            if (directoryExists)
+            {
+                bool isInvalidSearchOption = string.IsNullOrEmpty(options.SearchPattern);
+                if (isInvalidSearchOption)
+                {
+                    string msg =
+                        $"Invalid '{nameof(options.SearchPattern)}' provided for a directory input argument. " +
+                        $"Make sure to use --{Options.Args.SearchPattern} when providing directory paths.";
+                    throw new ArgumentException(msg);
+                }
+
+                var searchOption = options.SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+                files = Directory.GetFiles(path, options.SearchPattern, searchOption);
+            }
+
+            return directoryExists;
+        }
+        public static string[] GetFileOrFiles(Options options, string path)
+        {
+            // Make sure path is valid
+            bool fileExists = File.Exists(path);
+            bool dirExists = Directory.Exists(path);
+            if (!fileExists && !dirExists)
+                throw new ArgumentException($"Target file or folder '{path}' does not exist.");
+
+            // Get files in directory if it is a directory
+            bool isDirectory = GetFilesInDirectory(options, path, out string[] files);
+            if (!isDirectory)
+            {
+                // If not, return lone file path
+                files = new string[] { path };
+            }
+
+            return files;
+        }
+
+
+
+
+        // GARBAGE TO DELETE
+        public static string GetHashName(MemoryStream stream, System.Security.Cryptography.HashAlgorithm hashAlgorithm)
+        {
+            var streamPosition = stream.Position;
+            //
+            stream.Position = 0;
+            var bytes = stream.GetBuffer();
+            var hashBytes = hashAlgorithm.ComputeHash(bytes);
+            var sb = new System.Text.StringBuilder();
+            foreach (var @byte in hashBytes)
+                sb.Append($"{@byte:x2}");
+            //
+            stream.Position = streamPosition;
+            //
+            return sb.ToString();
+        }
+        public static string GetMD5HashName(MemoryStream stream)
+        {
+            var md5 = System.Security.Cryptography.MD5.Create();
+            string name = GetHashName(stream, md5);
+            return name;
         }
 
         private static void AssertFileOrDirectoryExists(string path)

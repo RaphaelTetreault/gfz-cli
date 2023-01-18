@@ -17,11 +17,11 @@
     },
     "tpl-unpack": {
       "commandName": "Project",
-      "commandLineArgs": "--tpl-unpack D:/gfz-cli-test/bg_win_gx.tpl --verbose --tpl-unpack-mipmaps"
+      "commandLineArgs": "--tpl-unpack D:/gfz-cli-test/gfz --verbose tpl-unpack-mipmaps --searchSubdirs --searchPattern *.tpl"
     },
     "tpl-pack": {
       "commandName": "Project",
-      "commandLineArgs": "--tpl-pack D:/gfz-cli-test/79.png --verbose"
+      "commandLineArgs": "--tpl-pack D:/gfz-cli-test/be.png --verbose"
     }
   }
 }
