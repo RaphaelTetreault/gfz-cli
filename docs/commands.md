@@ -53,7 +53,13 @@ gfz-cli.exe --lzd D:\gfzj01\stage\
 Decompress all `.lz` files in a folder and it's subfolders.
 
 ```shell
-gfz-cli.exe --lzd D:\gfzj01\ --searchSubdirs
+gfz-cli.exe --lzd D:\gfzj01\ --search-subdirs
+```
+
+Decompress all files ending in `.tpl.lz` in specified folder and it's subfolders.
+
+```shell
+gfz-cli.exe --lzd D:\gfzj01\ --search-pattern *.tpl.lz --search-subdirs 
 ```
 
 
@@ -69,13 +75,13 @@ gfz-cli.exe --lzc D:\gfzj01\stage\st01.gma
 Compress files named using the format `st??.gma` in the specified folder. (`?` is a single-character wildcard.)
 
 ```shell
-gfz-cli.exe --lzc D:\gfzj01\stage\ --searchPattern st??.gma
+gfz-cli.exe --lzc D:\gfzj01\stage\ --search-pattern st??.gma
 ```
 
 Compress all `.gma` files in folder and subfolders. (`*` is the variable-length wildcard character.)
 
 ```shell
-gfz-cli.exe --lzc D:\gfzj01\ --searchPattern *.gma --searchSubdirs
+gfz-cli.exe --lzc D:\gfzj01\ --search-pattern *.gma --search-subdirs
 ```
 
 ### Specifying F-Zero AX/GX Formats

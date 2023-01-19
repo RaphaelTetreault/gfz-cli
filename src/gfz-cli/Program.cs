@@ -11,19 +11,21 @@ using SixLabors.ImageSharp.PixelFormats;
 using GameCube.GX.Texture;
 using SixLabors.ImageSharp.Formats.Png;
 
-//using System.Text;
-//using System.Security.Cryptography;
-
-
 // TODO:
 // Make sure all parts of code respect new 'overwrite' flag
 // 
 
+using gfz_cli;
 
 namespace Manifold.GFZCLI
 {
     internal class Program
     {
+        static readonly object lock_ConsoleWrite = new();
+        const ConsoleColor FileNameColor = ConsoleColor.Cyan;
+        const ConsoleColor OverwriteFileColor = ConsoleColor.DarkYellow;
+        const ConsoleColor WriteFileColor = ConsoleColor.Green;
+
         public static void Main(string[] args)
         {
             Parser.Default.ParseArguments<Options>(args)
@@ -122,140 +124,195 @@ namespace Manifold.GFZCLI
             if (string.IsNullOrEmpty(path))
                 return;
 
-            bool fileExists = File.Exists(path);
-            bool dirExists = Directory.Exists(path);
-            if (!fileExists && !dirExists)
-                throw new ArgumentException($"Provided path target {path} does not exist.");
+            // Force checking for LZ files IF there is noething defined
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = "*.lz";
 
-            if (fileExists)
+            DoTasks(options, path, LzDecompressFile);
+        }
+        public static void LzDecompressFile(Options options, string filePath)
+        {
+            bool fileExists = File.Exists(filePath);
+            bool writeSuccess = LzUtility.DecompressAvLzToDisk(filePath, options.OverwriteFiles);
+
+            if (!options.Verbose)
+                return;
+
+            string inputFileName = Path.GetFileName(filePath);
+            string outputFileName = Path.GetFileNameWithoutExtension(inputFileName);
+            bool isOverwritingFile = fileExists && writeSuccess;
+            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
+            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
+
+            lock (lock_ConsoleWrite)
             {
-                LzUtility.DecompressAvLzToDisk(path, true);
-                Console.WriteLine($"Decompressed: {path}");
-            }
-            else if (dirExists)
-            {
-                var searchOption = options.SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-                var enumerable = LzUtility.DecompressAvLzDirectoryToDisk(path, true, searchOption);
-                foreach (var file in enumerable)
-                    Console.WriteLine($"Decompressed: {file.filePath}");
-            }
-            else
-            {
-                Assert.IsTrue(false, "This code should never run.");
+                if (writeSuccess)
+                {
+                    Konsole.Write($"LZ: Decompress file: ");
+                    Konsole.Write(inputFileName, FileNameColor);
+                    Konsole.Write(" - ");
+                    Konsole.Write(writeMsg, writeColor);
+                    Konsole.Write($" file: ");
+                    Konsole.Write(outputFileName, FileNameColor);
+                    Konsole.WriteLine();
+                }
+                else
+                {
+                    Konsole.Write($"LZ: Skip decompressing file: ");
+                    Konsole.Write(inputFileName, FileNameColor);
+                    Konsole.WriteLine();
+                }
             }
         }
         public static void LzCompress(Options options)
         {
-            string path = options.LzCompressTarget;
-            if (string.IsNullOrEmpty(path))
+            string lzcPath = options.LzCompressTarget;
+            if (string.IsNullOrEmpty(lzcPath))
                 return;
 
+            DoTasks(options, lzcPath, LzCompressTask);
+        }
+        public static void LzCompressTask(Options options, string path)
+        {
             bool fileExists = File.Exists(path);
-            bool dirExists = Directory.Exists(path);
-            if (!fileExists && !dirExists)
-                throw new ArgumentException($"Provided file or folder path target {path} does not exist.");
-            bool hasSearchPattern = !string.IsNullOrEmpty(options.SearchPattern);
-            if (dirExists && !hasSearchPattern)
-                throw new ArgumentException($"Cannot compress target folder {path} without specifying a search pattern.");
+            bool writeSuccess = LzUtility.CompressAvLzToDisk(path, options.AvGame, options.OverwriteFiles);
 
-            if (fileExists)
+            if (!options.Verbose)
+                return;
+
+            string inputFileName = Path.GetFileName(path);
+            string outputFileName = $"{inputFileName}.lz";
+            bool isOverwritingFile = fileExists && writeSuccess;
+            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
+            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
+
+            lock (lock_ConsoleWrite)
             {
-                LzUtility.CompressAvLzToDisk(path, options.AvGame, true);
-                Console.WriteLine($"Compressed: {path}");
-            }
-            else if (dirExists)
-            {
-                var searchOption = options.SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-                var enumerable = LzUtility.CompressAvLzDirectoryToDisk(path, options.AvGame, true, searchOption, options.SearchPattern);
-                foreach (var file in enumerable)
-                    Console.WriteLine($"Compressed: {file.filePath}");
-            }
-            else
-            {
-                Assert.IsTrue(false, "This code should never run.");
+                if (writeSuccess)
+                {
+                    Konsole.Write($"LZ: Compress file: ");
+                    Konsole.Write(inputFileName, FileNameColor);
+                    Konsole.Write($" - ");
+                    Konsole.Write(writeMsg, writeColor);
+                    Konsole.Write($" file: ");
+                    Konsole.Write(outputFileName, FileNameColor);
+                    Konsole.WriteLine();
+                }
+                else
+                {
+                    Konsole.Write($"LZ: Skip compressing file: ");
+                    Konsole.Write(inputFileName, FileNameColor);
+                    Konsole.WriteLine();
+                }
             }
         }
 
         public static void TplUnpack(Options options)
         {
-            string tplInputPath = options.TplUnpack;
-            if (string.IsNullOrEmpty(tplInputPath))
+            string path = options.TplUnpack;
+            if (string.IsNullOrEmpty(path))
                 return;
 
-            string[] filePaths = GetFileOrFiles(options, tplInputPath);
-            int digitsWidth = filePaths.LengthToFormat();
-            for (int i = 0; i < filePaths.Length; i++)
+            DoTasks(options, path, TplUnpackFile);
+        }
+        public static void TplUnpackFile(Options options, string filePath)
+        {
+            string tplFileName = Path.GetFileNameWithoutExtension(filePath);
+
+            // Deserialize the TPL
+            Tpl tpl = new Tpl();
+            using (var reader = new EndianBinaryReader(File.OpenRead(filePath), Tpl.endianness))
             {
-                string path = filePaths[i];
-                Console.WriteLine($"{path}");
+                tpl.Deserialize(reader);
+                tpl.FileName = Path.GetFileNameWithoutExtension(filePath);
+            }
 
-                // Deserialize the TPL
-                Tpl tpl = new Tpl();
-                using (var reader = new EndianBinaryReader(File.OpenRead(path), Tpl.endianness))
+            // Create folder named the same thing as the TPL input file
+            string directory = Path.GetDirectoryName(filePath);
+            directory = Path.Combine(directory, tpl.FileName);
+            Directory.CreateDirectory(directory);
+
+            // Iterate over texture and mipmaps, save to disk
+            int tplIndex = 0;
+            int tplDigits = tpl.TextureSeries.LengthToFormat();
+            foreach (var textureSeries in tpl.TextureSeries)
+            {
+                tplIndex++;
+
+                if (textureSeries is null)
+                    continue;
+
+                int mipmapIndex = 0;
+                int entryIndex = -1;
+                foreach (var textureEntry in textureSeries.Entries)
                 {
-                    tpl.Deserialize(reader);
-                    tpl.FileName = Path.GetFileNameWithoutExtension(path);
-                }
+                    entryIndex++;
 
-                // Create folder named the same thing as the TPL input file
-                string directory = Path.GetDirectoryName(path);
-                directory = Path.Combine(directory, tpl.FileName);
-                Directory.CreateDirectory(directory);
-
-                // Iterate over texture and mipmaps, save to disk
-                int tplIndex = 0;
-                foreach (var textureSeries in tpl.TextureSeries)
-                {
-                    tplIndex++;
-
-                    if (textureSeries is null)
+                    bool isMipmap = mipmapIndex > 0;
+                    bool skipMipmaps = isMipmap && !options.TplUnpackMipmaps;
+                    if (skipMipmaps)
                         continue;
 
-                    int mipmapIndex = 0;
-                    int entryIndex = -1;
-                    foreach (var textureEntry in textureSeries.Entries)
+                    mipmapIndex++;
+
+                    // Optionally bow out of saving texture if it is corrupted.
+                    bool skipCorruptedTexture = textureEntry.IsCorrupted && !options.TplUnpackSaveCorruptedTextures;
+                    if (skipCorruptedTexture)
+                        continue;
+
+                    // Copy contents of GameCube texture into ImageSharp representation
+                    var texture = textureEntry.Texture;
+                    Image<Rgba32> image = new Image<Rgba32>(texture.Width, texture.Height);
+
+                    for (int y = 0; y < texture.Height; y++)
                     {
-                        entryIndex++;
-
-                        bool isMipmap = mipmapIndex > 0;
-                        bool skipMipmaps = isMipmap && !options.TplUnpackMipmaps;
-                        if (skipMipmaps)
-                            continue;
-
-                        mipmapIndex++;
-
-                        // Optionally bow out of saving texture if it is corrupted.
-                        bool skipCorruptedTexture = textureEntry.IsCorrupted && !options.TplUnpackSaveCorruptedTextures;
-                        if (skipCorruptedTexture)
-                            continue;
-
-                        // Copy contents of GameCube texture into ImageSharp representation
-                        var texture = textureEntry.Texture;
-                        Image<Rgba32> image = new Image<Rgba32>(texture.Width, texture.Height);
-
-                        for (int y = 0; y < texture.Height; y++)
+                        for (int x = 0; x < texture.Width; x++)
                         {
-                            for (int x = 0; x < texture.Width; x++)
-                            {
-                                TextureColor pixel = texture[x, y];
-                                image[x, y] = new Rgba32(pixel.r, pixel.g, pixel.b, pixel.a);
-                            }
+                            TextureColor pixel = texture[x, y];
+                            image[x, y] = new Rgba32(pixel.r, pixel.g, pixel.b, pixel.a);
                         }
+                    }
 
-                        //var format = PngFormat.Instance;
-                        var encoder = new PngEncoder();
-                        encoder.CompressionLevel = PngCompressionLevel.BestCompression;
-                        string textureHash = textureSeries.MD5TextureHashes[entryIndex];
-                        string fileName = $"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}.png";
-                        string filePath = Path.Combine(directory, fileName);
+                    //var format = PngFormat.Instance;
+                    var encoder = new PngEncoder();
+                    encoder.CompressionLevel = PngCompressionLevel.BestCompression;
+                    string textureHash = textureSeries.MD5TextureHashes[entryIndex];
+                    string fileName = $"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}.png";
+                    string outputPath = Path.Combine(directory, fileName);
 
-                        bool skipFileWrite = File.Exists(filePath) && !options.OverwriteFiles;
-                        if (skipFileWrite)
-                            continue;
+                    bool fileExists = File.Exists(outputPath);
+                    bool skipFileWrite = fileExists && !options.OverwriteFiles;
+                    if (skipFileWrite)
+                        continue;
 
-                        // Save to disk
-                        image.Save(filePath, encoder);
-                        VerboseConsole.WriteLine($"Wrote file: {filePath}");
+                    // Save to disk
+                    image.Save(outputPath, encoder);
+
+                    //
+                    bool isOverwritingFile = fileExists;
+                    var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
+                    var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
+
+                    lock (lock_ConsoleWrite)
+                    {
+                        if (options.Verbose)
+                        {
+                            Konsole.Write($"TPL: Unpacking file: ");
+                            Konsole.Write(tplFileName, FileNameColor);
+                            Konsole.Write($" Texture {tplIndex.PadLeft(tplDigits)},");
+                            Konsole.Write($" Mipmap {mipmapIndex.PadLeft(2)}. ");
+                            Konsole.Write(writeMsg, writeColor);
+                            Konsole.Write($" file: ");
+                            Konsole.Write(outputPath, FileNameColor);
+                            Konsole.WriteLine();
+                        }
+                        else
+                        {
+                            Konsole.Write($"TPL: Skip unpacking file: ");
+                            Konsole.Write(fileName);
+                            Konsole.WriteLine();
+                        }
                     }
                 }
             }
@@ -329,7 +386,7 @@ namespace Manifold.GFZCLI
             }
         }
 
-
+        // NEW MAGIC SAUCE
         public static bool GetFilesInDirectory(Options options, string path, out string[] files)
         {
             files = new string[0];
@@ -371,52 +428,22 @@ namespace Manifold.GFZCLI
             return files;
         }
 
-
-
-
-        // GARBAGE TO DELETE
-        public static string GetHashName(MemoryStream stream, System.Security.Cryptography.HashAlgorithm hashAlgorithm)
+        public delegate void FileAction(Options options, string filePath);
+        public static void DoTasks(Options options, string path, FileAction fileAction)
         {
-            var streamPosition = stream.Position;
-            //
-            stream.Position = 0;
-            var bytes = stream.GetBuffer();
-            var hashBytes = hashAlgorithm.ComputeHash(bytes);
-            var sb = new System.Text.StringBuilder();
-            foreach (var @byte in hashBytes)
-                sb.Append($"{@byte:x2}");
-            //
-            stream.Position = streamPosition;
-            //
-            return sb.ToString();
-        }
-        public static string GetMD5HashName(MemoryStream stream)
-        {
-            var md5 = System.Security.Cryptography.MD5.Create();
-            string name = GetHashName(stream, md5);
-            return name;
-        }
+            string[] filePaths = GetFileOrFiles(options, path);
+            List<Task> tasks = new List<Task>();
 
-        private static void AssertFileOrDirectoryExists(string path)
-        {
-            bool fileExists = File.Exists(path);
-            bool dirExists = Directory.Exists(path);
-            if (!fileExists && !dirExists)
-                throw new ArgumentException($"Target file or folder '{path}' does not exist.");
-        }
-        private static void AssertDirectoryExists(string path)
-        {
-            bool dirExists = Directory.Exists(path);
-            if (!dirExists)
-                throw new ArgumentException($"Target directory '{path}' does not exist.");
-        }
-        private static void AssertFileExists(string path)
-        {
-            bool fileExists = File.Exists(path);
-            if (!fileExists)
-                throw new ArgumentException($"Target file '{path}' does not exist.");
-        }
+            foreach (var _filePath in filePaths)
+            {
+                var action = () => { fileAction(options, _filePath); };
+                var task = Task.Factory.StartNew(action);
+                tasks.Add(task);
+            }
 
+            var tasksFinished = Task.WhenAll(tasks);
+            tasksFinished.Wait();
+        }
 
     }
 }

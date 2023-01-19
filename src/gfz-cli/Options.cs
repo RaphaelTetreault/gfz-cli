@@ -11,10 +11,10 @@ namespace Manifold.GFZCLI
 
             public const string OverwriteFiles      = "overwrite";
             public const string Verbose             = "verbose";
-            public const string InputPath           = "inputPath";
-            public const string OutputPath          = "outputPath";
-            public const string SearchSubdirectories = "searchSubdirs";
-            public const string SearchPattern       = "searchPattern";
+            public const string InputPath           = "input-path";
+            public const string OutputPath          = "output-path";
+            public const string SearchSubdirectories = "search-subdirs";
+            public const string SearchPattern       = "search-pattern";
             public const string CarDataBinPath      = "cardata-bin-to-tsv";
             public const string CarDataTsvPath      = "cardata-tsv-to-bin";
             public const string SerializationFormat = "format";

@@ -11,17 +11,21 @@
       "commandName": "Project",
       "commandLineArgs": "--cardata-tsv-to-bin D:\\gfzj01\\game\\cardata.tsv"
     },
-    "lz-compress": {
-      "commandName": "Project",
-      "commandLineArgs": "--lzc D:\\gfzj01\\game\\cardata"
-    },
     "tpl-unpack": {
       "commandName": "Project",
-      "commandLineArgs": "--tpl-unpack D:/gfz-cli-test/gfz --verbose tpl-unpack-mipmaps --searchSubdirs --searchPattern *.tpl"
+      "commandLineArgs": "--tpl-unpack D:/gfz-cli-test/gfz --verbose tpl-unpack-mipmaps --searchSubdirs --searchPattern *.tpl --overwrite"
     },
     "tpl-pack": {
       "commandName": "Project",
       "commandLineArgs": "--tpl-pack D:/gfz-cli-test/be.png --verbose"
+    },
+    "lz-decompress": {
+      "commandName": "Project",
+      "commandLineArgs": "--lzd D:\\gfz-cli-test\\lz-test --search-subdirs --overwrite --verbose"
+    },
+    "lz-compress": {
+      "commandName": "Project",
+      "commandLineArgs": "--lzc D:\\gfz-cli-test\\lz-test --search-subdirs --search-pattern *.gma --overwrite --verbose"
     }
   }
 }
