@@ -100,3 +100,31 @@ Compress a file to be F-Zero AX compatible.
 gfz-cli.exe --lzc D:\gfzj01\stage\st01.gma --format ax
 ```
 
+
+
+## TPL Files
+
+To unpack a `.tpl` file, you can use the following command.
+
+### Unpack TPL
+
+These arguments will create a folder in the same directory as the source file with the same name as the source file containing `.png` files of the source `.tpl`'s textures.
+
+```shell
+gfz-cli.exe --tpl-unpack D:\gfzj01\bg\bg_mut.tpl
+```
+
+You can also unpack all `.tpl` files in a directory by calling the directory itself with appropriate search commands.
+
+```shell
+gfz-cli.exe --tpl-unpack D:\gfzj01\bg\ --search-pattern *.tpl
+```
+
+As usual, you can allow the command to include all subdirectories by using the `--search-subdirs` command.
+
+```shell
+gfz-cli.exe --tpl-unpack D:\gfzj01\bg\ --search-pattern *.tpl --search-subdirs
+```
+
+
+
