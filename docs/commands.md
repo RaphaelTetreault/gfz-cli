@@ -126,5 +126,21 @@ As usual, you can allow the command to include all subdirectories by using the `
 gfz-cli.exe --tpl-unpack D:\gfzj01\bg\ --search-pattern *.tpl --search-subdirs
 ```
 
+### Unpacking Options
 
+When unpacking a `.tpl` file, you can ask the unpacker to also save each textures' mipmaps.
+
+```shell
+gfz-cli.exe --tpl-unpack D:\gfzj01\bg\bg_mut.tpl --tpl-unpack-mipmaps
+```
+
+The following applies to F-Zero GX (todo: what about AX?).
+
+These `.tpl`do not store CMPR textures correctly. They can under-allocate memory for CMPR textures, so certain textures, particularly mipmaps, are corrupted/incomplete.
+
+You may specify that the unpacker output these corrupted/incomplete textures. By default, this is disabled. While not confirmed, this appears to only affect mipmaps with a side length of 4 pixels or less.
+
+```shell
+gfz-cli.exe --tpl-unpack D:\gfzj01\bg\bg_mut.tpl --tpl-unpack-mipmaps ---tpl-unpack-corrupted-cmpr
+```
 
