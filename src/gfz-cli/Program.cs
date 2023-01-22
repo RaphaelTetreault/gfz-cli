@@ -26,9 +26,29 @@ namespace Manifold.GFZCLI
             var encodingProvider = System.Text.CodePagesEncodingProvider.Instance;
             System.Text.Encoding.RegisterProvider(encodingProvider);
 
+            // If user did not pass any arguments, tell them how to use application.
+            // This will happen when users double-click application.
+            bool noArgumentsPassed = args.Length == 0;
+            if (noArgumentsPassed)
+            {
+                string msg = "You must call this program using arguments via the Console/Terminal. ";
+                Konsole.WriteLine(msg, ConsoleColor.Black, ConsoleColor.Red);
+                Konsole.WriteLine();
+                args = new string[] { "--help" };
+            }
+
             // Run program with options
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(RunOptions);
+
+            // If user did not pass any arguments, pause application so they can read Console.
+            // This will happen when users double-click application.
+            if (noArgumentsPassed)
+            {
+                string msg = "Press ENTER to continue.";
+                Konsole.WriteLine(msg, ConsoleColor.Black, ConsoleColor.Red);
+                Console.Read();
+            }
         }
 
         public static void RunOptions(Options options)
@@ -352,14 +372,14 @@ namespace Manifold.GFZCLI
                     var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
                     lock (lock_ConsoleWrite)
                     {
-                            Konsole.Write($"TPL: Unpacking file: ");
-                            Konsole.Write(tplFileName, FileNameColor);
-                            Konsole.Write($" Texture {tplIndex},");
-                            Konsole.Write($" Mipmap {mipmapIndex}. ");
-                            Konsole.Write(writeMsg, writeColor);
-                            Konsole.Write($" file: ");
-                            Konsole.Write(outputPath, FileNameColor);
-                            Konsole.WriteLine();
+                        Konsole.Write($"TPL: Unpacking file: ");
+                        Konsole.Write(tplFileName, FileNameColor);
+                        Konsole.Write($" Texture {tplIndex},");
+                        Konsole.Write($" Mipmap {mipmapIndex}. ");
+                        Konsole.Write(writeMsg, writeColor);
+                        Konsole.Write($" file: ");
+                        Konsole.Write(outputPath, FileNameColor);
+                        Konsole.WriteLine();
                     }
                 }
             }
@@ -470,9 +490,7 @@ namespace Manifold.GFZCLI
                         $"Make sure to use --{Options.Args.SearchPattern} when providing directory paths.";
                     throw new ArgumentException(msg);
                 }
-
-                var searchOption = options.SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-                files = Directory.GetFiles(path, options.SearchPattern, searchOption);
+                files = Directory.GetFiles(path, options.SearchPattern, options.SearchOption);
             }
             return files;
         }

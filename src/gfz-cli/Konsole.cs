@@ -17,7 +17,7 @@
             var fgColor = Console.ForegroundColor;
             var bgColor = Console.BackgroundColor;
             Console.ForegroundColor = foregroundColor;
-            Console.ForegroundColor = backgroundColor;
+            Console.BackgroundColor = backgroundColor;
             consoleWrite.Invoke();
             Console.ForegroundColor = fgColor;
             Console.BackgroundColor = bgColor;

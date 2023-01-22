@@ -1,5 +1,10 @@
 echo on
 
+:: Delete builds folder and contents
+:: /s	Deletes a directory tree (the specified directory and all its subdirectories, including all files).
+:: /q	Specifies quiet mode. Does not prompt for confirmation when deleting a directory tree. The /q parameter works only if /s is also specified.
+rmdir /s /q builds
+
 :: Move to project folder
 pushd .
 cd src/gfz-cli
@@ -30,7 +35,7 @@ robocopy .\src\gfz-cli\bin\Debug\net6.0\win-x64\publish\	.\builds\win-x64\	/s
 
 :: Compress folders as ZIP
 pushd .
-cd builds\
+cd builds/
 
 tar.exe -a -c -f	linux-x64.zip		linux-x64
 tar.exe -a -c -f	osx10.10-x64.zip	osx10.10-x64
