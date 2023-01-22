@@ -13,7 +13,7 @@
     },
     "tpl-unpack": {
       "commandName": "Project",
-      "commandLineArgs": "--tpl-unpack D:/gfz-cli-test/gfz --verbose tpl-unpack-mipmaps --searchSubdirs --searchPattern *.tpl --overwrite"
+      "commandLineArgs": "--tpl-unpack D:/gfz-cli-test/gfz --verbose tpl-unpack-mipmaps --search-subdirs --search-pattern *.tpl --overwrite"
     },
     "tpl-pack": {
       "commandName": "Project",

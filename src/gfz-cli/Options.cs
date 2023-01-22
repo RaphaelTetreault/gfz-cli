@@ -6,24 +6,31 @@ namespace Manifold.GFZCLI
 {
     public class Options
     {
+        internal static class ArgsShort
+        {
+            public const char InputPath = 'i';
+            public const char OutputPath = 'o';
+            public const char SearchSubdirectories = 's';
+            public const char SearchPattern = 'p';
+        }
+
         internal static class Args
         {
-
-            public const string OverwriteFiles      = "overwrite";
-            public const string Verbose             = "verbose";
-            public const string InputPath           = "input-path";
-            public const string OutputPath          = "output-path";
+            public const string OverwriteFiles = "overwrite";
+            public const string Verbose = "verbose";
+            public const string InputPath = "input-path";
+            public const string OutputPath = "output-path";
             public const string SearchSubdirectories = "search-subdirs";
-            public const string SearchPattern       = "search-pattern";
-            public const string CarDataBinPath      = "cardata-bin-to-tsv";
-            public const string CarDataTsvPath      = "cardata-tsv-to-bin";
+            public const string SearchPattern = "search-pattern";
+            public const string CarDataBinPath = "cardata-bin-to-tsv";
+            public const string CarDataTsvPath = "cardata-tsv-to-bin";
             public const string SerializationFormat = "format";
-            public const string LzDecompressTarget  = "lzd";
-            public const string LzCompressTarget    = "lzc";
-            public const string TplUnpack           = "tpl-unpack";
+            public const string LzDecompressTarget = "lzd";
+            public const string LzCompressTarget = "lzc";
+            public const string TplUnpack = "tpl-unpack";
+            public const string TplUnpackMipmaps = "tpl-unpack-mipmaps";
             public const string TplUnpackSaveCorruptedTextures = "tpl-unpack-corrupted-cmpr";
-            public const string TplUnpackMipmaps    = "tpl-unpack-mipmaps";
-            public const string TplPack             = "tpl-pack";
+            public const string TplPack = "tpl-pack";
         }
 
         internal static class Help
@@ -72,17 +79,17 @@ namespace Manifold.GFZCLI
         [Option(Args.Verbose, Required = false, HelpText = Help.Verbose)]
         public bool Verbose { get; set; }
 
-        [Option('i', Args.InputPath, Required = false, HelpText = Help.InputPath)]
+        [Option(ArgsShort.InputPath, Args.InputPath, Required = false, HelpText = Help.InputPath)]
         public string InputPath { get; set; } = string.Empty;
 
-        [Option('o', Args.OutputPath, Required = false, HelpText = Help.OutputPath)]
+        [Option(ArgsShort.OutputPath, Args.OutputPath, Required = false, HelpText = Help.OutputPath)]
         public string OutputPath { get; set; } = string.Empty;
 
 
-        [Option('s', Args.SearchSubdirectories, Required = false, HelpText = Help.SearchSubdirectories)]
+        [Option(ArgsShort.SearchSubdirectories, Args.SearchSubdirectories, Required = false, HelpText = Help.SearchSubdirectories)]
         public bool SearchSubdirectories { get; set; }
 
-        [Option('p', Args.SearchPattern, Required = false, HelpText = Help.SearchPattern)]
+        [Option(ArgsShort.SearchPattern, Args.SearchPattern, Required = false, HelpText = Help.SearchPattern)]
         public string SearchPattern { get; set; } = string.Empty;
 
 
@@ -112,7 +119,8 @@ namespace Manifold.GFZCLI
         [Option(Args.TplUnpackMipmaps, Required = false, HelpText = "TODO")]
         public bool TplUnpackMipmaps { get; set; }
 
-        [Option(Args.TplPack, Required = false, HelpText = Help.TplPack)]
+        // TEMP: disable PACK for release
+        //[Option(Args.TplPack, Required = false, HelpText = Help.TplPack)]
         public string TplPack { get; set; } = string.Empty;
 
         // TODO: implement/parse image-sharp enum for texture output types (use n64-mksprite impl.)

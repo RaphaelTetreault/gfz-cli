@@ -11,12 +11,6 @@ using SixLabors.ImageSharp.PixelFormats;
 using GameCube.GX.Texture;
 using SixLabors.ImageSharp.Formats.Png;
 
-// TODO:
-// Make sure all parts of code respect new 'overwrite' flag
-// 
-
-using gfz_cli;
-
 namespace Manifold.GFZCLI
 {
     internal class Program
@@ -99,7 +93,7 @@ namespace Manifold.GFZCLI
                     Konsole.Write(outputPath, FileNameColor);
                     Konsole.Write(". ");
                     Konsole.Write("File already exists.", OverwriteFileColor);
-                    Konsole.Write($" Use '--{Options.Args.OverwriteFiles}' if");
+                    Konsole.Write($" Use --{Options.Args.OverwriteFiles} if");
                     Konsole.Write($" you would like to overwrite files automatically.");
                     Konsole.WriteLine();
                     return;
@@ -143,7 +137,7 @@ namespace Manifold.GFZCLI
                     Konsole.Write(outputPath, FileNameColor);
                     Konsole.Write(". ");
                     Konsole.Write("File already exists.", OverwriteFileColor);
-                    Konsole.Write($" Use '--{Options.Args.OverwriteFiles}' if");
+                    Konsole.Write($" Use --{Options.Args.OverwriteFiles} if");
                     Konsole.Write($" you would like to overwrite files automatically.");
                     Konsole.WriteLine();
                     return;
@@ -170,12 +164,12 @@ namespace Manifold.GFZCLI
             if (string.IsNullOrEmpty(path))
                 return;
 
-            // Force checking for LZ files IF there is noething defined
+            // Force checking for LZ files IF there is nothing defined for saerch pattern
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)
                 options.SearchPattern = "*.lz";
 
-            DoTasks(options, path, LzDecompressFile);
+            DoFileTasks(options, path, LzDecompressFile);
         }
         public static void LzDecompressFile(Options options, string filePath)
         {
@@ -226,7 +220,7 @@ namespace Manifold.GFZCLI
             if (string.IsNullOrEmpty(lzcPath))
                 return;
 
-            DoTasks(options, lzcPath, LzCompressFile);
+            DoFileTasks(options, lzcPath, LzCompressFile);
         }
         public static void LzCompressFile(Options options, string path)
         {
@@ -269,7 +263,7 @@ namespace Manifold.GFZCLI
             if (string.IsNullOrEmpty(path))
                 return;
 
-            DoTasks(options, path, TplUnpackFile);
+            DoFileTasks(options, path, TplUnpackFile);
         }
         public static void TplUnpackFile(Options options, string filePath)
         {
@@ -290,7 +284,7 @@ namespace Manifold.GFZCLI
 
             // Iterate over texture and mipmaps, save to disk
             int tplIndex = 0;
-            int tplDigits = tpl.TextureSeries.LengthToFormat();
+            //int tplDigits = tpl.TextureSeries.LengthToFormat();
             foreach (var textureSeries in tpl.TextureSeries)
             {
                 tplIndex++;
@@ -339,35 +333,33 @@ namespace Manifold.GFZCLI
                     bool fileExists = File.Exists(outputPath);
                     bool skipFileWrite = fileExists && !options.OverwriteFiles;
                     if (skipFileWrite)
-                        continue;
-
-                    // Save to disk
-                    image.Save(outputPath, encoder);
-
-                    //
-                    bool isOverwritingFile = fileExists;
-                    var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
-                    var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
-
-                    lock (lock_ConsoleWrite)
                     {
-                        if (options.Verbose)
-                        {
-                            Konsole.Write($"TPL: Unpacking file: ");
-                            Konsole.Write(tplFileName, FileNameColor);
-                            Konsole.Write($" Texture {tplIndex.PadLeft(tplDigits)},");
-                            Konsole.Write($" Mipmap {mipmapIndex.PadLeft(2)}. ");
-                            Konsole.Write(writeMsg, writeColor);
-                            Konsole.Write($" file: ");
-                            Konsole.Write(outputPath, FileNameColor);
-                            Konsole.WriteLine();
-                        }
-                        else
+                        lock (lock_ConsoleWrite)
                         {
                             Konsole.Write($"TPL: Skip unpacking file: ");
                             Konsole.Write(fileName);
                             Konsole.WriteLine();
                         }
+                        continue;
+                    }
+
+                    // Save to disk
+                    image.Save(outputPath, encoder);
+
+                    // Output message
+                    bool isOverwritingFile = fileExists;
+                    var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
+                    var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
+                    lock (lock_ConsoleWrite)
+                    {
+                            Konsole.Write($"TPL: Unpacking file: ");
+                            Konsole.Write(tplFileName, FileNameColor);
+                            Konsole.Write($" Texture {tplIndex},");
+                            Konsole.Write($" Mipmap {mipmapIndex}. ");
+                            Konsole.Write(writeMsg, writeColor);
+                            Konsole.Write($" file: ");
+                            Konsole.Write(outputPath, FileNameColor);
+                            Konsole.WriteLine();
                     }
                 }
             }
@@ -436,15 +428,36 @@ namespace Manifold.GFZCLI
                     string filePath = Path.Combine(directory, fileName);
                     // Save to disk
                     imageCopy.SaveAsPng(filePath);
-                    VerboseConsole.WriteLine($"Wrote file: {filePath}");
+                    Konsole.WriteLine($"Wrote file: {filePath}");
                 }
             }
         }
 
         // NEW MAGIC SAUCE
-        public static bool GetFilesInDirectory(Options options, string path, out string[] files)
+        // These functions let me easily write multi-threaded code when operating on multiple files.
+
+        public delegate void FileTask(Options options, string filePath);
+        public static void DoFileTasks(Options options, string path, FileTask fileTask)
         {
-            files = new string[0];
+            // Get the file or all files at 'path'
+            string[] filePaths = GetFileOrFiles(options, path);
+
+            // For each file, queue it as a task - multithreaded
+            List<Task> tasks = new List<Task>();
+            foreach (var _filePath in filePaths)
+            {
+                var action = () => { fileTask(options, _filePath); };
+                var task = Task.Factory.StartNew(action);
+                tasks.Add(task);
+            }
+
+            // Wait for tasks to finish before returning
+            var tasksFinished = Task.WhenAll(tasks);
+            tasksFinished.Wait();
+        }
+        public static string[] GetFilesInDirectory(Options options, string path)
+        {
+            string[] files = new string[0];
 
             bool directoryExists = Directory.Exists(path);
             if (directoryExists)
@@ -461,44 +474,30 @@ namespace Manifold.GFZCLI
                 var searchOption = options.SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
                 files = Directory.GetFiles(path, options.SearchPattern, searchOption);
             }
-
-            return directoryExists;
+            return files;
         }
         public static string[] GetFileOrFiles(Options options, string path)
         {
-            // Make sure path is valid
+            // Make sure path is valid as either a file or folder
             bool fileExists = File.Exists(path);
             bool dirExists = Directory.Exists(path);
             if (!fileExists && !dirExists)
-                throw new ArgumentException($"Target file or folder '{path}' does not exist.");
+            {
+                string msg = $"Target file or folder '{path}' does not exist.";
+                throw new ArgumentException(msg);
+            }
 
             // Get files in directory if it is a directory
-            bool isDirectory = GetFilesInDirectory(options, path, out string[] files);
+            string[] files = GetFilesInDirectory(options, path);
+            bool isDirectory = files.Length > 0;
             if (!isDirectory)
             {
-                // If not, return lone file path
+                // Since we know 'path' is either a file or directory, and it
+                // isn't a directory, return 'path' as the file.
                 files = new string[] { path };
             }
 
             return files;
         }
-
-        public delegate void FileAction(Options options, string filePath);
-        public static void DoTasks(Options options, string path, FileAction fileAction)
-        {
-            string[] filePaths = GetFileOrFiles(options, path);
-            List<Task> tasks = new List<Task>();
-
-            foreach (var _filePath in filePaths)
-            {
-                var action = () => { fileAction(options, _filePath); };
-                var task = Task.Factory.StartNew(action);
-                tasks.Add(task);
-            }
-
-            var tasksFinished = Task.WhenAll(tasks);
-            tasksFinished.Wait();
-        }
-
     }
 }
