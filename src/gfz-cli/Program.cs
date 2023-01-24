@@ -11,6 +11,9 @@ using SixLabors.ImageSharp.PixelFormats;
 using GameCube.GX.Texture;
 using SixLabors.ImageSharp.Formats.Png;
 
+using static Manifold.GFZCLI.MultithreadFileTools;
+using GameCube.GFZ.Camera;
+
 namespace Manifold.GFZCLI
 {
     internal class Program
@@ -69,6 +72,9 @@ namespace Manifold.GFZCLI
             //
             TplUnpack(options);
             TplPack(options);
+            //
+            LiveCameraStageBinToTsv(options);
+            LiveCameraStageTsvToBin(options);
         }
 
         public static void CarDataBinToTsv(Options options)
@@ -287,8 +293,6 @@ namespace Manifold.GFZCLI
         }
         public static void TplUnpackFile(Options options, string filePath)
         {
-            string tplFileName = Path.GetFileNameWithoutExtension(filePath);
-
             // Deserialize the TPL
             Tpl tpl = new Tpl();
             using (var reader = new EndianBinaryReader(File.OpenRead(filePath), Tpl.endianness))
@@ -297,6 +301,8 @@ namespace Manifold.GFZCLI
                 tpl.FileName = Path.GetFileNameWithoutExtension(filePath);
             }
 
+            // File name, useful for some later stuff.
+            string tplFileName = Path.GetFileNameWithoutExtension(filePath);
             // Create folder named the same thing as the TPL input file
             string directory = Path.GetDirectoryName(filePath);
             directory = Path.Combine(directory, tpl.FileName);
@@ -453,69 +459,136 @@ namespace Manifold.GFZCLI
             }
         }
 
-        // NEW MAGIC SAUCE
-        // These functions let me easily write multi-threaded code when operating on multiple files.
 
-        public delegate void FileTask(Options options, string filePath);
-        public static void DoFileTasks(Options options, string path, FileTask fileTask)
+        public static void LiveCameraStageBinToTsv(Options options)
         {
-            // Get the file or all files at 'path'
-            string[] filePaths = GetFileOrFiles(options, path);
+            string path = options.LiveCameraStageBinToTsvPath;
+            if (string.IsNullOrEmpty(path))
+                return;
 
-            // For each file, queue it as a task - multithreaded
-            List<Task> tasks = new List<Task>();
-            foreach (var _filePath in filePaths)
-            {
-                var action = () => { fileTask(options, _filePath); };
-                var task = Task.Factory.StartNew(action);
-                tasks.Add(task);
-            }
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = "*livecam_stage_*.bin";
 
-            // Wait for tasks to finish before returning
-            var tasksFinished = Task.WhenAll(tasks);
-            tasksFinished.Wait();
+            DoFileTasks(options, path, LiveCameraStageBinToTsvFile);
+
+            //var filePaths = GetFileOrFiles(options, path);
+            //LiveCameraStageBinToTsvFile(options, filePaths[0]);
         }
-        public static string[] GetFilesInDirectory(Options options, string path)
+        public static void LiveCameraStageBinToTsvFile(Options options, string filePath)
         {
-            string[] files = new string[0];
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+            string outputFileName = $"{fileName}.tsv";
+            string directory = Path.GetDirectoryName(filePath);
+            string outputFilePath = Path.Combine(directory, outputFileName);
+            bool outputFileExists = File.Exists(outputFilePath);
+            bool isOverwritingFile = outputFileExists && options.OverwriteFiles;
+            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
+            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
 
-            bool directoryExists = Directory.Exists(path);
-            if (directoryExists)
+            bool isCreatingFile = !outputFileExists || isOverwritingFile;
+            if (isCreatingFile)
             {
-                bool isInvalidSearchOption = string.IsNullOrEmpty(options.SearchPattern);
-                if (isInvalidSearchOption)
+                // Deserialize the file
+                LiveCameraStage liveCameraStage = new LiveCameraStage();
+                using (var reader = new EndianBinaryReader(File.OpenRead(filePath), LiveCameraStage.endianness))
                 {
-                    string msg =
-                        $"Invalid '{nameof(options.SearchPattern)}' provided for a directory input argument. " +
-                        $"Make sure to use --{Options.Args.SearchPattern} when providing directory paths.";
-                    throw new ArgumentException(msg);
+                    liveCameraStage.Deserialize(reader);
+                    liveCameraStage.FileName = fileName;
                 }
-                files = Directory.GetFiles(path, options.SearchPattern, options.SearchOption);
+
+                // Write it to the stream
+                using (var textWriter = new StreamWriter(File.Create(outputFilePath)))
+                {
+                    liveCameraStage.Serialize(textWriter);
+                }
             }
-            return files;
+
+            lock (lock_ConsoleWrite)
+            {
+                if (isCreatingFile)
+                {
+                    Konsole.Write($"Live Camera Stage: Create TSV file: ");
+                    Konsole.Write(fileName, FileNameColor);
+                    Konsole.Write($" - ");
+                    Konsole.Write(writeMsg, writeColor);
+                    Konsole.Write($" file: ");
+                    Konsole.Write(outputFileName, FileNameColor);
+                    Konsole.WriteLine();
+                }
+                else
+                {
+                    Konsole.Write($"Live Camera Stage: Skip creating TSV file: ");
+                    Konsole.Write(fileName, FileNameColor);
+                    Konsole.WriteLine();
+                }
+            }
         }
-        public static string[] GetFileOrFiles(Options options, string path)
+
+
+
+        public static void LiveCameraStageTsvToBin(Options options)
         {
-            // Make sure path is valid as either a file or folder
-            bool fileExists = File.Exists(path);
-            bool dirExists = Directory.Exists(path);
-            if (!fileExists && !dirExists)
+            string path = options.LiveCameraStageTsvToBinPath;
+            if (string.IsNullOrEmpty(path))
+                return;
+
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = "*livecam_stage_*.tsv";
+
+            DoFileTasks(options, path, LiveCameraStageTsvToBinFile);
+
+            //var filePaths = GetFileOrFiles(options, path);
+            //LiveCameraStageTsvToBinFile(options, filePaths[0]);
+        }
+
+        public static void LiveCameraStageTsvToBinFile(Options options, string filePath)
+        {
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+            string outputFileName = $"{fileName}.bin";
+            string directory = Path.GetDirectoryName(filePath);
+            string outputFilePath = Path.Combine(directory, outputFileName);
+            bool outputFileExists = File.Exists(outputFilePath);
+            bool isOverwritingFile = outputFileExists && options.OverwriteFiles;
+            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
+            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
+
+            bool isCreatingFile = !outputFileExists || isOverwritingFile;
+            if (isCreatingFile)
             {
-                string msg = $"Target file or folder '{path}' does not exist.";
-                throw new ArgumentException(msg);
+                LiveCameraStage liveCameraStage = new LiveCameraStage();
+                using (var textReader = new StreamReader(File.OpenRead(filePath)))
+                {
+                    liveCameraStage.Deserialize(textReader);
+                    liveCameraStage.FileName = fileName;
+                }
+
+                using (var writer = new EndianBinaryWriter(File.Create(outputFilePath), LiveCameraStage.endianness))
+                {
+                    liveCameraStage.Serialize(writer);
+                }
             }
 
-            // Get files in directory if it is a directory
-            string[] files = GetFilesInDirectory(options, path);
-            bool isDirectory = files.Length > 0;
-            if (!isDirectory)
+            lock (lock_ConsoleWrite)
             {
-                // Since we know 'path' is either a file or directory, and it
-                // isn't a directory, return 'path' as the file.
-                files = new string[] { path };
+                if (isCreatingFile)
+                {
+                    Konsole.Write($"Live Camera Stage: Create TSV file: ");
+                    Konsole.Write(fileName, FileNameColor);
+                    Konsole.Write($" - ");
+                    Konsole.Write(writeMsg, writeColor);
+                    Konsole.Write($" file: ");
+                    Konsole.Write(outputFileName, FileNameColor);
+                    Konsole.WriteLine();
+                }
+                else
+                {
+                    Konsole.Write($"Live Camera Stage: Skip creating TSV file: ");
+                    Konsole.Write(fileName, FileNameColor);
+                    Konsole.WriteLine();
+                }
             }
-
-            return files;
         }
     }
 }

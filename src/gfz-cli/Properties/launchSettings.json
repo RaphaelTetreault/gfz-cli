@@ -26,6 +26,14 @@
     "lz-compress": {
       "commandName": "Project",
       "commandLineArgs": "--lzc D:\\gfz-cli-test\\lz-test --search-subdirs --search-pattern *.gma --overwrite --verbose"
+    },
+    "live-camera-stage-bin-to-tsv": {
+      "commandName": "Project",
+      "commandLineArgs": "--live-camera-stage-bin-to-tsv D:\\gfzj01\\ --search-subdirs --overwrite"
+    },
+    "live-camera-stage-tsv-to-bin": {
+      "commandName": "Project",
+      "commandLineArgs": "--live-camera-stage-tsv-to-bin D:\\gfzj01\\ --search-subdirs --overwrite"
     }
   }
 }

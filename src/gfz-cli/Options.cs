@@ -30,6 +30,9 @@ namespace Manifold.GFZCLI
 
             public const string CarDataBinPath = "cardata-bin-to-tsv";
             public const string CarDataTsvPath = "cardata-tsv-to-bin";
+            
+            public const string LiveCameraStageBinToTsvPath = "live-camera-stage-bin-to-tsv";
+            public const string LiveCameraStageTsvToBinPath = "live-camera-stage-tsv-to-bin";
         }
 
         internal static class Help
@@ -131,6 +134,13 @@ namespace Manifold.GFZCLI
         [Option(Args.CarDataTsvPath, Required = false, HelpText = Help.CarDataFromTSV)]
         public string CarDataTsvPath { get; set; } = string.Empty;
 
+
+        // LIVE CAMERA STAGE
+        [Option(Args.LiveCameraStageBinToTsvPath, Required = false, HelpText = "TODO")]
+        public string LiveCameraStageBinToTsvPath { get; set; } = string.Empty;
+
+        [Option(Args.LiveCameraStageTsvToBinPath, Required = false, HelpText = "TODO")]
+        public string LiveCameraStageTsvToBinPath { get; set; } = string.Empty;
 
 
         public SearchOption SearchOption => SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
