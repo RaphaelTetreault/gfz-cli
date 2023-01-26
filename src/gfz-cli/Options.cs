@@ -30,7 +30,7 @@ namespace Manifold.GFZCLI
 
             public const string CarDataBinPath = "cardata-bin-to-tsv";
             public const string CarDataTsvPath = "cardata-tsv-to-bin";
-            
+
             public const string LiveCameraStageBinToTsvPath = "live-camera-stage-bin-to-tsv";
             public const string LiveCameraStageTsvToBinPath = "live-camera-stage-tsv-to-bin";
         }
@@ -88,58 +88,68 @@ namespace Manifold.GFZCLI
         }
 
 
-        [Option(Args.Verbose, Required = false, HelpText = Help.Verbose)]
+        [Option('i', "input-path", HelpText = "TODO", Required = true)]
+        public string InputPath { get; set; } = string.Empty;
+
+        [Option('o', "output-path", HelpText = "TODO")]
+        public string OutputPath { get; set; } = string.Empty;
+
+
+        [Option(Args.Verbose, HelpText = Help.Verbose)]
         public bool Verbose { get; set; }
 
-        [Option(Args.OverwriteFiles, Required = false, HelpText = Help.OverwriteFiles)]
+        [Option(Args.OverwriteFiles, HelpText = Help.OverwriteFiles)]
         public bool OverwriteFiles { get; set; }
 
-        [Option(Args.SearchPattern, Required = false, HelpText = Help.SearchPattern)]
+        [Option(Args.SearchPattern, HelpText = Help.SearchPattern)]
         public string SearchPattern { get; set; } = string.Empty;
 
-        [Option(Args.SearchSubdirectories, Required = false, HelpText = Help.SearchSubdirectories)]
+        [Option(Args.SearchSubdirectories, HelpText = Help.SearchSubdirectories)]
         public bool SearchSubdirectories { get; set; }
 
-        [Option(Args.SerializationFormat, Required = false, HelpText = Help.SerializationFormat)]
+        [Option(Args.SerializationFormat, HelpText = Help.SerializationFormat)]
         public string SerializationFormat { get; set; } = string.Empty;
 
 
         // LZ
-        [Option(Args.LzDecompressTarget, Required = false, HelpText = Help.LzDecompressTarget)]
-        public string LzDecompressTarget { get; set; } = string.Empty;
-        [Option(Args.LzCompressTarget, Required = false, HelpText = Help.LzCompressTarget)]
+        [Option(Args.LzDecompressTarget, HelpText = Help.LzDecompressTarget)]
+        //public string LzDecompressTarget { get; set; } = string.Empty;
+        public bool LzDecompress { get; set; }
+        
+        [Option(Args.LzCompressTarget, HelpText = Help.LzCompressTarget)]
         public string LzCompressTarget { get; set; } = string.Empty;
+        //public bool LzCompressTarget { get; set; }
 
 
         // TPL
-        [Option(Args.TplUnpack, Required = false, HelpText = Help.TplUnpack)]
+        [Option(Args.TplUnpack, HelpText = Help.TplUnpack)]
         public string TplUnpack { get; set; } = string.Empty;
 
-        [Option(Args.TplUnpackMipmaps, Required = false, HelpText = Help.TplUnpackMipmaps)]
+        [Option(Args.TplUnpackMipmaps, HelpText = Help.TplUnpackMipmaps)]
         public bool TplUnpackMipmaps { get; set; }
 
-        [Option(Args.TplUnpackSaveCorruptedTextures, Required = false, HelpText = Help.TplUnpackSaveCorruptedTextures)]
+        [Option(Args.TplUnpackSaveCorruptedTextures, HelpText = Help.TplUnpackSaveCorruptedTextures)]
         public bool TplUnpackSaveCorruptedTextures { get; set; }
-        
+
         // TEMP: disable PACK for release
-        //[Option(Args.TplPack, Required = false, HelpText = Help.TplPack)]
+        //[Option(Args.TplPack,  HelpText = Help.TplPack)]
         public string TplPack { get; set; } = string.Empty;
         // TODO: implement/parse image-sharp enum for texture output types (use n64-mksprite impl.)
 
 
         // CARDATA
-        [Option(Args.CarDataBinPath, Required = false, HelpText = Help.CarDataToTSV)]
+        [Option(Args.CarDataBinPath, HelpText = Help.CarDataToTSV)]
         public string CarDataBinPath { get; set; } = string.Empty;
 
-        [Option(Args.CarDataTsvPath, Required = false, HelpText = Help.CarDataFromTSV)]
+        [Option(Args.CarDataTsvPath, HelpText = Help.CarDataFromTSV)]
         public string CarDataTsvPath { get; set; } = string.Empty;
 
 
         // LIVE CAMERA STAGE
-        [Option(Args.LiveCameraStageBinToTsvPath, Required = false, HelpText = "TODO")]
+        [Option(Args.LiveCameraStageBinToTsvPath, HelpText = "TODO")]
         public string LiveCameraStageBinToTsvPath { get; set; } = string.Empty;
 
-        [Option(Args.LiveCameraStageTsvToBinPath, Required = false, HelpText = "TODO")]
+        [Option(Args.LiveCameraStageTsvToBinPath, HelpText = "TODO")]
         public string LiveCameraStageTsvToBinPath { get; set; } = string.Empty;
 
 
@@ -187,6 +197,9 @@ namespace Manifold.GFZCLI
                     throw new ArgumentException(msg);
             }
         }
+
+
+
 
     }
 }

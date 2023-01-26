@@ -79,40 +79,41 @@ namespace Manifold.GFZCLI
 
         public static void CarDataBinToTsv(Options options)
         {
-            string filePath = options.CarDataBinPath;
-            if (string.IsNullOrEmpty(filePath))
+            string inputFilePath = options.CarDataBinPath;
+            if (string.IsNullOrEmpty(inputFilePath))
                 return;
 
-            if (!File.Exists(filePath))
-                throw new FileNotFoundException($"File at path '{filePath}' does not exist.");
+            if (!File.Exists(inputFilePath))
+                throw new FileNotFoundException($"File at path '{inputFilePath}' does not exist.");
 
             // Decompress LZ if not decompressed yet
-            string extension = Path.GetExtension(filePath);
+            string extension = Path.GetExtension(inputFilePath);
             bool hasNoExtension = string.IsNullOrEmpty(extension);
             if (!hasNoExtension)
             {
                 // Find path to potentially uncompressed CarData file
-                string fileName = Path.GetFileNameWithoutExtension(filePath);
-                string fileDir = Path.GetDirectoryName(filePath);
+                string fileName = Path.GetFileNameWithoutExtension(inputFilePath);
+                string fileDir = Path.GetDirectoryName(inputFilePath);
                 string uncompressedFilePath = Path.Combine(fileDir, fileName);
                 // Check to see if it exists. 
                 bool uncompressedFileExists = File.Exists(uncompressedFilePath);
                 if (!uncompressedFileExists)
                 {
                     // If not, decompressed file we were asked to convert
-                    LzDecompressFile(options, filePath);
+                    string outputFilePath = GetOutputPath(options, inputFilePath);
+                    LzDecompressFile(options, inputFilePath, outputFilePath);
                 }
                 // Update path to newly decompressed file
-                filePath = uncompressedFilePath;
+                inputFilePath = uncompressedFilePath;
             }
 
-            using (var reader = new EndianBinaryReader(File.OpenRead(filePath), CarData.endianness))
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), CarData.endianness))
             {
                 var carData = new CarData();
                 reader.Read(ref carData);
 
                 // Post message if we can't overwrite output file, stop there.
-                string outputPath = filePath + ".tsv";
+                string outputPath = inputFilePath + ".tsv";
                 if (File.Exists(outputPath) && !options.OverwriteFiles)
                 {
                     Konsole.Write($"CarData: Skip creating TSV file: ");
@@ -136,27 +137,27 @@ namespace Manifold.GFZCLI
         }
         public static void CarDataTsvToBin(Options options)
         {
-            string filePath = options.CarDataTsvPath;
-            if (string.IsNullOrEmpty(filePath))
+            string inputFilePath = options.CarDataTsvPath;
+            if (string.IsNullOrEmpty(inputFilePath))
                 return;
 
-            if (!File.Exists(filePath))
-                throw new FileNotFoundException($"File at path '{filePath}' does not exist.");
+            if (!File.Exists(inputFilePath))
+                throw new FileNotFoundException($"File at path '{inputFilePath}' does not exist.");
 
             // Open CarData
-            using (var reader = new StreamReader(File.OpenRead(filePath)))
+            using (var reader = new StreamReader(File.OpenRead(inputFilePath)))
             {
                 // Read TSV as CarData
                 var carData = new CarData();
                 carData.Deserialize(reader);
 
                 // Update path to decompressed file
-                string fileName = Path.GetFileNameWithoutExtension(filePath);
-                string fileDir = Path.GetDirectoryName(filePath);
-                filePath = Path.Combine(fileDir, fileName);
+                string fileName = Path.GetFileNameWithoutExtension(inputFilePath);
+                string fileDir = Path.GetDirectoryName(inputFilePath);
+                inputFilePath = Path.Combine(fileDir, fileName);
 
                 // Post message if we can't overwrite output file, stop there.
-                string outputPath = filePath + ".lz";
+                string outputPath = inputFilePath + ".lz";
                 if (File.Exists(outputPath) && !options.OverwriteFiles)
                 {
                     Konsole.Write($"CarData: Skip creating BIN file: ");
@@ -179,15 +180,19 @@ namespace Manifold.GFZCLI
                 }
                 // Force format to GX since Cardata only exists as a file there.
                 options.SerializationFormat = "gx";
-                LzCompressFile(options, filePath);
+                string outputFilePath = GetOutputPath(options, inputFilePath);
+                LzCompressFile(options, inputFilePath, outputFilePath);
                 //LzUtility.CompressAvLzToDisk(filePath, GameCube.AmusementVision.GxGame.FZeroGX, true);
             }
         }
 
         public static void LzDecompress(Options options)
         {
-            string path = options.LzDecompressTarget;
-            if (string.IsNullOrEmpty(path))
+            //string path = options.LzDecompressTarget;
+            //if (string.IsNullOrEmpty(path))
+            //    return;
+
+            if (!options.LzDecompress)
                 return;
 
             // Force checking for LZ files IF there is nothing defined for saerch pattern
@@ -195,34 +200,30 @@ namespace Manifold.GFZCLI
             if (hasNoSearchPattern)
                 options.SearchPattern = "*.lz";
 
-            DoFileTasks(options, path, LzDecompressFile);
+            DoFileTasks(options, LzDecompressFile);
         }
-        public static void LzDecompressFile(Options options, string filePath)
+        public static void LzDecompressFile(Options options, string inputFilePath, string outputFilePath)
         {
-            string dir = Path.GetDirectoryName(filePath);
-            string fileName = Path.GetFileNameWithoutExtension(filePath);
-            string path = Path.Combine(dir, fileName);
-            bool decompressedFileExists = File.Exists(path);
+            bool decompressedFileExists = File.Exists(outputFilePath);
+            bool doWriteFile = !decompressedFileExists || options.OverwriteFiles;
+            if (doWriteFile)
+            {
+                using (var stream = LzUtility.CompressAvLz(inputFilePath, options.AvGame))
+                    using (var writer = File.Create(outputFilePath))
+                        writer.Write(stream.ToArray());
+            }
 
-            bool writeSuccess = LzUtility.DecompressAvLzToDisk(filePath, options.OverwriteFiles, out string outputFilePath);
+            //bool writeSuccess = LzUtility.DecompressAvLzToDisk(inputFilePath, options.OverwriteFiles);
 
-            // Sanity check
-            bool outputFilePathsMatch = path == outputFilePath;
-            if (!outputFilePathsMatch)
-                throw new Exception("Mismatched string error. Comparision failed.");
-
-            //if (!options.Verbose)
-            //    return;
-
-            string inputFileName = Path.GetFileName(filePath);
+            string inputFileName = Path.GetFileName(inputFilePath);
             string outputFileName = Path.GetFileNameWithoutExtension(inputFileName);
-            bool isOverwritingFile = decompressedFileExists && writeSuccess;
+            bool isOverwritingFile = decompressedFileExists && doWriteFile;
             var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
             var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
 
             lock (lock_ConsoleWrite)
             {
-                if (writeSuccess)
+                if (doWriteFile)
                 {
                     Konsole.Write($"LZ: Decompress file: ");
                     Konsole.Write(inputFileName, FileNameColor);
@@ -246,17 +247,17 @@ namespace Manifold.GFZCLI
             if (string.IsNullOrEmpty(lzcPath))
                 return;
 
-            DoFileTasks(options, lzcPath, LzCompressFile);
+            DoFileTasks(options, LzCompressFile);
         }
-        public static void LzCompressFile(Options options, string path)
+        public static void LzCompressFile(Options options, string filePath, string _outFile)
         {
-            bool fileExists = File.Exists(path);
-            bool writeSuccess = LzUtility.CompressAvLzToDisk(path, options.AvGame, options.OverwriteFiles);
+            bool fileExists = File.Exists(filePath);
+            bool writeSuccess = LzUtility.CompressAvLzToDisk(filePath, options.AvGame, options.OverwriteFiles);
 
             //if (!options.Verbose)
             //    return;
 
-            string inputFileName = Path.GetFileName(path);
+            string inputFileName = Path.GetFileName(filePath);
             string outputFileName = $"{inputFileName}.lz";
             bool isOverwritingFile = fileExists && writeSuccess;
             var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
@@ -289,9 +290,9 @@ namespace Manifold.GFZCLI
             if (string.IsNullOrEmpty(path))
                 return;
 
-            DoFileTasks(options, path, TplUnpackFile);
+            DoFileTasks(options, TplUnpackFile);
         }
-        public static void TplUnpackFile(Options options, string filePath)
+        public static void TplUnpackFile(Options options, string filePath, string _outFile)
         {
             // Deserialize the TPL
             Tpl tpl = new Tpl();
@@ -470,12 +471,9 @@ namespace Manifold.GFZCLI
             if (hasNoSearchPattern)
                 options.SearchPattern = "*livecam_stage_*.bin";
 
-            DoFileTasks(options, path, LiveCameraStageBinToTsvFile);
-
-            //var filePaths = GetFileOrFiles(options, path);
-            //LiveCameraStageBinToTsvFile(options, filePaths[0]);
+            DoFileTasks(options, LiveCameraStageBinToTsvFile);
         }
-        public static void LiveCameraStageBinToTsvFile(Options options, string filePath)
+        public static void LiveCameraStageBinToTsvFile(Options options, string filePath, string _outFile)
         {
             string fileName = Path.GetFileNameWithoutExtension(filePath);
             string outputFileName = $"{fileName}.tsv";
@@ -537,18 +535,15 @@ namespace Manifold.GFZCLI
             if (hasNoSearchPattern)
                 options.SearchPattern = "*livecam_stage_*.tsv";
 
-            DoFileTasks(options, path, LiveCameraStageTsvToBinFile);
-
-            //var filePaths = GetFileOrFiles(options, path);
-            //LiveCameraStageTsvToBinFile(options, filePaths[0]);
+            DoFileTasks(options, LiveCameraStageTsvToBinFile);
         }
 
-        public static void LiveCameraStageTsvToBinFile(Options options, string filePath)
+        public static void LiveCameraStageTsvToBinFile(Options options, string filePath, string _outFile)
         {
-            string fileName = Path.GetFileNameWithoutExtension(filePath);
-            string outputFileName = $"{fileName}.bin";
-            string directory = Path.GetDirectoryName(filePath);
-            string outputFilePath = Path.Combine(directory, outputFileName);
+            string inputFileName = Path.GetFileNameWithoutExtension(filePath);
+            string outputFileName = $"{inputFileName}.bin";
+            string inputDirectory = Path.GetDirectoryName(filePath);
+            string outputFilePath = Path.Combine(inputDirectory, outputFileName);
             bool outputFileExists = File.Exists(outputFilePath);
             bool isOverwritingFile = outputFileExists && options.OverwriteFiles;
             var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
@@ -561,7 +556,7 @@ namespace Manifold.GFZCLI
                 using (var textReader = new StreamReader(File.OpenRead(filePath)))
                 {
                     liveCameraStage.Deserialize(textReader);
-                    liveCameraStage.FileName = fileName;
+                    liveCameraStage.FileName = inputFileName;
                 }
 
                 using (var writer = new EndianBinaryWriter(File.Create(outputFilePath), LiveCameraStage.endianness))
@@ -575,7 +570,7 @@ namespace Manifold.GFZCLI
                 if (isCreatingFile)
                 {
                     Konsole.Write($"Live Camera Stage: Create TSV file: ");
-                    Konsole.Write(fileName, FileNameColor);
+                    Konsole.Write(inputFileName, FileNameColor);
                     Konsole.Write($" - ");
                     Konsole.Write(writeMsg, writeColor);
                     Konsole.Write($" file: ");
@@ -585,7 +580,7 @@ namespace Manifold.GFZCLI
                 else
                 {
                     Konsole.Write($"Live Camera Stage: Skip creating TSV file: ");
-                    Konsole.Write(fileName, FileNameColor);
+                    Konsole.Write(inputFileName, FileNameColor);
                     Konsole.WriteLine();
                 }
             }

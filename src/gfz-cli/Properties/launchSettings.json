@@ -21,7 +21,7 @@
     },
     "lz-decompress": {
       "commandName": "Project",
-      "commandLineArgs": "--lzd D:\\gfz-cli-test\\lz-test --search-subdirs --overwrite --verbose"
+      "commandLineArgs": "--lzd -i D:\\gfz-cli-test\\lz-test -o D:\\test-gfz\\maybe\\ --search-subdirs --overwrite --verbose"
     },
     "lz-compress": {
       "commandName": "Project",
