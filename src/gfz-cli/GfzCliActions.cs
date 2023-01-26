@@ -13,6 +13,6 @@
         lz_compress,
         lz_decompress,
 
-        tpl_pack,
+        tpl_unpack,
     }
 }

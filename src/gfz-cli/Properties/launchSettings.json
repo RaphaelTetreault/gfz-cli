@@ -5,7 +5,7 @@
     },
     "cardata-bin-to-tsv": {
       "commandName": "Project",
-      "commandLineArgs": "-a cardata-bin-to-tsv -i D:\\gfzj01\\game\\cardata.lz"
+      "commandLineArgs": "-a cardata-bin-to-tsv -i D:\\gfzj01\\game\\cardata.lz --overwrite"
     },
     "cardata-tsv-to-bin": {
       "commandName": "Project",
@@ -13,7 +13,7 @@
     },
     "tpl-unpack": {
       "commandName": "Project",
-      "commandLineArgs": "--tpl-unpack D:/gfz-cli-test/gfz --verbose tpl-unpack-mipmaps --search-subdirs --search-pattern *.tpl --overwrite"
+      "commandLineArgs": "-a tpl-unpack -i D:/gfzj01/bg -o D:/gfz-cli-test/gfz tpl-unpack-mipmaps --overwrite --search-subdirs search-pattern *.tpl"
     },
     "tpl-pack": {
       "commandName": "Project",
@@ -25,7 +25,7 @@
     },
     "lz-compress": {
       "commandName": "Project",
-      "commandLineArgs": "--lzc D:\\gfz-cli-test\\lz-test --search-subdirs --search-pattern *.gma --overwrite --verbose"
+      "commandLineArgs": "-a lz-compress -i D:\\gfz-cli-test\\lz-test --search-subdirs --search-pattern *.gma --overwrite"
     },
     "live-camera-stage-bin-to-tsv": {
       "commandName": "Project",

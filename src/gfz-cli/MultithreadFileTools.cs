@@ -15,12 +15,14 @@ namespace Manifold.GFZCLI
         //public delegate void FileTask(Options options, string filePath);
         public delegate void FileTask(Options options, string inputFilePath, string outputFilePath);
 
-        public static void DoFileTasks(Options options, FileTask fileTask)
+        public static int DoFileTasks(Options options, FileTask fileTask)
         {
             // Get the file or all files at 'path'
             string path = options.InputPath;
             string[] inputFilePaths = GetInputFiles(options, path);
+            CleanPath(ref inputFilePaths);
             string[] outputFilePaths = GetOutputFiles(options, inputFilePaths);
+            CleanPath(ref outputFilePaths);
             EnsureDirectoriesExist(outputFilePaths);
 
             // Sanity check
@@ -44,6 +46,8 @@ namespace Manifold.GFZCLI
             // Wait for tasks to finish before returning
             var tasksFinished = Task.WhenAll(tasks);
             tasksFinished.Wait();
+
+            return tasks.Count;
         }
 
         public static string[] GetFilesInDirectory(Options options, string path)
@@ -77,15 +81,9 @@ namespace Manifold.GFZCLI
                 throw new ArgumentException(msg);
             }
 
-            // Get files in directory if it is a directory
-            string[] files = GetFilesInDirectory(options, path);
-            bool isDirectory = files.Length > 0;
-            if (!isDirectory)
-            {
-                // Since we know 'path' is either a file or directory, and it
-                // isn't a directory, return 'path' as the file.
-                files = new string[] { path };
-            }
+            string[] files = fileExists
+                ? new string[] { path }
+                : GetFilesInDirectory(options, path);
 
             return files;
         }
@@ -177,5 +175,18 @@ namespace Manifold.GFZCLI
             return filePathWithExtension;
         }
 
+
+        public static string CleanPath(ref string path)
+        {
+            path = path.Replace("\\", "/");
+            return path;
+        }
+        public static string[] CleanPath(ref string[] paths)
+        {
+            for (int i = 0; i < paths.Length; i++)
+                CleanPath(ref paths[i]);
+
+            return paths;
+        }
     }
 }

@@ -70,7 +70,7 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.lz_compress: LzCompress(options); break;
                 case GfzCliAction.lz_decompress: LzDecompress(options); break;
                 // TPL
-                case GfzCliAction.tpl_pack: TplPack(options); break;
+                case GfzCliAction.tpl_unpack: TplUnpack(options); break;
 
                 // UNSET
                 case 0:
@@ -201,7 +201,7 @@ namespace Manifold.GFZCLI
         {
             Konsole.WriteLine("Decompressing LZ files.");
 
-            // Force checking for LZ files IF there is nothing defined for saerch pattern
+            // Force checking for LZ files IF there is no defined search pattern
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)
                 options.SearchPattern = "*.lz";
@@ -253,6 +253,7 @@ namespace Manifold.GFZCLI
         }
         public static void LzCompress(Options options)
         {
+            Konsole.WriteLine("Compressing files with LZ.");
             DoFileTasks(options, LzCompressFile);
         }
         public static void LzCompressFile(Options options, string inputFilePath, string outputFilePath)
@@ -300,28 +301,31 @@ namespace Manifold.GFZCLI
 
         public static void TplUnpack(Options options)
         {
-            string path = options.TplUnpack;
-            if (string.IsNullOrEmpty(path))
-                return;
+            // Force search TPL files IF there is no defined search pattern
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = "*.tpl";
 
-            DoFileTasks(options, TplUnpackFile);
+            Konsole.WriteLine("TPL: unpacking file(s).");
+            int taskCount = DoFileTasks(options, TplUnpackFile);
+            Konsole.WriteLine($"TPL: done unpacking {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void TplUnpackFile(Options options, string filePath, string _outFile)
+        public static void TplUnpackFile(Options options, string inputFilePath, string outputFilePath)
         {
             // Deserialize the TPL
             Tpl tpl = new Tpl();
-            using (var reader = new EndianBinaryReader(File.OpenRead(filePath), Tpl.endianness))
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), Tpl.endianness))
             {
                 tpl.Deserialize(reader);
-                tpl.FileName = Path.GetFileNameWithoutExtension(filePath);
+                tpl.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
             }
 
             // File name, useful for some later stuff.
-            string tplFileName = Path.GetFileNameWithoutExtension(filePath);
+            string tplFileName = Path.GetFileNameWithoutExtension(outputFilePath);
             // Create folder named the same thing as the TPL input file
-            string directory = Path.GetDirectoryName(filePath);
-            directory = Path.Combine(directory, tpl.FileName);
-            Directory.CreateDirectory(directory);
+            string directory = Path.GetDirectoryName(outputFilePath);
+            string outputDirectory = Path.Combine(directory, tpl.FileName);
+            Directory.CreateDirectory(outputDirectory);
 
             // Iterate over texture and mipmaps, save to disk
             int tplIndex = 0;
@@ -369,23 +373,27 @@ namespace Manifold.GFZCLI
                     encoder.CompressionLevel = PngCompressionLevel.BestCompression;
                     string textureHash = textureSeries.MD5TextureHashes[entryIndex];
                     string fileName = $"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}.png";
-                    string outputPath = Path.Combine(directory, fileName);
+                    string textureOutputPath = Path.Combine(outputDirectory, fileName);
+                    CleanPath(ref textureOutputPath);
 
-                    bool fileExists = File.Exists(outputPath);
+                    bool fileExists = File.Exists(textureOutputPath);
                     bool skipFileWrite = fileExists && !options.OverwriteFiles;
                     if (skipFileWrite)
                     {
                         lock (lock_ConsoleWrite)
                         {
-                            Konsole.Write($"TPL: Skip unpacking file: ");
-                            Konsole.Write(fileName);
+                            Konsole.Write("TPL: ");
+                            Konsole.Write("Skip writing texture ");
+                            Konsole.Write(fileName, FileNameColor);
+                            Konsole.Write(" from file ");
+                            Konsole.Write(inputFilePath, FileNameColor);
                             Konsole.WriteLine();
                         }
                         continue;
                     }
 
                     // Save to disk
-                    image.Save(outputPath, encoder);
+                    image.Save(textureOutputPath, encoder);
 
                     // Output message
                     bool isOverwritingFile = fileExists;
@@ -393,13 +401,14 @@ namespace Manifold.GFZCLI
                     var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
                     lock (lock_ConsoleWrite)
                     {
-                        Konsole.Write($"TPL: Unpacking file: ");
-                        Konsole.Write(tplFileName, FileNameColor);
+                        Konsole.Write("TPL: ");
+                        Konsole.Write("Unpacking file ");
+                        Konsole.Write(inputFilePath, FileNameColor);
                         Konsole.Write($" Texture {tplIndex},");
                         Konsole.Write($" Mipmap {mipmapIndex}. ");
                         Konsole.Write(writeMsg, writeColor);
                         Konsole.Write($" file: ");
-                        Konsole.Write(outputPath, FileNameColor);
+                        Konsole.Write(textureOutputPath, FileNameColor);
                         Konsole.WriteLine();
                     }
                 }
@@ -474,39 +483,28 @@ namespace Manifold.GFZCLI
             }
         }
 
-
         public static void LiveCameraStageBinToTsv(Options options)
         {
-            string path = options.LiveCameraStageBinToTsvPath;
-            if (string.IsNullOrEmpty(path))
-                return;
-
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)
                 options.SearchPattern = "*livecam_stage_*.bin";
 
-            DoFileTasks(options, LiveCameraStageBinToTsvFile);
+            Konsole.WriteLine("Live Camera Stage: converting file(s) to TSV.");
+            int taskCount = DoFileTasks(options, LiveCameraStageBinToTsvFile);
+            Konsole.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void LiveCameraStageBinToTsvFile(Options options, string filePath, string _outFile)
+        public static void LiveCameraStageBinToTsvFile(Options options, string inputFilePath, string outputFilePath)
         {
-            string fileName = Path.GetFileNameWithoutExtension(filePath);
-            string outputFileName = $"{fileName}.tsv";
-            string directory = Path.GetDirectoryName(filePath);
-            string outputFilePath = Path.Combine(directory, outputFileName);
             bool outputFileExists = File.Exists(outputFilePath);
-            bool isOverwritingFile = outputFileExists && options.OverwriteFiles;
-            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
-            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
-
-            bool isCreatingFile = !outputFileExists || isOverwritingFile;
-            if (isCreatingFile)
+            bool doWriteFile = !outputFileExists || options.OverwriteFiles;
+            if (doWriteFile)
             {
                 // Deserialize the file
                 LiveCameraStage liveCameraStage = new LiveCameraStage();
-                using (var reader = new EndianBinaryReader(File.OpenRead(filePath), LiveCameraStage.endianness))
+                using (var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), LiveCameraStage.endianness))
                 {
                     liveCameraStage.Deserialize(reader);
-                    liveCameraStage.FileName = fileName;
+                    liveCameraStage.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
                 }
 
                 // Write it to the stream
@@ -516,60 +514,54 @@ namespace Manifold.GFZCLI
                 }
             }
 
-            lock (lock_ConsoleWrite)
-            {
-                if (isCreatingFile)
-                {
-                    Konsole.Write($"Live Camera Stage: Create TSV file: ");
-                    Konsole.Write(fileName, FileNameColor);
-                    Konsole.Write($" - ");
-                    Konsole.Write(writeMsg, writeColor);
-                    Konsole.Write($" file: ");
-                    Konsole.Write(outputFileName, FileNameColor);
-                    Konsole.WriteLine();
-                }
-                else
-                {
-                    Konsole.Write($"Live Camera Stage: Skip creating TSV file: ");
-                    Konsole.Write(fileName, FileNameColor);
-                    Konsole.WriteLine();
-                }
-            }
-        }
-
-
-
-        public static void LiveCameraStageTsvToBin(Options options)
-        {
-            string path = options.LiveCameraStageTsvToBinPath;
-            if (string.IsNullOrEmpty(path))
-                return;
-
-            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-            if (hasNoSearchPattern)
-                options.SearchPattern = "*livecam_stage_*.tsv";
-
-            DoFileTasks(options, LiveCameraStageTsvToBinFile);
-        }
-        public static void LiveCameraStageTsvToBinFile(Options options, string filePath, string _outFile)
-        {
-            string inputFileName = Path.GetFileNameWithoutExtension(filePath);
-            string outputFileName = $"{inputFileName}.bin";
-            string inputDirectory = Path.GetDirectoryName(filePath);
-            string outputFilePath = Path.Combine(inputDirectory, outputFileName);
-            bool outputFileExists = File.Exists(outputFilePath);
             bool isOverwritingFile = outputFileExists && options.OverwriteFiles;
             var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
             var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
 
-            bool isCreatingFile = !outputFileExists || isOverwritingFile;
-            if (isCreatingFile)
+            lock (lock_ConsoleWrite)
+            {
+                Konsole.Write("Live Camera Stage: ");
+                if (doWriteFile)
+                {
+                    Konsole.Write("Create TSV file: ");
+                    Konsole.Write(inputFilePath, FileNameColor);
+                    Konsole.Write(". ");
+                    Konsole.Write(writeMsg, writeColor);
+                    Konsole.Write(" file: ");
+                    Konsole.Write(outputFilePath, FileNameColor);
+                }
+                else
+                {
+                    Konsole.Write("Skip creating TSV file: ");
+                    Konsole.Write(inputFilePath, FileNameColor);
+                    Konsole.Write(" since ");
+                    Konsole.Write(outputFilePath, FileNameColor);
+                    Konsole.Write(" already exists.");
+                }
+                Konsole.WriteLine();
+            }
+        }
+        public static void LiveCameraStageTsvToBin(Options options)
+        {
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = "*livecam_stage_*.tsv";
+
+            Konsole.WriteLine("Live Camera Stage: converting TSV file(s) to binaries.");
+            int taskCount = DoFileTasks(options, LiveCameraStageTsvToBinFile);
+            Konsole.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
+        }
+        public static void LiveCameraStageTsvToBinFile(Options options, string inputFilePath, string outputFilePath)
+        {
+            bool outputFileExists = File.Exists(outputFilePath);
+            bool doWriteFile = !outputFileExists || options.OverwriteFiles;
+            if (doWriteFile)
             {
                 LiveCameraStage liveCameraStage = new LiveCameraStage();
-                using (var textReader = new StreamReader(File.OpenRead(filePath)))
+                using (var textReader = new StreamReader(File.OpenRead(inputFilePath)))
                 {
                     liveCameraStage.Deserialize(textReader);
-                    liveCameraStage.FileName = inputFileName;
+                    liveCameraStage.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
                 }
 
                 using (var writer = new EndianBinaryWriter(File.Create(outputFilePath), LiveCameraStage.endianness))
@@ -578,38 +570,33 @@ namespace Manifold.GFZCLI
                 }
             }
 
+            bool isOverwritingFile = outputFileExists && options.OverwriteFiles;
+            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
+            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
+
             lock (lock_ConsoleWrite)
             {
-                if (isCreatingFile)
+                Konsole.Write("Live Camera Stage: ");
+                if (doWriteFile)
                 {
-                    Konsole.Write($"Live Camera Stage: Create TSV file: ");
-                    Konsole.Write(inputFileName, FileNameColor);
-                    Konsole.Write($" - ");
+                    Konsole.Write("Create BIN file: ");
+                    Konsole.Write(inputFilePath, FileNameColor);
+                    Konsole.Write(". ");
                     Konsole.Write(writeMsg, writeColor);
-                    Konsole.Write($" file: ");
-                    Konsole.Write(outputFileName, FileNameColor);
-                    Konsole.WriteLine();
+                    Konsole.Write(" file: ");
+                    Konsole.Write(outputFilePath, FileNameColor);
                 }
                 else
                 {
-                    Konsole.Write($"Live Camera Stage: Skip creating TSV file: ");
-                    Konsole.Write(inputFileName, FileNameColor);
-                    Konsole.WriteLine();
+                    Konsole.Write("Skip creating BIN file: ");
+                    Konsole.Write(inputFilePath, FileNameColor);
+                    Konsole.Write(" since ");
+                    Konsole.Write(outputFilePath, FileNameColor);
+                    Konsole.Write(" already exists.");
                 }
+                Konsole.WriteLine();
             }
         }
 
-
-
-        public static void PrintAllGfzCliActions()
-        {
-            foreach (string enumName in Enum.GetNames<GfzCliAction>())
-            {
-                string lower = enumName.ToLower();
-                string noGap = lower.Replace('_', '-');
-                Konsole.Write('\t');
-                Konsole.WriteLine(noGap);
-            }
-        }
     }
 }
