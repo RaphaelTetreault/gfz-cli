@@ -5,11 +5,11 @@
     },
     "cardata-bin-to-tsv": {
       "commandName": "Project",
-      "commandLineArgs": "--cardata-bin-to-tsv D:\\gfzj01\\game\\cardata.lz"
+      "commandLineArgs": "-a cardata-bin-to-tsv -i D:\\gfzj01\\game\\cardata.lz"
     },
     "cardata-tsv-to-bin": {
       "commandName": "Project",
-      "commandLineArgs": "--cardata-tsv-to-bin D:\\gfzj01\\game\\cardata.tsv"
+      "commandLineArgs": "-a cardata-tsv-to-bin -i D:\\gfzj01\\game\\cardata.tsv --overwrite"
     },
     "tpl-unpack": {
       "commandName": "Project",
@@ -21,7 +21,7 @@
     },
     "lz-decompress": {
       "commandName": "Project",
-      "commandLineArgs": "--lzd -i D:\\gfz-cli-test\\lz-test -o D:\\test-gfz\\maybe\\ --search-subdirs --overwrite --verbose"
+      "commandLineArgs": "-a lz-dcompressed -i D:\\gfz-cli-test\\lz-test -o D:\\test-gfz\\maybe\\ --search-subdirs --overwrite"
     },
     "lz-compress": {
       "commandName": "Project",

@@ -156,5 +156,26 @@ namespace Manifold.GFZCLI
             }
         }
 
+        public static string StripFileExtension(string filePath)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(filePath);
+            var directory = Path.GetDirectoryName(filePath);
+            var filePathWithoutExtensions = Path.Combine(directory, fileName);
+            return filePathWithoutExtensions;
+        }
+
+        public static string ReplaceFileExtension(string filePath, string extension)
+        {
+            var filePathWithoutExtensions = StripFileExtension(filePath);
+            var filePathWithExtension = $"{filePathWithoutExtensions}.{extension}";
+            return filePathWithExtension;
+        }
+
+        public static string AppendExtension(string filePath, string extension)
+        {
+            var filePathWithExtension = $"{filePath}.{extension}";
+            return filePathWithExtension;
+        }
+
     }
 }

@@ -87,6 +87,18 @@ namespace Manifold.GFZCLI
                 "Creates a binary from the values of a cardata TSV spreadsheet.";
         }
 
+        [Option('a', "action", HelpText = "TODO", Required = true)]
+        public string ActionStr { get; set; } = string.Empty;
+        public GfzCliAction Action
+        {
+            get
+            {
+                string sanitized = ActionStr.Replace('-', '_');
+                Enum.TryParse(sanitized, true, out GfzCliAction action);
+                return action;
+            }
+        }
+
 
         [Option('i', "input-path", HelpText = "TODO", Required = true)]
         public string InputPath { get; set; } = string.Empty;
@@ -109,16 +121,6 @@ namespace Manifold.GFZCLI
 
         [Option(Args.SerializationFormat, HelpText = Help.SerializationFormat)]
         public string SerializationFormat { get; set; } = string.Empty;
-
-
-        // LZ
-        [Option(Args.LzDecompressTarget, HelpText = Help.LzDecompressTarget)]
-        //public string LzDecompressTarget { get; set; } = string.Empty;
-        public bool LzDecompress { get; set; }
-        
-        [Option(Args.LzCompressTarget, HelpText = Help.LzCompressTarget)]
-        public string LzCompressTarget { get; set; } = string.Empty;
-        //public bool LzCompressTarget { get; set; }
 
 
         // TPL
@@ -199,7 +201,29 @@ namespace Manifold.GFZCLI
         }
 
 
+        //public bool IsAction(GfzCliAction action)
+        //{
+        //    bool isAction = Action == action;
+        //    return isAction;
+        //}
 
+        public bool IsNotAction(GfzCliAction action)
+        {
+            bool isAction = Action != action;
+            return isAction;
+        }
+
+        //public bool IsNotAction(params GfzCliAction[] actions)
+        //{
+        //    foreach (var action in actions)
+        //    {
+        //        bool isAction = IsAction(action);
+        //        if (isAction)
+        //            return false;
+        //    }
+
+        //    return true;
+        //}
 
     }
 }
