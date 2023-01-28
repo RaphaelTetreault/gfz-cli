@@ -34,6 +34,14 @@
     "live-camera-stage-tsv-to-bin": {
       "commandName": "Project",
       "commandLineArgs": "--live-camera-stage-tsv-to-bin D:\\gfzj01\\ --search-subdirs --overwrite"
+    },
+    "emblem-to-image": {
+      "commandName": "Project",
+      "commandLineArgs": "-a emblem-to-image -i D:\\gfz-cli-test\\emblem\\8P-GFZE-fze020_pkmn2_215_Snease_077.dat.gci"
+    },
+    "emblem-to-image-bin": {
+      "commandName": "Project",
+      "commandLineArgs": "-a emblem-to-image -i D:\\gfz-cli-test\\emblem\\chara.bin"
     }
   }
 }

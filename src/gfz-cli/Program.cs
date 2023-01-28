@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using GameCube.GFZ.CarData;
+using GameCube.GFZ.Emblem;
 using GameCube.GFZ.LZ;
 using GameCube.GFZ.TPL;
 using Manifold;
@@ -63,6 +64,10 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.cardata_bin_to_tsv: CarDataBinToTsv(options); break;
                 case GfzCliAction.cardata_tsv_to_bin: CarDataTsvToBin(options); break;
                 //
+                case GfzCliAction.emblem_to_image: EmblemToImage(options); break;
+                case GfzCliAction.image_to_emblem: ImageToEmblem(options); break;
+
+                // LIVE CAMERA STAGE
                 case GfzCliAction.live_camera_stage_bin_to_tsv: LiveCameraStageBinToTsv(options); break;
                 case GfzCliAction.live_camera_stage_tsv_to_bin: LiveCameraStageTsvToBin(options); break;
                 // LZ
@@ -357,16 +362,7 @@ namespace Manifold.GFZCLI
 
                     // Copy contents of GameCube texture into ImageSharp representation
                     var texture = textureEntry.Texture;
-                    Image<Rgba32> image = new Image<Rgba32>(texture.Width, texture.Height);
-
-                    for (int y = 0; y < texture.Height; y++)
-                    {
-                        for (int x = 0; x < texture.Width; x++)
-                        {
-                            TextureColor pixel = texture[x, y];
-                            image[x, y] = new Rgba32(pixel.r, pixel.g, pixel.b, pixel.a);
-                        }
-                    }
+                    Image<Rgba32> image = TextureToImage(texture);
 
                     //var format = PngFormat.Instance;
                     var encoder = new PngEncoder();
@@ -595,6 +591,102 @@ namespace Manifold.GFZCLI
                     Terminal.Write(" already exists.");
                 }
                 Terminal.WriteLine();
+            }
+        }
+
+
+
+
+
+        public static void EmblemToImage(Options options)
+        {
+            EmblemBinToImages(options);
+        }
+
+        public static void ImageToEmblem(Options options)
+        {
+
+        }
+
+
+        private static Image<Rgba32> TextureToImage(Texture texture)
+        {
+            Image<Rgba32> image = new Image<Rgba32>(texture.Width, texture.Height);
+
+            for (int y = 0; y < texture.Height; y++)
+            {
+                for (int x = 0; x < texture.Width; x++)
+                {
+                    TextureColor pixel = texture[x, y];
+                    image[x, y] = new Rgba32(pixel.r, pixel.g, pixel.b, pixel.a);
+                }
+            }
+
+            return image;
+        }
+
+
+        private static void EmblemGciToImage(Options options)
+        {
+            Terminal.WriteLine("Writing emblems...");
+
+            var emblemGCI = new EmblemGCI();
+            using (var reader = new EndianBinaryReader(File.OpenRead(options.InputPath), EmblemGCI.endianness))
+            {
+                emblemGCI.Deserialize(reader);
+                emblemGCI.FileName = Path.GetFileNameWithoutExtension(options.InputPath);
+            }
+
+            string directory = Path.GetDirectoryName(options.InputPath);
+            var encoder = new PngEncoder();
+            encoder.CompressionLevel = PngCompressionLevel.BestCompression;
+
+            // BANNER
+            {
+                string fileName = $"{emblemGCI.InternalFileName}-banner.png";
+                string textureOutputPath = Path.Combine(directory, fileName);
+                Image<Rgba32> image = TextureToImage(emblemGCI.Banner.Texture);
+                image.Save(textureOutputPath, encoder);
+            }
+            // ICON
+            {
+                string fileName = $"{emblemGCI.GameCode}-icon.png";
+                string textureOutputPath = Path.Combine(directory, fileName);
+                Image<Rgba32> image = TextureToImage(emblemGCI.Icon.Texture);
+                image.Save(textureOutputPath, encoder);
+            }
+            // EMBLEM
+            {
+                string fileName = $"{emblemGCI.InternalFileName}.png";
+                string textureOutputPath = Path.Combine(directory, fileName);
+                Image<Rgba32> image = TextureToImage(emblemGCI.Emblem.Texture);
+                image.Save(textureOutputPath, encoder);
+            }
+        }
+        private static void EmblemBinToImages(Options options)
+        {
+            Terminal.WriteLine("Writing BIN emblems...");
+
+            var emblemBIN = new EmblemBIN();
+            using (var reader = new EndianBinaryReader(File.OpenRead(options.InputPath), EmblemBIN.endianness))
+            {
+                emblemBIN.Deserialize(reader);
+                emblemBIN.FileName = Path.GetFileNameWithoutExtension(options.InputPath);
+            }
+
+            string directory = Path.GetDirectoryName(options.InputPath);
+            var encoder = new PngEncoder();
+            encoder.CompressionLevel = PngCompressionLevel.BestCompression;
+
+            int index = 0;
+            int format = emblemBIN.Emblems.LengthToFormat();
+            foreach (var emblem in emblemBIN.Emblems)
+            {
+                index++;
+                string fileName = $"{emblemBIN.FileName}-{index.PadLeft(format, '0')}.png";
+                string textureOutputPath = Path.Combine(directory, fileName);
+                Image<Rgba32> image = TextureToImage(emblem.Texture);
+                image.Save(textureOutputPath, encoder);
             }
         }
 

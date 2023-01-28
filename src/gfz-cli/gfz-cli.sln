@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gfz-cli", "gfz-cli.csproj", "{53C635FF-CA63-41B0-ABF2-57B3AC76EA5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gfz-cli", "gfz-cli.csproj", "{53C635FF-CA63-41B0-ABF2-57B3AC76EA5E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.AmusementVision", "..\..\libs\GameCube.AmusementVision\src\GameCube.AmusementVision\GameCube.AmusementVision.csproj", "{816061FC-D5F5-42E1-9E75-E15A298C6866}"
 EndProject
@@ -46,6 +46,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.Stage", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Stage\GameCube.GFZ.Stage.csproj", "{86034AF9-B882-44A3-AE45-35888AD1EFC9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.TPL", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.TPL\GameCube.GFZ.TPL.csproj", "{3CB05FDA-7688-4360-8F7A-E26554BB6FFD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.Emblem", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Emblem\GameCube.GFZ.Emblem.csproj", "{2FD91D5B-1286-4C87-AF39-12CA918D9463}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -231,6 +233,14 @@ Global
 		{3CB05FDA-7688-4360-8F7A-E26554BB6FFD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3CB05FDA-7688-4360-8F7A-E26554BB6FFD}.Release|x64.ActiveCfg = Release|Any CPU
 		{3CB05FDA-7688-4360-8F7A-E26554BB6FFD}.Release|x64.Build.0 = Release|Any CPU
+		{2FD91D5B-1286-4C87-AF39-12CA918D9463}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FD91D5B-1286-4C87-AF39-12CA918D9463}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FD91D5B-1286-4C87-AF39-12CA918D9463}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2FD91D5B-1286-4C87-AF39-12CA918D9463}.Debug|x64.Build.0 = Debug|Any CPU
+		{2FD91D5B-1286-4C87-AF39-12CA918D9463}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FD91D5B-1286-4C87-AF39-12CA918D9463}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FD91D5B-1286-4C87-AF39-12CA918D9463}.Release|x64.ActiveCfg = Release|Any CPU
+		{2FD91D5B-1286-4C87-AF39-12CA918D9463}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
