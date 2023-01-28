@@ -13,7 +13,6 @@ using SixLabors.ImageSharp.Formats.Png;
 
 using static Manifold.GFZCLI.MultithreadFileTools;
 using GameCube.GFZ.Camera;
-using static Manifold.GFZCLI.Options;
 
 namespace Manifold.GFZCLI
 {
@@ -199,14 +198,14 @@ namespace Manifold.GFZCLI
 
         public static void LzDecompress(Options options)
         {
-            Konsole.WriteLine("Decompressing LZ files.");
-
             // Force checking for LZ files IF there is no defined search pattern
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)
                 options.SearchPattern = "*.lz";
 
-            DoFileTasks(options, LzDecompressFile);
+            Konsole.WriteLine("LZ: Decompressing file(s).");
+            int taskCount = DoFileTasks(options, LzDecompressFile);
+            Konsole.WriteLine($"LZ: done decompressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
         public static void LzDecompressFile(Options options, string inputFilePath, string outputFilePath)
         {
@@ -253,8 +252,9 @@ namespace Manifold.GFZCLI
         }
         public static void LzCompress(Options options)
         {
-            Konsole.WriteLine("Compressing files with LZ.");
-            DoFileTasks(options, LzCompressFile);
+            Konsole.WriteLine("LZ: Compressing file(s).");
+            int taskCount = DoFileTasks(options, LzCompressFile);
+            Konsole.WriteLine($"LZ: done compressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
         public static void LzCompressFile(Options options, string inputFilePath, string outputFilePath)
         {
