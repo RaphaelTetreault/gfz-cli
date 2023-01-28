@@ -3,7 +3,7 @@
     /// <summary>
     /// A wrapper for System.Console with the option to write with ConsoleColor
     /// </summary>
-    public static class Konsole
+    public static class Terminal
     {
         private static void Write(Action consoleWrite, ConsoleColor foregroundColor)
         {

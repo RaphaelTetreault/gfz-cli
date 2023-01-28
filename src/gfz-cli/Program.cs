@@ -36,8 +36,8 @@ namespace Manifold.GFZCLI
             if (noArgumentsPassed)
             {
                 string msg = "You must call this program using arguments via the Console/Terminal. ";
-                Konsole.WriteLine(msg, ConsoleColor.Black, ConsoleColor.Red);
-                Konsole.WriteLine();
+                Terminal.WriteLine(msg, ConsoleColor.Black, ConsoleColor.Red);
+                Terminal.WriteLine();
                 args = Help;
             }
 
@@ -50,7 +50,7 @@ namespace Manifold.GFZCLI
             if (noArgumentsPassed)
             {
                 string msg = "Press ENTER to continue.";
-                Konsole.WriteLine(msg, ConsoleColor.Black, ConsoleColor.Red);
+                Terminal.WriteLine(msg, ConsoleColor.Black, ConsoleColor.Red);
                 Console.Read();
             }
         }
@@ -75,8 +75,8 @@ namespace Manifold.GFZCLI
                 case 0:
                     {
                         string msg = $"Could not parse (-a|--action) '{options.ActionStr}'.";
-                        Konsole.WriteLine(msg);
-                        Konsole.WriteLine();
+                        Terminal.WriteLine(msg);
+                        Terminal.WriteLine();
                         //PrintAllGfzCliActions();
                         Parser.Default.ParseArguments<Options>(Help).WithParsed(RunOptions);
                     }
@@ -121,23 +121,23 @@ namespace Manifold.GFZCLI
                             carData.Serialize(writer);
                     }
 
-                    Konsole.Write("CarData: ");
+                    Terminal.Write("CarData: ");
                     if (doWriteFile)
                     {
-                        Konsole.Write("Created TSV file: ");
-                        Konsole.Write(outputFilePath, FileNameColor);
+                        Terminal.Write("Created TSV file: ");
+                        Terminal.Write(outputFilePath, FileNameColor);
                     }
                     else
                     {
-                        Konsole.Write("Skip creating TSV file: ");
-                        Konsole.Write(outputFilePath, FileNameColor);
-                        Konsole.Write(". ");
-                        Konsole.Write("File already exists.", OverwriteFileColor);
-                        Konsole.Write(" Use --");
-                        Konsole.Write(Options.Args.OverwriteFiles);
-                        Konsole.Write(" if you would like to overwrite files automatically.");
+                        Terminal.Write("Skip creating TSV file: ");
+                        Terminal.Write(outputFilePath, FileNameColor);
+                        Terminal.Write(". ");
+                        Terminal.Write("File already exists.", OverwriteFileColor);
+                        Terminal.Write(" Use --");
+                        Terminal.Write(Options.Args.OverwriteFiles);
+                        Terminal.Write(" if you would like to overwrite files automatically.");
                     }
-                    Konsole.WriteLine();
+                    Terminal.WriteLine();
                 }
             }
         }
@@ -177,23 +177,23 @@ namespace Manifold.GFZCLI
                 }
             }
 
-            Konsole.Write("CarData: ");
+            Terminal.Write("CarData: ");
             if (doWriteFile)
             {
-                Konsole.Write("Created BIN file: ");
-                Konsole.Write(outputFilePath, FileNameColor);
+                Terminal.Write("Created BIN file: ");
+                Terminal.Write(outputFilePath, FileNameColor);
             }
             else
             {
-                Konsole.Write($"Skip creating BIN file: ");
-                Konsole.Write(outputFilePath, FileNameColor);
-                Konsole.Write(". ");
-                Konsole.Write("File already exists.", OverwriteFileColor);
-                Konsole.Write(" Use --");
-                Konsole.Write(Options.Args.OverwriteFiles);
-                Konsole.Write(" if you would like to overwrite files automatically.");
+                Terminal.Write($"Skip creating BIN file: ");
+                Terminal.Write(outputFilePath, FileNameColor);
+                Terminal.Write(". ");
+                Terminal.Write("File already exists.", OverwriteFileColor);
+                Terminal.Write(" Use --");
+                Terminal.Write(Options.Args.OverwriteFiles);
+                Terminal.Write(" if you would like to overwrite files automatically.");
             }
-            Konsole.WriteLine();
+            Terminal.WriteLine();
         }
 
         public static void LzDecompress(Options options)
@@ -203,9 +203,9 @@ namespace Manifold.GFZCLI
             if (hasNoSearchPattern)
                 options.SearchPattern = "*.lz";
 
-            Konsole.WriteLine("LZ: Decompressing file(s).");
+            Terminal.WriteLine("LZ: Decompressing file(s).");
             int taskCount = DoFileTasks(options, LzDecompressFile);
-            Konsole.WriteLine($"LZ: done decompressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
+            Terminal.WriteLine($"LZ: done decompressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
         public static void LzDecompressFile(Options options, string inputFilePath, string outputFilePath)
         {
@@ -229,32 +229,32 @@ namespace Manifold.GFZCLI
 
             lock (lock_ConsoleWrite)
             {
-                Konsole.Write("LZ: ");
+                Terminal.Write("LZ: ");
                 if (doWriteFile)
                 {
-                    Konsole.Write("Decompress file ");
-                    Konsole.Write(inputFilePath, FileNameColor);
-                    Konsole.Write(". ");
-                    Konsole.Write(writeMsg, writeColor);
-                    Konsole.Write(" file: ");
-                    Konsole.Write(outputFilePath, FileNameColor);
+                    Terminal.Write("Decompress file ");
+                    Terminal.Write(inputFilePath, FileNameColor);
+                    Terminal.Write(". ");
+                    Terminal.Write(writeMsg, writeColor);
+                    Terminal.Write(" file: ");
+                    Terminal.Write(outputFilePath, FileNameColor);
                 }
                 else
                 {
-                    Konsole.Write("Skip decompressing file ");
-                    Konsole.Write(inputFilePath, FileNameColor);
-                    Konsole.Write(" since ");
-                    Konsole.Write(outputFilePath, FileNameColor);
-                    Konsole.Write(" already exists.");
+                    Terminal.Write("Skip decompressing file ");
+                    Terminal.Write(inputFilePath, FileNameColor);
+                    Terminal.Write(" since ");
+                    Terminal.Write(outputFilePath, FileNameColor);
+                    Terminal.Write(" already exists.");
                 }
-                Konsole.WriteLine();
+                Terminal.WriteLine();
             }
         }
         public static void LzCompress(Options options)
         {
-            Konsole.WriteLine("LZ: Compressing file(s).");
+            Terminal.WriteLine("LZ: Compressing file(s).");
             int taskCount = DoFileTasks(options, LzCompressFile);
-            Konsole.WriteLine($"LZ: done compressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
+            Terminal.WriteLine($"LZ: done compressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
         public static void LzCompressFile(Options options, string inputFilePath, string outputFilePath)
         {
@@ -277,25 +277,25 @@ namespace Manifold.GFZCLI
 
             lock (lock_ConsoleWrite)
             {
-                Konsole.Write("LZ: ");
+                Terminal.Write("LZ: ");
                 if (doWriteFile)
                 {
-                    Konsole.Write("Compress file: ");
-                    Konsole.Write(inputFilePath, FileNameColor);
-                    Konsole.Write(". ");
-                    Konsole.Write(writeMsg, writeColor);
-                    Konsole.Write(" file: ");
-                    Konsole.Write(outputFilePath, FileNameColor);
+                    Terminal.Write("Compress file: ");
+                    Terminal.Write(inputFilePath, FileNameColor);
+                    Terminal.Write(". ");
+                    Terminal.Write(writeMsg, writeColor);
+                    Terminal.Write(" file: ");
+                    Terminal.Write(outputFilePath, FileNameColor);
                 }
                 else
                 {
-                    Konsole.Write("Skip compressing file ");
-                    Konsole.Write(inputFilePath, FileNameColor);
-                    Konsole.Write(" since ");
-                    Konsole.Write(outputFilePath, FileNameColor);
-                    Konsole.Write(" already exists.");
+                    Terminal.Write("Skip compressing file ");
+                    Terminal.Write(inputFilePath, FileNameColor);
+                    Terminal.Write(" since ");
+                    Terminal.Write(outputFilePath, FileNameColor);
+                    Terminal.Write(" already exists.");
                 }
-                Konsole.WriteLine();
+                Terminal.WriteLine();
             }
         }
 
@@ -306,9 +306,9 @@ namespace Manifold.GFZCLI
             if (hasNoSearchPattern)
                 options.SearchPattern = "*.tpl";
 
-            Konsole.WriteLine("TPL: unpacking file(s).");
+            Terminal.WriteLine("TPL: unpacking file(s).");
             int taskCount = DoFileTasks(options, TplUnpackFile);
-            Konsole.WriteLine($"TPL: done unpacking {taskCount} file{(taskCount != 1 ? 's' : "")}.");
+            Terminal.WriteLine($"TPL: done unpacking {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
         public static void TplUnpackFile(Options options, string inputFilePath, string outputFilePath)
         {
@@ -382,12 +382,12 @@ namespace Manifold.GFZCLI
                     {
                         lock (lock_ConsoleWrite)
                         {
-                            Konsole.Write("TPL: ");
-                            Konsole.Write("Skip writing texture ");
-                            Konsole.Write(fileName, FileNameColor);
-                            Konsole.Write(" from file ");
-                            Konsole.Write(inputFilePath, FileNameColor);
-                            Konsole.WriteLine();
+                            Terminal.Write("TPL: ");
+                            Terminal.Write("Skip writing texture ");
+                            Terminal.Write(fileName, FileNameColor);
+                            Terminal.Write(" from file ");
+                            Terminal.Write(inputFilePath, FileNameColor);
+                            Terminal.WriteLine();
                         }
                         continue;
                     }
@@ -401,15 +401,15 @@ namespace Manifold.GFZCLI
                     var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
                     lock (lock_ConsoleWrite)
                     {
-                        Konsole.Write("TPL: ");
-                        Konsole.Write("Unpacking file ");
-                        Konsole.Write(inputFilePath, FileNameColor);
-                        Konsole.Write($" Texture {tplIndex},");
-                        Konsole.Write($" Mipmap {mipmapIndex}. ");
-                        Konsole.Write(writeMsg, writeColor);
-                        Konsole.Write($" file: ");
-                        Konsole.Write(textureOutputPath, FileNameColor);
-                        Konsole.WriteLine();
+                        Terminal.Write("TPL: ");
+                        Terminal.Write("Unpacking file ");
+                        Terminal.Write(inputFilePath, FileNameColor);
+                        Terminal.Write($" Texture {tplIndex},");
+                        Terminal.Write($" Mipmap {mipmapIndex}. ");
+                        Terminal.Write(writeMsg, writeColor);
+                        Terminal.Write($" file: ");
+                        Terminal.Write(textureOutputPath, FileNameColor);
+                        Terminal.WriteLine();
                     }
                 }
             }
@@ -478,7 +478,7 @@ namespace Manifold.GFZCLI
                     string filePath = Path.Combine(directory, fileName);
                     // Save to disk
                     imageCopy.SaveAsPng(filePath);
-                    Konsole.WriteLine($"Wrote file: {filePath}");
+                    Terminal.WriteLine($"Wrote file: {filePath}");
                 }
             }
         }
@@ -489,9 +489,9 @@ namespace Manifold.GFZCLI
             if (hasNoSearchPattern)
                 options.SearchPattern = "*livecam_stage_*.bin";
 
-            Konsole.WriteLine("Live Camera Stage: converting file(s) to TSV.");
+            Terminal.WriteLine("Live Camera Stage: converting file(s) to TSV.");
             int taskCount = DoFileTasks(options, LiveCameraStageBinToTsvFile);
-            Konsole.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
+            Terminal.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
         public static void LiveCameraStageBinToTsvFile(Options options, string inputFilePath, string outputFilePath)
         {
@@ -520,25 +520,25 @@ namespace Manifold.GFZCLI
 
             lock (lock_ConsoleWrite)
             {
-                Konsole.Write("Live Camera Stage: ");
+                Terminal.Write("Live Camera Stage: ");
                 if (doWriteFile)
                 {
-                    Konsole.Write("Create TSV file: ");
-                    Konsole.Write(inputFilePath, FileNameColor);
-                    Konsole.Write(". ");
-                    Konsole.Write(writeMsg, writeColor);
-                    Konsole.Write(" file: ");
-                    Konsole.Write(outputFilePath, FileNameColor);
+                    Terminal.Write("Create TSV file: ");
+                    Terminal.Write(inputFilePath, FileNameColor);
+                    Terminal.Write(". ");
+                    Terminal.Write(writeMsg, writeColor);
+                    Terminal.Write(" file: ");
+                    Terminal.Write(outputFilePath, FileNameColor);
                 }
                 else
                 {
-                    Konsole.Write("Skip creating TSV file: ");
-                    Konsole.Write(inputFilePath, FileNameColor);
-                    Konsole.Write(" since ");
-                    Konsole.Write(outputFilePath, FileNameColor);
-                    Konsole.Write(" already exists.");
+                    Terminal.Write("Skip creating TSV file: ");
+                    Terminal.Write(inputFilePath, FileNameColor);
+                    Terminal.Write(" since ");
+                    Terminal.Write(outputFilePath, FileNameColor);
+                    Terminal.Write(" already exists.");
                 }
-                Konsole.WriteLine();
+                Terminal.WriteLine();
             }
         }
         public static void LiveCameraStageTsvToBin(Options options)
@@ -547,9 +547,9 @@ namespace Manifold.GFZCLI
             if (hasNoSearchPattern)
                 options.SearchPattern = "*livecam_stage_*.tsv";
 
-            Konsole.WriteLine("Live Camera Stage: converting TSV file(s) to binaries.");
+            Terminal.WriteLine("Live Camera Stage: converting TSV file(s) to binaries.");
             int taskCount = DoFileTasks(options, LiveCameraStageTsvToBinFile);
-            Konsole.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
+            Terminal.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
         public static void LiveCameraStageTsvToBinFile(Options options, string inputFilePath, string outputFilePath)
         {
@@ -576,25 +576,25 @@ namespace Manifold.GFZCLI
 
             lock (lock_ConsoleWrite)
             {
-                Konsole.Write("Live Camera Stage: ");
+                Terminal.Write("Live Camera Stage: ");
                 if (doWriteFile)
                 {
-                    Konsole.Write("Create BIN file: ");
-                    Konsole.Write(inputFilePath, FileNameColor);
-                    Konsole.Write(". ");
-                    Konsole.Write(writeMsg, writeColor);
-                    Konsole.Write(" file: ");
-                    Konsole.Write(outputFilePath, FileNameColor);
+                    Terminal.Write("Create BIN file: ");
+                    Terminal.Write(inputFilePath, FileNameColor);
+                    Terminal.Write(". ");
+                    Terminal.Write(writeMsg, writeColor);
+                    Terminal.Write(" file: ");
+                    Terminal.Write(outputFilePath, FileNameColor);
                 }
                 else
                 {
-                    Konsole.Write("Skip creating BIN file: ");
-                    Konsole.Write(inputFilePath, FileNameColor);
-                    Konsole.Write(" since ");
-                    Konsole.Write(outputFilePath, FileNameColor);
-                    Konsole.Write(" already exists.");
+                    Terminal.Write("Skip creating BIN file: ");
+                    Terminal.Write(inputFilePath, FileNameColor);
+                    Terminal.Write(" since ");
+                    Terminal.Write(outputFilePath, FileNameColor);
+                    Terminal.Write(" already exists.");
                 }
-                Konsole.WriteLine();
+                Terminal.WriteLine();
             }
         }
 
