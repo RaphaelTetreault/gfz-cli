@@ -9,7 +9,7 @@ namespace Manifold.GFZCLI
     /// <summary>
     ///     Functions to make multithreading file processes easier.
     /// </summary>
-    public static class MultithreadFileTools
+    public static class MultiFileUtility
     {
 
         //public delegate void FileTask(Options options, string filePath);

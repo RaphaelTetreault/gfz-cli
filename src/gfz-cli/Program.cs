@@ -11,7 +11,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using GameCube.GX.Texture;
 using SixLabors.ImageSharp.Formats.Png;
 
-using static Manifold.GFZCLI.MultithreadFileTools;
+using static Manifold.GFZCLI.MultiFileUtility;
 using GameCube.GFZ.Camera;
 
 namespace Manifold.GFZCLI
