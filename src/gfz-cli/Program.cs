@@ -14,9 +14,7 @@ using SixLabors.ImageSharp.Formats.Png;
 
 using static Manifold.GFZCLI.MultiFileUtility;
 using GameCube.GFZ.Camera;
-using System.Reflection;
 using SixLabors.ImageSharp.Formats;
-//using System.Text;
 
 namespace Manifold.GFZCLI
 {
@@ -66,10 +64,9 @@ namespace Manifold.GFZCLI
                 // CARDATA
                 case GfzCliAction.cardata_bin_to_tsv: CarDataBinToTsv(options); break;
                 case GfzCliAction.cardata_tsv_to_bin: CarDataTsvToBin(options); break;
-                //
+                // EMBLEM
                 case GfzCliAction.emblem_to_image: EmblemToImage(options); break;
                 case GfzCliAction.image_to_emblem: ImageToEmblem(options); break;
-
                 // LIVE CAMERA STAGE
                 case GfzCliAction.live_camera_stage_bin_to_tsv: LiveCameraStageBinToTsv(options); break;
                 case GfzCliAction.live_camera_stage_tsv_to_bin: LiveCameraStageTsvToBin(options); break;
@@ -104,7 +101,7 @@ namespace Manifold.GFZCLI
             string inputFilePath = options.InputPath;
             string outputFilePath = GetOutputPath(options, inputFilePath);
             outputFilePath = StripFileExtension(outputFilePath);
-            outputFilePath = AppendExtension(outputFilePath, "tsv");
+            outputFilePath += ".tsv";
 
             // Check to make sure file exists
             if (!File.Exists(inputFilePath))
@@ -114,40 +111,27 @@ namespace Manifold.GFZCLI
             string extension = Path.GetExtension(inputFilePath);
             bool isLzCompressed = extension.ToLower() == ".lz";
             // Open the file if decompressed, decompress file stream otherwise
+            var carData = new CarData();
             using (Stream fileStream = isLzCompressed ? LzUtility.DecompressAvLz(inputFilePath) : File.OpenRead(inputFilePath))
+            using (var reader = new EndianBinaryReader(fileStream, CarData.endianness))
+                carData.Deserialize(reader);
+
+            //
+            var fileWrite = () =>
             {
-                using (var reader = new EndianBinaryReader(fileStream, CarData.endianness))
-                {
-                    var carData = new CarData();
-                    carData.Deserialize(reader);
-
-                    //
-                    bool doWriteFile = !File.Exists(outputFilePath) || options.OverwriteFiles;
-                    if (doWriteFile)
-                    {
-                        using (var writer = new StreamWriter(File.Create(outputFilePath)))
-                            carData.Serialize(writer);
-                    }
-
-                    Terminal.Write("CarData: ");
-                    if (doWriteFile)
-                    {
-                        Terminal.Write("Created TSV file: ");
-                        Terminal.Write(outputFilePath, FileNameColor);
-                    }
-                    else
-                    {
-                        Terminal.Write("Skip creating TSV file: ");
-                        Terminal.Write(outputFilePath, FileNameColor);
-                        Terminal.Write(". ");
-                        Terminal.Write("File already exists.", OverwriteFileColor);
-                        Terminal.Write(" Use --");
-                        Terminal.Write(Options.Args.OverwriteFiles);
-                        Terminal.Write(" if you would like to overwrite files automatically.");
-                    }
-                    Terminal.WriteLine();
-                }
-            }
+                using (var writer = new StreamWriter(File.Create(outputFilePath)))
+                    carData.Serialize(writer);
+            };
+            var info = new FileWriteInfo()
+            {
+                InputFilePath = inputFilePath,
+                OutputFilePath = outputFilePath,
+                PrintDesignator = "CarData",
+                PrintActionDescription = "creating cardata TSV from file",
+                PrintMoreInfoOnSkip =
+                    $"Use --{Options.Args.OverwriteFiles} if you would like to overwrite files automatically.",
+            };
+            FileWriteOverwriteHandler(options, fileWrite, info);
         }
         public static void CarDataTsvToBin(Options options)
         {
@@ -155,6 +139,7 @@ namespace Manifold.GFZCLI
             string inputFilePath = options.InputPath;
             string outputFilePath = GetOutputPath(options, inputFilePath);
             outputFilePath = StripFileExtension(outputFilePath);
+            outputFilePath += ".lz";
 
             // Check to make sure file exists
             if (!File.Exists(inputFilePath))
@@ -165,9 +150,8 @@ namespace Manifold.GFZCLI
             using (var reader = new StreamReader(File.OpenRead(inputFilePath)))
                 carData.Deserialize(reader);
 
-            // Write file, if possible
-            bool doWriteFile = !File.Exists(outputFilePath) || options.OverwriteFiles;
-            if (doWriteFile)
+            // 
+            var fileWrite = () =>
             {
                 // Save out file (this file is not yet compressed)
                 using (var writer = new EndianBinaryWriter(new MemoryStream(), CarData.endianness))
@@ -183,25 +167,17 @@ namespace Manifold.GFZCLI
                         GameCube.AmusementVision.LZ.Lz.Pack(writer.BaseStream, fs, options.AvGame);
                     }
                 }
-            }
-
-            Terminal.Write("CarData: ");
-            if (doWriteFile)
+            };
+            var info = new FileWriteInfo()
             {
-                Terminal.Write("Created BIN file: ");
-                Terminal.Write(outputFilePath, FileNameColor);
-            }
-            else
-            {
-                Terminal.Write($"Skip creating BIN file: ");
-                Terminal.Write(outputFilePath, FileNameColor);
-                Terminal.Write(". ");
-                Terminal.Write("File already exists.", OverwriteFileColor);
-                Terminal.Write(" Use --");
-                Terminal.Write(Options.Args.OverwriteFiles);
-                Terminal.Write(" if you would like to overwrite files automatically.");
-            }
-            Terminal.WriteLine();
+                InputFilePath = inputFilePath,
+                OutputFilePath = outputFilePath,
+                PrintDesignator = "CarData", 
+                PrintActionDescription = "creating cardata BIN from file",
+                PrintMoreInfoOnSkip =
+                    $"Use --{Options.Args.OverwriteFiles} if you would like to overwrite files automatically.",
+            };
+            FileWriteOverwriteHandler(options, fileWrite, info);
         }
 
         public static void LzDecompress(Options options)
@@ -211,7 +187,7 @@ namespace Manifold.GFZCLI
             if (hasNoSearchPattern)
                 options.SearchPattern = "*.lz";
 
-            Terminal.WriteLine("LZ: Decompressing file(s).");
+            Terminal.WriteLine("LZ: decompressing file(s).");
             int taskCount = DoFileTasks(options, LzDecompressFile);
             Terminal.WriteLine($"LZ: done decompressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
@@ -220,43 +196,26 @@ namespace Manifold.GFZCLI
             // Remove extension
             outputFilePath = StripFileExtension(outputFilePath);
 
-            // Decompress file and save it - if allowed
-            bool decompressedFileExists = File.Exists(outputFilePath);
-            bool doWriteFile = !decompressedFileExists || options.OverwriteFiles;
-            if (doWriteFile)
+            // 
+            var fileWrite = () =>
             {
                 // TODO: add LZ function in library to read from inputFilePath, decompress, save to outputFilePath
                 using (var stream = LzUtility.DecompressAvLz(inputFilePath))
-                using (var writer = File.Create(outputFilePath))
-                    writer.Write(stream.ToArray());
-            }
-
-            bool isOverwritingFile = decompressedFileExists && doWriteFile;
-            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
-            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
-
-            lock (lock_ConsoleWrite)
+                {
+                    using (var writer = File.Create(outputFilePath))
+                    {
+                        writer.Write(stream.ToArray());
+                    }
+                }
+            };
+            var info = new FileWriteInfo()
             {
-                Terminal.Write("LZ: ");
-                if (doWriteFile)
-                {
-                    Terminal.Write("Decompress file ");
-                    Terminal.Write(inputFilePath, FileNameColor);
-                    Terminal.Write(". ");
-                    Terminal.Write(writeMsg, writeColor);
-                    Terminal.Write(" file: ");
-                    Terminal.Write(outputFilePath, FileNameColor);
-                }
-                else
-                {
-                    Terminal.Write("Skip decompressing file ");
-                    Terminal.Write(inputFilePath, FileNameColor);
-                    Terminal.Write(" since ");
-                    Terminal.Write(outputFilePath, FileNameColor);
-                    Terminal.Write(" already exists.");
-                }
-                Terminal.WriteLine();
-            }
+                InputFilePath = inputFilePath,
+                OutputFilePath = outputFilePath,
+                PrintDesignator = "LZ",
+                PrintActionDescription = "decompressing file",
+            };
+            FileWriteOverwriteHandler(options, fileWrite, info);
         }
         public static void LzCompress(Options options)
         {
@@ -266,45 +225,28 @@ namespace Manifold.GFZCLI
         }
         public static void LzCompressFile(Options options, string inputFilePath, string outputFilePath)
         {
-            outputFilePath = AppendExtension(outputFilePath, "lz");
+            outputFilePath += ".lz";
 
-            // Compress file and save it - if allowed
-            bool compressedFileExists = File.Exists(outputFilePath);
-            bool doWriteFile = !compressedFileExists || options.OverwriteFiles;
-            if (doWriteFile)
+            // 
+            var fileWrite = () =>
             {
                 // TODO: add LZ function in library to read from inputFilePath, compress, save to outputFilePath
                 using (var stream = LzUtility.CompressAvLz(inputFilePath, options.AvGame))
-                using (var writer = File.Create(outputFilePath))
-                    writer.Write(stream.ToArray());
-            }
-
-            bool isOverwritingFile = compressedFileExists && doWriteFile;
-            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
-            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
-
-            lock (lock_ConsoleWrite)
+                {
+                    using (var writer = File.Create(outputFilePath))
+                    {
+                        writer.Write(stream.ToArray());
+                    }
+                }
+            };
+            var info = new FileWriteInfo()
             {
-                Terminal.Write("LZ: ");
-                if (doWriteFile)
-                {
-                    Terminal.Write("Compress file: ");
-                    Terminal.Write(inputFilePath, FileNameColor);
-                    Terminal.Write(". ");
-                    Terminal.Write(writeMsg, writeColor);
-                    Terminal.Write(" file: ");
-                    Terminal.Write(outputFilePath, FileNameColor);
-                }
-                else
-                {
-                    Terminal.Write("Skip compressing file ");
-                    Terminal.Write(inputFilePath, FileNameColor);
-                    Terminal.Write(" since ");
-                    Terminal.Write(outputFilePath, FileNameColor);
-                    Terminal.Write(" already exists.");
-                }
-                Terminal.WriteLine();
-            }
+                InputFilePath = inputFilePath,
+                OutputFilePath = outputFilePath,
+                PrintDesignator = "LZ",
+                PrintActionDescription = "compressing input file",
+            };
+            FileWriteOverwriteHandler(options, fileWrite, info);
         }
 
         public static void TplUnpack(Options options)
@@ -328,16 +270,17 @@ namespace Manifold.GFZCLI
                 tpl.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
             }
 
-            // File name, useful for some later stuff.
-            string tplFileName = Path.GetFileNameWithoutExtension(outputFilePath);
             // Create folder named the same thing as the TPL input file
             string directory = Path.GetDirectoryName(outputFilePath);
             string outputDirectory = Path.Combine(directory, tpl.FileName);
             Directory.CreateDirectory(outputDirectory);
 
+            // Prepare image encoder
+            var encoder = new PngEncoder();
+            encoder.CompressionLevel = PngCompressionLevel.BestCompression;
+
             // Iterate over texture and mipmaps, save to disk
             int tplIndex = 0;
-            //int tplDigits = tpl.TextureSeries.LengthToFormat();
             foreach (var textureSeries in tpl.TextureSeries)
             {
                 tplIndex++;
@@ -363,53 +306,30 @@ namespace Manifold.GFZCLI
                     if (skipCorruptedTexture)
                         continue;
 
-                    // Copy contents of GameCube texture into ImageSharp representation
+                    //
                     var texture = textureEntry.Texture;
-                    Image<Rgba32> image = TextureToImage(texture);
-
-                    //var format = PngFormat.Instance;
-                    var encoder = new PngEncoder();
-                    encoder.CompressionLevel = PngCompressionLevel.BestCompression;
                     string textureHash = textureSeries.MD5TextureHashes[entryIndex];
                     string fileName = $"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}.png";
                     string textureOutputPath = Path.Combine(outputDirectory, fileName);
                     CleanPath(ref textureOutputPath);
 
-                    bool fileExists = File.Exists(textureOutputPath);
-                    bool skipFileWrite = fileExists && !options.OverwriteFiles;
-                    if (skipFileWrite)
+                    //
+                    var fileWrite = () =>
                     {
-                        lock (lock_ConsoleWrite)
-                        {
-                            Terminal.Write("TPL: ");
-                            Terminal.Write("Skip writing texture ");
-                            Terminal.Write(fileName, FileNameColor);
-                            Terminal.Write(" from file ");
-                            Terminal.Write(inputFilePath, FileNameColor);
-                            Terminal.WriteLine();
-                        }
-                        continue;
-                    }
-
-                    // Save to disk
-                    image.Save(textureOutputPath, encoder);
-
-                    // Output message
-                    bool isOverwritingFile = fileExists;
-                    var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
-                    var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
-                    lock (lock_ConsoleWrite)
+                        // Copy contents of GameCube texture into ImageSharp representation
+                        var texture = textureEntry.Texture;
+                        Image<Rgba32> image = TextureToImage(texture);
+                        // Save to disk
+                        image.Save(textureOutputPath, encoder);
+                    };
+                    var info = new FileWriteInfo()
                     {
-                        Terminal.Write("TPL: ");
-                        Terminal.Write("Unpacking file ");
-                        Terminal.Write(inputFilePath, FileNameColor);
-                        Terminal.Write($" Texture {tplIndex},");
-                        Terminal.Write($" Mipmap {mipmapIndex}. ");
-                        Terminal.Write(writeMsg, writeColor);
-                        Terminal.Write($" file: ");
-                        Terminal.Write(textureOutputPath, FileNameColor);
-                        Terminal.WriteLine();
-                    }
+                        InputFilePath = inputFilePath,
+                        OutputFilePath = textureOutputPath,
+                        PrintDesignator = "TPL",
+                        PrintActionDescription = $"unpacking texture {tplIndex} mipmap {mipmapIndex} of file",
+                    };
+                    FileWriteOverwriteHandler(options, fileWrite, info);
                 }
             }
         }
@@ -494,51 +414,31 @@ namespace Manifold.GFZCLI
         }
         public static void LiveCameraStageBinToTsvFile(Options options, string inputFilePath, string outputFilePath)
         {
-            bool outputFileExists = File.Exists(outputFilePath);
-            bool doWriteFile = !outputFileExists || options.OverwriteFiles;
-            if (doWriteFile)
+            // Deserialize the file
+            LiveCameraStage liveCameraStage = new LiveCameraStage();
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), LiveCameraStage.endianness))
             {
-                // Deserialize the file
-                LiveCameraStage liveCameraStage = new LiveCameraStage();
-                using (var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), LiveCameraStage.endianness))
-                {
-                    liveCameraStage.Deserialize(reader);
-                    liveCameraStage.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
-                }
+                liveCameraStage.Deserialize(reader);
+                liveCameraStage.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
+            }
 
+            //
+            var fileWrite = () =>
+            {
                 // Write it to the stream
                 using (var textWriter = new StreamWriter(File.Create(outputFilePath)))
                 {
                     liveCameraStage.Serialize(textWriter);
                 }
-            }
-
-            bool isOverwritingFile = outputFileExists && options.OverwriteFiles;
-            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
-            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
-
-            lock (lock_ConsoleWrite)
+            };
+            var info = new FileWriteInfo()
             {
-                Terminal.Write("Live Camera Stage: ");
-                if (doWriteFile)
-                {
-                    Terminal.Write("Create TSV file: ");
-                    Terminal.Write(inputFilePath, FileNameColor);
-                    Terminal.Write(". ");
-                    Terminal.Write(writeMsg, writeColor);
-                    Terminal.Write(" file: ");
-                    Terminal.Write(outputFilePath, FileNameColor);
-                }
-                else
-                {
-                    Terminal.Write("Skip creating TSV file: ");
-                    Terminal.Write(inputFilePath, FileNameColor);
-                    Terminal.Write(" since ");
-                    Terminal.Write(outputFilePath, FileNameColor);
-                    Terminal.Write(" already exists.");
-                }
-                Terminal.WriteLine();
-            }
+                InputFilePath = inputFilePath,
+                OutputFilePath = outputFilePath,
+                PrintDesignator = "LiveCam Stage",
+                PrintActionDescription = "creating livecam_stage TSV from file",
+            };
+            FileWriteOverwriteHandler(options, fileWrite, info);
         }
         public static void LiveCameraStageTsvToBin(Options options)
         {
@@ -552,54 +452,31 @@ namespace Manifold.GFZCLI
         }
         public static void LiveCameraStageTsvToBinFile(Options options, string inputFilePath, string outputFilePath)
         {
-            bool outputFileExists = File.Exists(outputFilePath);
-            bool doWriteFile = !outputFileExists || options.OverwriteFiles;
-            if (doWriteFile)
+            // Load file
+            LiveCameraStage liveCameraStage = new LiveCameraStage();
+            using (var textReader = new StreamReader(File.OpenRead(inputFilePath)))
             {
-                LiveCameraStage liveCameraStage = new LiveCameraStage();
-                using (var textReader = new StreamReader(File.OpenRead(inputFilePath)))
-                {
-                    liveCameraStage.Deserialize(textReader);
-                    liveCameraStage.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
-                }
+                liveCameraStage.Deserialize(textReader);
+                liveCameraStage.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
+            }
 
+            // 
+            var fileWrite = () =>
+                {
                 using (var writer = new EndianBinaryWriter(File.Create(outputFilePath), LiveCameraStage.endianness))
                 {
                     liveCameraStage.Serialize(writer);
                 }
-            }
-
-            bool isOverwritingFile = outputFileExists && options.OverwriteFiles;
-            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
-            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
-
-            lock (lock_ConsoleWrite)
+            };
+            var info = new FileWriteInfo()
             {
-                Terminal.Write("Live Camera Stage: ");
-                if (doWriteFile)
-                {
-                    Terminal.Write("Create BIN file: ");
-                    Terminal.Write(inputFilePath, FileNameColor);
-                    Terminal.Write(". ");
-                    Terminal.Write(writeMsg, writeColor);
-                    Terminal.Write(" file: ");
-                    Terminal.Write(outputFilePath, FileNameColor);
-                }
-                else
-                {
-                    Terminal.Write("Skip creating BIN file: ");
-                    Terminal.Write(inputFilePath, FileNameColor);
-                    Terminal.Write(" since ");
-                    Terminal.Write(outputFilePath, FileNameColor);
-                    Terminal.Write(" already exists.");
-                }
-                Terminal.WriteLine();
-            }
+                InputFilePath = inputFilePath,
+                OutputFilePath = outputFilePath,
+                PrintDesignator = "LiveCam Stage",
+                PrintActionDescription = "creating livecam_stage TSV from file",
+            };
+            FileWriteOverwriteHandler(options, fileWrite, info);
         }
-
-
-
-
 
         public static void EmblemToImage(Options options)
         {
@@ -616,12 +493,10 @@ namespace Manifold.GFZCLI
             int gciCount = DoFileTasks(options, EmblemGciToImage);
             Terminal.WriteLine($"Emblem: done converting {gciCount} file{(gciCount != 1 ? 's' : "")}.");
         }
-
         public static void ImageToEmblem(Options options)
         {
-
+            throw new NotImplementedException();
         }
-
 
         public static Image<Rgba32> TextureToImage(Texture texture)
         {
@@ -661,23 +536,19 @@ namespace Manifold.GFZCLI
                 Terminal.Write($"{info.PrintDesignator}: ");
                 if (doWriteFile)
                 {
-                    Terminal.Write(info.PrintAction.ToLower());
-                    Terminal.Write(info.PrintActionDetails.Length > 0 ? " " : "");
-                    Terminal.Write(info.PrintActionDetails);
-                    Terminal.Write(" file: ");
+                    Terminal.Write(info.PrintActionDescription);
+                    Terminal.Write(" ");
                     Terminal.Write(info.InputFilePath, FileNameColor);
                     Terminal.Write(". ");
                     Terminal.Write(writeMsg, writeColor);
-                    Terminal.Write(" file: ");
+                    Terminal.Write(" file ");
                     Terminal.Write(info.OutputFilePath, FileNameColor);
                 }
                 else
                 {
                     Terminal.Write("skip ");
-                    Terminal.Write(info.PrintAction.ToLower());
-                    Terminal.Write(info.PrintActionDetails.Length > 0 ? " " : "");
-                    Terminal.Write(info.PrintActionDetails);
-                    Terminal.Write(" file ");
+                    Terminal.Write(info.PrintActionDescription);
+                    Terminal.Write(" ");
                     Terminal.Write(info.InputFilePath, FileNameColor);
                     Terminal.Write(" since ");
                     Terminal.Write(info.OutputFilePath, FileNameColor);
@@ -691,7 +562,6 @@ namespace Manifold.GFZCLI
                 fileWrite.Invoke();
             }
         }
-
 
         private static void EmblemGciToImage(Options options, string inputFilePath, string outputFilePath)
         {
@@ -722,14 +592,14 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFilePath,
                 PrintDesignator = "Emblem",
-                PrintAction = "converting",
+                PrintActionDescription = "converting",
             };
 
             // BANNER
             {
                 string textureOutputPath = $"{outputFilePath}-banner.png";
                 fileWriteInfo.OutputFilePath = textureOutputPath;
-                fileWriteInfo.PrintAction = "emblem banner";
+                fileWriteInfo.PrintActionDescription = "emblem banner";
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
             }
             // ICON
@@ -739,14 +609,14 @@ namespace Manifold.GFZCLI
                 string fileName = $"{emblemGCI.GameCode}-icon.png";
                 string textureOutputPath = Path.Combine(directory, fileName);
                 fileWriteInfo.OutputFilePath = textureOutputPath;
-                fileWriteInfo.PrintAction = "emblem icon";
+                fileWriteInfo.PrintActionDescription = "emblem icon";
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
             }
             // EMBLEM
             {
                 string textureOutputPath = $"{outputFilePath}.png";
                 fileWriteInfo.OutputFilePath = textureOutputPath;
-                fileWriteInfo.PrintAction = "emblem";
+                fileWriteInfo.PrintActionDescription = "emblem";
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
             }
         }
@@ -775,7 +645,6 @@ namespace Manifold.GFZCLI
                 InputFilePath = inputFilePath,
                 OutputFilePath = outputFilePath,
                 PrintDesignator = "Emblem",
-                PrintAction = "converting",
             };
 
             // Write out each emblem in file
@@ -787,7 +656,7 @@ namespace Manifold.GFZCLI
                 string directory = Path.GetDirectoryName(outputFilePath);
                 string fileName = $"{emblemBIN.FileName}-{index.PadLeft(format, '0')}.png";
                 string textureOutputPath = Path.Combine(directory, fileName);
-                fileWriteInfo.PrintActionDetails = $"emblem {index} of";
+                fileWriteInfo.PrintActionDescription = $"converting emblem {index} of";
                 WriteImage(options, encoder, emblem.Texture, fileWriteInfo);
             }
         }

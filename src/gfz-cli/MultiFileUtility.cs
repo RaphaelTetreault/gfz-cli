@@ -169,11 +169,11 @@ namespace Manifold.GFZCLI
             return filePathWithExtension;
         }
 
-        public static string AppendExtension(string filePath, string extension)
-        {
-            var filePathWithExtension = $"{filePath}.{extension}";
-            return filePathWithExtension;
-        }
+        //public static string AppendFileExtension(string filePath, string extension)
+        //{
+        //    var filePathWithExtension = $"{filePath}.{extension}";
+        //    return filePathWithExtension;
+        //}
 
 
         public static string CleanPath(ref string path)
