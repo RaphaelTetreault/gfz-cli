@@ -14,6 +14,9 @@ using SixLabors.ImageSharp.Formats.Png;
 
 using static Manifold.GFZCLI.MultiFileUtility;
 using GameCube.GFZ.Camera;
+using System.Reflection;
+using SixLabors.ImageSharp.Formats;
+//using System.Text;
 
 namespace Manifold.GFZCLI
 {
@@ -600,7 +603,18 @@ namespace Manifold.GFZCLI
 
         public static void EmblemToImage(Options options)
         {
-            EmblemBinToImages(options);
+            Terminal.WriteLine("Emblem: converting emblems from BIN files.");
+            int binCount = DoFileTasks(options, EmblemBinToImages);
+            Terminal.WriteLine($"Emblem: done converting {binCount} file{(binCount != 1 ? 's' : "")}.");
+
+            // In this case where no search pattern is set, find *FZE*.GCI (emblem) files.
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = "*fze*.dat.gci";
+
+            Terminal.WriteLine("Emblem: converting emblems from GCI files.");
+            int gciCount = DoFileTasks(options, EmblemGciToImage);
+            Terminal.WriteLine($"Emblem: done converting {gciCount} file{(gciCount != 1 ? 's' : "")}.");
         }
 
         public static void ImageToEmblem(Options options)
@@ -609,7 +623,7 @@ namespace Manifold.GFZCLI
         }
 
 
-        private static Image<Rgba32> TextureToImage(Texture texture)
+        public static Image<Rgba32> TextureToImage(Texture texture)
         {
             Image<Rgba32> image = new Image<Rgba32>(texture.Width, texture.Height);
 
@@ -624,69 +638,157 @@ namespace Manifold.GFZCLI
 
             return image;
         }
-
-
-        private static void EmblemGciToImage(Options options)
+        public static void WriteImage(Options options, IImageEncoder encoder, Texture texture, FileWriteInfo info)
         {
-            Terminal.WriteLine("Writing emblems...");
-
-            var emblemGCI = new EmblemGCI();
-            using (var reader = new EndianBinaryReader(File.OpenRead(options.InputPath), EmblemGCI.endianness))
+            var action = () =>
             {
-                emblemGCI.Deserialize(reader);
-                emblemGCI.FileName = Path.GetFileNameWithoutExtension(options.InputPath);
+                Image<Rgba32> image = TextureToImage(texture);
+                image.Save(info.OutputFilePath, encoder);
+            };
+
+            FileWriteOverwriteHandler(options, action, info);
+        }
+        public static void FileWriteOverwriteHandler(Options options, Action fileWrite, FileWriteInfo info)
+        {
+            bool outputFileExists = File.Exists(info.OutputFilePath);
+            bool doWriteFile = !outputFileExists || options.OverwriteFiles;
+            bool isOverwritingFile = outputFileExists && doWriteFile;
+            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
+            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
+
+            lock (lock_ConsoleWrite)
+            {
+                Terminal.Write($"{info.PrintDesignator}: ");
+                if (doWriteFile)
+                {
+                    Terminal.Write(info.PrintAction.ToLower());
+                    Terminal.Write(info.PrintActionDetails.Length > 0 ? " " : "");
+                    Terminal.Write(info.PrintActionDetails);
+                    Terminal.Write(" file: ");
+                    Terminal.Write(info.InputFilePath, FileNameColor);
+                    Terminal.Write(". ");
+                    Terminal.Write(writeMsg, writeColor);
+                    Terminal.Write(" file: ");
+                    Terminal.Write(info.OutputFilePath, FileNameColor);
+                }
+                else
+                {
+                    Terminal.Write("skip ");
+                    Terminal.Write(info.PrintAction.ToLower());
+                    Terminal.Write(info.PrintActionDetails.Length > 0 ? " " : "");
+                    Terminal.Write(info.PrintActionDetails);
+                    Terminal.Write(" file ");
+                    Terminal.Write(info.InputFilePath, FileNameColor);
+                    Terminal.Write(" since ");
+                    Terminal.Write(info.OutputFilePath, FileNameColor);
+                    Terminal.Write(" already exists.");
+                }
+                Terminal.WriteLine();
             }
 
-            string directory = Path.GetDirectoryName(options.InputPath);
+            if (doWriteFile)
+            {
+                fileWrite.Invoke();
+            }
+        }
+
+
+        private static void EmblemGciToImage(Options options, string inputFilePath, string outputFilePath)
+        {
+            // Abort method if file does not use correct
+            string extension = Path.GetExtension(inputFilePath);
+            bool isGciFile = extension == EmblemGCI.Extension;
+            if (!isGciFile)
+                return;
+
+            // Read GCI Emblem data
+            var emblemGCI = new EmblemGCI();
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), EmblemGCI.endianness))
+            {
+                emblemGCI.Deserialize(reader);
+                emblemGCI.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
+            }
+
+            // Prepare image encoder
             var encoder = new PngEncoder();
             encoder.CompressionLevel = PngCompressionLevel.BestCompression;
+
+            // Strip twice to remove .dat.gci extension
+            outputFilePath = StripFileExtension(outputFilePath);
+            outputFilePath = StripFileExtension(outputFilePath);
+
+            // Info for file write + console print
+            var fileWriteInfo = new FileWriteInfo()
+            {
+                InputFilePath = inputFilePath,
+                PrintDesignator = "Emblem",
+                PrintAction = "converting",
+            };
 
             // BANNER
             {
-                string fileName = $"{emblemGCI.InternalFileName}-banner.png";
-                string textureOutputPath = Path.Combine(directory, fileName);
-                Image<Rgba32> image = TextureToImage(emblemGCI.Banner.Texture);
-                image.Save(textureOutputPath, encoder);
+                string textureOutputPath = $"{outputFilePath}-banner.png";
+                fileWriteInfo.OutputFilePath = textureOutputPath;
+                fileWriteInfo.PrintAction = "emblem banner";
+                WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
             }
             // ICON
             {
+                // Strip original file name, replace with GC game code
+                string directory = Path.GetDirectoryName(outputFilePath);
                 string fileName = $"{emblemGCI.GameCode}-icon.png";
                 string textureOutputPath = Path.Combine(directory, fileName);
-                Image<Rgba32> image = TextureToImage(emblemGCI.Icon.Texture);
-                image.Save(textureOutputPath, encoder);
+                fileWriteInfo.OutputFilePath = textureOutputPath;
+                fileWriteInfo.PrintAction = "emblem icon";
+                WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
             }
             // EMBLEM
             {
-                string fileName = $"{emblemGCI.InternalFileName}.png";
-                string textureOutputPath = Path.Combine(directory, fileName);
-                Image<Rgba32> image = TextureToImage(emblemGCI.Emblem.Texture);
-                image.Save(textureOutputPath, encoder);
+                string textureOutputPath = $"{outputFilePath}.png";
+                fileWriteInfo.OutputFilePath = textureOutputPath;
+                fileWriteInfo.PrintAction = "emblem";
+                WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
             }
         }
-        private static void EmblemBinToImages(Options options)
+        private static void EmblemBinToImages(Options options, string inputFilePath, string outputFilePath)
         {
-            Terminal.WriteLine("Writing BIN emblems...");
+            string extension = Path.GetExtension(inputFilePath);
+            bool isBinFile = extension == EmblemBIN.Extension;
+            if (!isBinFile)
+                return;
 
+            // Read BIN Emblem data
             var emblemBIN = new EmblemBIN();
-            using (var reader = new EndianBinaryReader(File.OpenRead(options.InputPath), EmblemBIN.endianness))
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), EmblemBIN.endianness))
             {
                 emblemBIN.Deserialize(reader);
-                emblemBIN.FileName = Path.GetFileNameWithoutExtension(options.InputPath);
+                emblemBIN.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
             }
 
-            string directory = Path.GetDirectoryName(options.InputPath);
+            // Prepare image encoder
             var encoder = new PngEncoder();
             encoder.CompressionLevel = PngCompressionLevel.BestCompression;
 
+            // Info for file write + console print
+            var fileWriteInfo = new FileWriteInfo()
+            {
+                InputFilePath = inputFilePath,
+                OutputFilePath = outputFilePath,
+                PrintDesignator = "Emblem",
+                PrintAction = "converting",
+            };
+
+            // Write out each emblem in file
             int index = 0;
             int format = emblemBIN.Emblems.LengthToFormat();
             foreach (var emblem in emblemBIN.Emblems)
             {
                 index++;
+                string directory = Path.GetDirectoryName(outputFilePath);
                 string fileName = $"{emblemBIN.FileName}-{index.PadLeft(format, '0')}.png";
                 string textureOutputPath = Path.Combine(directory, fileName);
-                Image<Rgba32> image = TextureToImage(emblem.Texture);
-                image.Save(textureOutputPath, encoder);
+                fileWriteInfo.PrintActionDetails = $"emblem {index} of";
+                WriteImage(options, encoder, emblem.Texture, fileWriteInfo);
             }
         }
 
