@@ -311,7 +311,7 @@ namespace Manifold.GFZCLI
                     string textureHash = textureSeries.MD5TextureHashes[entryIndex];
                     string fileName = $"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}.png";
                     string textureOutputPath = Path.Combine(outputDirectory, fileName);
-                    CleanPath(ref textureOutputPath);
+                    textureOutputPath = CleanPath(textureOutputPath);
 
                     //
                     var fileWrite = () =>

@@ -20,9 +20,7 @@ namespace Manifold.GFZCLI
             // Get the file or all files at 'path'
             string path = options.InputPath;
             string[] inputFilePaths = GetInputFiles(options, path);
-            CleanPath(ref inputFilePaths);
             string[] outputFilePaths = GetOutputFiles(options, inputFilePaths);
-            CleanPath(ref outputFilePaths);
             EnsureDirectoriesExist(outputFilePaths);
 
             // Sanity check
@@ -90,8 +88,13 @@ namespace Manifold.GFZCLI
 
         public static string GetOutputPath(Options options, string filePath)
         {
-            bool isFile = File.Exists(options.InputPath);
-            bool isDirectory = Directory.Exists(options.InputPath);
+            // Clean separators
+            filePath = CleanPath(filePath);
+            string inputPath = CleanPath(options.InputPath);
+            string outputPath = CleanPath(options.OutputPath);
+
+            bool isFile = File.Exists(inputPath);
+            bool isDirectory = Directory.Exists(inputPath);
             bool isValid = isFile ^ isDirectory;
             if (!isValid)
             {
@@ -101,30 +104,30 @@ namespace Manifold.GFZCLI
             if (isFile)
             {
                 // If input is a file, check to see if output path is specified
-                bool hasOutputFilePath = !string.IsNullOrEmpty(options.OutputPath);
+                bool hasOutputFilePath = !string.IsNullOrEmpty(outputPath);
                 if (hasOutputFilePath)
                 {
                     // If it does, it means the output path is a file path, so return that
-                    return options.OutputPath;
+                    return outputPath;
                 }
             }
 
             if (isDirectory)
             {
                 // Check to see if an output directory is specified
-                bool hasOutputDirectory = !string.IsNullOrEmpty(options.OutputPath);
+                bool hasOutputDirectory = !string.IsNullOrEmpty(outputPath);
                 if (hasOutputDirectory)
                 {
                     // Remove inputPath from the file Path
-                    string relativePath = filePath.Replace(options.InputPath, "");
+                    string relativePath = filePath.Replace(inputPath, "");
 
                     if (relativePath[0] == '\\' || relativePath[0] == '/')
                         relativePath = relativePath.Substring(1);
 
                     // Append the relative path to the end of the output path
-                    string outputPath = Path.Combine(options.OutputPath, relativePath);
+                    string cleanOutputPath = Path.Combine(outputPath, relativePath);
                     // Return final result
-                    return outputPath;
+                    return cleanOutputPath;
                 }
             }
 
@@ -176,15 +179,15 @@ namespace Manifold.GFZCLI
         //}
 
 
-        public static string CleanPath(ref string path)
+        public static string CleanPath(string path)
         {
             path = path.Replace("\\", "/");
             return path;
         }
-        public static string[] CleanPath(ref string[] paths)
+        public static string[] CleanPath(string[] paths)
         {
             for (int i = 0; i < paths.Length; i++)
-                CleanPath(ref paths[i]);
+                paths[i] = CleanPath(paths[i]);
 
             return paths;
         }
