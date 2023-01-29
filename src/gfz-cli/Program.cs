@@ -493,76 +493,6 @@ namespace Manifold.GFZCLI
             int gciCount = DoFileTasks(options, EmblemGciToImage);
             Terminal.WriteLine($"Emblem: done converting {gciCount} file{(gciCount != 1 ? 's' : "")}.");
         }
-        public static void ImageToEmblem(Options options)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static Image<Rgba32> TextureToImage(Texture texture)
-        {
-            Image<Rgba32> image = new Image<Rgba32>(texture.Width, texture.Height);
-
-            for (int y = 0; y < texture.Height; y++)
-            {
-                for (int x = 0; x < texture.Width; x++)
-                {
-                    TextureColor pixel = texture[x, y];
-                    image[x, y] = new Rgba32(pixel.r, pixel.g, pixel.b, pixel.a);
-                }
-            }
-
-            return image;
-        }
-        public static void WriteImage(Options options, IImageEncoder encoder, Texture texture, FileWriteInfo info)
-        {
-            var action = () =>
-            {
-                Image<Rgba32> image = TextureToImage(texture);
-                image.Save(info.OutputFilePath, encoder);
-            };
-
-            FileWriteOverwriteHandler(options, action, info);
-        }
-        public static void FileWriteOverwriteHandler(Options options, Action fileWrite, FileWriteInfo info)
-        {
-            bool outputFileExists = File.Exists(info.OutputFilePath);
-            bool doWriteFile = !outputFileExists || options.OverwriteFiles;
-            bool isOverwritingFile = outputFileExists && doWriteFile;
-            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
-            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
-
-            lock (lock_ConsoleWrite)
-            {
-                Terminal.Write($"{info.PrintDesignator}: ");
-                if (doWriteFile)
-                {
-                    Terminal.Write(info.PrintActionDescription);
-                    Terminal.Write(" ");
-                    Terminal.Write(info.InputFilePath, FileNameColor);
-                    Terminal.Write(". ");
-                    Terminal.Write(writeMsg, writeColor);
-                    Terminal.Write(" file ");
-                    Terminal.Write(info.OutputFilePath, FileNameColor);
-                }
-                else
-                {
-                    Terminal.Write("skip ");
-                    Terminal.Write(info.PrintActionDescription);
-                    Terminal.Write(" ");
-                    Terminal.Write(info.InputFilePath, FileNameColor);
-                    Terminal.Write(" since ");
-                    Terminal.Write(info.OutputFilePath, FileNameColor);
-                    Terminal.Write(" already exists.");
-                }
-                Terminal.WriteLine();
-            }
-
-            if (doWriteFile)
-            {
-                fileWrite.Invoke();
-            }
-        }
-
         private static void EmblemGciToImage(Options options, string inputFilePath, string outputFilePath)
         {
             // Abort method if file does not use correct
@@ -658,6 +588,76 @@ namespace Manifold.GFZCLI
                 string textureOutputPath = Path.Combine(directory, fileName);
                 fileWriteInfo.PrintActionDescription = $"converting emblem {index} of";
                 WriteImage(options, encoder, emblem.Texture, fileWriteInfo);
+            }
+        }
+        public static void ImageToEmblem(Options options)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public static Image<Rgba32> TextureToImage(Texture texture)
+        {
+            Image<Rgba32> image = new Image<Rgba32>(texture.Width, texture.Height);
+
+            for (int y = 0; y < texture.Height; y++)
+            {
+                for (int x = 0; x < texture.Width; x++)
+                {
+                    TextureColor pixel = texture[x, y];
+                    image[x, y] = new Rgba32(pixel.r, pixel.g, pixel.b, pixel.a);
+                }
+            }
+
+            return image;
+        }
+        public static void WriteImage(Options options, IImageEncoder encoder, Texture texture, FileWriteInfo info)
+        {
+            var action = () =>
+            {
+                Image<Rgba32> image = TextureToImage(texture);
+                image.Save(info.OutputFilePath, encoder);
+            };
+
+            FileWriteOverwriteHandler(options, action, info);
+        }
+        public static void FileWriteOverwriteHandler(Options options, Action fileWrite, FileWriteInfo info)
+        {
+            bool outputFileExists = File.Exists(info.OutputFilePath);
+            bool doWriteFile = !outputFileExists || options.OverwriteFiles;
+            bool isOverwritingFile = outputFileExists && doWriteFile;
+            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
+            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
+
+            lock (lock_ConsoleWrite)
+            {
+                Terminal.Write($"{info.PrintDesignator}: ");
+                if (doWriteFile)
+                {
+                    Terminal.Write(info.PrintActionDescription);
+                    Terminal.Write(" ");
+                    Terminal.Write(info.InputFilePath, FileNameColor);
+                    Terminal.Write(". ");
+                    Terminal.Write(writeMsg, writeColor);
+                    Terminal.Write(" file ");
+                    Terminal.Write(info.OutputFilePath, FileNameColor);
+                }
+                else
+                {
+                    Terminal.Write("skip ");
+                    Terminal.Write(info.PrintActionDescription);
+                    Terminal.Write(" ");
+                    Terminal.Write(info.InputFilePath, FileNameColor);
+                    Terminal.Write(" since ");
+                    Terminal.Write(info.OutputFilePath, FileNameColor);
+                    Terminal.Write(" already exists.");
+                }
+                Terminal.WriteLine();
+            }
+
+            if (doWriteFile)
+            {
+                fileWrite.Invoke();
             }
         }
 
