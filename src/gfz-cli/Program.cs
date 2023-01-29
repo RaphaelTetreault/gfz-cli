@@ -335,7 +335,9 @@ namespace Manifold.GFZCLI
         }
         public static void TplPack(Options options)
         {
-            string path = options.TplPack;
+            return;
+
+            string path = options.InputPath;
             if (string.IsNullOrEmpty(path))
                 return;
 

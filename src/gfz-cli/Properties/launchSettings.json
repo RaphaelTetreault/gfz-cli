@@ -29,11 +29,11 @@
     },
     "live-camera-stage-bin-to-tsv": {
       "commandName": "Project",
-      "commandLineArgs": "--live-camera-stage-bin-to-tsv D:\\gfzj01\\ --search-subdirs --overwrite"
+      "commandLineArgs": "-a live-camera-stage-bin-to-tsv -i D:\\gfzj01\\ --search-subdirs --overwrite"
     },
     "live-camera-stage-tsv-to-bin": {
       "commandName": "Project",
-      "commandLineArgs": "--live-camera-stage-tsv-to-bin D:\\gfzj01\\ --search-subdirs --overwrite"
+      "commandLineArgs": "-a live-camera-stage-tsv-to-bin -i D:\\gfzj01\\ --search-subdirs --overwrite"
     },
     "emblem-to-image": {
       "commandName": "Project",

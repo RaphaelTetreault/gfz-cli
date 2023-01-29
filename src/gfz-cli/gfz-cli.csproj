@@ -6,7 +6,7 @@
     <RootNamespace>Manifold.GFZCLI</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>0.2.1</Version>
+    <Version>0.3.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

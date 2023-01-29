@@ -6,33 +6,30 @@ namespace Manifold.GFZCLI
 {
     public class Options
     {
-        //internal static class ArgsShort
-        //{
-        //    public const char SearchPattern = 'p';
-        //    public const char SearchSubdirectories = 's';
-        //}
+        internal static class ArgsShort
+        {
+            public const char Action = 'a';
+            public const char InputPath = 'i';
+            public const char OutputPath = 'o';
+            //public const char SearchPattern = 'p';
+            //public const char SearchSubdirectories = 's';
+        }
 
         internal static class Args
         {
-            public const string Verbose = "verbose";
+            //public const string Verbose = "verbose";
+
+            public const string Action = "action";
+            public const string InputPath = "input-path";
+            public const string OutputPath = "output-path";
+
             public const string OverwriteFiles = "overwrite";
             public const string SearchPattern = "search-pattern";
             public const string SearchSubdirectories = "search-subdirs";
             public const string SerializationFormat = "format";
 
-            public const string LzDecompressTarget = "lzd";
-            public const string LzCompressTarget = "lzc";
-
-            public const string TplUnpack = "tpl-unpack";
             public const string TplUnpackMipmaps = "tpl-unpack-mipmaps";
             public const string TplUnpackSaveCorruptedTextures = "tpl-unpack-corrupted-cmpr";
-            public const string TplPack = "tpl-pack";
-
-            public const string CarDataBinPath = "cardata-bin-to-tsv";
-            public const string CarDataTsvPath = "cardata-tsv-to-bin";
-
-            public const string LiveCameraStageBinToTsvPath = "live-camera-stage-bin-to-tsv";
-            public const string LiveCameraStageTsvToBinPath = "live-camera-stage-tsv-to-bin";
         }
 
         internal static class Help
@@ -41,10 +38,25 @@ namespace Manifold.GFZCLI
                 "Output all messages to console.\n" +
                 "\tEnabled only when called.";
 
+            public const string Action =
+                "The action to perform. (action: description)\n" +
+                "\tcardata-bin-to-tsv: create cardata TSV from input binary.\n" +
+                "\tcardata-tsv-to-bin: create cardata binary from input TSV.\n" +
+                "\temblem-to-image: convert .gci and .bin emblem files into images.\n" +
+                //"\timage-to-emblem: WIP.\n" +
+                "\tlive-camera-stage-bin-to-tsv: create livecam_stage TSV from input file.\n" +
+                "\tlive-camera-stage-tsv-to-bin: create livecam_stage binary from TSV file.\n" +
+                "\tlz-decompress: decompress .lz archive.\n" +
+                "\tlz-compress: compress file to .lz archive.\n" +
+                "\ttpl-unpack: unpack .tpl archive into folder of it's textures."; //\n" +
+            public const string InputPath =
+                "The input path to a file or folder for the specified action. Most actions support both.";
+            public const string OutputPath =
+                "Optional. The output path. Can be a full file path (for single file actions) " +
+                "or destination directory (for multi file actions).";
             public const string OverwriteFiles =
                 "Allow output files to overwrite existing files.\n" +
                 "\tEnabled only when called.";
-
             public const string SearchPattern =
                 "The search pattern used to find files.\n" +
                 "\tEx: \"*.tpl.lz\" (find all compressed TPL files in any directory, if permitted.)\n" +
@@ -57,37 +69,13 @@ namespace Manifold.GFZCLI
                 "The format used when serializing.\n" +
                 "\tOptions: \"ax\", \"gx\". Set to \"gx\" by default.";
 
-
-            public const string LzDecompressTarget =
-                "The target path to decompress. Can be file or directory.";
-            public const string LzCompressTarget =
-                "The target path to compress. Can be file or directory\n" +
-                "\tUse --" + Args.SerializationFormat + " to set output format.";
-
-
-            public const string TplUnpack =
-                "Creates a folder containing the image contents of target .tpl file(s).\n" +
-                "\tInput path can be a file or directory.\n" +
-                "\tOutput folder is created in the same directory as the file.";
-            public const string TplPack =
-                "TODO";
             public const string TplUnpackMipmaps =
-                "Export mipmap textures.\n" +
-                "\t--" + Args.TplUnpack + " must be called.";
+                "tpl-unpack (option): Export mipmap textures.";
             public const string TplUnpackSaveCorruptedTextures =
-                "Export corrupted CMPR mipmap textures.\n" +
-                "\t--" + Args.TplUnpack + " must be called.\n" +
-                "\t--" + Args.TplUnpackMipmaps + " must be called.";
-
-
-            public const string CarDataToTSV =
-                "Creates a TSV spreadsheet from the values of cardata.lz binary.\n" +
-                "\tApplies only to F-Zero GX. File location: ./game/cardata.lz";
-            public const string CarDataFromTSV =
-                "Creates a binary from the values of a cardata TSV spreadsheet.";
+                "tpl-unpack (option): Export corrupted CMPR mipmap textures.";
         }
 
-        [Option('a', "action", HelpText = "TODO", Required = true)]
+        [Option(ArgsShort.Action, Args.Action, HelpText = Help.Action, Required = true)]
         public string ActionStr { get; set; } = string.Empty;
         public GfzCliAction Action
         {
@@ -99,16 +87,11 @@ namespace Manifold.GFZCLI
             }
         }
 
-
-        [Option('i', "input-path", HelpText = "TODO", Required = true)]
+        [Option(ArgsShort.InputPath, Args.InputPath, HelpText = Help.InputPath, Required = true)]
         public string InputPath { get; set; } = string.Empty;
 
-        [Option('o', "output-path", HelpText = "TODO")]
+        [Option(ArgsShort.OutputPath, Args.OutputPath, HelpText = Help.OutputPath)]
         public string OutputPath { get; set; } = string.Empty;
-
-
-        [Option(Args.Verbose, HelpText = Help.Verbose)]
-        public bool Verbose { get; set; }
 
         [Option(Args.OverwriteFiles, HelpText = Help.OverwriteFiles)]
         public bool OverwriteFiles { get; set; }
@@ -119,57 +102,22 @@ namespace Manifold.GFZCLI
         [Option(Args.SearchSubdirectories, HelpText = Help.SearchSubdirectories)]
         public bool SearchSubdirectories { get; set; }
 
+        // GENERAL OPTIONS
         [Option(Args.SerializationFormat, HelpText = Help.SerializationFormat)]
         public string SerializationFormat { get; set; } = string.Empty;
 
-
-        // TPL
-        [Option(Args.TplUnpack, HelpText = Help.TplUnpack)]
-        public string TplUnpack { get; set; } = string.Empty;
-
+        // TPL OPTIONS
         [Option(Args.TplUnpackMipmaps, HelpText = Help.TplUnpackMipmaps)]
         public bool TplUnpackMipmaps { get; set; }
 
         [Option(Args.TplUnpackSaveCorruptedTextures, HelpText = Help.TplUnpackSaveCorruptedTextures)]
         public bool TplUnpackSaveCorruptedTextures { get; set; }
 
-        // TEMP: disable PACK for release
-        //[Option(Args.TplPack,  HelpText = Help.TplPack)]
-        public string TplPack { get; set; } = string.Empty;
-        // TODO: implement/parse image-sharp enum for texture output types (use n64-mksprite impl.)
-
-
-        // CARDATA
-        [Option(Args.CarDataBinPath, HelpText = Help.CarDataToTSV)]
-        public string CarDataBinPath { get; set; } = string.Empty;
-
-        [Option(Args.CarDataTsvPath, HelpText = Help.CarDataFromTSV)]
-        public string CarDataTsvPath { get; set; } = string.Empty;
-
-
-        // LIVE CAMERA STAGE
-        [Option(Args.LiveCameraStageBinToTsvPath, HelpText = "TODO")]
-        public string LiveCameraStageBinToTsvPath { get; set; } = string.Empty;
-
-        [Option(Args.LiveCameraStageTsvToBinPath, HelpText = "TODO")]
-        public string LiveCameraStageTsvToBinPath { get; set; } = string.Empty;
-
 
         public SearchOption SearchOption => SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
         public SerializeFormat SerializeFormat => GetSerializeFormat(SerializationFormat);
         public GxGame AvGame => GetAvFormat(SerializeFormat);
 
-
-        public void PrintState()
-        {
-            //Console.WriteLine("Options:");
-            //Console.WriteLine($"{nameof(Verbose)}: {Verbose}");
-            //Console.WriteLine($"{nameof(InputPath)}: {InputPath}");
-            //Console.WriteLine($"{nameof(OutputPath)}: {OutputPath}");
-            //Console.WriteLine($"{nameof(SearchSubdirectories)}: {SearchSubdirectories}");
-            //Console.WriteLine($"{nameof(SearchOption)}: {SearchOption}");
-            //Console.WriteLine($"{nameof(SearchPattern)}: {SearchPattern}");
-        }
 
         private static SerializeFormat GetSerializeFormat(string serializeFormat)
         {
@@ -199,31 +147,11 @@ namespace Manifold.GFZCLI
                     throw new ArgumentException(msg);
             }
         }
-
-
-        //public bool IsAction(GfzCliAction action)
-        //{
-        //    bool isAction = Action == action;
-        //    return isAction;
-        //}
-
         public bool IsNotAction(GfzCliAction action)
         {
             bool isAction = Action != action;
             return isAction;
         }
-
-        //public bool IsNotAction(params GfzCliAction[] actions)
-        //{
-        //    foreach (var action in actions)
-        //    {
-        //        bool isAction = IsAction(action);
-        //        if (isAction)
-        //            return false;
-        //    }
-
-        //    return true;
-        //}
 
     }
 }
