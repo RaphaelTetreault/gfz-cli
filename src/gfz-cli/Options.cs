@@ -1,18 +1,29 @@
 ﻿using CommandLine;
+using CommandLine.Text;
 using GameCube.AmusementVision;
 using GameCube.GFZ.Stage;
+using System.Text.Json.Serialization;
 
 namespace Manifold.GFZCLI
 {
-    public class Options
+    public class Options :
+        ITplOptions
     {
         internal static class ArgsShort
         {
-            public const char Action = 'a';
-            public const char InputPath = 'i';
-            public const char OutputPath = 'o';
-            //public const char SearchPattern = 'p';
-            //public const char SearchSubdirectories = 's';
+            //public const char Action = 'a';
+            //public const char InputPath = 'i';
+            //public const char OutputPath = 'o';
+
+            public const char OverwriteFiles = 'o';
+            public const char SearchPattern = 'p';
+            public const char SearchSubdirectories = 's';
+            public const char SerializationFormat = 'f';
+        }
+
+        internal static class Sets
+        {
+            public const string TPL = "tpl";
         }
 
         internal static class Args
@@ -54,6 +65,7 @@ namespace Manifold.GFZCLI
             public const string OutputPath =
                 "Optional. The output path. Can be a full file path (for single file actions) " +
                 "or destination directory (for multi file actions).";
+
             public const string OverwriteFiles =
                 "Allow output files to overwrite existing files.\n" +
                 "\tEnabled only when called.";
@@ -64,7 +76,6 @@ namespace Manifold.GFZCLI
             public const string SearchSubdirectories =
                 "Whether or not to search subdirectories for files when using the directory mode.\n" +
                 "\tEnabled only when called.";
-
             public const string SerializationFormat =
                 "The format used when serializing.\n" +
                 "\tOptions: \"ax\", \"gx\". Set to \"gx\" by default.";
@@ -75,7 +86,9 @@ namespace Manifold.GFZCLI
                 "tpl-unpack (option): Export corrupted CMPR mipmap textures.";
         }
 
-        [Option(ArgsShort.Action, Args.Action, HelpText = Help.Action, Required = true)]
+        // VALUES
+        [Value(0, MetaName = Args.Action, HelpText = Help.Action, Required = true)]
+        //public GfzCliAction Action { get; set; }
         public string ActionStr { get; set; } = string.Empty;
         public GfzCliAction Action
         {
@@ -87,36 +100,42 @@ namespace Manifold.GFZCLI
             }
         }
 
-        [Option(ArgsShort.InputPath, Args.InputPath, HelpText = Help.InputPath, Required = true)]
+        [Value(1, MetaName = Args.InputPath, HelpText = Help.InputPath, Required = true)]
         public string InputPath { get; set; } = string.Empty;
 
-        [Option(ArgsShort.OutputPath, Args.OutputPath, HelpText = Help.OutputPath)]
+        [Value(2, MetaName = Args.OutputPath, HelpText = Help.OutputPath, Required = false)]
         public string OutputPath { get; set; } = string.Empty;
 
-        [Option(Args.OverwriteFiles, HelpText = Help.OverwriteFiles)]
-        public bool OverwriteFiles { get; set; }
-
-        [Option(Args.SearchPattern, HelpText = Help.SearchPattern)]
-        public string SearchPattern { get; set; } = string.Empty;
-
-        [Option(Args.SearchSubdirectories, HelpText = Help.SearchSubdirectories)]
-        public bool SearchSubdirectories { get; set; }
 
         // GENERAL OPTIONS
-        [Option(Args.SerializationFormat, HelpText = Help.SerializationFormat)]
+        [Option(ArgsShort.OverwriteFiles, Args.OverwriteFiles, HelpText = Help.OverwriteFiles)]
+        public bool OverwriteFiles { get; set; }
+
+        [Option(ArgsShort.SearchPattern, Args.SearchPattern, HelpText = Help.SearchPattern)]
+        public string SearchPattern { get; set; } = string.Empty;
+
+        [Option(ArgsShort.SearchSubdirectories, Args.SearchSubdirectories, HelpText = Help.SearchSubdirectories)]
+        public bool SearchSubdirectories { get; set; }
+
+        [Option(ArgsShort.SerializationFormat, Args.SerializationFormat, HelpText = Help.SerializationFormat)]
         public string SerializationFormat { get; set; } = string.Empty;
 
-        // TPL OPTIONS
-        [Option(Args.TplUnpackMipmaps, HelpText = Help.TplUnpackMipmaps)]
-        public bool TplUnpackMipmaps { get; set; }
 
-        [Option(Args.TplUnpackSaveCorruptedTextures, HelpText = Help.TplUnpackSaveCorruptedTextures)]
-        public bool TplUnpackSaveCorruptedTextures { get; set; }
+        //// TPL OPTIONS
+        //[Option(Args.TplUnpackMipmaps, HelpText = Help.TplUnpackMipmaps, SetName = Sets.TPL)]
+        //public bool TplUnpackMipmaps { get; set; }
 
+        //[Option(Args.TplUnpackSaveCorruptedTextures, HelpText = Help.TplUnpackSaveCorruptedTextures, SetName = Sets.TPL)]
+        //public bool TplUnpackSaveCorruptedTextures { get; set; }
 
         public SearchOption SearchOption => SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
         public SerializeFormat SerializeFormat => GetSerializeFormat(SerializationFormat);
         public GxGame AvGame => GetAvFormat(SerializeFormat);
+
+
+        // TPL
+        public bool TplUnpackMipmaps { get; set; }
+        public bool TplUnpackSaveCorruptedTextures { get; set; }
 
 
         private static SerializeFormat GetSerializeFormat(string serializeFormat)
@@ -147,11 +166,5 @@ namespace Manifold.GFZCLI
                     throw new ArgumentException(msg);
             }
         }
-        public bool IsNotAction(GfzCliAction action)
-        {
-            bool isAction = Action != action;
-            return isAction;
-        }
-
     }
 }

@@ -44,20 +44,21 @@ namespace Manifold.GFZCLI
             }
 
             // Run program with options
-            Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(RunOptions);
+            var parseResult = Parser.Default.ParseArguments<Options>(args)
+                .WithParsed(ExecuteAction);
 
             // If user did not pass any arguments, pause application so they can read Console.
             // This will happen when users double-click application.
             if (noArgumentsPassed)
             {
                 string msg = "Press ENTER to continue.";
-                Terminal.WriteLine(msg, ConsoleColor.Black, ConsoleColor.Red);
+                Terminal.Write(msg, ConsoleColor.Black, ConsoleColor.Red);
+                Terminal.WriteLine();
                 Console.Read();
             }
         }
 
-        public static void RunOptions(Options options)
+        public static void ExecuteAction(Options options)
         {
             switch (options.Action)
             {
@@ -83,7 +84,7 @@ namespace Manifold.GFZCLI
                         Terminal.WriteLine(msg);
                         Terminal.WriteLine();
                         //PrintAllGfzCliActions();
-                        Parser.Default.ParseArguments<Options>(Help).WithParsed(RunOptions);
+                        Parser.Default.ParseArguments<Options>(Help).WithParsed(ExecuteAction);
                     }
                     break;
 
