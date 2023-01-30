@@ -76,6 +76,7 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.lz_decompress: LzDecompress(options); break;
                 // TPL
                 case GfzCliAction.tpl_unpack: TplUnpack(options); break;
+                //case GfzCliAction.tpl_pack: TplPack(options); break;
 
                 // UNSET
                 case 0:

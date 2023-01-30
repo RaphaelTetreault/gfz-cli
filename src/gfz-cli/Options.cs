@@ -130,7 +130,7 @@ namespace Manifold.GFZCLI
 
         public SearchOption SearchOption => SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
         public SerializeFormat SerializeFormat => GetSerializeFormat(SerializationFormat);
-        public GxGame AvGame => GetAvFormat(SerializeFormat);
+        public AvGame AvGame => GetAvFormat(SerializeFormat);
 
 
         // TPL
@@ -155,12 +155,12 @@ namespace Manifold.GFZCLI
                     throw new ArgumentException(msg);
             }
         }
-        private static GxGame GetAvFormat(SerializeFormat serializeFormat)
+        private static AvGame GetAvFormat(SerializeFormat serializeFormat)
         {
             switch (serializeFormat)
             {
-                case SerializeFormat.AX: return GxGame.FZeroAX;
-                case SerializeFormat.GX: return GxGame.FZeroGX;
+                case SerializeFormat.AX: return AvGame.FZeroAX;
+                case SerializeFormat.GX: return AvGame.FZeroGX;
                 default:
                     string msg = $"No {nameof(SerializationFormat)} \"{serializeFormat}\" defined.";
                     throw new ArgumentException(msg);
