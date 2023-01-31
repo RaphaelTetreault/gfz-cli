@@ -13,9 +13,10 @@ namespace Manifold.GFZCLI
     {
 
         //public delegate void FileTask(Options options, string filePath);
-        public delegate void FileTask(Options options, string inputFilePath, string outputFilePath);
+        public delegate void ConvertFileTask(Options options, string inputFilePath, string outputFilePath);
+        public delegate T ProcessFileTask<T>(Options options, string inputFilePath);
 
-        public static int DoFileTasks(Options options, FileTask fileTask)
+        public static int DoFileTasks(Options options, ConvertFileTask fileTask)
         {
             // Get the file or all files at 'path'
             string path = options.InputPath;
@@ -47,6 +48,43 @@ namespace Manifold.GFZCLI
 
             return tasks.Count;
         }
+
+        public static T[] DoFilesTask<T>(Options options, ProcessFileTask<T> processFileTask)
+        {
+            // Get all files specified by user
+            string[] inputFilePaths = GetInputFiles(options, options.InputPath);
+            // Get singular output
+            string outputFilePath = CleanPath(options.OutputPath);
+            // Make a directory for file if necessary
+            EnsureDirectoriesExist(new string[] { outputFilePath });
+
+            // Create tasks and store result of each task
+            Task[] tasks = new Task[inputFilePaths.Length];
+            T[] results = new T[tasks.Length];
+            object lock_results = new object();
+
+            //  Schedule tasks, indicate where to store value
+            for (int i = 0; i < tasks.Length; i++)
+            {
+                string inputFilePath = inputFilePaths[i];
+                int index = i;
+
+                var action = () =>
+                {
+                    results[index] = processFileTask(options, inputFilePath);
+                };
+
+                var task = Task.Factory.StartNew(action);
+                tasks[i] = task;
+            }
+
+            // Wait for tasks to finish
+            var tasksFinished = Task.WhenAll(tasks);
+            tasksFinished.Wait();
+
+            return results;
+        }
+
 
         public static string[] GetFilesInDirectory(Options options, string path)
         {

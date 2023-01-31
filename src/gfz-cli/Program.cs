@@ -15,6 +15,7 @@ using SixLabors.ImageSharp.Formats.Png;
 using static Manifold.GFZCLI.MultiFileUtility;
 using GameCube.GFZ.Camera;
 using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Processing;
 
 namespace Manifold.GFZCLI
 {
@@ -174,7 +175,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFilePath,
                 OutputFilePath = outputFilePath,
-                PrintDesignator = "CarData", 
+                PrintDesignator = "CarData",
                 PrintActionDescription = "creating cardata BIN from file",
                 PrintMoreInfoOnSkip =
                     $"Use --{Options.Args.OverwriteFiles} if you would like to overwrite files automatically.",
@@ -467,11 +468,11 @@ namespace Manifold.GFZCLI
             // 
             var fileWrite = () =>
                 {
-                using (var writer = new EndianBinaryWriter(File.Create(outputFilePath), LiveCameraStage.endianness))
-                {
-                    liveCameraStage.Serialize(writer);
-                }
-            };
+                    using (var writer = new EndianBinaryWriter(File.Create(outputFilePath), LiveCameraStage.endianness))
+                    {
+                        liveCameraStage.Serialize(writer);
+                    }
+                };
             var info = new FileWriteInfo()
             {
                 InputFilePath = inputFilePath,
@@ -596,8 +597,62 @@ namespace Manifold.GFZCLI
         }
         public static void ImageToEmblem(Options options)
         {
-            throw new NotImplementedException();
+            Terminal.WriteLine("Images -> emblem.bin");
+            var emblems = DoFilesTask(options, ImageToEmblem);
+            {
+                string outputFilePath = CleanPath(options.OutputPath);
+
+                // Info for file write + console print
+                var info = new FileWriteInfo()
+                {
+                    InputFilePath = "XXX",
+                    OutputFilePath = outputFilePath,
+                    PrintDesignator = "Emblem",
+                    PrintActionDescription = "saving final",
+                };
+
+                var fileWrite = () =>
+                {
+                    using (var fileStream = File.Create(outputFilePath))
+                    {
+                        using (var writer = new EndianBinaryWriter(fileStream, EmblemBIN.endianness))
+                        {
+                            var emblemBin = new EmblemBIN();
+                            emblemBin.Emblems = emblems;
+                            emblemBin.Serialize(writer);
+                        }
+                    }
+                };
+
+                FileWriteOverwriteHandler(options, fileWrite, info);
+            }
+            Terminal.WriteLine("Done");
         }
+        public static Emblem ImageToEmblem(Options options, string inputFilePath)
+        {
+            // Image -> GC Texture
+            Image<Rgba32> image = (Image<Rgba32>)Image.Load(inputFilePath);
+            image.Mutate(c => c.Resize(64, 64, false));
+            var texture = ImageToTexture(image, TextureFormat.RGB5A3);
+
+
+            Emblem emblem = new Emblem()
+            {
+                Texture = texture,
+            };
+
+            lock (lock_ConsoleWrite)
+            {
+                Terminal.WriteLine("Converted a file to texture...");
+            }
+
+            return emblem;
+        }
+        public static void ImageToEmblemWrite(Options options, string inputFilePath, string outputFilePath)
+        {
+
+        }
+
 
 
         public static Image<Rgba32> TextureToImage(Texture texture)
@@ -615,6 +670,22 @@ namespace Manifold.GFZCLI
 
             return image;
         }
+        public static Texture ImageToTexture(Image<Rgba32> image, TextureFormat textureFormat = TextureFormat.RGBA8)
+        {
+            var texture = new Texture(image.Width, image.Height, textureFormat);
+
+            for (int y = 0; y < image.Height; y++)
+            {
+                for (int x = 0; x < image.Width; x++)
+                {
+                    Rgba32 pixel = image[x, y];
+                    texture[x, y] = new TextureColor(pixel.R, pixel.G, pixel.B, pixel.A);
+                }
+            }
+
+            return texture;
+        }
+
         public static void WriteImage(Options options, IImageEncoder encoder, Texture texture, FileWriteInfo info)
         {
             var action = () =>

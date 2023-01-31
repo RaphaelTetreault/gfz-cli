@@ -42,6 +42,10 @@
     "emblem-to-image-bin": {
       "commandName": "Project",
       "commandLineArgs": "-a emblem-to-image -i D:\\gfz-cli-test\\emblem\\chara.bin"
+    },
+    "image-to-emblem-bin": {
+      "commandName": "Project",
+      "commandLineArgs": "image-to-emblem D:\\desktop\\pkmn D:\\gfz-cli-test\\pkmn.bin -p * -o"
     }
   }
 }
