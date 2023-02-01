@@ -98,7 +98,7 @@ namespace Manifold.GFZCLI
                 {
                     string msg =
                         $"Invalid '{nameof(options.SearchPattern)}' provided for a directory input argument. " +
-                        $"Make sure to use --{Options.Args.SearchPattern} when providing directory paths.";
+                        $"Make sure to use --{IGfzCliOptions.Args.SearchPattern} when providing directory paths.";
                     throw new ArgumentException(msg);
                 }
                 files = Directory.GetFiles(path, options.SearchPattern, options.SearchOption);

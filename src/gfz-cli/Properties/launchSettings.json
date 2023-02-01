@@ -45,7 +45,7 @@
     },
     "image-to-emblem-bin": {
       "commandName": "Project",
-      "commandLineArgs": "image-to-emblem D:\\desktop\\pkmn D:\\gfz-cli-test\\pkmn.bin -p * -o"
+      "commandLineArgs": "image-to-emblem D:\\desktop\\pkmn C:\\gfzj01-working\\files\\emblem\\sample.bin -p * -o --resize"
     }
   }
 }

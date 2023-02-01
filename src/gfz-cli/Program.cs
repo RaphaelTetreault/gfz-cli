@@ -82,7 +82,7 @@ namespace Manifold.GFZCLI
                 // UNSET
                 case 0:
                     {
-                        string msg = $"Could not parse (-a|--action) '{options.ActionStr}'.";
+                        string msg = $"Could not parse action) '{options.ActionStr}'.";
                         Terminal.WriteLine(msg);
                         Terminal.WriteLine();
                         //PrintAllGfzCliActions();
@@ -132,7 +132,7 @@ namespace Manifold.GFZCLI
                 PrintDesignator = "CarData",
                 PrintActionDescription = "creating cardata TSV from file",
                 PrintMoreInfoOnSkip =
-                    $"Use --{Options.Args.OverwriteFiles} if you would like to overwrite files automatically.",
+                    $"Use --{IGfzCliOptions.Args.OverwriteFiles} if you would like to overwrite files automatically.",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
@@ -165,7 +165,7 @@ namespace Manifold.GFZCLI
                     using (var fs = File.Create(outputFilePath))
                     {
                         // Force format to GX since "cardata.lz" is a GX exclusive standalone file.
-                        options.SerializationFormat = "gx";
+                        options.SerializationFormatStr = "gx";
                         // Compress memory stream to file stream
                         GameCube.AmusementVision.LZ.Lz.Pack(writer.BaseStream, fs, options.AvGame);
                     }
@@ -178,7 +178,7 @@ namespace Manifold.GFZCLI
                 PrintDesignator = "CarData",
                 PrintActionDescription = "creating cardata BIN from file",
                 PrintMoreInfoOnSkip =
-                    $"Use --{Options.Args.OverwriteFiles} if you would like to overwrite files automatically.",
+                    $"Use --{IGfzCliOptions.Args.OverwriteFiles} if you would like to overwrite files automatically.",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
@@ -630,27 +630,43 @@ namespace Manifold.GFZCLI
         }
         public static Emblem ImageToEmblem(Options options, string inputFilePath)
         {
+            TextureColor clear = new TextureColor(0, 0);
+
             // Image -> GC Texture
             Image<Rgba32> image = (Image<Rgba32>)Image.Load(inputFilePath);
-            image.Mutate(c => c.Resize(64, 64, false));
-            var texture = ImageToTexture(image, TextureFormat.RGB5A3);
 
+            // Optional: resize image
+            //if (options.Resize)
 
-            Emblem emblem = new Emblem()
+            // Resize image to fit inside bounds
             {
-                Texture = texture,
-            };
+                ResizeOptions ResizeOptions = IImageResizeOptions.GetResizeOptions(options);
+                // Size is either 62x62 (1px alpha border, as intended) or 64x64 ("hacker" option)
+                int sizeX = options.EmblemHasAlphaBorder ? Emblem._Width - 2 : Emblem._Width;
+                int sizeY = options.EmblemHasAlphaBorder ? Emblem._Height - 2 : Emblem._Height;
+                ResizeOptions.Size = IImageResizeOptions.GetResizeSize(options, sizeX, sizeY);
+                image.Mutate(ipc => ipc.Resize(ResizeOptions));
+            }
+
+            // Create emblem, textures
+            Emblem emblem = new Emblem();
+            Texture imageTexture = ImageToTexture(image, TextureFormat.RGB5A3);
+            Texture emblemTexture = new Texture(Emblem._Width, Emblem._Height, clear, TextureFormat.RGB5A3);
+
+            // Copy image texture to emblem center
+            ////// (only works if image is 64px or less!)
+            int offsetX = (emblem.Width - image.Width) / 2;
+            int offsetY = (emblem.Height - image.Height) / 2;
+            Texture.Copy(imageTexture, emblemTexture, offsetX, offsetY);
 
             lock (lock_ConsoleWrite)
             {
-                Terminal.WriteLine("Converted a file to texture...");
+                Terminal.WriteLine($"Converted a file to texture... {image.Width},{image.Height}");
             }
 
+            // Assign return
+            emblem.Texture = emblemTexture;
             return emblem;
-        }
-        public static void ImageToEmblemWrite(Options options, string inputFilePath, string outputFilePath)
-        {
-
         }
 
 
