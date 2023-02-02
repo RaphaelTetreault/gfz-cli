@@ -34,7 +34,7 @@ namespace Manifold.GFZCLI
 
         public bool Resize { get; set; } = false;
         public bool Compand { get; set; } = true;
-        public string ResizeModeStr { get; set; } = ResizeMode.Min.ToString();
+        public string ResizeModeStr { get; set; } = ResizeMode.Max.ToString();
         public ResizeMode ResizeMode => GfzCliEnumParser.ParseDashRemoved<ResizeMode>(ResizeModeStr);
         public string PadColorStr { get; set; } = "r=0;g=0;b=0;a=0";
         public Color PadColor => StringToColor(PadColorStr);
@@ -44,8 +44,8 @@ namespace Manifold.GFZCLI
         public string ResamplerTypeStr { get; set; } = "Bicubic";
         public ResamplerType ResamplerType => GfzCliEnumParser.ParseDashRemoved<ResamplerType>(PositionStr);
         public IResampler Resampler => IImageResizeOptions.GetResampler(ResamplerType);
-        public int SizeX { get; set; }
-        public int SizeY { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
 
         [Option("emblem-border")]
         public bool EmblemHasAlphaBorder { get; set; } = true;

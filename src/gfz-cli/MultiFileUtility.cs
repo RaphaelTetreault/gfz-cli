@@ -121,6 +121,10 @@ namespace Manifold.GFZCLI
                 ? new string[] { path }
                 : GetFilesInDirectory(options, path);
 
+            // Quick and dirty way to sort files
+            //int maxStringLength = files.Select(f => f.Length).Max();
+            //files = files.OrderBy(x => Path.GetFileName(x).PadLeft(maxStringLength)).ToArray();
+
             return files;
         }
 

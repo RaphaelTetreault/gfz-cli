@@ -18,7 +18,15 @@ namespace Manifold.GFZCLI
     {
         internal static class Args
         {
-            public const string Temp = "command";
+            public const string Resize = "resize";
+            public const string Compand = "compand";
+            public const string ResizeMode = "resize-mode";
+            public const string PadColor = "pad-color";
+            public const string Position = "position";
+            public const string PremultiplyAlpha = "premultiply-alpha";
+            public const string Resampler = "resampler";
+            public const string Width = "width";
+            public const string Height = "height";
         }
 
         internal static class Help
@@ -27,20 +35,37 @@ namespace Manifold.GFZCLI
                 "Description.";
         }
 
-        [Option("resize")]
+        [Option(Args.Resize)]
         public bool Resize { get; set; }
+
+        [Option(Args.Compand)]
         public bool Compand { get; set; }
+
+        [Option(Args.ResizeMode)]
         public string ResizeModeStr { get; set; }
         public ResizeMode ResizeMode { get; }
+
+        [Option(Args.PadColor)]
         public string PadColorStr { get; set; }
         public Color PadColor { get; }
+
+        [Option(Args.Position)]
         public string PositionStr { get; set; }
         public AnchorPositionMode Position { get; }
+
+        [Option(Args.PremultiplyAlpha)]
         public bool PremultiplyAlpha { get; set; }
+
+        [Option(Args.Resampler)]
         public string ResamplerTypeStr { get; set; }
         public IResampler Resampler { get; }
-        public int SizeX { get; set; }
-        public int SizeY { get; set; }
+
+        [Option(Args.Width)]
+        public int Width { get; set; }
+
+        [Option(Args.Height)]
+        public int Height { get; set; }
+
 
         public static ResizeOptions GetResizeOptions(IImageResizeOptions imageResizeOptions)
         {
@@ -55,13 +80,30 @@ namespace Manifold.GFZCLI
                 // Size
             };
         }
+        public static Size GetResizeSize(IImageResizeOptions imageResizeOptions, Image image)
+            => GetResizeSize(imageResizeOptions, image.Width, image.Height);
         public static Size GetResizeSize(IImageResizeOptions imageResizeOptions, int defaultX, int defaultY)
         {
-            int x = imageResizeOptions.SizeX > 0 ? imageResizeOptions.SizeX : defaultX;
-            int y = imageResizeOptions.SizeY > 0 ? imageResizeOptions.SizeY : defaultY;
+            int x = imageResizeOptions.Width > 0 ? imageResizeOptions.Width : defaultX;
+            int y = imageResizeOptions.Height > 0 ? imageResizeOptions.Height : defaultY;
             Size size = new Size(x, y);
             return size;
         }
+        public static bool IsSizeTooLarge(IImageResizeOptions imageResizeOptions, int maxX, int maxY)
+        {
+            bool isTooWide = imageResizeOptions.Width > maxX;
+            bool isTooTall = imageResizeOptions.Height > maxY;
+            bool isTooLarge = isTooWide || isTooTall;
+            return isTooLarge;
+        }
+        public static bool IsSizeTooSmall(IImageResizeOptions imageResizeOptions, int minX, int minY)
+        {
+            bool isTooShort = imageResizeOptions.Width < minX;
+            bool isTooSkinny = imageResizeOptions.Height < minY;
+            bool isTooSmall = isTooShort || isTooSkinny;
+            return isTooSmall;
+        }
+
         public static IResampler GetResampler(ResamplerType resampler)
         {
             switch (resampler)

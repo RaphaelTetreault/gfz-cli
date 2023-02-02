@@ -597,7 +597,7 @@ namespace Manifold.GFZCLI
         }
         public static void ImageToEmblem(Options options)
         {
-            Terminal.WriteLine("Images -> emblem.bin");
+            Terminal.WriteLine("Emblem: converting image(s) to emblem.bin file.");            
             var emblems = DoFilesTask(options, ImageToEmblem);
             {
                 string outputFilePath = CleanPath(options.OutputPath);
@@ -605,10 +605,10 @@ namespace Manifold.GFZCLI
                 // Info for file write + console print
                 var info = new FileWriteInfo()
                 {
-                    InputFilePath = "XXX",
+                    InputFilePath = options.InputPath,
                     OutputFilePath = outputFilePath,
                     PrintDesignator = "Emblem",
-                    PrintActionDescription = "saving final",
+                    PrintActionDescription = "packaging path",
                 };
 
                 var fileWrite = () =>
@@ -626,42 +626,53 @@ namespace Manifold.GFZCLI
 
                 FileWriteOverwriteHandler(options, fileWrite, info);
             }
-            Terminal.WriteLine("Done");
+            Terminal.WriteLine($"Emblem: done converting {emblems.Length} image{(emblems.Length != 1 ? 's' : "")}.");
         }
         public static Emblem ImageToEmblem(Options options, string inputFilePath)
         {
-            TextureColor clear = new TextureColor(0, 0);
-
-            // Image -> GC Texture
-            Image<Rgba32> image = (Image<Rgba32>)Image.Load(inputFilePath);
-
-            // Optional: resize image
-            //if (options.Resize)
-
-            // Resize image to fit inside bounds
+            // Make sure some option parameters are appropriate
+            bool isTooLarge = IImageResizeOptions.IsSizeTooLarge(options, Emblem._Width, Emblem._Height);
+            if (isTooLarge)
             {
-                ResizeOptions ResizeOptions = IImageResizeOptions.GetResizeOptions(options);
-                // Size is either 62x62 (1px alpha border, as intended) or 64x64 ("hacker" option)
-                int sizeX = options.EmblemHasAlphaBorder ? Emblem._Width - 2 : Emblem._Width;
-                int sizeY = options.EmblemHasAlphaBorder ? Emblem._Height - 2 : Emblem._Height;
-                ResizeOptions.Size = IImageResizeOptions.GetResizeSize(options, sizeX, sizeY);
-                image.Mutate(ipc => ipc.Resize(ResizeOptions));
+                string msg =
+                    $"Requested resize ({options.Width},{options.Height}) exceeds the maximum " +
+                    $"bounds of an emblem ({Emblem._Width},{Emblem._Height}).";
+                throw new ArgumentException(msg);
             }
+
+            Image<Rgba32> image = Image.Load<Rgba32>(inputFilePath);
+
+            // Resize image to fit inside bounds of 64x64
+            ResizeOptions ResizeOptions = IImageResizeOptions.GetResizeOptions(options);
+            // Emblem size is either 62x62 (1px alpha border, as intended) or 64x64 ("hacker" option)
+            int emblemX = options.EmblemHasAlphaBorder ? Emblem._Width - 2 : Emblem._Width;
+            int emblemY = options.EmblemHasAlphaBorder ? Emblem._Height - 2 : Emblem._Height;
+            // Choose lowest dimensions as the default size (ie: preserve pixel-perfect if possible)
+            int defaultX = Math.Min(emblemX, image.Width);
+            int defaultY = Math.Min(emblemY, image.Height);
+            // Set size override, then resize image
+            ResizeOptions.Size = IImageResizeOptions.GetResizeSize(options, defaultX, defaultY);
+            image.Mutate(ipc => ipc.Resize(ResizeOptions));
 
             // Create emblem, textures
             Emblem emblem = new Emblem();
             Texture imageTexture = ImageToTexture(image, TextureFormat.RGB5A3);
-            Texture emblemTexture = new Texture(Emblem._Width, Emblem._Height, clear, TextureFormat.RGB5A3);
+            Texture emblemTexture = new Texture(Emblem._Width, Emblem._Height, TextureColor.Clear, TextureFormat.RGB5A3);
 
             // Copy image texture to emblem center
-            ////// (only works if image is 64px or less!)
+            // Only works if image is 64px or less! Resize code block prepares this.
             int offsetX = (emblem.Width - image.Width) / 2;
             int offsetY = (emblem.Height - image.Height) / 2;
             Texture.Copy(imageTexture, emblemTexture, offsetX, offsetY);
 
+            // Write some useful information to the terminal
             lock (lock_ConsoleWrite)
             {
-                Terminal.WriteLine($"Converted a file to texture... {image.Width},{image.Height}");
+                Terminal.Write($"Emblem: ");
+                Terminal.Write($"processing image ");
+                Terminal.Write(inputFilePath, FileNameColor);
+                Terminal.Write($" ({image.Width},{image.Height}).");
+                Terminal.WriteLine();
             }
 
             // Assign return
