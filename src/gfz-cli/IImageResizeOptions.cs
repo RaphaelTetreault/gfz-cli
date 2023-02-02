@@ -1,16 +1,7 @@
-﻿using CommandLine.Text;
-using CommandLine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommandLine;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Processing.Processors;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
-using GameCube.GFZ.GMA;
-using System.Runtime.Serialization;
 
 namespace Manifold.GFZCLI
 {
@@ -31,39 +22,46 @@ namespace Manifold.GFZCLI
 
         internal static class Help
         {
-            public const string Temp =
-                "Description.";
+            public const string Resize = "Whether to resize image.";
+            public const string Compand = "Whether to compress or expand individual pixel colors when scaling image.";
+            public const string ResizeMode = "How the image should be resized";
+            public const string PadColor = "The padding color when scaling image.";
+            public const string Position = "Anchor positions to apply to resize image.";
+            public const string PremultiplyAlpha = "Whether to use premultiplied alpha when scaling image.";
+            public const string Resampler = "The resampler to use when scaling image.";
+            public const string Width = "The desired image width. May not be result width depending on 'resize-mode' option.";
+            public const string Height = "The desired image height. May not be result width depending on 'resize-mode' option.";
         }
 
-        [Option(Args.Resize)]
+        [Option(Args.Resize, HelpText = Help.Resize)]
         public bool Resize { get; set; }
 
-        [Option(Args.Compand)]
+        [Option(Args.Compand, HelpText = Help.Compand)]
         public bool Compand { get; set; }
 
-        [Option(Args.ResizeMode)]
+        [Option(Args.ResizeMode, HelpText = Help.ResizeMode)]
         public string ResizeModeStr { get; set; }
         public ResizeMode ResizeMode { get; }
 
-        [Option(Args.PadColor)]
+        [Option(Args.PadColor, HelpText = Help.PadColor)]
         public string PadColorStr { get; set; }
         public Color PadColor { get; }
 
-        [Option(Args.Position)]
+        [Option(Args.Position, HelpText = Help.Position)]
         public string PositionStr { get; set; }
         public AnchorPositionMode Position { get; }
 
-        [Option(Args.PremultiplyAlpha)]
+        [Option(Args.PremultiplyAlpha, HelpText = Help.PremultiplyAlpha)]
         public bool PremultiplyAlpha { get; set; }
 
-        [Option(Args.Resampler)]
+        [Option(Args.Resampler, HelpText = Help.Resampler)]
         public string ResamplerTypeStr { get; set; }
         public IResampler Resampler { get; }
 
-        [Option(Args.Width)]
+        [Option(Args.Width, HelpText = Help.Width)]
         public int Width { get; set; }
 
-        [Option(Args.Height)]
+        [Option(Args.Height, HelpText = Help.Height)]
         public int Height { get; set; }
 
 
@@ -125,7 +123,8 @@ namespace Manifold.GFZCLI
                 case ResamplerType.Welch: return KnownResamplers.Welch;
 
                 default:
-                    throw new ArgumentException();
+                    string msg = $"Unknown resampler '{resampler}'.";
+                    throw new ArgumentException(msg);
             }
         }
 
