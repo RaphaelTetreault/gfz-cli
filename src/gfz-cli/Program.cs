@@ -191,7 +191,7 @@ namespace Manifold.GFZCLI
                 options.SearchPattern = "*.lz";
 
             Terminal.WriteLine("LZ: decompressing file(s).");
-            int taskCount = DoFileTasks(options, LzDecompressFile);
+            int taskCount = DoFileIOTasks(options, LzDecompressFile);
             Terminal.WriteLine($"LZ: done decompressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
         public static void LzDecompressFile(Options options, string inputFilePath, string outputFilePath)
@@ -223,7 +223,7 @@ namespace Manifold.GFZCLI
         public static void LzCompress(Options options)
         {
             Terminal.WriteLine("LZ: Compressing file(s).");
-            int taskCount = DoFileTasks(options, LzCompressFile);
+            int taskCount = DoFileIOTasks(options, LzCompressFile);
             Terminal.WriteLine($"LZ: done compressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
         public static void LzCompressFile(Options options, string inputFilePath, string outputFilePath)
@@ -260,7 +260,7 @@ namespace Manifold.GFZCLI
                 options.SearchPattern = "*.tpl";
 
             Terminal.WriteLine("TPL: unpacking file(s).");
-            int taskCount = DoFileTasks(options, TplUnpackFile);
+            int taskCount = DoFileIOTasks(options, TplUnpackFile);
             Terminal.WriteLine($"TPL: done unpacking {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
         public static void TplUnpackFile(Options options, string inputFilePath, string outputFilePath)
@@ -414,7 +414,7 @@ namespace Manifold.GFZCLI
                 options.SearchPattern = "*livecam_stage_*.bin";
 
             Terminal.WriteLine("Live Camera Stage: converting file(s) to TSV.");
-            int taskCount = DoFileTasks(options, LiveCameraStageBinToTsvFile);
+            int taskCount = DoFileIOTasks(options, LiveCameraStageBinToTsvFile);
             Terminal.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
         public static void LiveCameraStageBinToTsvFile(Options options, string inputFilePath, string outputFilePath)
@@ -452,7 +452,7 @@ namespace Manifold.GFZCLI
                 options.SearchPattern = "*livecam_stage_*.tsv";
 
             Terminal.WriteLine("Live Camera Stage: converting TSV file(s) to binaries.");
-            int taskCount = DoFileTasks(options, LiveCameraStageTsvToBinFile);
+            int taskCount = DoFileIOTasks(options, LiveCameraStageTsvToBinFile);
             Terminal.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
         public static void LiveCameraStageTsvToBinFile(Options options, string inputFilePath, string outputFilePath)
@@ -486,7 +486,7 @@ namespace Manifold.GFZCLI
         public static void EmblemToImage(Options options)
         {
             Terminal.WriteLine("Emblem: converting emblems from BIN files.");
-            int binCount = DoFileTasks(options, EmblemBinToImages);
+            int binCount = DoFileIOTasks(options, EmblemBinToImages);
             Terminal.WriteLine($"Emblem: done converting {binCount} file{(binCount != 1 ? 's' : "")}.");
 
             // In this case where no search pattern is set, find *FZE*.GCI (emblem) files.
@@ -495,7 +495,7 @@ namespace Manifold.GFZCLI
                 options.SearchPattern = "*fze*.dat.gci";
 
             Terminal.WriteLine("Emblem: converting emblems from GCI files.");
-            int gciCount = DoFileTasks(options, EmblemGciToImage);
+            int gciCount = DoFileIOTasks(options, EmblemGciToImage);
             Terminal.WriteLine($"Emblem: done converting {gciCount} file{(gciCount != 1 ? 's' : "")}.");
         }
         private static void EmblemGciToImage(Options options, string inputFilePath, string outputFilePath)
@@ -598,7 +598,7 @@ namespace Manifold.GFZCLI
         public static void ImageToEmblem(Options options)
         {
             Terminal.WriteLine("Emblem: converting image(s) to emblem.bin file.");            
-            var emblems = DoFilesTask(options, ImageToEmblem);
+            var emblems = DoFilesToValueTasks(options, ImageToEmblem);
             {
                 string outputFilePath = CleanPath(options.OutputPath);
 

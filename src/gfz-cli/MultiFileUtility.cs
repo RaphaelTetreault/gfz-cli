@@ -16,7 +16,7 @@ namespace Manifold.GFZCLI
         public delegate void ConvertFileTask(Options options, string inputFilePath, string outputFilePath);
         public delegate T ProcessFileTask<T>(Options options, string inputFilePath);
 
-        public static int DoFileTasks(Options options, ConvertFileTask fileTask)
+        public static int DoFileIOTasks(Options options, ConvertFileTask fileTask)
         {
             // Get the file or all files at 'path'
             string path = options.InputPath;
@@ -49,7 +49,7 @@ namespace Manifold.GFZCLI
             return tasks.Count;
         }
 
-        public static T[] DoFilesTask<T>(Options options, ProcessFileTask<T> processFileTask)
+        public static T[] DoFilesToValueTasks<T>(Options options, ProcessFileTask<T> processFileTask)
         {
             // Get all files specified by user
             string[] inputFilePaths = GetInputFiles(options, options.InputPath);
