@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using GameCube.AmusementVision;
 using GameCube.GFZ.Stage;
+using System.IO;
 
 namespace Manifold.GFZCLI
 {

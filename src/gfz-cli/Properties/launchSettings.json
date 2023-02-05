@@ -5,7 +5,7 @@
     },
     "cardata-bin-to-tsv": {
       "commandName": "Project",
-      "commandLineArgs": "-a cardata-bin-to-tsv -i D:\\gfzj01\\game\\cardata.lz --overwrite"
+      "commandLineArgs": "cardata-bin-to-tsv D:\\gfzj01\\game\\cardata.lz --overwrite"
     },
     "cardata-tsv-to-bin": {
       "commandName": "Project",
@@ -35,10 +35,6 @@
       "commandName": "Project",
       "commandLineArgs": "-a live-camera-stage-tsv-to-bin -i D:\\gfzj01\\ --search-subdirs --overwrite"
     },
-    "emblem-to-image": {
-      "commandName": "Project",
-      "commandLineArgs": "-a emblem-to-image -i D:\\gfz-cli-test\\emblem\\8P-GFZE-fze020_pkmn2_215_Snease_077.dat.gci"
-    },
     "emblem-to-image-bin": {
       "commandName": "Project",
       "commandLineArgs": "-a emblem-to-image -i D:\\gfz-cli-test\\emblem\\chara.bin"
@@ -46,6 +42,10 @@
     "image-to-emblem-bin": {
       "commandName": "Project",
       "commandLineArgs": "image-to-emblem D:\\desktop\\pkmn C:\\gfzj01-working\\files\\emblem\\sample.bin -p * -o --resize"
+    },
+    "emblem-to-image-gci": {
+      "commandName": "Project",
+      "commandLineArgs": "emblem-to-image D:\\gfz-cli-test\\emblem\\8P-GFZE-fze020_pkmn2_215_Snease_077.dat.gci"
     }
   }
 }

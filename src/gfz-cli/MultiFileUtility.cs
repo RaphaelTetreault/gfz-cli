@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Manifold.GFZCLI
@@ -11,7 +10,6 @@ namespace Manifold.GFZCLI
     /// </summary>
     public static class MultiFileUtility
     {
-
         //public delegate void FileTask(Options options, string filePath);
         public delegate void ConvertFileTask(Options options, string inputFilePath, string outputFilePath);
         public delegate T ProcessFileTask<T>(Options options, string inputFilePath);
@@ -31,7 +29,6 @@ namespace Manifold.GFZCLI
 
             // For each file, queue it as a task - multithreaded
             List<Task> tasks = new List<Task>();
-            //foreach (var _filePath in inputFilePaths)
             for (int i = 0; i < inputFilePaths.Length; i++)
             {
                 string inputFilePath = inputFilePaths[i];
@@ -48,7 +45,6 @@ namespace Manifold.GFZCLI
 
             return tasks.Count;
         }
-
         public static T[] DoFilesToValueTasks<T>(Options options, ProcessFileTask<T> processFileTask)
         {
             // Get all files specified by user
@@ -105,7 +101,6 @@ namespace Manifold.GFZCLI
             }
             return files;
         }
-
         public static string[] GetInputFiles(Options options, string path)
         {
             // Make sure path is valid as either a file or folder
@@ -175,7 +170,6 @@ namespace Manifold.GFZCLI
 
             return filePath;
         }
-
         public static string[] GetOutputFiles(Options options, string[] inputFiles)
         {
             string[] outputFiles = new string[inputFiles.Length];
@@ -189,6 +183,22 @@ namespace Manifold.GFZCLI
             return outputFiles;
         }
 
+
+        public static FileDescription GetFileInfo(string filePath)
+        {
+            FileDescription file = new FileDescription(filePath);
+            return file;
+        }
+        public static FileDescription[] GetFileInfo(params string[] filePath)
+        {
+            FileDescription[] files = new FileDescription[filePath.Length];
+            for (int i = 0; i < filePath.Length; i++)
+                files[i] = new FileDescription(filePath[i]);
+
+            return files;
+        }
+
+
         public static void EnsureDirectoriesExist(string[] filesPaths)
         {
             foreach (var path in filesPaths)
@@ -199,26 +209,20 @@ namespace Manifold.GFZCLI
             }
         }
 
-        public static string StripFileExtension(string filePath)
+        public static string StripFileExtensions(string filePath)
         {
             var fileName = Path.GetFileNameWithoutExtension(filePath);
             var directory = Path.GetDirectoryName(filePath);
             var filePathWithoutExtensions = Path.Combine(directory, fileName);
+            filePathWithoutExtensions = CleanPath(filePathWithoutExtensions);
             return filePathWithoutExtensions;
         }
-
         public static string ReplaceFileExtension(string filePath, string extension)
         {
-            var filePathWithoutExtensions = StripFileExtension(filePath);
+            var filePathWithoutExtensions = StripFileExtensions(filePath);
             var filePathWithExtension = $"{filePathWithoutExtensions}.{extension}";
             return filePathWithExtension;
         }
-
-        //public static string AppendFileExtension(string filePath, string extension)
-        //{
-        //    var filePathWithExtension = $"{filePath}.{extension}";
-        //    return filePathWithExtension;
-        //}
 
 
         public static string CleanPath(string path)

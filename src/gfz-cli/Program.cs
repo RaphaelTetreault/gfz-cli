@@ -100,35 +100,32 @@ namespace Manifold.GFZCLI
 
         public static void CarDataBinToTsv(Options options)
         {
-            // Get IO paths
-            string inputFilePath = options.InputPath;
-            string outputFilePath = GetOutputPath(options, inputFilePath);
-            outputFilePath = StripFileExtension(outputFilePath);
-            outputFilePath += ".tsv";
+            // Manage input
+            var inputFile = new FileDescription(options.InputPath);
+            inputFile.ThrowIfDoesNotExist();
+            // Manage output
+            var outputFile = new FileDescription(GetOutputPath(options, options.InputPath));
+            outputFile.Extension = ".tsv";
 
-            // Check to make sure file exists
-            if (!File.Exists(inputFilePath))
-                throw new FileNotFoundException($"File at path '{inputFilePath}' does not exist.");
-
+            // Read file
             // Decompress LZ if not decompressed yet
-            string extension = Path.GetExtension(inputFilePath);
-            bool isLzCompressed = extension.ToLower() == ".lz";
+            bool isLzCompressed = inputFile.IsExtension(".lz");
             // Open the file if decompressed, decompress file stream otherwise
             var carData = new CarData();
-            using (Stream fileStream = isLzCompressed ? LzUtility.DecompressAvLz(inputFilePath) : File.OpenRead(inputFilePath))
+            using (Stream fileStream = isLzCompressed ? LzUtility.DecompressAvLz(inputFile) : File.OpenRead(inputFile))
             using (var reader = new EndianBinaryReader(fileStream, CarData.endianness))
                 carData.Deserialize(reader);
 
             //
             var fileWrite = () =>
             {
-                using (var writer = new StreamWriter(File.Create(outputFilePath)))
+                using (var writer = new StreamWriter(File.Create(outputFile)))
                     carData.Serialize(writer);
             };
             var info = new FileWriteInfo()
             {
-                InputFilePath = inputFilePath,
-                OutputFilePath = outputFilePath,
+                InputFilePath = inputFile,
+                OutputFilePath = outputFile,
                 PrintDesignator = "CarData",
                 PrintActionDescription = "creating cardata TSV from file",
                 PrintMoreInfoOnSkip =
@@ -141,7 +138,7 @@ namespace Manifold.GFZCLI
             // Get IO paths
             string inputFilePath = options.InputPath;
             string outputFilePath = GetOutputPath(options, inputFilePath);
-            outputFilePath = StripFileExtension(outputFilePath);
+            outputFilePath = StripFileExtensions(outputFilePath);
             outputFilePath += ".lz";
 
             // Check to make sure file exists
@@ -197,7 +194,7 @@ namespace Manifold.GFZCLI
         public static void LzDecompressFile(Options options, string inputFilePath, string outputFilePath)
         {
             // Remove extension
-            outputFilePath = StripFileExtension(outputFilePath);
+            outputFilePath = StripFileExtensions(outputFilePath);
 
             // 
             var fileWrite = () =>
@@ -506,6 +503,10 @@ namespace Manifold.GFZCLI
             if (!isGciFile)
                 return;
 
+            var inputFileInfo = new FileDescription(inputFilePath);
+            var outputFileInfo = new FileDescription(outputFilePath);
+            var x = inputFileInfo.FullPath;
+
             // Read GCI Emblem data
             var emblemGCI = new EmblemGCI();
             using (var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), EmblemGCI.endianness))
@@ -519,8 +520,8 @@ namespace Manifold.GFZCLI
             encoder.CompressionLevel = PngCompressionLevel.BestCompression;
 
             // Strip twice to remove .dat.gci extension
-            outputFilePath = StripFileExtension(outputFilePath);
-            outputFilePath = StripFileExtension(outputFilePath);
+            outputFilePath = StripFileExtensions(outputFilePath);
+            outputFilePath = StripFileExtensions(outputFilePath);
 
             // Info for file write + console print
             var fileWriteInfo = new FileWriteInfo()
@@ -598,7 +599,7 @@ namespace Manifold.GFZCLI
         public static void ImageToEmblem(Options options)
         {
             Terminal.WriteLine("Emblem: converting image(s) to emblem.bin file.");            
-            var emblems = DoFilesToValueTasks(options, ImageToEmblem);
+            var emblems = DoFilesToValueTasks(options, ImageToEmblemBin);
             {
                 string outputFilePath = CleanPath(options.OutputPath);
 
@@ -628,7 +629,7 @@ namespace Manifold.GFZCLI
             }
             Terminal.WriteLine($"Emblem: done converting {emblems.Length} image{(emblems.Length != 1 ? 's' : "")}.");
         }
-        public static Emblem ImageToEmblem(Options options, string inputFilePath)
+        public static Emblem ImageToEmblemBin(Options options, string inputFilePath)
         {
             // Make sure some option parameters are appropriate
             bool isTooLarge = IImageResizeOptions.IsSizeTooLarge(options, Emblem._Width, Emblem._Height);
@@ -679,7 +680,31 @@ namespace Manifold.GFZCLI
             emblem.Texture = emblemTexture;
             return emblem;
         }
+        public static void ImageToEmblemGci(Options options, string inputFilePath, string outputFilePath)
+        {
+            // Remove extension
+            outputFilePath = StripFileExtensions(outputFilePath);
+            outputFilePath += ".gci";
 
+            // Load image
+            Image<Rgba32> image = Image.Load<Rgba32>(inputFilePath);
+            //
+            //Texture emblem = ;
+
+            //  
+            var fileWrite = () =>
+            {
+                // Save emblem
+            };
+            var info = new FileWriteInfo()
+            {
+                InputFilePath = inputFilePath,
+                OutputFilePath = outputFilePath,
+                PrintDesignator = "Emblem",
+                PrintActionDescription = "decompressing file",
+            };
+            FileWriteOverwriteHandler(options, fileWrite, info);
+        }
 
 
         public static Image<Rgba32> TextureToImage(Texture texture)
