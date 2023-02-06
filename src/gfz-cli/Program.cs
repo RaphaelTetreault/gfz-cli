@@ -135,19 +135,16 @@ namespace Manifold.GFZCLI
         }
         public static void CarDataTsvToBin(Options options)
         {
-            // Get IO paths
-            string inputFilePath = options.InputPath;
-            string outputFilePath = GetOutputPath(options, inputFilePath);
-            outputFilePath = StripFileExtensions(outputFilePath);
-            outputFilePath += ".lz";
-
-            // Check to make sure file exists
-            if (!File.Exists(inputFilePath))
-                throw new FileNotFoundException($"File at path '{inputFilePath}' does not exist.");
+            // Manage input
+            var inputFile = new FileDescription(options.InputPath);
+            inputFile.ThrowIfDoesNotExist();
+            // Manage output
+            var outputFile = new FileDescription(GetOutputPath(options, options.InputPath));
+            outputFile.Extension = ".lz";
 
             // Get CarData
             var carData = new CarData();
-            using (var reader = new StreamReader(File.OpenRead(inputFilePath)))
+            using (var reader = new StreamReader(File.OpenRead(inputFile)))
                 carData.Deserialize(reader);
 
             // 
@@ -159,7 +156,7 @@ namespace Manifold.GFZCLI
                     // Write data to stream in memory
                     carData.Serialize(writer);
                     // Create file new file
-                    using (var fs = File.Create(outputFilePath))
+                    using (var fs = File.Create(outputFile))
                     {
                         // Force format to GX since "cardata.lz" is a GX exclusive standalone file.
                         options.SerializationFormatStr = "gx";
@@ -170,8 +167,8 @@ namespace Manifold.GFZCLI
             };
             var info = new FileWriteInfo()
             {
-                InputFilePath = inputFilePath,
-                OutputFilePath = outputFilePath,
+                InputFilePath = inputFile,
+                OutputFilePath = outputFile,
                 PrintDesignator = "CarData",
                 PrintActionDescription = "creating cardata BIN from file",
                 PrintMoreInfoOnSkip =

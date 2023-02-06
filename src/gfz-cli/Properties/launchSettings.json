@@ -9,7 +9,7 @@
     },
     "cardata-tsv-to-bin": {
       "commandName": "Project",
-      "commandLineArgs": "-a cardata-tsv-to-bin -i D:\\gfzj01\\game\\cardata.tsv --overwrite"
+      "commandLineArgs": "cardata-tsv-to-bin D:\\gfzj01\\game\\cardata.tsv --overwrite"
     },
     "tpl-unpack": {
       "commandName": "Project",
