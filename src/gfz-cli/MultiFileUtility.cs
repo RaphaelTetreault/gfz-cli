@@ -11,10 +11,10 @@ namespace Manifold.GFZCLI
     public static class MultiFileUtility
     {
         //public delegate void FileTask(Options options, string filePath);
-        public delegate void ConvertFileTask(Options options, string inputFilePath, string outputFilePath);
-        public delegate T ProcessFileTask<T>(Options options, string inputFilePath);
+        public delegate void FileInFileOutTask(Options options, FileDescription inputFile, FileDescription outputFile);
+        public delegate T FileInTypeOutTask<T>(Options options, FileDescription inputFile);
 
-        public static int DoFileIOTasks(Options options, ConvertFileTask fileTask)
+        public static int DoFileInFileOutTasks(Options options, FileInFileOutTask fileTask)
         {
             // Get the file or all files at 'path'
             string path = options.InputPath;
@@ -28,13 +28,13 @@ namespace Manifold.GFZCLI
                 throw new Exception();
 
             // For each file, queue it as a task - multithreaded
-            List<Task> tasks = new List<Task>();
+            List<Task> tasks = new List<Task>(inputFilePaths.Length);
             for (int i = 0; i < inputFilePaths.Length; i++)
             {
-                string inputFilePath = inputFilePaths[i];
-                string outputFilePath = outputFilePaths[i];
+                FileDescription inputFile = new FileDescription(inputFilePaths[i]);
+                FileDescription outputFile = new FileDescription(outputFilePaths[i]);
 
-                var action = () => { fileTask(options, inputFilePath, outputFilePath); };
+                var action = () => { fileTask(options, inputFile, outputFile); };
                 var task = Task.Factory.StartNew(action);
                 tasks.Add(task);
             }
@@ -45,7 +45,7 @@ namespace Manifold.GFZCLI
 
             return tasks.Count;
         }
-        public static T[] DoFilesToValueTasks<T>(Options options, ProcessFileTask<T> processFileTask)
+        public static T[] DoFileInTypeOutTasks<T>(Options options, FileInTypeOutTask<T> processFileTask)
         {
             // Get all files specified by user
             string[] inputFilePaths = GetInputFiles(options, options.InputPath);
@@ -62,14 +62,10 @@ namespace Manifold.GFZCLI
             //  Schedule tasks, indicate where to store value
             for (int i = 0; i < tasks.Length; i++)
             {
-                string inputFilePath = inputFilePaths[i];
+                FileDescription inputFile = new FileDescription(inputFilePaths[i]);
                 int index = i;
 
-                var action = () =>
-                {
-                    results[index] = processFileTask(options, inputFilePath);
-                };
-
+                var action = () => { results[index] = processFileTask(options, inputFile); };
                 var task = Task.Factory.StartNew(action);
                 tasks[i] = task;
             }

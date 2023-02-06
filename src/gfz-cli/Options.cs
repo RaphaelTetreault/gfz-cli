@@ -24,7 +24,7 @@ namespace Manifold.GFZCLI
         public string SearchPattern { get; set; } = string.Empty;
         public bool SearchSubdirectories { get; set; } = false;
         public SearchOption SearchOption => SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-        public string SerializationFormatStr { get; set; } = string.Empty;
+        public string SerializationFormatStr { get; set; } = "gx";
         public SerializeFormat SerializeFormat => Enum.Parse<SerializeFormat>(SerializationFormatStr, true);
         public AvGame AvGame => GetAvFormat(SerializeFormat);
 

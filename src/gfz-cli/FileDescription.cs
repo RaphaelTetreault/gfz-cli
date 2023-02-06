@@ -91,6 +91,16 @@ namespace Manifold.GFZCLI
             return allExtensions;
         }
 
+        public string GetExtensions()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (var extension in ExtensionsList)
+            {
+                stringBuilder.Append('.');
+                stringBuilder.Append(extension);
+            }
+            return stringBuilder.ToString();
+        }
         public void SetExtensions(string extensions)
         {
             // Clear all extenions
@@ -111,20 +121,26 @@ namespace Manifold.GFZCLI
                 ExtensionsList.Add(extension);
             }
         }
-        public string GetExtensions()
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach (var extension in ExtensionsList)
-            {
-                stringBuilder.Append('.');
-                stringBuilder.Append(extension);
-            }
-            return stringBuilder.ToString();
-        }
         public void PopExtension()
         {
             // This calls the setter which pops last extension
             Extension = string.Empty;
+        }
+        public void AppendExtension(string extension)
+        {
+            string[] extensions = CleanExtension(extension);
+            foreach (var ext in extensions)
+                ExtensionsList.Add(ext);
+        }
+        public void AppendDirectory(string directory)
+        {
+            directory = EnforceUnixPath(directory);
+
+            bool doesNotStartWithSlash = directory[0] != '/';
+            if (doesNotStartWithSlash)
+                Directory += '/';
+
+            Directory += directory;
         }
         public bool IsExtension(string extension, bool ignoreCase = true)
         {
@@ -138,7 +154,7 @@ namespace Manifold.GFZCLI
             if (ignoreCase)
             {
                 extension = extension.ToLower();
-                selfExtension = extension.ToLower();
+                selfExtension = selfExtension.ToLower();
             }
 
             bool isSame = selfExtension == extension;

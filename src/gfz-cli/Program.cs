@@ -16,6 +16,7 @@ using static Manifold.GFZCLI.MultiFileUtility;
 using GameCube.GFZ.Camera;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Processing;
+using System.Net.Http.Headers;
 
 namespace Manifold.GFZCLI
 {
@@ -105,7 +106,7 @@ namespace Manifold.GFZCLI
             inputFile.ThrowIfDoesNotExist();
             // Manage output
             var outputFile = new FileDescription(GetOutputPath(options, options.InputPath));
-            outputFile.Extension = ".tsv";
+            outputFile.SetExtensions(".tsv");
 
             // Read file
             // Decompress LZ if not decompressed yet
@@ -140,7 +141,7 @@ namespace Manifold.GFZCLI
             inputFile.ThrowIfDoesNotExist();
             // Manage output
             var outputFile = new FileDescription(GetOutputPath(options, options.InputPath));
-            outputFile.Extension = ".lz";
+            outputFile.SetExtensions(".lz");
 
             // Get CarData
             var carData = new CarData();
@@ -185,21 +186,21 @@ namespace Manifold.GFZCLI
                 options.SearchPattern = "*.lz";
 
             Terminal.WriteLine("LZ: decompressing file(s).");
-            int taskCount = DoFileIOTasks(options, LzDecompressFile);
+            int taskCount = DoFileInFileOutTasks(options, LzDecompressFile);
             Terminal.WriteLine($"LZ: done decompressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void LzDecompressFile(Options options, string inputFilePath, string outputFilePath)
+        public static void LzDecompressFile(Options options, FileDescription inputFile, FileDescription outputFile)
         {
             // Remove extension
-            outputFilePath = StripFileExtensions(outputFilePath);
+            outputFile.PopExtension();
 
             // 
             var fileWrite = () =>
             {
                 // TODO: add LZ function in library to read from inputFilePath, decompress, save to outputFilePath
-                using (var stream = LzUtility.DecompressAvLz(inputFilePath))
+                using (var stream = LzUtility.DecompressAvLz(inputFile))
                 {
-                    using (var writer = File.Create(outputFilePath))
+                    using (var writer = File.Create(inputFile))
                     {
                         writer.Write(stream.ToArray());
                     }
@@ -207,8 +208,8 @@ namespace Manifold.GFZCLI
             };
             var info = new FileWriteInfo()
             {
-                InputFilePath = inputFilePath,
-                OutputFilePath = outputFilePath,
+                InputFilePath = inputFile,
+                OutputFilePath = outputFile,
                 PrintDesignator = "LZ",
                 PrintActionDescription = "decompressing file",
             };
@@ -217,20 +218,19 @@ namespace Manifold.GFZCLI
         public static void LzCompress(Options options)
         {
             Terminal.WriteLine("LZ: Compressing file(s).");
-            int taskCount = DoFileIOTasks(options, LzCompressFile);
+            int taskCount = DoFileInFileOutTasks(options, LzCompressFile);
             Terminal.WriteLine($"LZ: done compressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void LzCompressFile(Options options, string inputFilePath, string outputFilePath)
+        public static void LzCompressFile(Options options, FileDescription inputFile, FileDescription outputFile)
         {
-            outputFilePath += ".lz";
+            outputFile.AppendExtension(".lz");
 
-            // 
             var fileWrite = () =>
             {
-                // TODO: add LZ function in library to read from inputFilePath, compress, save to outputFilePath
-                using (var stream = LzUtility.CompressAvLz(inputFilePath, options.AvGame))
+                // TODO: add LZ function in library to read from inputFile, compress, save to outputFile
+                using (var stream = LzUtility.CompressAvLz(inputFile, options.AvGame))
                 {
-                    using (var writer = File.Create(outputFilePath))
+                    using (var writer = File.Create(outputFile))
                     {
                         writer.Write(stream.ToArray());
                     }
@@ -238,8 +238,8 @@ namespace Manifold.GFZCLI
             };
             var info = new FileWriteInfo()
             {
-                InputFilePath = inputFilePath,
-                OutputFilePath = outputFilePath,
+                InputFilePath = inputFile,
+                OutputFilePath = outputFile,
                 PrintDesignator = "LZ",
                 PrintActionDescription = "compressing input file",
             };
@@ -254,27 +254,29 @@ namespace Manifold.GFZCLI
                 options.SearchPattern = "*.tpl";
 
             Terminal.WriteLine("TPL: unpacking file(s).");
-            int taskCount = DoFileIOTasks(options, TplUnpackFile);
-            Terminal.WriteLine($"TPL: done unpacking {taskCount} file{(taskCount != 1 ? 's' : "")}.");
+            int taskCount = DoFileInFileOutTasks(options, TplUnpackFile);
+            Terminal.WriteLine($"TPL: done unpacking {taskCount} TPL file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void TplUnpackFile(Options options, string inputFilePath, string outputFilePath)
+        public static void TplUnpackFile(Options options, FileDescription inputFile, FileDescription outputFile)
         {
             // Deserialize the TPL
             Tpl tpl = new Tpl();
-            using (var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), Tpl.endianness))
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), Tpl.endianness))
             {
                 tpl.Deserialize(reader);
-                tpl.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
+                tpl.FileName = Path.GetFileNameWithoutExtension(inputFile);
             }
 
             // Create folder named the same thing as the TPL input file
-            string directory = Path.GetDirectoryName(outputFilePath);
+            string directory = Path.GetDirectoryName(outputFile);
             string outputDirectory = Path.Combine(directory, tpl.FileName);
             Directory.CreateDirectory(outputDirectory);
 
             // Prepare image encoder
             var encoder = new PngEncoder();
             encoder.CompressionLevel = PngCompressionLevel.BestCompression;
+            outputFile.SetExtensions(".png");
+            outputFile.AppendDirectory(tpl.FileName);
 
             // Iterate over texture and mipmaps, save to disk
             int tplIndex = 0;
@@ -303,12 +305,12 @@ namespace Manifold.GFZCLI
                     if (skipCorruptedTexture)
                         continue;
 
-                    //
+                    // TODO
+                    // Use new FileDescription
                     var texture = textureEntry.Texture;
                     string textureHash = textureSeries.MD5TextureHashes[entryIndex];
-                    string fileName = $"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}.png";
-                    string textureOutputPath = Path.Combine(outputDirectory, fileName);
-                    textureOutputPath = CleanPath(textureOutputPath);
+                    FileDescription textureOutput = new FileDescription(outputFile);
+                    textureOutput.Name = $"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}";
 
                     //
                     var fileWrite = () =>
@@ -317,12 +319,12 @@ namespace Manifold.GFZCLI
                         var texture = textureEntry.Texture;
                         Image<Rgba32> image = TextureToImage(texture);
                         // Save to disk
-                        image.Save(textureOutputPath, encoder);
+                        image.Save(textureOutput, encoder);
                     };
                     var info = new FileWriteInfo()
                     {
-                        InputFilePath = inputFilePath,
-                        OutputFilePath = textureOutputPath,
+                        InputFilePath = inputFile,
+                        OutputFilePath = textureOutput,
                         PrintDesignator = "TPL",
                         PrintActionDescription = $"unpacking texture {tplIndex} mipmap {mipmapIndex} of file",
                     };
@@ -401,6 +403,7 @@ namespace Manifold.GFZCLI
             }
         }
 
+
         public static void LiveCameraStageBinToTsv(Options options)
         {
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
@@ -408,32 +411,34 @@ namespace Manifold.GFZCLI
                 options.SearchPattern = "*livecam_stage_*.bin";
 
             Terminal.WriteLine("Live Camera Stage: converting file(s) to TSV.");
-            int taskCount = DoFileIOTasks(options, LiveCameraStageBinToTsvFile);
+            int taskCount = DoFileInFileOutTasks(options, LiveCameraStageBinToTsvFile);
             Terminal.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void LiveCameraStageBinToTsvFile(Options options, string inputFilePath, string outputFilePath)
+        public static void LiveCameraStageBinToTsvFile(Options options, FileDescription inputFile, FileDescription outputFile)
         {
+            outputFile.SetExtensions(".tsv");
+
             // Deserialize the file
             LiveCameraStage liveCameraStage = new LiveCameraStage();
-            using (var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), LiveCameraStage.endianness))
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), LiveCameraStage.endianness))
             {
                 liveCameraStage.Deserialize(reader);
-                liveCameraStage.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
+                liveCameraStage.FileName = Path.GetFileNameWithoutExtension(inputFile);
             }
 
             //
             var fileWrite = () =>
             {
                 // Write it to the stream
-                using (var textWriter = new StreamWriter(File.Create(outputFilePath)))
+                using (var textWriter = new StreamWriter(File.Create(outputFile)))
                 {
                     liveCameraStage.Serialize(textWriter);
                 }
             };
             var info = new FileWriteInfo()
             {
-                InputFilePath = inputFilePath,
-                OutputFilePath = outputFilePath,
+                InputFilePath = inputFile,
+                OutputFilePath = outputFile,
                 PrintDesignator = "LiveCam Stage",
                 PrintActionDescription = "creating livecam_stage TSV from file",
             };
@@ -446,31 +451,33 @@ namespace Manifold.GFZCLI
                 options.SearchPattern = "*livecam_stage_*.tsv";
 
             Terminal.WriteLine("Live Camera Stage: converting TSV file(s) to binaries.");
-            int taskCount = DoFileIOTasks(options, LiveCameraStageTsvToBinFile);
+            int taskCount = DoFileInFileOutTasks(options, LiveCameraStageTsvToBinFile);
             Terminal.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void LiveCameraStageTsvToBinFile(Options options, string inputFilePath, string outputFilePath)
+        public static void LiveCameraStageTsvToBinFile(Options options, FileDescription inputFile, FileDescription outputFile)
         {
+            outputFile.SetExtensions(".bin");
+
             // Load file
             LiveCameraStage liveCameraStage = new LiveCameraStage();
-            using (var textReader = new StreamReader(File.OpenRead(inputFilePath)))
+            using (var textReader = new StreamReader(File.OpenRead(inputFile)))
             {
                 liveCameraStage.Deserialize(textReader);
-                liveCameraStage.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
+                liveCameraStage.FileName = Path.GetFileNameWithoutExtension(inputFile);
             }
 
             // 
             var fileWrite = () =>
                 {
-                    using (var writer = new EndianBinaryWriter(File.Create(outputFilePath), LiveCameraStage.endianness))
+                    using (var writer = new EndianBinaryWriter(File.Create(outputFile), LiveCameraStage.endianness))
                     {
                         liveCameraStage.Serialize(writer);
                     }
                 };
             var info = new FileWriteInfo()
             {
-                InputFilePath = inputFilePath,
-                OutputFilePath = outputFilePath,
+                InputFilePath = inputFile,
+                OutputFilePath = outputFile,
                 PrintDesignator = "LiveCam Stage",
                 PrintActionDescription = "creating livecam_stage TSV from file",
             };
@@ -480,7 +487,7 @@ namespace Manifold.GFZCLI
         public static void EmblemToImage(Options options)
         {
             Terminal.WriteLine("Emblem: converting emblems from BIN files.");
-            int binCount = DoFileIOTasks(options, EmblemBinToImages);
+            int binCount = DoFileInFileOutTasks(options, EmblemBinToImages);
             Terminal.WriteLine($"Emblem: done converting {binCount} file{(binCount != 1 ? 's' : "")}.");
 
             // In this case where no search pattern is set, find *FZE*.GCI (emblem) files.
@@ -489,114 +496,102 @@ namespace Manifold.GFZCLI
                 options.SearchPattern = "*fze*.dat.gci";
 
             Terminal.WriteLine("Emblem: converting emblems from GCI files.");
-            int gciCount = DoFileIOTasks(options, EmblemGciToImage);
+            int gciCount = DoFileInFileOutTasks(options, EmblemGciToImage);
             Terminal.WriteLine($"Emblem: done converting {gciCount} file{(gciCount != 1 ? 's' : "")}.");
         }
-        private static void EmblemGciToImage(Options options, string inputFilePath, string outputFilePath)
+        private static void EmblemGciToImage(Options options, FileDescription inputFile, FileDescription outputFile)
         {
             // Abort method if file does not use correct
-            string extension = Path.GetExtension(inputFilePath);
-            bool isGciFile = extension == EmblemGCI.Extension;
-            if (!isGciFile)
+            if (!inputFile.IsExtension(EmblemGCI.Extension))
                 return;
-
-            var inputFileInfo = new FileDescription(inputFilePath);
-            var outputFileInfo = new FileDescription(outputFilePath);
-            var x = inputFileInfo.FullPath;
 
             // Read GCI Emblem data
             var emblemGCI = new EmblemGCI();
-            using (var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), EmblemGCI.endianness))
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemGCI.endianness))
             {
                 emblemGCI.Deserialize(reader);
-                emblemGCI.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
+                emblemGCI.FileName = Path.GetFileNameWithoutExtension(inputFile);
             }
 
             // Prepare image encoder
             var encoder = new PngEncoder();
             encoder.CompressionLevel = PngCompressionLevel.BestCompression;
-
-            // Strip twice to remove .dat.gci extension
-            outputFilePath = StripFileExtensions(outputFilePath);
-            outputFilePath = StripFileExtensions(outputFilePath);
+            // Strip .dat.gci extensions
+            outputFile.SetExtensions("png");
 
             // Info for file write + console print
             var fileWriteInfo = new FileWriteInfo()
             {
-                InputFilePath = inputFilePath,
+                InputFilePath = inputFile,
                 PrintDesignator = "Emblem",
-                PrintActionDescription = "converting",
             };
 
             // BANNER
             {
-                string textureOutputPath = $"{outputFilePath}-banner.png";
-                fileWriteInfo.OutputFilePath = textureOutputPath;
-                fileWriteInfo.PrintActionDescription = "emblem banner";
+                FileDescription textureOutput = new FileDescription(outputFile);
+                textureOutput.Name = $"{outputFile.Name}-banner";
+                fileWriteInfo.OutputFilePath = textureOutput;
+                fileWriteInfo.PrintActionDescription = "converting emblem banner";
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
             }
             // ICON
             {
                 // Strip original file name, replace with GC game code
-                string directory = Path.GetDirectoryName(outputFilePath);
-                string fileName = $"{emblemGCI.GameCode}-icon.png";
-                string textureOutputPath = Path.Combine(directory, fileName);
-                fileWriteInfo.OutputFilePath = textureOutputPath;
-                fileWriteInfo.PrintActionDescription = "emblem icon";
+                FileDescription textureOutput = new FileDescription(outputFile);
+                textureOutput.Name = $"{emblemGCI.GameCode}-icon";
+                fileWriteInfo.OutputFilePath = textureOutput;
+                fileWriteInfo.PrintActionDescription = "converting emblem icon";
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
             }
             // EMBLEM
             {
-                string textureOutputPath = $"{outputFilePath}.png";
-                fileWriteInfo.OutputFilePath = textureOutputPath;
-                fileWriteInfo.PrintActionDescription = "emblem";
+                fileWriteInfo.OutputFilePath = outputFile;
+                fileWriteInfo.PrintActionDescription = "converting emblem";
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
             }
         }
-        private static void EmblemBinToImages(Options options, string inputFilePath, string outputFilePath)
+        private static void EmblemBinToImages(Options options, FileDescription inputFile, FileDescription outputFile)
         {
-            string extension = Path.GetExtension(inputFilePath);
-            bool isBinFile = extension == EmblemBIN.Extension;
-            if (!isBinFile)
+            if (!inputFile.IsExtension(EmblemBIN.Extension))
                 return;
 
             // Read BIN Emblem data
             var emblemBIN = new EmblemBIN();
-            using (var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), EmblemBIN.endianness))
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemBIN.endianness))
             {
                 emblemBIN.Deserialize(reader);
-                emblemBIN.FileName = Path.GetFileNameWithoutExtension(inputFilePath);
+                emblemBIN.FileName = Path.GetFileNameWithoutExtension(inputFile);
             }
 
             // Prepare image encoder
             var encoder = new PngEncoder();
             encoder.CompressionLevel = PngCompressionLevel.BestCompression;
+            outputFile.SetExtensions(".png");
 
             // Info for file write + console print
             var fileWriteInfo = new FileWriteInfo()
             {
-                InputFilePath = inputFilePath,
-                OutputFilePath = outputFilePath,
+                InputFilePath = inputFile,
                 PrintDesignator = "Emblem",
             };
 
             // Write out each emblem in file
-            int index = 0;
-            int format = emblemBIN.Emblems.LengthToFormat();
-            foreach (var emblem in emblemBIN.Emblems)
+            int formatLength = emblemBIN.Emblems.LengthToFormat();
+            for (int i = 0; i < emblemBIN.Emblems.Length; i++)
             {
-                index++;
-                string directory = Path.GetDirectoryName(outputFilePath);
-                string fileName = $"{emblemBIN.FileName}-{index.PadLeft(format, '0')}.png";
-                string textureOutputPath = Path.Combine(directory, fileName);
-                fileWriteInfo.PrintActionDescription = $"converting emblem {index} of";
+                var emblem = emblemBIN.Emblems[i];
+                int index = i + 1;
+                string indexStr = index.PadLeft(formatLength, '0');
+                outputFile.Name = $"{inputFile.Name}-{indexStr}";
+                fileWriteInfo.PrintActionDescription = $"converting emblem {indexStr} of";
+                fileWriteInfo.OutputFilePath = outputFile;
                 WriteImage(options, encoder, emblem.Texture, fileWriteInfo);
             }
         }
         public static void ImageToEmblem(Options options)
         {
-            Terminal.WriteLine("Emblem: converting image(s) to emblem.bin file.");            
-            var emblems = DoFilesToValueTasks(options, ImageToEmblemBin);
+            Terminal.WriteLine("Emblem: converting image(s) to emblem.bin file.");
+            var emblems = DoFileInTypeOutTasks(options, ImageToEmblemBin);
             {
                 string outputFilePath = CleanPath(options.OutputPath);
 
@@ -626,7 +621,7 @@ namespace Manifold.GFZCLI
             }
             Terminal.WriteLine($"Emblem: done converting {emblems.Length} image{(emblems.Length != 1 ? 's' : "")}.");
         }
-        public static Emblem ImageToEmblemBin(Options options, string inputFilePath)
+        public static Emblem ImageToEmblemBin(Options options, FileDescription inputFile)
         {
             // Make sure some option parameters are appropriate
             bool isTooLarge = IImageResizeOptions.IsSizeTooLarge(options, Emblem._Width, Emblem._Height);
@@ -638,7 +633,9 @@ namespace Manifold.GFZCLI
                 throw new ArgumentException(msg);
             }
 
-            Image<Rgba32> image = Image.Load<Rgba32>(inputFilePath);
+            Image<Rgba32> image = Image.Load<Rgba32>(inputFile);
+
+            // TODO: auto-magically handle 64x64 images
 
             // Resize image to fit inside bounds of 64x64
             ResizeOptions ResizeOptions = IImageResizeOptions.GetResizeOptions(options);
@@ -668,7 +665,7 @@ namespace Manifold.GFZCLI
             {
                 Terminal.Write($"Emblem: ");
                 Terminal.Write($"processing image ");
-                Terminal.Write(inputFilePath, FileNameColor);
+                Terminal.Write(inputFile, FileNameColor);
                 Terminal.Write($" ({image.Width},{image.Height}).");
                 Terminal.WriteLine();
             }
@@ -677,14 +674,13 @@ namespace Manifold.GFZCLI
             emblem.Texture = emblemTexture;
             return emblem;
         }
-        public static void ImageToEmblemGci(Options options, string inputFilePath, string outputFilePath)
+        public static void ImageToEmblemGci(Options options, FileDescription inputFile, FileDescription outputFile)
         {
             // Remove extension
-            outputFilePath = StripFileExtensions(outputFilePath);
-            outputFilePath += ".gci";
+            outputFile.SetExtensions(".dat.gci");
 
             // Load image
-            Image<Rgba32> image = Image.Load<Rgba32>(inputFilePath);
+            Image<Rgba32> image = Image.Load<Rgba32>(inputFile);
             //
             //Texture emblem = ;
 
@@ -692,11 +688,12 @@ namespace Manifold.GFZCLI
             var fileWrite = () =>
             {
                 // Save emblem
+                throw new NotImplementedException();
             };
             var info = new FileWriteInfo()
             {
-                InputFilePath = inputFilePath,
-                OutputFilePath = outputFilePath,
+                InputFilePath = inputFile,
+                OutputFilePath = outputFile,
                 PrintDesignator = "Emblem",
                 PrintActionDescription = "decompressing file",
             };
