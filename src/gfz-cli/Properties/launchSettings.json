@@ -39,13 +39,17 @@
       "commandName": "Project",
       "commandLineArgs": "emblem-to-image D:\\gfz-cli-test\\emblem\\chara.bin"
     },
-    "image-to-emblem-bin": {
-      "commandName": "Project",
-      "commandLineArgs": "image-to-emblem D:\\desktop\\pkmn C:\\gfzj01-working\\files\\emblem\\sample.bin -p * -o --resize"
-    },
     "emblem-to-image-gci": {
       "commandName": "Project",
       "commandLineArgs": "emblem-to-image D:\\gfz-cli-test\\emblem\\8P-GFZE-fze020_pkmn2_215_Snease_077.dat.gci"
+    },
+    "image-to-emblem-bin": {
+      "commandName": "Project",
+      "commandLineArgs": "image-to-emblem-bin D:\\desktop\\pkmn C:\\gfzj01-working\\files\\emblem\\sample.bin -p * -o"
+    },
+    "image-to-emblem-gci": {
+      "commandName": "Project",
+      "commandLineArgs": "image-to-emblem-gci D:\\desktop\\pkmn C:\\gfzj01-working\\files\\emblem\\ -p * -o"
     }
   }
 }

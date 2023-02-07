@@ -48,6 +48,7 @@ namespace Manifold.GFZCLI
         public int Width { get; set; }
         public int Height { get; set; }
 
+
         [Option("emblem-border")]
         public bool EmblemHasAlphaBorder { get; set; } = true;
 

@@ -14,6 +14,7 @@ namespace Manifold.GFZCLI
         private List<string> ExtensionsList { get; set; } = new List<string>();
 
         public string Name { get; set; } = string.Empty;
+        public string NameAndExtensions => Name + GetExtensions();
         public string Directory { get; set; } = string.Empty;
         public string Extension
         {

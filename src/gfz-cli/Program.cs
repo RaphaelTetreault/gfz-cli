@@ -16,7 +16,6 @@ using static Manifold.GFZCLI.MultiFileUtility;
 using GameCube.GFZ.Camera;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Processing;
-using System.Net.Http.Headers;
 
 namespace Manifold.GFZCLI
 {
@@ -42,6 +41,7 @@ namespace Manifold.GFZCLI
                 string msg = "You must call this program using arguments via the Console/Terminal. ";
                 Terminal.WriteLine(msg, ConsoleColor.Black, ConsoleColor.Red);
                 Terminal.WriteLine();
+                // Force help page
                 args = Help;
             }
 
@@ -69,7 +69,8 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.cardata_tsv_to_bin: CarDataTsvToBin(options); break;
                 // EMBLEM
                 case GfzCliAction.emblem_to_image: EmblemToImage(options); break;
-                case GfzCliAction.image_to_emblem: ImageToEmblem(options); break;
+                case GfzCliAction.image_to_emblem_bin: ImageToEmblemBIN(options); break;
+                case GfzCliAction.image_to_emblem_gci: ImageToEmblemGCI(options); break;
                 // LIVE CAMERA STAGE
                 case GfzCliAction.live_camera_stage_bin_to_tsv: LiveCameraStageBinToTsv(options); break;
                 case GfzCliAction.live_camera_stage_tsv_to_bin: LiveCameraStageTsvToBin(options); break;
@@ -486,25 +487,30 @@ namespace Manifold.GFZCLI
 
         public static void EmblemToImage(Options options)
         {
-            Terminal.WriteLine("Emblem: converting emblems from BIN files.");
-            int binCount = DoFileInFileOutTasks(options, EmblemBinToImages);
-            Terminal.WriteLine($"Emblem: done converting {binCount} file{(binCount != 1 ? 's' : "")}.");
+            var inputFile = new FileDescription(options.InputPath);
+            bool isGCI = inputFile.IsExtension(EmblemGCI.Extension);
+            bool isBIN = inputFile.IsExtension(EmblemBIN.Extension);
 
-            // In this case where no search pattern is set, find *FZE*.GCI (emblem) files.
-            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-            if (hasNoSearchPattern)
-                options.SearchPattern = "*fze*.dat.gci";
+            if (isBIN)
+            {
+                Terminal.WriteLine("Emblem: converting emblems from BIN files.");
+                int binCount = DoFileInFileOutTasks(options, EmblemBinToImages);
+                Terminal.WriteLine($"Emblem: done converting {binCount} file{(binCount != 1 ? 's' : "")}.");
+            }
+            else if (isGCI)
+            {
+                // In this case where no search pattern is set, find *FZE*.GCI (emblem) files.
+                bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+                if (hasNoSearchPattern)
+                    options.SearchPattern = "*fze*.dat.gci";
 
-            Terminal.WriteLine("Emblem: converting emblems from GCI files.");
-            int gciCount = DoFileInFileOutTasks(options, EmblemGciToImage);
-            Terminal.WriteLine($"Emblem: done converting {gciCount} file{(gciCount != 1 ? 's' : "")}.");
+                Terminal.WriteLine("Emblem: converting emblems from GCI files.");
+                int gciCount = DoFileInFileOutTasks(options, EmblemGciToImage);
+                Terminal.WriteLine($"Emblem: done converting {gciCount} file{(gciCount != 1 ? 's' : "")}.");
+            }
         }
         private static void EmblemGciToImage(Options options, FileDescription inputFile, FileDescription outputFile)
         {
-            // Abort method if file does not use correct
-            if (!inputFile.IsExtension(EmblemGCI.Extension))
-                return;
-
             // Read GCI Emblem data
             var emblemGCI = new EmblemGCI();
             using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemGCI.endianness))
@@ -552,9 +558,6 @@ namespace Manifold.GFZCLI
         }
         private static void EmblemBinToImages(Options options, FileDescription inputFile, FileDescription outputFile)
         {
-            if (!inputFile.IsExtension(EmblemBIN.Extension))
-                return;
-
             // Read BIN Emblem data
             var emblemBIN = new EmblemBIN();
             using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemBIN.endianness))
@@ -588,38 +591,22 @@ namespace Manifold.GFZCLI
                 WriteImage(options, encoder, emblem.Texture, fileWriteInfo);
             }
         }
-        public static void ImageToEmblem(Options options)
+        public static void ImageToEmblemBIN(Options options)
         {
-            Terminal.WriteLine("Emblem: converting image(s) to emblem.bin file.");
-            var emblems = DoFileInTypeOutTasks(options, ImageToEmblemBin);
-            {
-                string outputFilePath = CleanPath(options.OutputPath);
-
-                // Info for file write + console print
-                var info = new FileWriteInfo()
-                {
-                    InputFilePath = options.InputPath,
-                    OutputFilePath = outputFilePath,
-                    PrintDesignator = "Emblem",
-                    PrintActionDescription = "packaging path",
-                };
-
-                var fileWrite = () =>
-                {
-                    using (var fileStream = File.Create(outputFilePath))
-                    {
-                        using (var writer = new EndianBinaryWriter(fileStream, EmblemBIN.endianness))
-                        {
-                            var emblemBin = new EmblemBIN();
-                            emblemBin.Emblems = emblems;
-                            emblemBin.Serialize(writer);
-                        }
-                    }
-                };
-
-                FileWriteOverwriteHandler(options, fileWrite, info);
-            }
+            Terminal.WriteLine("Emblem: converting image(s) to emblem.bin.");
+            var emblems = ImageToEmblemBin(options);
             Terminal.WriteLine($"Emblem: done converting {emblems.Length} image{(emblems.Length != 1 ? 's' : "")}.");
+        }
+        public static void ImageToEmblemGCI(Options options)
+        {
+            // In this case where no search pattern is set, find *fz*.dat.gci (emblem) files.
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = "*fz*.dat.gci";
+
+            Terminal.WriteLine("Emblem: converting image(s) to emblem.dat.gci.");
+            int gciCount = DoFileInFileOutTasks(options, ImageToEmblemGci);
+            Terminal.WriteLine($"Emblem: done converting {gciCount} image{(gciCount != 1 ? 's' : "")}.");
         }
         public static Emblem ImageToEmblemBin(Options options, FileDescription inputFile)
         {
@@ -674,28 +661,91 @@ namespace Manifold.GFZCLI
             emblem.Texture = emblemTexture;
             return emblem;
         }
+        public static Emblem[] ImageToEmblemBin(Options options)
+        {
+            var emblems = DoFileInTypeOutTasks(options, ImageToEmblemBin);
+
+            string outputFilePath = CleanPath(options.OutputPath);
+
+            // Info for file write + console print
+            var info = new FileWriteInfo()
+            {
+                InputFilePath = options.InputPath,
+                OutputFilePath = outputFilePath,
+                PrintDesignator = "Emblem",
+                PrintActionDescription = "packaging path",
+            };
+
+            var fileWrite = () =>
+            {
+                using (var fileStream = File.Create(outputFilePath))
+                {
+                    using (var writer = new EndianBinaryWriter(fileStream, EmblemBIN.endianness))
+                    {
+                        var emblemBin = new EmblemBIN();
+                        emblemBin.Emblems = emblems;
+                        emblemBin.Serialize(writer);
+                    }
+                }
+            };
+
+            FileWriteOverwriteHandler(options, fileWrite, info);
+
+            return emblems;
+        }
         public static void ImageToEmblemGci(Options options, FileDescription inputFile, FileDescription outputFile)
         {
-            // Remove extension
             outputFile.SetExtensions(".dat.gci");
+            outputFile.Name = EmblemGCI.GetFileName(outputFile.Name, GameCube.GFZ.GameCode.GFZJ01);
 
             // Load image
             Image<Rgba32> image = Image.Load<Rgba32>(inputFile);
+            // TODO: appropriate scaling and stuff - genericize previous code
+            Image<Rgba32> imagePreview = image.Clone();
             //
-            //Texture emblem = ;
+            image.Mutate(ipc => ipc.Resize(64, 64));
+            imagePreview.Mutate(ipc => ipc.Resize(32, 32));
+
+            Texture emblemTexture = ImageToTexture(image);
+            Texture emblemPreview = ImageToTexture(imagePreview);
+            Emblem emblem = new Emblem()
+            {
+                Texture = emblemTexture
+            };
+            //
+            MenuBanner banner = new MenuBanner();
+            banner.Texture = new Texture(96, 32, new TextureColor(0, 255, 255), TextureFormat.RGB5A3);
+            Texture.Copy(emblemPreview, banner.Texture, 64, 0);
+            //
+            MenuIcon icon = new MenuIcon();
+            icon.Texture = new Texture(32, 32, new TextureColor(255, 255, 0), TextureFormat.RGB5A3);
+            //
+            EmblemGCI gci = new EmblemGCI();
+            gci.Banner = banner;
+            gci.Icon = icon;
+            gci.Emblem = emblem;
+            gci.SafeSetInternalFileName(outputFile.NameAndExtensions);
+            // TODO: not hardcoded
+            gci.SetRegionCode(GameCube.GFZ.GameCode.GFZJ01);
 
             //  
             var fileWrite = () =>
             {
                 // Save emblem
-                throw new NotImplementedException();
+                using (var fileStream = File.Create(outputFile))
+                {
+                    using (var writer = new EndianBinaryWriter(fileStream, EmblemGCI.endianness))
+                    {
+                        gci.Serialize(writer);
+                    }
+                }
             };
             var info = new FileWriteInfo()
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
                 PrintDesignator = "Emblem",
-                PrintActionDescription = "decompressing file",
+                PrintActionDescription = "creating emblem",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
