@@ -201,7 +201,7 @@ namespace Manifold.GFZCLI
                 // TODO: add LZ function in library to read from inputFilePath, decompress, save to outputFilePath
                 using (var stream = LzUtility.DecompressAvLz(inputFile))
                 {
-                    using (var writer = File.Create(inputFile))
+                    using (var writer = File.Create(outputFile))
                     {
                         writer.Write(stream.ToArray());
                     }
