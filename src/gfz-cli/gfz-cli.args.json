@@ -1,0 +1,10 @@
+{
+  "FileVersion": 2,
+  "Id": "53c635ff-ca63-41b0-abf2-57b3ac76ea5e",
+  "Items": [
+    {
+      "Id": "7ec9cb17-d926-435d-9d1a-e8af8f7e8efc",
+      "Command": "lz-decompress D:\\gfzj01\\bg\\ D:\\test-gfz\\maybe\\ --search-subdirs --overwrite"
+    }
+  ]
+}

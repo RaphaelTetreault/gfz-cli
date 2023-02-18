@@ -1,7 +1,8 @@
 {
   "profiles": {
     "gfz-cli": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "lz-decompress D:\\gfzj01\\bg\\ D:\\test-gfz\\maybe\\ --search-subdirs --overwrite"
     },
     "cardata-bin-to-tsv": {
       "commandName": "Project",
@@ -48,8 +49,11 @@
       "commandLineArgs": "image-to-emblem-bin D:\\desktop\\pkmn C:\\gfzj01-working\\files\\emblem\\sample.bin -p * -o"
     },
     "image-to-emblem-gci": {
-      "commandName": "Project",
-      "commandLineArgs": "image-to-emblem-gci D:\\desktop\\pkmn C:\\gfzj01-working\\files\\emblem\\ -p * -o"
+      "commandName": "Project"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
     }
   }
 }
