@@ -17,6 +17,9 @@ using static Manifold.GFZCLI.MultiFileUtility;
 using GameCube.GFZ.Camera;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Processing;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Manifold.GFZCLI
 {
@@ -252,6 +255,19 @@ namespace Manifold.GFZCLI
 
         public static void IsoExtractFileSystem(Options options)
         {
+            // Manage input
+            var inputFile = new FileDescription(options.InputPath);
+            inputFile.ThrowIfDoesNotExist();
+            //// Manage output
+            if (string.IsNullOrWhiteSpace(options.OutputPath))
+            {
+                string msg =
+                    $"Output path (directory) is not defined. " +
+                    $"{nameof(options.OutputPath)}: \"{options.OutputPath}\".";
+                throw new DirectoryNotFoundException(msg);
+            }
+
+            // Read ISO
             DVD iso = new DVD();
             string isoPath = options.InputPath;
             using (var isoFile = File.OpenRead(isoPath))
@@ -262,21 +278,53 @@ namespace Manifold.GFZCLI
                 }
             }
 
-            // ok!
-            for (int i = 0; i < 0; i++)
+            // Prepare files for writing
+            var fileEntries = iso.FileSystem.FileEntries;
+            List<Task> tasks = new List<Task>(fileEntries.Count);
+            for (int i = 0; i < fileEntries.Count; i++)
             {
+                // Get output path
+                var fileEntry = fileEntries[i];
+                FileDescription outputFile = new FileDescription("");
+                outputFile.Directory = options.OutputPath;
+                outputFile.Name += fileEntry.Name;
 
+                //
+                EnsureDirectoriesExist(outputFile);
+
+                //Console.WriteLine(outputFile);
+                //continue;
+
+                // Function to write file
+                var fileWrite = () =>
+                {
+                    using (var writer = new BinaryWriter(File.Open(outputFile, FileMode.Create)))
+                    {
+                        writer.Write(fileEntry.Data);
+                    }
+                };
+
+                // Prin information
+                var info = new FileWriteInfo()
+                {
+                    InputFilePath = inputFile,
+                    OutputFilePath = outputFile,
+                    PrintDesignator = "ISO",
+                    PrintActionDescription = "extracting file from",
+                };
+
+                // Function to print and the call above function
+                var finalAction = () => { FileWriteOverwriteHandler(options, fileWrite, info); };
+
+                // Run tasks
+                var task = Task.Factory.StartNew(finalAction);
+                tasks.Add(task);
             }
-        }
-        public static void IsoExtractFile()
-        {
 
+            // Wait for tasks to finish before returning
+            var tasksFinished = Task.WhenAll(tasks);
+            tasksFinished.Wait();
         }
-        public static void IsoExtractDirectory()
-        {
-
-        }
-
 
         public static void TplUnpack(Options options)
         {
@@ -852,7 +900,8 @@ namespace Manifold.GFZCLI
                     Terminal.Write(info.InputFilePath, FileNameColor);
                     Terminal.Write(" since ");
                     Terminal.Write(info.OutputFilePath, FileNameColor);
-                    Terminal.Write(" already exists.");
+                    Terminal.Write(" already exists. ");
+                    Terminal.Write(info.PrintMoreInfoOnSkip);
                 }
                 Terminal.WriteLine();
             }

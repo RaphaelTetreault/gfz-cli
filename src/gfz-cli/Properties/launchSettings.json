@@ -57,7 +57,7 @@
     },
     "extract-iso-files": {
       "commandName": "Project",
-      "commandLineArgs": "extract-iso-files \"D:\\roms\\gfzj01.iso\""
+      "commandLineArgs": "extract-iso-files \"D:\\roms\\gfzj01.iso\" \"D:/tempx\""
     }
   }
 }

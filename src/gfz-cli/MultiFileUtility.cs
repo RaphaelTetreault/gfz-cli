@@ -194,14 +194,17 @@ namespace Manifold.GFZCLI
             return files;
         }
 
-
+        public static void EnsureDirectoriesExist(string filePath)
+        {
+            var directory = Path.GetDirectoryName(filePath);
+            if (directory is not null)
+                Directory.CreateDirectory(directory);
+        }
         public static void EnsureDirectoriesExist(string[] filesPaths)
         {
             foreach (var path in filesPaths)
             {
-                var directory = Path.GetDirectoryName(path);
-                if (directory is not null)
-                    Directory.CreateDirectory(directory);
+                EnsureDirectoriesExist(path);
             }
         }
 
