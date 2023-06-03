@@ -54,6 +54,10 @@
     "WSL": {
       "commandName": "WSL2",
       "distributionName": ""
+    },
+    "extract-iso-files": {
+      "commandName": "Project",
+      "commandLineArgs": "extract-iso-files \"D:\\roms\\gfzj01.iso\""
     }
   }
 }

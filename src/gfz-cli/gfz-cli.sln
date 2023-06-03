@@ -49,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.TPL", "..\..\l
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.Emblem", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Emblem\GameCube.GFZ.Emblem.csproj", "{2FD91D5B-1286-4C87-AF39-12CA918D9463}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.DiskImage", "..\..\libs\GameCube.Core\src\GameCube.DiskImage\GameCube.DiskImage.csproj", "{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -241,6 +243,14 @@ Global
 		{2FD91D5B-1286-4C87-AF39-12CA918D9463}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2FD91D5B-1286-4C87-AF39-12CA918D9463}.Release|x64.ActiveCfg = Release|Any CPU
 		{2FD91D5B-1286-4C87-AF39-12CA918D9463}.Release|x64.Build.0 = Release|Any CPU
+		{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}.Debug|x64.Build.0 = Debug|Any CPU
+		{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}.Release|x64.ActiveCfg = Release|Any CPU
+		{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

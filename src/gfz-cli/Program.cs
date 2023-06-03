@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using GameCube.DiskImage;
 using GameCube.GFZ.CarData;
 using GameCube.GFZ.Emblem;
 using GameCube.GFZ.LZ;
@@ -81,10 +82,12 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.tpl_unpack: TplUnpack(options); break;
                 //case GfzCliAction.tpl_pack: TplPack(options); break;
 
+                case GfzCliAction.extract_iso_files: IsoExtractFileSystem(options); break;
+
                 // UNSET
                 case 0:
                     {
-                        string msg = $"Could not parse action) '{options.ActionStr}'.";
+                        string msg = $"Could not parse action '{options.ActionStr}'.";
                         Terminal.WriteLine(msg);
                         Terminal.WriteLine();
                         //PrintAllGfzCliActions();
@@ -246,6 +249,34 @@ namespace Manifold.GFZCLI
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
+
+        public static void IsoExtractFileSystem(Options options)
+        {
+            DVD iso = new DVD();
+            string isoPath = options.InputPath;
+            using (var isoFile = File.OpenRead(isoPath))
+            {
+                using (var isoReader = new EndianBinaryReader(isoFile, DVD.endianness))
+                {
+                    iso.Deserialize(isoReader);
+                }
+            }
+
+            // ok!
+            for (int i = 0; i < 0; i++)
+            {
+
+            }
+        }
+        public static void IsoExtractFile()
+        {
+
+        }
+        public static void IsoExtractDirectory()
+        {
+
+        }
+
 
         public static void TplUnpack(Options options)
         {

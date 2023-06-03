@@ -18,5 +18,7 @@
         lz_decompress,
 
         tpl_unpack,
+
+        extract_iso_files,
     }
 }

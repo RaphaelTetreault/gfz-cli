@@ -80,7 +80,7 @@ namespace Manifold.GFZCLI
 
         public static string[] GetFilesInDirectory(Options options, string path)
         {
-            string[] files = new string[0];
+            string[] files = Array.Empty<string>();
 
             bool directoryExists = Directory.Exists(path);
             if (directoryExists)
