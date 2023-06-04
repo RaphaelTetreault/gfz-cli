@@ -58,6 +58,7 @@ namespace Manifold.GFZCLI
             }
         }
 
+        public FileDescription() : this(string.Empty) { }
         public FileDescription(string filePath)
         {
             string name = Path.GetFileName(filePath);

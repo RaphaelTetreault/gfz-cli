@@ -85,7 +85,7 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.tpl_unpack: TplUnpack(options); break;
                 //case GfzCliAction.tpl_pack: TplPack(options); break;
 
-                case GfzCliAction.extract_iso_files: IsoExtractFileSystem(options); break;
+                case GfzCliAction.extract_iso_files: IsoExtractAll(options); break;
 
                 // UNSET
                 case 0:
@@ -253,7 +253,7 @@ namespace Manifold.GFZCLI
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
 
-        public static void IsoExtractFileSystem(Options options)
+        public static void IsoExtractAll(Options options)
         {
             // Manage input
             var inputFile = new FileDescription(options.InputPath);
@@ -278,6 +278,14 @@ namespace Manifold.GFZCLI
                 }
             }
 
+            // Run tasks and wait for completion
+            var task0 = IsoExtractFiles(options, iso, inputFile);
+            var task1 = IsoExtractSystem(options, iso, inputFile);
+            task0.Wait();
+            task1.Wait();
+        }
+        private static Task IsoExtractFiles(Options options, DVD iso, FileDescription inputFile)
+        {
             // Prepare files for writing
             var fileEntries = iso.FileSystem.FileEntries;
             List<Task> tasks = new List<Task>(fileEntries.Count);
@@ -285,8 +293,9 @@ namespace Manifold.GFZCLI
             {
                 // Get output path
                 var fileEntry = fileEntries[i];
-                FileDescription outputFile = new FileDescription("");
+                FileDescription outputFile = new FileDescription();
                 outputFile.Directory = options.OutputPath;
+                outputFile.AppendDirectory("files");
                 outputFile.Name += fileEntry.Name;
 
                 //
@@ -304,7 +313,7 @@ namespace Manifold.GFZCLI
                     }
                 };
 
-                // Prin information
+                // Print information
                 var info = new FileWriteInfo()
                 {
                     InputFilePath = inputFile,
@@ -323,7 +332,60 @@ namespace Manifold.GFZCLI
 
             // Wait for tasks to finish before returning
             var tasksFinished = Task.WhenAll(tasks);
-            tasksFinished.Wait();
+            return tasksFinished;
+        }
+        private static Task IsoExtractSystem(Options options, DVD iso, FileDescription inputFile)
+        {
+            // Prepare functions
+            var makeBootBin = IsoExtractSystemFile(options, inputFile, "boot", "bin", iso.DiskHeader.BootBinRaw);
+            var makeBi2Bin = IsoExtractSystemFile(options, inputFile, "bi2", "bin", iso.DiskHeaderInformation.Bi2BinRaw);
+            var makeApploader = IsoExtractSystemFile(options, inputFile, "apploader", "img", iso.Apploader.Raw);
+            var makeFilesystem = IsoExtractSystemFile(options, inputFile, "fst", "bin", iso.FileSystem.Raw);
+            var makeMainDol = IsoExtractSystemFile(options, inputFile, "main", "dol", iso.MainExecutableRaw);
+
+            // Create tasks
+            List<Task> tasks = new List<Task>
+            {
+                Task.Factory.StartNew(makeBootBin),
+                Task.Factory.StartNew(makeBi2Bin),
+                Task.Factory.StartNew(makeApploader),
+                Task.Factory.StartNew(makeFilesystem),
+                Task.Factory.StartNew(makeMainDol),
+            };
+
+            // Wait for tasks to finish before returning
+            var tasksFinished = Task.WhenAll(tasks);
+            return tasksFinished;
+        }
+        private static Action IsoExtractSystemFile(Options options, FileDescription inputFile, string outputName, string outputExtension, byte[] data)
+        {
+            // Get output path
+            FileDescription outputFile = new FileDescription();
+            outputFile.Directory = options.OutputPath;
+            outputFile.AppendDirectory("sys");
+            outputFile.Name = outputName;
+            outputFile.SetExtensions(outputExtension);
+
+            // Print information
+            var info = new FileWriteInfo()
+            {
+                InputFilePath = inputFile,
+                OutputFilePath = outputFile,
+                PrintDesignator = "ISO",
+                PrintActionDescription = "extracting sys file from",
+            };
+
+            var fileWrite = () =>
+            {
+                EnsureDirectoriesExist(outputFile);
+                using (var writer = new BinaryWriter(File.Create(outputFile)))
+                {
+                    writer.Write(data);
+                }
+            };
+
+            var outputAction = () => { FileWriteOverwriteHandler(options, fileWrite, info); };
+            return outputAction;
         }
 
         public static void TplUnpack(Options options)
