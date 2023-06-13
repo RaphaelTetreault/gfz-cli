@@ -4,8 +4,13 @@
     {
         none,
 
+        arc_decompress,
+        arc_compress,
+
         cardata_bin_to_tsv,
         cardata_tsv_to_bin,
+
+        extract_iso_files,
 
         emblem_to_image,
         image_to_emblem_bin,
@@ -18,7 +23,5 @@
         lz_decompress,
 
         tpl_unpack,
-
-        extract_iso_files,
     }
 }

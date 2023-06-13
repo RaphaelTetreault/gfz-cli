@@ -19,6 +19,7 @@ using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Processing;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GameCube.AmusementVision.ARC;
 
 namespace Manifold.GFZCLI
 {
@@ -67,9 +68,14 @@ namespace Manifold.GFZCLI
         {
             switch (options.Action)
             {
+                // ARC
+                case GfzCliAction.arc_compress: ArcCompress(options); break;
+                case GfzCliAction.arc_decompress: ArcDecompress(options); break;
                 // CARDATA
                 case GfzCliAction.cardata_bin_to_tsv: CarDataBinToTsv(options); break;
                 case GfzCliAction.cardata_tsv_to_bin: CarDataTsvToBin(options); break;
+                // ISO
+                case GfzCliAction.extract_iso_files: IsoExtractAll(options); break;
                 // EMBLEM
                 case GfzCliAction.emblem_to_image: EmblemToImage(options); break;
                 case GfzCliAction.image_to_emblem_bin: ImageToEmblemBIN(options); break;
@@ -84,7 +90,6 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.tpl_unpack: TplUnpack(options); break;
                 //case GfzCliAction.tpl_pack: TplPack(options); break;
 
-                case GfzCliAction.extract_iso_files: IsoExtractAll(options); break;
 
                 // UNSET
                 case 0:
@@ -104,6 +109,71 @@ namespace Manifold.GFZCLI
                     }
             }
         }
+
+        // GENERIC
+        // Maybe not worth it??? Check other funcs for repetition
+        public static void Decompress(Options options, string fileEntension, string printDesignator, FileInFileOutTask fileInFileOutTask)
+        {
+            // Force checking for specific file type IF there is no defined search pattern
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = $"*{fileEntension}";
+
+            Terminal.WriteLine($"{printDesignator}: decompressing file(s).");
+            int taskCount = DoFileInFileOutTasks(options, fileInFileOutTask);
+            Terminal.WriteLine($"{printDesignator}: done decompressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
+        }
+
+        public static void ArcDecompress(Options options)
+            => Decompress(options, ".arc", "ARC", ArcDecompressFile);
+        public static void ArcDecompressFile(Options options, FileDescription inputFile, FileDescription outputFile)
+        {
+            // Turn file into folder
+            outputFile.PopExtension();
+            outputFile.Name += "/";
+
+            var fileWrite = () =>
+            {
+                // Read ARC file
+                var arc = new Archive();
+                using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), Archive.endianness))
+                {
+                    arc.FileName = inputFile;
+                    arc.Deserialize(reader);
+                }
+
+                // Write ARC contents
+                foreach (var file in arc.Files)
+                {
+                    FileDescription fileOutputPath = new FileDescription(outputFile);
+                    fileOutputPath.Name += file.Path;
+                    EnsureDirectoriesExist(fileOutputPath);
+
+                    using (var writer = File.Create(fileOutputPath))
+                    {
+                        writer.Write(file.Data);
+                    }
+                }
+
+            };
+            var info = new FileWriteInfo()
+            {
+                InputFilePath = inputFile,
+                OutputFilePath = outputFile,
+                PrintDesignator = "ARC",
+                PrintActionDescription = "decompressing file)",
+            };
+            FileWriteOverwriteHandler(options, fileWrite, info);
+        }
+        public static void ArcCompress(Options options)
+        {
+            Terminal.WriteLine("ARC: Compiling file(s).");
+            string[] inputFilePaths = GetInputFiles(options, options.InputPath);
+            var arc = new Archive();
+            arc.Files = FileSystemFile.GetFiles(options.InputPath, inputFilePaths);
+            Terminal.WriteLine($"ARC: done compiling {inputFilePaths.Length} file{(inputFilePaths.Length != 1 ? 's' : "")}.");
+        }
+
 
         public static void CarDataBinToTsv(Options options)
         {
@@ -185,16 +255,8 @@ namespace Manifold.GFZCLI
         }
 
         public static void LzDecompress(Options options)
-        {
-            // Force checking for LZ files IF there is no defined search pattern
-            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-            if (hasNoSearchPattern)
-                options.SearchPattern = "*.lz";
+            => Decompress(options, ".lz", "LZ", LzDecompressFile);
 
-            Terminal.WriteLine("LZ: decompressing file(s).");
-            int taskCount = DoFileInFileOutTasks(options, LzDecompressFile);
-            Terminal.WriteLine($"LZ: done decompressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
-        }
         public static void LzDecompressFile(Options options, FileDescription inputFile, FileDescription outputFile)
         {
             // Remove extension
@@ -286,29 +348,24 @@ namespace Manifold.GFZCLI
         private static Task IsoExtractFiles(Options options, DVD iso, FileDescription inputFile)
         {
             // Prepare files for writing
-            var fileEntries = iso.FileSystem.FileEntries;
-            List<Task> tasks = new List<Task>(fileEntries.Count);
-            for (int i = 0; i < fileEntries.Count; i++)
+            var files = iso.FileSystemFiles;
+            List<Task> tasks = new List<Task>(files.Length);
+            for (int i = 0; i < files.Length; i++)
             {
                 // Get output path
-                var fileEntry = fileEntries[i];
+                var file = files[i];
                 FileDescription outputFile = new FileDescription();
                 outputFile.Directory = options.OutputPath;
                 outputFile.AppendDirectory("files");
-                outputFile.Name += fileEntry.Name;
-
-                //
-                EnsureDirectoriesExist(outputFile);
-
-                //Console.WriteLine(outputFile);
-                //continue;
+                outputFile.Name += file.Path;
 
                 // Function to write file
                 var fileWrite = () =>
                 {
+                    EnsureDirectoriesExist(outputFile);
                     using (var writer = new BinaryWriter(File.Open(outputFile, FileMode.Create)))
                     {
-                        writer.Write(fileEntry.Data);
+                        writer.Write(file.Data);
                     }
                 };
 
@@ -371,7 +428,7 @@ namespace Manifold.GFZCLI
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
                 PrintDesignator = "ISO",
-                PrintActionDescription = "extracting sys file from",
+                PrintActionDescription = "extracting system file from",
             };
 
             var fileWrite = () =>
