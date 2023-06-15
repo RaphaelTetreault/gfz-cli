@@ -11,8 +11,8 @@ namespace Manifold.GFZCLI
     public static class MultiFileUtility
     {
         //public delegate void FileTask(Options options, string filePath);
-        public delegate void FileInFileOutTask(Options options, FileDescription inputFile, FileDescription outputFile);
-        public delegate T FileInTypeOutTask<T>(Options options, FileDescription inputFile);
+        public delegate void FileInFileOutTask(Options options, FilePath inputFile, FilePath outputFile);
+        public delegate T FileInTypeOutTask<T>(Options options, FilePath inputFile);
 
         public static int DoFileInFileOutTasks(Options options, FileInFileOutTask fileTask)
         {
@@ -31,8 +31,8 @@ namespace Manifold.GFZCLI
             List<Task> tasks = new List<Task>(inputFilePaths.Length);
             for (int i = 0; i < inputFilePaths.Length; i++)
             {
-                FileDescription inputFile = new FileDescription(inputFilePaths[i]);
-                FileDescription outputFile = new FileDescription(outputFilePaths[i]);
+                FilePath inputFile = new FilePath(inputFilePaths[i]);
+                FilePath outputFile = new FilePath(outputFilePaths[i]);
 
                 var action = () => { fileTask(options, inputFile, outputFile); };
                 var task = Task.Factory.StartNew(action);
@@ -62,7 +62,7 @@ namespace Manifold.GFZCLI
             //  Schedule tasks, indicate where to store value
             for (int i = 0; i < tasks.Length; i++)
             {
-                FileDescription inputFile = new FileDescription(inputFilePaths[i]);
+                FilePath inputFile = new FilePath(inputFilePaths[i]);
                 int index = i;
 
                 var action = () => { results[index] = processFileTask(options, inputFile); };
@@ -180,16 +180,16 @@ namespace Manifold.GFZCLI
         }
 
 
-        public static FileDescription GetFileInfo(string filePath)
+        public static FilePath GetFileInfo(string filePath)
         {
-            FileDescription file = new FileDescription(filePath);
+            FilePath file = new FilePath(filePath);
             return file;
         }
-        public static FileDescription[] GetFileInfo(params string[] filePath)
+        public static FilePath[] GetFileInfo(params string[] filePath)
         {
-            FileDescription[] files = new FileDescription[filePath.Length];
+            FilePath[] files = new FilePath[filePath.Length];
             for (int i = 0; i < filePath.Length; i++)
-                files[i] = new FileDescription(filePath[i]);
+                files[i] = new FilePath(filePath[i]);
 
             return files;
         }

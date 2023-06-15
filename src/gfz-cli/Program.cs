@@ -20,6 +20,7 @@ using SixLabors.ImageSharp.Processing;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameCube.AmusementVision.ARC;
+using System.Linq;
 
 namespace Manifold.GFZCLI
 {
@@ -126,11 +127,10 @@ namespace Manifold.GFZCLI
 
         public static void ArcDecompress(Options options)
             => Decompress(options, ".arc", "ARC", ArcDecompressFile);
-        public static void ArcDecompressFile(Options options, FileDescription inputFile, FileDescription outputFile)
+        public static void ArcDecompressFile(Options options, FilePath inputFile, FilePath outputFile)
         {
-            // Turn file into folder
+            // Turn file path into folder path
             outputFile.PopExtension();
-            outputFile.Name += "/";
 
             var fileWrite = () =>
             {
@@ -143,10 +143,11 @@ namespace Manifold.GFZCLI
                 }
 
                 // Write ARC contents
-                foreach (var file in arc.Files)
+                foreach (var file in arc.FileSystem.Files)
                 {
-                    FileDescription fileOutputPath = new FileDescription(outputFile);
-                    fileOutputPath.Name += file.Path;
+                    FilePath fileOutputPath = new FilePath();
+                    fileOutputPath.SetDirectory(outputFile);
+                    fileOutputPath.SetName(file.GetResolvedPath());
                     EnsureDirectoriesExist(fileOutputPath);
 
                     using (var writer = File.Create(fileOutputPath))
@@ -154,7 +155,6 @@ namespace Manifold.GFZCLI
                         writer.Write(file.Data);
                     }
                 }
-
             };
             var info = new FileWriteInfo()
             {
@@ -170,18 +170,20 @@ namespace Manifold.GFZCLI
             Terminal.WriteLine("ARC: Compiling file(s).");
             string[] inputFilePaths = GetInputFiles(options, options.InputPath);
             var arc = new Archive();
-            arc.Files = FileSystemFile.GetFiles(options.InputPath, inputFilePaths);
+            //arc.Files = FileSystemFile.GetFiles(options.InputPath, inputFilePaths);
             Terminal.WriteLine($"ARC: done compiling {inputFilePaths.Length} file{(inputFilePaths.Length != 1 ? 's' : "")}.");
+
+            throw new NotImplementedException();
         }
 
 
         public static void CarDataBinToTsv(Options options)
         {
             // Manage input
-            var inputFile = new FileDescription(options.InputPath);
+            var inputFile = new FilePath(options.InputPath);
             inputFile.ThrowIfDoesNotExist();
             // Manage output
-            var outputFile = new FileDescription(GetOutputPath(options, options.InputPath));
+            var outputFile = new FilePath(GetOutputPath(options, options.InputPath));
             outputFile.SetExtensions(".tsv");
 
             // Read file
@@ -213,10 +215,10 @@ namespace Manifold.GFZCLI
         public static void CarDataTsvToBin(Options options)
         {
             // Manage input
-            var inputFile = new FileDescription(options.InputPath);
+            var inputFile = new FilePath(options.InputPath);
             inputFile.ThrowIfDoesNotExist();
             // Manage output
-            var outputFile = new FileDescription(GetOutputPath(options, options.InputPath));
+            var outputFile = new FilePath(GetOutputPath(options, options.InputPath));
             outputFile.SetExtensions(".lz");
 
             // Get CarData
@@ -257,7 +259,7 @@ namespace Manifold.GFZCLI
         public static void LzDecompress(Options options)
             => Decompress(options, ".lz", "LZ", LzDecompressFile);
 
-        public static void LzDecompressFile(Options options, FileDescription inputFile, FileDescription outputFile)
+        public static void LzDecompressFile(Options options, FilePath inputFile, FilePath outputFile)
         {
             // Remove extension
             outputFile.PopExtension();
@@ -289,7 +291,7 @@ namespace Manifold.GFZCLI
             int taskCount = DoFileInFileOutTasks(options, LzCompressFile);
             Terminal.WriteLine($"LZ: done compressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void LzCompressFile(Options options, FileDescription inputFile, FileDescription outputFile)
+        public static void LzCompressFile(Options options, FilePath inputFile, FilePath outputFile)
         {
             outputFile.AppendExtension(".lz");
 
@@ -317,9 +319,9 @@ namespace Manifold.GFZCLI
         public static void IsoExtractAll(Options options)
         {
             // Manage input
-            var inputFile = new FileDescription(options.InputPath);
+            var inputFile = new FilePath(options.InputPath);
             inputFile.ThrowIfDoesNotExist();
-            //// Manage output
+            // Manage output
             if (string.IsNullOrWhiteSpace(options.OutputPath))
             {
                 string msg =
@@ -345,20 +347,20 @@ namespace Manifold.GFZCLI
             task0.Wait();
             task1.Wait();
         }
-        private static Task IsoExtractFiles(Options options, DVD iso, FileDescription inputFile)
+        private static Task IsoExtractFiles(Options options, DVD iso, FilePath inputFile)
         {
             // Prepare files for writing
-            var files = iso.FileSystemFiles;
+            var files = iso.FileSystem.Files.ToArray();
             List<Task> tasks = new List<Task>(files.Length);
             for (int i = 0; i < files.Length; i++)
             {
                 // Get output path
                 var file = files[i];
-                FileDescription outputFile = new FileDescription();
-                outputFile.Directory = options.OutputPath;
+                FilePath outputFile = new FilePath();
+                outputFile.SetDirectory(options.OutputPath);
                 outputFile.AppendDirectory("files");
-                outputFile.Name += file.Path;
-
+                outputFile.SetName(file.GetResolvedPath());
+                
                 // Function to write file
                 var fileWrite = () =>
                 {
@@ -390,7 +392,7 @@ namespace Manifold.GFZCLI
             var tasksFinished = Task.WhenAll(tasks);
             return tasksFinished;
         }
-        private static Task IsoExtractSystem(Options options, DVD iso, FileDescription inputFile)
+        private static Task IsoExtractSystem(Options options, DVD iso, FilePath inputFile)
         {
             // Prepare functions
             var makeBootBin = IsoExtractSystemFile(options, inputFile, "boot", "bin", iso.DiskHeader.BootBinRaw);
@@ -413,13 +415,13 @@ namespace Manifold.GFZCLI
             var tasksFinished = Task.WhenAll(tasks);
             return tasksFinished;
         }
-        private static Action IsoExtractSystemFile(Options options, FileDescription inputFile, string outputName, string outputExtension, byte[] data)
+        private static Action IsoExtractSystemFile(Options options, FilePath inputFile, string outputName, string outputExtension, byte[] data)
         {
             // Get output path
-            FileDescription outputFile = new FileDescription();
-            outputFile.Directory = options.OutputPath;
+            FilePath outputFile = new FilePath();
+            outputFile.SetDirectory(options.OutputPath);
             outputFile.AppendDirectory("sys");
-            outputFile.Name = outputName;
+            outputFile.SetName(outputName);
             outputFile.SetExtensions(outputExtension);
 
             // Print information
@@ -455,7 +457,7 @@ namespace Manifold.GFZCLI
             int taskCount = DoFileInFileOutTasks(options, TplUnpackFile);
             Terminal.WriteLine($"TPL: done unpacking {taskCount} TPL file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void TplUnpackFile(Options options, FileDescription inputFile, FileDescription outputFile)
+        public static void TplUnpackFile(Options options, FilePath inputFile, FilePath outputFile)
         {
             // Deserialize the TPL
             Tpl tpl = new Tpl();
@@ -507,8 +509,8 @@ namespace Manifold.GFZCLI
                     // Use new FileDescription
                     var texture = textureEntry.Texture;
                     string textureHash = textureSeries.MD5TextureHashes[entryIndex];
-                    FileDescription textureOutput = new FileDescription(outputFile);
-                    textureOutput.Name = $"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}";
+                    FilePath textureOutput = new FilePath(outputFile);
+                    textureOutput.SetName($"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}");
 
                     //
                     var fileWrite = () =>
@@ -612,7 +614,7 @@ namespace Manifold.GFZCLI
             int taskCount = DoFileInFileOutTasks(options, LiveCameraStageBinToTsvFile);
             Terminal.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void LiveCameraStageBinToTsvFile(Options options, FileDescription inputFile, FileDescription outputFile)
+        public static void LiveCameraStageBinToTsvFile(Options options, FilePath inputFile, FilePath outputFile)
         {
             outputFile.SetExtensions(".tsv");
 
@@ -652,7 +654,7 @@ namespace Manifold.GFZCLI
             int taskCount = DoFileInFileOutTasks(options, LiveCameraStageTsvToBinFile);
             Terminal.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void LiveCameraStageTsvToBinFile(Options options, FileDescription inputFile, FileDescription outputFile)
+        public static void LiveCameraStageTsvToBinFile(Options options, FilePath inputFile, FilePath outputFile)
         {
             outputFile.SetExtensions(".bin");
 
@@ -684,7 +686,7 @@ namespace Manifold.GFZCLI
 
         public static void EmblemToImage(Options options)
         {
-            var inputFile = new FileDescription(options.InputPath);
+            var inputFile = new FilePath(options.InputPath);
             bool isGCI = inputFile.IsExtension(EmblemGCI.Extension);
             bool isBIN = inputFile.IsExtension(EmblemBIN.Extension);
 
@@ -706,7 +708,7 @@ namespace Manifold.GFZCLI
                 Terminal.WriteLine($"Emblem: done converting {gciCount} file{(gciCount != 1 ? 's' : "")}.");
             }
         }
-        private static void EmblemGciToImage(Options options, FileDescription inputFile, FileDescription outputFile)
+        private static void EmblemGciToImage(Options options, FilePath inputFile, FilePath outputFile)
         {
             // Read GCI Emblem data
             var emblemGCI = new EmblemGCI();
@@ -731,8 +733,8 @@ namespace Manifold.GFZCLI
 
             // BANNER
             {
-                FileDescription textureOutput = new FileDescription(outputFile);
-                textureOutput.Name = $"{outputFile.Name}-banner";
+                FilePath textureOutput = new FilePath(outputFile);
+                textureOutput.SetName($"{outputFile.Name}-banner");
                 fileWriteInfo.OutputFilePath = textureOutput;
                 fileWriteInfo.PrintActionDescription = "converting emblem banner";
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
@@ -740,8 +742,8 @@ namespace Manifold.GFZCLI
             // ICON
             {
                 // Strip original file name, replace with GC game code
-                FileDescription textureOutput = new FileDescription(outputFile);
-                textureOutput.Name = $"{emblemGCI.GameCode}-icon";
+                FilePath textureOutput = new FilePath(outputFile);
+                textureOutput.SetName($"{emblemGCI.GameCode}-icon");
                 fileWriteInfo.OutputFilePath = textureOutput;
                 fileWriteInfo.PrintActionDescription = "converting emblem icon";
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
@@ -753,7 +755,7 @@ namespace Manifold.GFZCLI
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
             }
         }
-        private static void EmblemBinToImages(Options options, FileDescription inputFile, FileDescription outputFile)
+        private static void EmblemBinToImages(Options options, FilePath inputFile, FilePath outputFile)
         {
             // Read BIN Emblem data
             var emblemBIN = new EmblemBIN();
@@ -782,7 +784,7 @@ namespace Manifold.GFZCLI
                 var emblem = emblemBIN.Emblems[i];
                 int index = i + 1;
                 string indexStr = index.PadLeft(formatLength, '0');
-                outputFile.Name = $"{inputFile.Name}-{indexStr}";
+                outputFile.SetName($"{inputFile.Name}-{indexStr}");
                 fileWriteInfo.PrintActionDescription = $"converting emblem {indexStr} of";
                 fileWriteInfo.OutputFilePath = outputFile;
                 WriteImage(options, encoder, emblem.Texture, fileWriteInfo);
@@ -805,7 +807,7 @@ namespace Manifold.GFZCLI
             int gciCount = DoFileInFileOutTasks(options, ImageToEmblemGci);
             Terminal.WriteLine($"Emblem: done converting {gciCount} image{(gciCount != 1 ? 's' : "")}.");
         }
-        public static Emblem ImageToEmblemBin(Options options, FileDescription inputFile)
+        public static Emblem ImageToEmblemBin(Options options, FilePath inputFile)
         {
             // Make sure some option parameters are appropriate
             bool isTooLarge = IImageResizeOptions.IsSizeTooLarge(options, Emblem._Width, Emblem._Height);
@@ -890,10 +892,11 @@ namespace Manifold.GFZCLI
 
             return emblems;
         }
-        public static void ImageToEmblemGci(Options options, FileDescription inputFile, FileDescription outputFile)
+        public static void ImageToEmblemGci(Options options, FilePath inputFile, FilePath outputFile)
         {
             outputFile.SetExtensions(".dat.gci");
-            outputFile.Name = EmblemGCI.GetFileName(outputFile.Name, GameCube.GFZ.GameCode.GFZJ01);
+            string fileName = EmblemGCI.GetFileName(outputFile.Name, GameCube.GFZ.GameCode.GFZJ01);
+            outputFile.SetName(fileName);
 
             // Load image
             Image<Rgba32> image = Image.Load<Rgba32>(inputFile);
