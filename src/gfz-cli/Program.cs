@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameCube.AmusementVision.ARC;
 using System.Linq;
+using System.Collections;
 
 namespace Manifold.GFZCLI
 {
@@ -143,7 +144,7 @@ namespace Manifold.GFZCLI
                 }
 
                 // Write ARC contents
-                foreach (var file in arc.FileSystem.Files)
+                foreach (var file in arc.FileSystem.GetFiles())
                 {
                     FilePath fileOutputPath = new FilePath();
                     fileOutputPath.SetDirectory(outputFile);
@@ -167,13 +168,33 @@ namespace Manifold.GFZCLI
         }
         public static void ArcCompress(Options options)
         {
-            Terminal.WriteLine("ARC: Compiling file(s).");
             string[] inputFilePaths = GetInputFiles(options, options.InputPath);
-            var arc = new Archive();
-            //arc.Files = FileSystemFile.GetFiles(options.InputPath, inputFilePaths);
-            Terminal.WriteLine($"ARC: done compiling {inputFilePaths.Length} file{(inputFilePaths.Length != 1 ? 's' : "")}.");
+            //
+            FilePath outputFile = new FilePath(GetOutputPath(options, options.OutputPath));
+            if (string.IsNullOrEmpty(outputFile.Name))
+                outputFile.SetName(outputFile.PopDirectory());
+            outputFile.AppendExtension(Archive.Extension);
 
-            throw new NotImplementedException();
+            Terminal.WriteLine($"ARC: Compiling {inputFilePaths.Length} file{S(inputFilePaths)} into \"{outputFile}{Archive.Extension}\".");
+            var arc = new Archive();
+            arc.FileSystem.AddFiles(inputFilePaths, options.InputPath);
+
+            //
+            var fileWrite = () =>
+            {
+                using (var writer = new EndianBinaryWriter(File.Create(outputFile), Archive.endianness))
+                    arc.Serialize(writer);
+            };
+            var info = new FileWriteInfo()
+            {
+                InputFilePath = options.InputPath, // hacky? This is folder
+                OutputFilePath = outputFile,
+                PrintDesignator = "ARC",
+                PrintActionDescription = "creating archive file",
+            };
+            FileWriteOverwriteHandler(options, fileWrite, info);
+
+            Terminal.WriteLine($"ARC: done archiving {inputFilePaths.Length} file{(S(inputFilePaths))} in {outputFile}.");
         }
 
 
@@ -350,7 +371,7 @@ namespace Manifold.GFZCLI
         private static Task IsoExtractFiles(Options options, DVD iso, FilePath inputFile)
         {
             // Prepare files for writing
-            var files = iso.FileSystem.Files.ToArray();
+            var files = iso.FileSystem.GetFiles();
             List<Task> tasks = new List<Task>(files.Length);
             for (int i = 0; i < files.Length; i++)
             {
@@ -1033,5 +1054,16 @@ namespace Manifold.GFZCLI
             }
         }
 
+
+
+
+
+        private static string S(Array array)
+        {
+            if (array.Length == 1)
+                return "";
+            else
+                return "s";
+        }
     }
 }

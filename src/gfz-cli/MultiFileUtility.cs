@@ -154,8 +154,9 @@ namespace Manifold.GFZCLI
                     // Remove inputPath from the file Path
                     string relativePath = filePath.Replace(inputPath, "");
 
-                    if (relativePath[0] == '\\' || relativePath[0] == '/')
-                        relativePath = relativePath.Substring(1);
+                    if (relativePath.Length > 0)
+                        if (relativePath[0] == '\\' || relativePath[0] == '/')
+                            relativePath = relativePath.Substring(1);
 
                     // Append the relative path to the end of the output path
                     string cleanOutputPath = Path.Combine(outputPath, relativePath);

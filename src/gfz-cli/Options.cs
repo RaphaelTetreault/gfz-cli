@@ -7,6 +7,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
 using System.IO;
+using System.Text.Json.Serialization;
 
 namespace Manifold.GFZCLI
 {
@@ -32,7 +33,7 @@ namespace Manifold.GFZCLI
         public bool TplUnpackMipmaps { get; set; }
         public bool TplUnpackSaveCorruptedTextures { get; set; }
 
-
+        // IImageResizeOptions
         public bool Resize { get; set; } = false;
         public bool Compand { get; set; } = true;
         public string ResizeModeStr { get; set; } = ResizeMode.Max.ToString();
@@ -48,10 +49,12 @@ namespace Manifold.GFZCLI
         public int Width { get; set; }
         public int Height { get; set; }
 
-
+        // UNSORTED IN INTERFACES
         [Option("emblem-border")]
         public bool EmblemHasAlphaBorder { get; set; } = true;
 
+        //[Option("arc-root")]
+        //public string ArchiveRoot { get; set; } = string.Empty;
 
 
         /// <summary>

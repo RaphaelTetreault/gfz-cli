@@ -57,7 +57,7 @@
     },
     "extract-iso-files": {
       "commandName": "Project",
-      "commandLineArgs": "extract-iso-files \"D:\\roms\\gfzj01.iso\" \"D:/tempx\""
+      "commandLineArgs": "extract-iso-files \"D:\\roms\\gfzj01.iso\" \"D:/tempx\" --overwrite"
     },
     "arc-decompress": {
       "commandName": "Project",
@@ -65,7 +65,7 @@
     },
     "arc-compress": {
       "commandName": "Project",
-      "commandLineArgs": "arc-compress D:\\test-gfz\\maybe D:\\test-gfz\\maybe\\ --search-subdirs --overwrite --search-pattern \"*\""
+      "commandLineArgs": "arc-compress D:\\test-gfz\\maybe\\jpeg\\compo\\ D:\\test-gfz\\maybe\\jpeg\\compo\\ --search-subdirs --overwrite --search-pattern \"*\""
     }
   }
 }

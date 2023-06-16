@@ -12,6 +12,7 @@ namespace Manifold.GFZCLI
     {
         private const string MatchEverythingBeforePeriod = @"[^.]*";
         private const string MatchEverythingAfterPeriod = @"\..*";
+        private const string MatchEverythingAfterLastSlash = @"([^\/]+$)";
 
         private string _name = string.Empty;
         private string _directory = string.Empty;
@@ -106,11 +107,7 @@ namespace Manifold.GFZCLI
         }
         public void SetExtension(string value)
         {
-            // FIFO: pop extension
-            int numExtensions = _extensionsList.Count;
-            bool hasExtensions = numExtensions > 0;
-            if (hasExtensions)
-                _extensionsList.RemoveAt(numExtensions - 1);
+            PopExtension();
 
             // If null/empty, stop after popping extension
             bool isInvalidExtension = string.IsNullOrEmpty(value);
@@ -122,10 +119,17 @@ namespace Manifold.GFZCLI
             foreach (var extension in extensions)
                 _extensionsList.Add(extension);
         }
-        public void PopExtension()
+        public string PopExtension()
         {
-            // This call pops last extension
-            SetExtension(string.Empty);
+            int numExtensions = _extensionsList.Count;
+            bool hasExtensions = numExtensions > 0;
+            if (hasExtensions)
+            {
+                string extension = _extensionsList[numExtensions - 1];
+                _extensionsList.RemoveAt(numExtensions - 1);
+                return extension;
+            }
+            return string.Empty;
         }
         public void AppendExtension(string extension)
         {
@@ -146,6 +150,17 @@ namespace Manifold.GFZCLI
                 _directory += '/';
 
             _directory += directory;
+        }
+        public string PopDirectory()
+        {
+            if (string.IsNullOrEmpty(_directory))
+                return string.Empty;
+
+            string topDirectory = Regex.Match(_directory, MatchEverythingAfterLastSlash).ToString();
+            int startIndex = _directory.Length - topDirectory.Length; 
+            _directory = _directory.Remove(startIndex - 1);
+
+            return topDirectory;
         }
         public void SetName(string nameOrRelativePath)
         {
