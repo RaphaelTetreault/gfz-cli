@@ -133,38 +133,39 @@ namespace Manifold.GFZCLI
             // Turn file path into folder path
             outputFile.PopExtension();
 
-            var fileWrite = () =>
+            // Read ARC file
+            var arc = new Archive();
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), Archive.endianness))
             {
-                // Read ARC file
-                var arc = new Archive();
-                using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), Archive.endianness))
-                {
-                    arc.FileName = inputFile;
-                    arc.Deserialize(reader);
-                }
+                arc.FileName = inputFile;
+                arc.Deserialize(reader);
+            }
 
-                // Write ARC contents
-                foreach (var file in arc.FileSystem.GetFiles())
-                {
-                    FilePath fileOutputPath = new FilePath();
-                    fileOutputPath.SetDirectory(outputFile);
-                    fileOutputPath.SetName(file.GetResolvedPath());
-                    EnsureDirectoriesExist(fileOutputPath);
+            // Write ARC contents
+            foreach (var file in arc.FileSystem.GetFiles())
+            {
+                // Create output file path
+                FilePath fileOutputPath = new FilePath();
+                fileOutputPath.SetDirectory(outputFile);
+                fileOutputPath.SetName(file.GetResolvedPath());
+                EnsureDirectoriesExist(fileOutputPath);
 
+                var fileWrite = () =>
+                {
                     using (var writer = File.Create(fileOutputPath))
                     {
                         writer.Write(file.Data);
                     }
-                }
-            };
-            var info = new FileWriteInfo()
-            {
-                InputFilePath = inputFile,
-                OutputFilePath = outputFile,
-                PrintDesignator = "ARC",
-                PrintActionDescription = "decompressing file)",
-            };
-            FileWriteOverwriteHandler(options, fileWrite, info);
+                };
+                var info = new FileWriteInfo()
+                {
+                    InputFilePath = inputFile,
+                    OutputFilePath = fileOutputPath,
+                    PrintDesignator = "ARC",
+                    PrintActionDescription = "decompressing file",
+                };
+                FileWriteOverwriteHandler(options, fileWrite, info);
+            }
         }
         public static void ArcCompress(Options options)
         {
@@ -196,7 +197,6 @@ namespace Manifold.GFZCLI
 
             Terminal.WriteLine($"ARC: done archiving {inputFilePaths.Length} file{(S(inputFilePaths))} in {outputFile}.");
         }
-
 
         public static void CarDataBinToTsv(Options options)
         {
@@ -381,7 +381,7 @@ namespace Manifold.GFZCLI
                 outputFile.SetDirectory(options.OutputPath);
                 outputFile.AppendDirectory("files");
                 outputFile.SetName(file.GetResolvedPath());
-                
+
                 // Function to write file
                 var fileWrite = () =>
                 {
