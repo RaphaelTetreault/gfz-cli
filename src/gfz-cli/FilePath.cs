@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace Manifold.GFZCLI
 {
     /// <summary>
-    ///     Class manages multiple strings representing a file path.
+    ///     Managed represention of file path.
     /// </summary>
     public class FilePath
     {
@@ -65,7 +65,28 @@ namespace Manifold.GFZCLI
             string[] allExtensions = extension.Split('.');
             return allExtensions;
         }
+        private string GetFileNameFromPath(string path)
+        {
+            // Get file name stripping all possible extensions
+            string fileName = Path.GetFileName(path);
+            string cleanName = Regex.Match(fileName, MatchEverythingBeforePeriod).Value;
+            return cleanName;
+        }
 
+        public string GetExtensionsFromPath(string path)
+        {
+            // Get all possible extensions
+            string fileName = Path.GetFileName(path);
+            string extensions = Regex.Match(fileName, MatchEverythingAfterPeriod).Value;
+            return extensions;
+        }
+        public string GetDirectoryFromPath(string path)
+        {
+            // Get directory from path
+            string? directory = Path.GetDirectoryName(path);
+            string cleanDirectory = directory is null ? string.Empty : EnforceUnixPath(directory);
+            return cleanDirectory;
+        }
         public string GetExtensions()
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -84,19 +105,13 @@ namespace Manifold.GFZCLI
                 : string.Empty;
             return extension;
         }
-        // TODO: SetExtensions(param strings[] extensions){}
-        public void SetExtensions(string extensions)
+        public void SetExtensions(params string[] extensions)
         {
             // Clear all extenions
             _extensionsList.Clear();
 
-            // If null/empty string, stop here
-            if (string.IsNullOrEmpty(extensions))
-                return;
-
-            // For each extension, add to list
-            string[] allExtensions = extensions.Split('.');
-            foreach (string extension in allExtensions)
+            // Add each element
+            foreach (string extension in extensions)
             {
                 bool isInvalid = string.IsNullOrWhiteSpace(extension);
                 if (isInvalid)
@@ -104,6 +119,16 @@ namespace Manifold.GFZCLI
 
                 _extensionsList.Add(extension);
             }
+        }
+        public void SetExtensions(string extensions)
+        {
+            // If null/empty string, stop here
+            if (string.IsNullOrEmpty(extensions))
+                return;
+
+            // Split extensions block
+            string[] entensionsSplit = extensions.Split('.');
+            SetExtensions(entensionsSplit);
         }
         public void SetExtension(string value)
         {
@@ -214,31 +239,5 @@ namespace Manifold.GFZCLI
         {
             return FullPath;
         }
-
-
-        private string GetFileNameFromPath(string path)
-        {
-            // Get file name stripping all possible extensions
-            string fileName = Path.GetFileName(path);
-            string cleanName = Regex.Match(fileName, MatchEverythingBeforePeriod).Value;
-            return cleanName;
-        }
-
-        public string GetExtensionsFromPath(string path)
-        {
-            // Get all possible extensions
-            string fileName = Path.GetFileName(path);
-            string extensions = Regex.Match(fileName, MatchEverythingAfterPeriod).Value;
-            return extensions;
-        }
-
-        public string GetDirectoryFromPath(string path)
-        {
-            // Get directory from path
-            string? directory = Path.GetDirectoryName(path);
-            string cleanDirectory = directory is null ? string.Empty : EnforceUnixPath(directory);
-            return cleanDirectory;
-        }
-
     }
 }

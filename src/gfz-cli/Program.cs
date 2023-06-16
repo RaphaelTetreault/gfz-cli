@@ -352,11 +352,11 @@ namespace Manifold.GFZCLI
             }
 
             // Read ISO
-            DVD iso = new DVD();
+            DiskImage iso = new DiskImage();
             string isoPath = options.InputPath;
             using (var isoFile = File.OpenRead(isoPath))
             {
-                using (var isoReader = new EndianBinaryReader(isoFile, DVD.endianness))
+                using (var isoReader = new EndianBinaryReader(isoFile, DiskImage.endianness))
                 {
                     iso.Deserialize(isoReader);
                 }
@@ -368,7 +368,7 @@ namespace Manifold.GFZCLI
             task0.Wait();
             task1.Wait();
         }
-        private static Task IsoExtractFiles(Options options, DVD iso, FilePath inputFile)
+        private static Task IsoExtractFiles(Options options, DiskImage iso, FilePath inputFile)
         {
             // Prepare files for writing
             var files = iso.FileSystem.GetFiles();
@@ -413,7 +413,7 @@ namespace Manifold.GFZCLI
             var tasksFinished = Task.WhenAll(tasks);
             return tasksFinished;
         }
-        private static Task IsoExtractSystem(Options options, DVD iso, FilePath inputFile)
+        private static Task IsoExtractSystem(Options options, DiskImage iso, FilePath inputFile)
         {
             // Prepare functions
             var makeBootBin = IsoExtractSystemFile(options, inputFile, "boot", "bin", iso.DiskHeader.BootBinRaw);
