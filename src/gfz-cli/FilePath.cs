@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -53,6 +54,25 @@ namespace Manifold.GFZCLI
         {
             path = path.Replace("\\", "/");
             return path;
+        }
+        private static string CleanRelativeDirectory(string directory)
+        {
+            // Quit if irrelevant
+            if (string.IsNullOrEmpty(directory))
+                return directory;
+            // Clean up any backslashes
+            directory = EnforceUnixPath(directory);
+
+            bool trimStart = (directory.Length > 0) && (directory[0] == '/');
+            if (trimStart)
+                directory = directory.Substring(1);
+
+            int lastIndex = directory.Length - 1;
+            bool trimEnd = (directory.Length > 0) && (directory[lastIndex] == '/');
+            if (trimEnd)
+                directory = directory.Remove(lastIndex, 1);
+
+            return directory;
         }
         private static string[] CleanExtension(string extension)
         {
@@ -164,7 +184,7 @@ namespace Manifold.GFZCLI
         }
         public void AppendDirectory(string directory)
         {
-            directory = EnforceUnixPath(directory);
+            directory = CleanRelativeDirectory(directory);
 
             bool doAppendSlash =
                 !string.IsNullOrWhiteSpace(_directory) && // Only append if root dir exists
@@ -182,7 +202,7 @@ namespace Manifold.GFZCLI
                 return string.Empty;
 
             string topDirectory = Regex.Match(_directory, MatchEverythingAfterLastSlash).ToString();
-            int startIndex = _directory.Length - topDirectory.Length; 
+            int startIndex = _directory.Length - topDirectory.Length;
             _directory = _directory.Remove(startIndex - 1);
 
             return topDirectory;

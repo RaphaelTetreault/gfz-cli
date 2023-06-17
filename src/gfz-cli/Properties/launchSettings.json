@@ -65,7 +65,7 @@
     },
     "arc-compress": {
       "commandName": "Project",
-      "commandLineArgs": "arc-compress D:\\test-gfz\\maybe\\jpeg\\compo\\ D:\\test-gfz\\maybe\\jpeg\\compo\\ --search-subdirs --overwrite --search-pattern \"*\""
+      "commandLineArgs": "arc-compress D:\\test-gfz\\maybe\\jpeg\\compo\\ --search-subdirs --overwrite --search-pattern \"*\""
     }
   }
 }

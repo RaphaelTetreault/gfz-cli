@@ -169,42 +169,57 @@ namespace Manifold.GFZCLI
         }
         public static void ArcCompress(Options options)
         {
-            string[] inputFilePaths = GetInputFiles(options, options.InputPath);
-            //
-            FilePath outputFile = new FilePath(GetOutputPath(options, options.OutputPath));
-            if (string.IsNullOrEmpty(outputFile.Name))
-                outputFile.SetName(outputFile.PopDirectory());
+            // ARC requires directory as input path
+            bool inputNotADirectory = !Directory.Exists(options.InputPath);
+            if (inputNotADirectory)
+            {
+                string msg = "ARC archive compress requires a direcory as input path.";
+                throw new Exception(msg);
+            }
+            string[] inputFilePaths = GetInputFiles(options);
+
+            // ARC requires a directory as output path
+            bool hasOutputPath = !string.IsNullOrEmpty(options.OutputPath);
+            bool outputNotDirectory = !Directory.Exists(options.OutputPath);
+            if (hasOutputPath && outputNotDirectory)
+            {
+                string msg = "ARC archive compress requires a direcory as output path.";
+                throw new Exception(msg);
+            }
+            // Construct output file name
+            string fileName = new FilePath(options.InputPath).PopDirectory(); // filename is "[input dir].arc"
+            string directory = GetOutputDirectory(options);
+            FilePath outputFile = new();
+            outputFile.SetDirectory(directory);
+            // drop down 1 directory so have have ARC beside folder if no output path specified
+            outputFile.PopDirectory();
+            outputFile.SetName(fileName);
             outputFile.AppendExtension(Archive.Extension);
 
-            Terminal.WriteLine($"ARC: Compiling {inputFilePaths.Length} file{S(inputFilePaths)} into \"{outputFile}{Archive.Extension}\".");
+            Terminal.WriteLine($"ARC: compiling {inputFilePaths.Length} file{S(inputFilePaths)} into \"{outputFile}\".");
+
             var arc = new Archive();
             arc.FileSystem.AddFiles(inputFilePaths, options.InputPath);
-
-            //
             var fileWrite = () =>
             {
-                using (var writer = new EndianBinaryWriter(File.Create(outputFile), Archive.endianness))
-                    arc.Serialize(writer);
+                using var writer = new EndianBinaryWriter(File.Create(outputFile), Archive.endianness);
+                arc.Serialize(writer);
             };
             var info = new FileWriteInfo()
             {
-                InputFilePath = options.InputPath, // hacky? This is folder
+                InputFilePath = options.InputPath,
                 OutputFilePath = outputFile,
                 PrintDesignator = "ARC",
-                PrintActionDescription = "creating archive file",
+                PrintActionDescription = "creating archive from files in",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
 
             Terminal.WriteLine($"ARC: done archiving {inputFilePaths.Length} file{(S(inputFilePaths))} in {outputFile}.");
         }
 
-        public static void CarDataBinToTsv(Options options)
+        public static void CarDataBinToTsv(Options options) => DoFileInFileOutTasks(options, CarDataBinToTsvTask);
+        public static void CarDataBinToTsvTask(Options options, FilePath inputFile, FilePath outputFile)
         {
-            // Manage input
-            var inputFile = new FilePath(options.InputPath);
-            inputFile.ThrowIfDoesNotExist();
-            // Manage output
-            var outputFile = new FilePath(GetOutputPath(options, options.InputPath));
             outputFile.SetExtensions(".tsv");
 
             // Read file
@@ -233,13 +248,9 @@ namespace Manifold.GFZCLI
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
-        public static void CarDataTsvToBin(Options options)
+        public static void CarDataTsvToBin(Options options) => DoFileInFileOutTasks(options, CarDataTsvToBin);
+        public static void CarDataTsvToBin(Options options, FilePath inputFile, FilePath outputFile)
         {
-            // Manage input
-            var inputFile = new FilePath(options.InputPath);
-            inputFile.ThrowIfDoesNotExist();
-            // Manage output
-            var outputFile = new FilePath(GetOutputPath(options, options.InputPath));
             outputFile.SetExtensions(".lz");
 
             // Get CarData
@@ -277,9 +288,7 @@ namespace Manifold.GFZCLI
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
 
-        public static void LzDecompress(Options options)
-            => Decompress(options, ".lz", "LZ", LzDecompressFile);
-
+        public static void LzDecompress(Options options) => Decompress(options, ".lz", "LZ", LzDecompressFile);
         public static void LzDecompressFile(Options options, FilePath inputFile, FilePath outputFile)
         {
             // Remove extension

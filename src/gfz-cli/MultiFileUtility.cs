@@ -17,22 +17,15 @@ namespace Manifold.GFZCLI
         public static int DoFileInFileOutTasks(Options options, FileInFileOutTask fileTask)
         {
             // Get the file or all files at 'path'
-            string path = options.InputPath;
-            string[] inputFilePaths = GetInputFiles(options, path);
-            string[] outputFilePaths = GetOutputFiles(options, inputFilePaths);
+            string[] outputFilePaths = GetOutputFiles(options, out string[] inputFilePaths);
             EnsureDirectoriesExist(outputFilePaths);
 
-            // Sanity check
-            bool isCorrect = inputFilePaths.Length == outputFilePaths.Length;
-            if (!isCorrect)
-                throw new Exception();
-
             // For each file, queue it as a task - multithreaded
-            List<Task> tasks = new List<Task>(inputFilePaths.Length);
+            List<Task> tasks = new(inputFilePaths.Length);
             for (int i = 0; i < inputFilePaths.Length; i++)
             {
-                FilePath inputFile = new FilePath(inputFilePaths[i]);
-                FilePath outputFile = new FilePath(outputFilePaths[i]);
+                var inputFile = new FilePath(inputFilePaths[i]);
+                var outputFile = new FilePath(outputFilePaths[i]);
 
                 var action = () => { fileTask(options, inputFile, outputFile); };
                 var task = Task.Factory.StartNew(action);
@@ -48,11 +41,7 @@ namespace Manifold.GFZCLI
         public static T[] DoFileInTypeOutTasks<T>(Options options, FileInTypeOutTask<T> processFileTask)
         {
             // Get all files specified by user
-            string[] inputFilePaths = GetInputFiles(options, options.InputPath);
-            // Get singular output
-            string outputFilePath = CleanPath(options.OutputPath);
-            // Make a directory for file if necessary
-            EnsureDirectoriesExist(new string[] { outputFilePath });
+            string[] inputFilePaths = GetInputFiles(options);
 
             // Create tasks and store result of each task
             Task[] tasks = new Task[inputFilePaths.Length];
@@ -62,7 +51,7 @@ namespace Manifold.GFZCLI
             //  Schedule tasks, indicate where to store value
             for (int i = 0; i < tasks.Length; i++)
             {
-                FilePath inputFile = new FilePath(inputFilePaths[i]);
+                var inputFile = new FilePath(inputFilePaths[i]);
                 int index = i;
 
                 var action = () => { results[index] = processFileTask(options, inputFile); };
@@ -78,11 +67,11 @@ namespace Manifold.GFZCLI
         }
 
 
-        public static string[] GetFilesInDirectory(Options options, string path)
+        private static string[] GetFilesInInputDirectory(Options options)
         {
             string[] files = Array.Empty<string>();
 
-            bool directoryExists = Directory.Exists(path);
+            bool directoryExists = Directory.Exists(options.InputPath);
             if (directoryExists)
             {
                 bool isInvalidSearchOption = string.IsNullOrEmpty(options.SearchPattern);
@@ -93,24 +82,24 @@ namespace Manifold.GFZCLI
                         $"Make sure to use --{IGfzCliOptions.Args.SearchPattern} when providing directory paths.";
                     throw new ArgumentException(msg);
                 }
-                files = Directory.GetFiles(path, options.SearchPattern, options.SearchOption);
+                files = Directory.GetFiles(options.InputPath, options.SearchPattern, options.SearchOption);
             }
             return files;
         }
-        public static string[] GetInputFiles(Options options, string path)
+        public static string[] GetInputFiles(Options options)
         {
             // Make sure path is valid as either a file or folder
-            bool fileExists = File.Exists(path);
-            bool dirExists = Directory.Exists(path);
+            bool fileExists = File.Exists(options.InputPath);
+            bool dirExists = Directory.Exists(options.InputPath);
             if (!fileExists && !dirExists)
             {
-                string msg = $"Target file or folder '{path}' does not exist.";
+                string msg = $"Target file or folder '{options.InputPath}' does not exist.";
                 throw new ArgumentException(msg);
             }
 
             string[] files = fileExists
-                ? new string[] { path }
-                : GetFilesInDirectory(options, path);
+                ? new string[] { options.InputPath }
+                : GetFilesInInputDirectory(options);
 
             // Quick and dirty way to sort files
             //int maxStringLength = files.Select(f => f.Length).Max();
@@ -118,22 +107,40 @@ namespace Manifold.GFZCLI
 
             return files;
         }
+        public static string[] GetOutputFiles(Options options)
+            => GetOutputFiles(options, out _);
+        private static string[] GetOutputFiles(Options options, out string[] inputFiles)
+        {
+            inputFiles = GetInputFiles(options);
+            string[] outputFiles = new string[inputFiles.Length];
+            for (int i = 0; i < inputFiles.Length; i++)
+            {
+                string inputFilePath = inputFiles[i];
+                string outputFilePath = GetOutputFile(options, inputFilePath);
+                outputFiles[i] = outputFilePath;
+            }
 
-        public static string GetOutputPath(Options options, string filePath)
+            return outputFiles;
+        }
+        private static string GetOutputFile(Options options, string inputFile)
         {
             // Clean separators
-            filePath = CleanPath(filePath);
+            inputFile = CleanPath(inputFile);
             string inputPath = CleanPath(options.InputPath);
             string outputPath = CleanPath(options.OutputPath);
 
+            // Validate input path (not the supplied path)
             bool isFile = File.Exists(inputPath);
             bool isDirectory = Directory.Exists(inputPath);
             bool isValid = isFile ^ isDirectory;
             if (!isValid)
             {
-                throw new Exception();
+                string msg = $"Path \"{inputFile}\" is neither a file or directory.";
+                throw new Exception(msg);
             }
 
+            // If input path is file, output is exptected to be file
+            // If output path is defined, return output path (assumed to be file path)
             if (isFile)
             {
                 // If input is a file, check to see if output path is specified
@@ -145,6 +152,8 @@ namespace Manifold.GFZCLI
                 }
             }
 
+            // If input is directory, check if output is defined (assumed directory)
+            // If so, remove input path directory from supplied 'path' and prepend output directory
             if (isDirectory)
             {
                 // Check to see if an output directory is specified
@@ -152,10 +161,10 @@ namespace Manifold.GFZCLI
                 if (hasOutputDirectory)
                 {
                     // Remove inputPath from the file Path
-                    string relativePath = filePath.Replace(inputPath, "");
+                    string relativePath = inputFile.Replace(inputPath, "");
 
                     if (relativePath.Length > 0)
-                        if (relativePath[0] == '\\' || relativePath[0] == '/')
+                        if (relativePath[0] == '\\' || relativePath[0] == '/') //TODO: assume / if properly enforced...
                             relativePath = relativePath.Substring(1);
 
                     // Append the relative path to the end of the output path
@@ -165,28 +174,39 @@ namespace Manifold.GFZCLI
                 }
             }
 
-            return filePath;
+            // If both cases fail, leave path untouched
+            return inputFile;
         }
-        public static string[] GetOutputFiles(Options options, string[] inputFiles)
+
+        public static string GetOutputDirectory(Options options)
         {
-            string[] outputFiles = new string[inputFiles.Length];
-            for (int i = 0; i < inputFiles.Length; i++)
+            string inputDirectory = options.InputPath;
+            string outputDirectory = options.OutputPath;
+
+            bool isValid = Directory.Exists(inputDirectory);
+            if (!isValid)
             {
-                string inputFilePath = inputFiles[i];
-                string outputFilePath = GetOutputPath(options, inputFilePath);
-                outputFiles[i] = outputFilePath;
+                string msg = $"Path '{inputDirectory}' is no a directory.";
+                throw new ArgumentException(msg);
             }
 
-            return outputFiles;
+            bool noOutputDirectorySpecified = string.IsNullOrEmpty(outputDirectory);
+            if (noOutputDirectorySpecified)
+            {
+                return inputDirectory;
+            }
+            else
+            {
+                return outputDirectory;
+            }
         }
 
-
-        public static FilePath GetFileInfo(string filePath)
+        public static FilePath AsFilePath(string filePath)
         {
             FilePath file = new FilePath(filePath);
             return file;
         }
-        public static FilePath[] GetFileInfo(params string[] filePath)
+        public static FilePath[] AsFilePath(params string[] filePath)
         {
             FilePath[] files = new FilePath[filePath.Length];
             for (int i = 0; i < filePath.Length; i++)
@@ -208,7 +228,6 @@ namespace Manifold.GFZCLI
                 EnsureDirectoriesExist(path);
             }
         }
-
         public static string StripFileExtensions(string filePath)
         {
             var fileName = Path.GetFileNameWithoutExtension(filePath);
@@ -217,25 +236,10 @@ namespace Manifold.GFZCLI
             filePathWithoutExtensions = CleanPath(filePathWithoutExtensions);
             return filePathWithoutExtensions;
         }
-        public static string ReplaceFileExtension(string filePath, string extension)
-        {
-            var filePathWithoutExtensions = StripFileExtensions(filePath);
-            var filePathWithExtension = $"{filePathWithoutExtensions}.{extension}";
-            return filePathWithExtension;
-        }
-
-
         public static string CleanPath(string path)
         {
             path = path.Replace("\\", "/");
             return path;
-        }
-        public static string[] CleanPath(string[] paths)
-        {
-            for (int i = 0; i < paths.Length; i++)
-                paths[i] = CleanPath(paths[i]);
-
-            return paths;
         }
     }
 }
