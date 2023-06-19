@@ -6,8 +6,8 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.IO;
-using static Manifold.GFZCLI.MultiFileUtility;
-using static Manifold.GFZCLI.Program;
+using static Manifold.GFZCLI.GfzCliUtilities;
+using static Manifold.GFZCLI.GfzCliImageUtilities;
 
 namespace Manifold.GFZCLI
 {

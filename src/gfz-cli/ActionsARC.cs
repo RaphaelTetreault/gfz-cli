@@ -2,8 +2,7 @@
 using Manifold.IO;
 using System;
 using System.IO;
-using static Manifold.GFZCLI.MultiFileUtility;
-using static Manifold.GFZCLI.Program;
+using static Manifold.GFZCLI.GfzCliUtilities;
 
 namespace Manifold.GFZCLI
 {
@@ -19,7 +18,7 @@ namespace Manifold.GFZCLI
 
             Terminal.WriteLine($"ARC: decompressing file(s).");
             int taskCount = DoFileInFileOutTasks(options, ArcDecompressFile);
-            Terminal.WriteLine($"ARC: done decompressing {taskCount} file{S(taskCount)}.");
+            Terminal.WriteLine($"ARC: done decompressing {taskCount} file{Plural(taskCount)}.");
         }
 
         public static void ArcDecompressFile(Options options, FilePath inputFile, FilePath outputFile)
@@ -89,7 +88,7 @@ namespace Manifold.GFZCLI
             outputFile.SetName(fileName);
             outputFile.AppendExtension(Archive.Extension);
 
-            Terminal.WriteLine($"ARC: compiling {inputFilePaths.Length} file{S(inputFilePaths)} into \"{outputFile}\".");
+            Terminal.WriteLine($"ARC: compiling {inputFilePaths.Length} file{Plural(inputFilePaths)} into \"{outputFile}\".");
 
             var arc = new Archive();
             arc.FileSystem.AddFiles(inputFilePaths, options.InputPath);
@@ -107,7 +106,7 @@ namespace Manifold.GFZCLI
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
 
-            Terminal.WriteLine($"ARC: done archiving {inputFilePaths.Length} file{(S(inputFilePaths))} in {outputFile}.");
+            Terminal.WriteLine($"ARC: done archiving {inputFilePaths.Length} file{(Plural(inputFilePaths))} in {outputFile}.");
         }
     }
 }

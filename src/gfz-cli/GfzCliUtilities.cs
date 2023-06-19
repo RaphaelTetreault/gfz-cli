@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using static Manifold.GFZCLI.Program;
 
 namespace Manifold.GFZCLI
 {
     /// <summary>
     ///     Functions to make multithreading file processes easier.
     /// </summary>
-    public static class MultiFileUtility
+    public static class GfzCliUtilities
     {
-        //public delegate void FileTask(Options options, string filePath);
         public delegate void FileInFileOutTask(Options options, FilePath inputFile, FilePath outputFile);
         public delegate T FileInTypeOutTask<T>(Options options, FilePath inputFile);
 
@@ -65,6 +65,48 @@ namespace Manifold.GFZCLI
 
             return results;
         }
+
+        public static void FileWriteOverwriteHandler(Options options, Action fileWrite, FileWriteInfo info)
+        {
+            bool outputFileExists = File.Exists(info.OutputFilePath);
+            bool doWriteFile = !outputFileExists || options.OverwriteFiles;
+            bool isOverwritingFile = outputFileExists && doWriteFile;
+            var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
+            var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
+
+            lock (lock_ConsoleWrite)
+            {
+                Terminal.Write($"{info.PrintDesignator}: ");
+                if (doWriteFile)
+                {
+                    Terminal.Write(info.PrintActionDescription);
+                    Terminal.Write(" ");
+                    Terminal.Write(info.InputFilePath, FileNameColor);
+                    Terminal.Write(". ");
+                    Terminal.Write(writeMsg, writeColor);
+                    Terminal.Write(" file ");
+                    Terminal.Write(info.OutputFilePath, FileNameColor);
+                }
+                else
+                {
+                    Terminal.Write("skip ");
+                    Terminal.Write(info.PrintActionDescription);
+                    Terminal.Write(" ");
+                    Terminal.Write(info.InputFilePath, FileNameColor);
+                    Terminal.Write(" since ");
+                    Terminal.Write(info.OutputFilePath, FileNameColor);
+                    Terminal.Write(" already exists. ");
+                    Terminal.Write(info.PrintMoreInfoOnSkip);
+                }
+                Terminal.WriteLine();
+            }
+
+            if (doWriteFile)
+            {
+                fileWrite.Invoke();
+            }
+        }
+
 
         private static string[] GetFilesInInputDirectory(Options options)
         {
@@ -217,5 +259,14 @@ namespace Manifold.GFZCLI
             path = path.Replace("\\", "/");
             return path;
         }
+
+        public static string Plural(int length, string plural = "s", string singular = "")
+        {
+            if (length == 1)
+                return singular;
+            else
+                return plural;
+        }
+        public static string Plural(Array array) => Plural(array.Length);
     }
 }

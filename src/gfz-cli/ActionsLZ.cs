@@ -1,7 +1,6 @@
 ﻿using GameCube.GFZ.LZ;
 using System.IO;
-using static Manifold.GFZCLI.MultiFileUtility;
-using static Manifold.GFZCLI.Program;
+using static Manifold.GFZCLI.GfzCliUtilities;
 
 namespace Manifold.GFZCLI
 {
@@ -17,7 +16,7 @@ namespace Manifold.GFZCLI
 
             Terminal.WriteLine($"LZ: decompressing file(s).");
             int taskCount = DoFileInFileOutTasks(options, LzDecompressFile);
-            Terminal.WriteLine($"LZ: done decompressing {taskCount} file{S(taskCount)}.");
+            Terminal.WriteLine($"LZ: done decompressing {taskCount} file{Plural(taskCount)}.");
         }
 
         public static void LzDecompressFile(Options options, FilePath inputFile, FilePath outputFile)

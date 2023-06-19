@@ -4,8 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using static Manifold.GFZCLI.MultiFileUtility;
-using static Manifold.GFZCLI.Program;
+using static Manifold.GFZCLI.GfzCliUtilities;
 
 namespace Manifold.GFZCLI
 {
