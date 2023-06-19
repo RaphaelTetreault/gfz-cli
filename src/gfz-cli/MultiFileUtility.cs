@@ -66,7 +66,6 @@ namespace Manifold.GFZCLI
             return results;
         }
 
-
         private static string[] GetFilesInInputDirectory(Options options)
         {
             string[] files = Array.Empty<string>();
@@ -125,9 +124,9 @@ namespace Manifold.GFZCLI
         private static string GetOutputFile(Options options, string inputFile)
         {
             // Clean separators
-            inputFile = CleanPath(inputFile);
-            string inputPath = CleanPath(options.InputPath);
-            string outputPath = CleanPath(options.OutputPath);
+            inputFile = EnforceUnixSeparators(inputFile);
+            string inputPath = EnforceUnixSeparators(options.InputPath);
+            string outputPath = EnforceUnixSeparators(options.OutputPath);
 
             // Validate input path (not the supplied path)
             bool isFile = File.Exists(inputPath);
@@ -177,7 +176,6 @@ namespace Manifold.GFZCLI
             // If both cases fail, leave path untouched
             return inputFile;
         }
-
         public static string GetOutputDirectory(Options options)
         {
             string inputDirectory = options.InputPath;
@@ -201,20 +199,6 @@ namespace Manifold.GFZCLI
             }
         }
 
-        public static FilePath AsFilePath(string filePath)
-        {
-            FilePath file = new FilePath(filePath);
-            return file;
-        }
-        public static FilePath[] AsFilePath(params string[] filePath)
-        {
-            FilePath[] files = new FilePath[filePath.Length];
-            for (int i = 0; i < filePath.Length; i++)
-                files[i] = new FilePath(filePath[i]);
-
-            return files;
-        }
-
         public static void EnsureDirectoriesExist(string filePath)
         {
             var directory = Path.GetDirectoryName(filePath);
@@ -228,15 +212,7 @@ namespace Manifold.GFZCLI
                 EnsureDirectoriesExist(path);
             }
         }
-        public static string StripFileExtensions(string filePath)
-        {
-            var fileName = Path.GetFileNameWithoutExtension(filePath);
-            var directory = Path.GetDirectoryName(filePath);
-            var filePathWithoutExtensions = Path.Combine(directory, fileName);
-            filePathWithoutExtensions = CleanPath(filePathWithoutExtensions);
-            return filePathWithoutExtensions;
-        }
-        public static string CleanPath(string path)
+        public static string EnforceUnixSeparators(string path)
         {
             path = path.Replace("\\", "/");
             return path;
