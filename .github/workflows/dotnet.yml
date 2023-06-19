@@ -49,8 +49,30 @@ jobs:
         dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/win-x86   -r win-x86   --self-contained
       working-directory: ./src/gfz-cli/
       
-    - name: Upload Build Artifact
+    # Linux x65
+    - name: Upload Linux Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: gfz-cli
-        path: ./src/gfz-cli/cibuild/
+        name: gfz-cli-linux-x64
+        path: ./src/gfz-cli/cibuild/linux-x64/
+        
+    # maxOS x64
+    - name: Upload OSX Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: gfz-cli-osx-x64
+        path: ./src/gfz-cli/cibuild/osx-x64/
+        
+    # Windows x64
+    - name: Upload Windowsx64 Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: gfz-cli-windows-x64
+        path: ./src/gfz-cli/cibuild/win-x64/
+      
+    # Windows x86
+    - name: Upload Windowsx86 Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: gfz-cli-windows-x86
+        path: ./src/gfz-cli/cibuild/win-x86/
