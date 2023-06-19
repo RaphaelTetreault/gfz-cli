@@ -23,7 +23,7 @@ jobs:
     - name: DEBUG
       run: ls
     - name: Prepare wrokspace directory
-      run: cd "../src/gfz-cli/"
+      run: cd "./src/gfz-cli/"
     - name: Install dependencies
       run: dotnet add package CommandLineParser --version 2.9.1
     - name: Install dependencies
