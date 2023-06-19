@@ -35,3 +35,18 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
       working-directory: ./src/gfz-cli/
+        
+    - name: Publish
+      # https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish#options
+      # -c: Configuration. Options: Debug (default), Release, (other?)
+      # -o: Specifies the path for the output directory.
+      # --nologo: Doesn't display the startup banner or the copyright message.
+      run: dotnet publish gfz-cli.csproj.csproj  -c Debug  -o cibuild  --nologo
+      working-directory: ./src/gfz-cli/
+      
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: gfz-cli
+        path: ci-build
+        working-directory: ./src/gfz-cli/
