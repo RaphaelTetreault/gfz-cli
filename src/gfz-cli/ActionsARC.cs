@@ -8,6 +8,58 @@ namespace Manifold.GFZCLI
 {
     public static class ActionsARC
     {
+        public static void ArcCompress(Options options)
+        {
+            // ARC requires directory as input path
+            bool inputNotADirectory = !Directory.Exists(options.InputPath);
+            if (inputNotADirectory)
+            {
+                string msg = "ARC archive compress requires a direcory as input path.";
+                throw new Exception(msg);
+            }
+            string[] inputFilePaths = GetInputFiles(options);
+
+            // ARC requires a directory as output path
+            bool hasOutputPath = !string.IsNullOrEmpty(options.OutputPath);
+            bool outputNotDirectory = !Directory.Exists(options.OutputPath);
+            if (hasOutputPath && outputNotDirectory)
+            {
+                string msg = "ARC archive compress requires a direcory as output path.";
+                throw new Exception(msg);
+            }
+            // Construct output file name
+            string fileName = new FilePath(options.InputPath).PopDirectory(); // filename is "[input dir].arc"
+            string directory = GetOutputDirectory(options);
+            FilePath outputFile = new();
+            outputFile.SetDirectory(directory);
+            // drop down 1 directory so have have ARC beside folder if no output path specified
+            bool doesNotHaveOutputSpecified = string.IsNullOrEmpty(options.OutputPath);
+            if (doesNotHaveOutputSpecified)
+                outputFile.PopDirectory();
+            outputFile.SetName(fileName);
+            outputFile.AppendExtension(Archive.Extension);
+
+            Terminal.WriteLine($"ARC: compiling {inputFilePaths.Length} file{Plural(inputFilePaths)} into \"{outputFile}\".");
+
+            var arc = new Archive();
+            arc.FileSystem.AddFiles(inputFilePaths, options.InputPath);
+            var fileWrite = () =>
+            {
+                using var writer = new EndianBinaryWriter(File.Create(outputFile), Archive.endianness);
+                arc.Serialize(writer);
+            };
+            var info = new FileWriteInfo()
+            {
+                InputFilePath = options.InputPath,
+                OutputFilePath = outputFile,
+                PrintDesignator = "ARC",
+                PrintActionDescription = "creating archive from files in",
+            };
+            FileWriteOverwriteHandler(options, fileWrite, info);
+
+            Terminal.WriteLine($"ARC: done archiving {inputFilePaths.Length} file{(Plural(inputFilePaths))} in {outputFile}.");
+        }
+
 
         public static void ArcDecompress(Options options)
         {
@@ -59,54 +111,5 @@ namespace Manifold.GFZCLI
             }
         }
 
-        public static void ArcCompress(Options options)
-        {
-            // ARC requires directory as input path
-            bool inputNotADirectory = !Directory.Exists(options.InputPath);
-            if (inputNotADirectory)
-            {
-                string msg = "ARC archive compress requires a direcory as input path.";
-                throw new Exception(msg);
-            }
-            string[] inputFilePaths = GetInputFiles(options);
-
-            // ARC requires a directory as output path
-            bool hasOutputPath = !string.IsNullOrEmpty(options.OutputPath);
-            bool outputNotDirectory = !Directory.Exists(options.OutputPath);
-            if (hasOutputPath && outputNotDirectory)
-            {
-                string msg = "ARC archive compress requires a direcory as output path.";
-                throw new Exception(msg);
-            }
-            // Construct output file name
-            string fileName = new FilePath(options.InputPath).PopDirectory(); // filename is "[input dir].arc"
-            string directory = GetOutputDirectory(options);
-            FilePath outputFile = new();
-            outputFile.SetDirectory(directory);
-            // drop down 1 directory so have have ARC beside folder if no output path specified
-            outputFile.PopDirectory();
-            outputFile.SetName(fileName);
-            outputFile.AppendExtension(Archive.Extension);
-
-            Terminal.WriteLine($"ARC: compiling {inputFilePaths.Length} file{Plural(inputFilePaths)} into \"{outputFile}\".");
-
-            var arc = new Archive();
-            arc.FileSystem.AddFiles(inputFilePaths, options.InputPath);
-            var fileWrite = () =>
-            {
-                using var writer = new EndianBinaryWriter(File.Create(outputFile), Archive.endianness);
-                arc.Serialize(writer);
-            };
-            var info = new FileWriteInfo()
-            {
-                InputFilePath = options.InputPath,
-                OutputFilePath = outputFile,
-                PrintDesignator = "ARC",
-                PrintActionDescription = "creating archive from files in",
-            };
-            FileWriteOverwriteHandler(options, fileWrite, info);
-
-            Terminal.WriteLine($"ARC: done archiving {inputFilePaths.Length} file{(Plural(inputFilePaths))} in {outputFile}.");
-        }
     }
 }

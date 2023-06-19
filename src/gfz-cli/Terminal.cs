@@ -3,7 +3,7 @@
 namespace Manifold.GFZCLI
 {
     /// <summary>
-    /// A wrapper for System.Console with the option to write with ConsoleColor
+    ///     A wrapper for System.Console with the option to write with ConsoleColor
     /// </summary>
     public static class Terminal
     {

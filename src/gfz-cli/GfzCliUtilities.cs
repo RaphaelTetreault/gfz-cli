@@ -107,7 +107,6 @@ namespace Manifold.GFZCLI
             }
         }
 
-
         private static string[] GetFilesInInputDirectory(Options options)
         {
             string[] files = Array.Empty<string>();
@@ -226,7 +225,7 @@ namespace Manifold.GFZCLI
             bool isValid = Directory.Exists(inputDirectory);
             if (!isValid)
             {
-                string msg = $"Path '{inputDirectory}' is no a directory.";
+                string msg = $"Path '{inputDirectory}' is not a directory.";
                 throw new ArgumentException(msg);
             }
 
