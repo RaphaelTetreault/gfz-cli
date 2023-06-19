@@ -40,8 +40,13 @@ jobs:
       # https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish#options
       # -c: Configuration. Options: Debug (default), Release, (other?)
       # -o: Specifies the path for the output directory.
+      # -r: Runtime
       # --nologo: Doesn't display the startup banner or the copyright message.
-      run: dotnet publish gfz-cli.csproj.csproj  -c Debug  -o cibuild  --nologo
+      run:
+        dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/linux-x64 -r linux-x64
+        dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/osx-x64   -r osx-x64
+        dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/win-x64   -r win-x64
+        dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/win-x86   -r win-x86
       working-directory: ./src/gfz-cli/
       
     - name: Upload Build Artifact
