@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-
+    # Windows required to compile Unity.Mathematics' 4.7.2 .NET Framework
     runs-on: windows-latest
 
     steps:
@@ -40,8 +40,8 @@ jobs:
       # https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish#options
       # -c: Configuration. Options: Debug (default), Release, (other?)
       # -o: Specifies the path for the output directory.
-      # -r: Runtime
-      # --nologo: Doesn't display the startup banner or the copyright message.
+      # -r: Target runtime of build
+      # --self-contained: Packages runtime and application altogether (at cost of space)
       run: |
         dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/linux-x64 -r linux-x64 --self-contained
         dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/osx-x64   -r osx-x64   --self-contained
