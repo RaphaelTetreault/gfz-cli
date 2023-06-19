@@ -42,7 +42,7 @@ jobs:
       # -o: Specifies the path for the output directory.
       # -r: Runtime
       # --nologo: Doesn't display the startup banner or the copyright message.
-      run:
+      run: |
         dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/linux-x64 -r linux-x64
         dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/osx-x64   -r osx-x64
         dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/win-x64   -r win-x64
