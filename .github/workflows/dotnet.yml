@@ -20,6 +20,8 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
+    - name: Prepare wrokspace directory
+      run: cd "/home/runner/work/gfz-cli/gfz-cli/"
     - name: Install dependencies
       run: dotnet add package CommandLineParser --version 2.9.1
     - name: Install dependencies
@@ -27,6 +29,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore dotnet build "/home/runner/work/gfz-cli/src/gfz-cli/*.csproj"
+      run: dotnet build --no-restore dotnet build
     - name: Test
       run: dotnet test --no-build --verbosity normal
