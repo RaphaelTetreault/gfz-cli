@@ -53,5 +53,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: gfz-cli
-        path: ci-build
-        working-directory: ./src/gfz-cli/
+        path: ./src/gfz-cli/ci-build
