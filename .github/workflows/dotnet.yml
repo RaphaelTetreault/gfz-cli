@@ -1,0 +1,78 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    # Windows required to compile Unity.Mathematics' 4.7.2 .NET Framework
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+      
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: ./src/gfz-cli/
+      
+    - name: Build
+      run: dotnet build --no-restore
+      working-directory: ./src/gfz-cli/
+      
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+      working-directory: ./src/gfz-cli/
+        
+    - name: Publish
+      # https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish#options
+      # -c: Configuration. Options: Debug (default), Release, (other?)
+      # -o: Specifies the path for the output directory.
+      # -r: Target runtime of build
+      # --self-contained: Packages runtime and application altogether (at cost of space)
+      run: |
+        dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/linux-x64 -r linux-x64 --self-contained
+        dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/osx-x64   -r osx-x64   --self-contained
+        dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/win-x64   -r win-x64   --self-contained
+        dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/win-x86   -r win-x86   --self-contained
+      working-directory: ./src/gfz-cli/
+      
+    # Linux x65
+    - name: Upload Linux Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: gfz-cli-linux-x64
+        path: ./src/gfz-cli/cibuild/linux-x64/
+        
+    # maxOS x64
+    - name: Upload OSX Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: gfz-cli-osx-x64
+        path: ./src/gfz-cli/cibuild/osx-x64/
+        
+    # Windows x64
+    - name: Upload Windowsx64 Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: gfz-cli-windows-x64
+        path: ./src/gfz-cli/cibuild/win-x64/
+      
+    # Windows x86
+    - name: Upload Windowsx86 Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: gfz-cli-windows-x86
+        path: ./src/gfz-cli/cibuild/win-x86/
