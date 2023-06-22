@@ -240,6 +240,18 @@ namespace Manifold.GFZCLI
             }
         }
 
+        public static bool IsInputFile(Options options)
+        {
+            bool fileExists = File.Exists(options.InputPath);
+            return fileExists;
+        }
+        public static bool IsInputDirectory(Options options)
+        {
+            bool directoryExists = Directory.Exists(options.InputPath);
+            return directoryExists;
+        }
+
+
         public static void EnsureDirectoriesExist(string filePath)
         {
             var directory = Path.GetDirectoryName(filePath);
