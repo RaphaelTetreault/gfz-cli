@@ -31,7 +31,7 @@ namespace Manifold.GFZCLI
             public const string PremultiplyAlpha = "Whether to use premultiplied alpha when scaling image.";
             public const string Resampler = "The resampler to use when scaling image.";
             public const string Width = "The desired image width. May not be result width depending on 'resize-mode' option.";
-            public const string Height = "The desired image height. May not be result width depending on 'resize-mode' option.";
+            public const string Height = "The desired image height. May not be result height depending on 'resize-mode' option.";
         }
 
         [Option(Args.Resize, HelpText = Help.Resize)]

@@ -30,6 +30,12 @@ When using the `--search-pattern` command, you may use the `*` and `?` wildcards
 
 `?` is the character wildcard and will match any one character.
 
+### Image Formats
+
+`gfz-cli` uses the `SixLabors.ImageSharp` image library for image processing. As such, all image formats *can* be supported. For inputs, any image format will do. However, as this tool is a work in progress, not all formats are supported as output formats.
+
+Review supported image types on SixLabors' website. https://docs.sixlabors.com/articles/imagesharp/imageformats.html
+
 
 
 ## General Usage
@@ -169,19 +175,72 @@ Actions for managing emblems.
 
 ### Types of Emblems
 
+There are two kinds of emblems used in F-Zero AX and F-Zero GX. `gfz-cli` supports both.
+
 #### Editor Emblems
+
+Editor emblems are the emblems (typically) created inside the emblem editor. These files are saved to the GameCube memory card as `.gci` files. Each emblem contains a single image. The `.gci` format contains some other information for the GameCube file system.
 
 #### Emblem Archives
 
+F-Zero GX contains two binaries which house a number of emblems; `./emblem/chara.bin` and `./emblem/sample.bin`. These are the default emblems used in the machine editor. You can replace the emblems of these archives using more or less images than originally contained, too. Files too large will crash the game, though.
+
 ### Convert Emblem to Image
+
+Extract the image contents of a `.gci` emblem. This creates 3 files; the `.gci` banner, the `.gci` icon, and the emblem image.
+
+Extract images inside ***input-path*** (file or directory) at the current path or at ***output-path*** if specified.
+
+```shell
+# Extract images from emblem.gci
+# "--search-pattern *fz*.dat.gci" is implicit
+gfz-cli.exe emblem-to-image in/emblem.gci
+```
+
+Extract all images from an emblem archive.
+
+Extract images inside ***input-path*** (file or directory) at the current path or at ***output-path*** if specified.
+
+```shell
+# Extract images from "emblem.bin" creating "in/emblem/emblems/"
+gfz-cli.exe emblem-to-image in/emblem/emblems.bin
+```
 
 ### Convert Image to Emblem
 
+Convert ***input-path*** (file or directory) to an emblem archive at the current path or at ***output-path*** if specified.
+
+```shell
+# Convert source image to a .gci emblem
+gfz-cli.exe image-to-emblem-gci in/source.png
+```
+
+Convert ***input-path*** (file or directory) to an emblem archive at the current path or at ***output-path*** if specified.
+
+```shell
+# Convert source images inside target directory to a .bin emblem archive
+gfz-cli.exe image-to-emblem-bin in/source/ --search-pattern *.png
+```
+
+#### Image Options
+
+The image to emblem code path supports using `SixLabors.ImageSharp`'s `ResizeOptions` information for resizing input images before being converted to emblems. As such, any option provided for [image resize options](#image-resize-options) will be used when processing images to emblems.
 
 
-## ISO Management
+
+## ISO Images
+
+Actions for handling GameCube ISO images.
 
 ### Extract Files from ISO
+
+Extract all files including system files from ISO image.
+
+```shell
+# Extract files from ISO
+# Creates "in/image/" with subdirectories "./sys/" and "./files"
+gfz-cli.exe extract-iso-files in/image.iso
+```
 
 
 
@@ -191,7 +250,7 @@ Actions for managing `.lz` archive files.
 
 ### LZ Compression
 
-Compress ***input-path*** (file or directory) to an `.lz` archive at the current path or at ***output-path*** (directory) if specified.
+Compress ***input-path*** (file or directory) to an `.lz` archive at the current path or at ***output-path*** (file or directory) if specified.
 
 Compress a specific file.
 
@@ -200,7 +259,7 @@ Compress a specific file.
 gfz-cli.exe lz-compress in/stage/st01.tpl
 ```
 
-Compress all `.gma` files in folder and subfolders.
+Compress all files in folder and subfolders.
 
 ```shell
 # Compress all files ending in .gma inside the "in/" directory and its subdirectories
@@ -267,16 +326,16 @@ gfz-cli.exe tpl-unpack in/bg/ --search-subdirs
 | `--unpack-mipmaps`        | Unpack mipmaps. Off by default.                 |
 | `--unpack-corrupted-cmpr` | Unpack corrupted CMPR textures. Off by default. |
 
-#### Unpacking Mipmaps
+#### Unpack Mipmaps
 
-When unpacking a `.tpl` file, you can ask the unpacker to also save each textures' uncorrupted mipmaps. See [Unpacking Corrupted CMPR Textures](#unpacking-corrupted-cmpr-textures) for more information about corrupted mipmaps.
+When unpacking a `.tpl` file, you can ask the unpacker to also save each textures' uncorrupted mipmaps. See [Unpack Corrupted CMPR Textures](#unpack-corrupted-cmpr-textures) for more information about corrupted mipmaps.
 
 ```shell
 # Unpack "in/bg/bg_mut.tpl" textures and all textures' valid mipmaps
 gfz-cli.exe tpl-unpack in/bg/bg_mut.tpl --unpack-mipmaps
 ```
 
-#### Unpacking Corrupted CMPR Textures
+#### Unpack Corrupted CMPR Textures
 
 F-Zero AX and F-Zero GX `.tpl` files do not store CMPR textures correctly. Due to a bug, they can under-allocate memory. Due to the nature of this bug, mipmaps are most susceptible to this issue.
 
@@ -286,6 +345,82 @@ You may specify that the unpacker output these corrupted/incomplete textures. Th
 # # Unpack "in/bg/bg_mut.tpl" textures and all textures' mipmaps 
 gfz-cli.exe tpl-unpack in/bg/bg_mut.tpl --unpack-mipmaps --unpack-corrupted-cmpr
 ```
+
+
+
+## Image Resize Options
+
+Some `gfz-cli` actions take advantage of `SixLabors.ImageSharp`'s `ResizeOptions` when resizing images. This table shows the options available.
+
+https://docs.sixlabors.com/api/ImageSharp/SixLabors.ImageSharp.Processing.ResizeOptions.html
+
+| Option Token            | Brief Description                                            |
+| ----------------------- | ------------------------------------------------------------ |
+| `--width`               | The desired image width. May not be result width depending on `resize-mode` option. |
+| `--height`              | The desired image height. May not be result height depending on `resize-mode` option. |
+| `--resize`              | Whether to resize image.                                     |
+| `--resize-mode`         | How the image should be resized. See [resize mode](#resize-mode). |
+| `--resampler`           | The resampler to use when scaling image. See [resamplers](#resamplers). |
+| `--compand`             | Whether to compress or expand individual pixel colors when scaling image. |
+| `--pad-color`           | The padding color when scaling image.                        |
+| `--position`            | Anchor positions to apply to resize image. See [position](#Position-(AnchorPositionMode)). |
+| `--premultiplied-alpha` | Whether to use premultiplied alpha when scaling image.       |
+
+### Resamplers
+
+Select which image resampler to use. These options are for the `--resampler` command.
+
+| Option              | Description                                                  |
+| ------------------- | ------------------------------------------------------------ |
+| `bicubic`           | Gets the Bicubic sampler that implements the bicubic kernel algorithm W(x). |
+| `box`               | Gets the Box sampler that implements the box algorithm. Similar to nearest neighbor when upscaling. When downscaling the pixels will average, merging pixels together. |
+| `catmullrom`        | Gets the Catmull-Rom sampler, a well known standard Cubic Filter often used as a interpolation function. |
+| `hermite`           | Gets the Hermite sampler. A type of smoothed triangular interpolation filter that rounds off strong edges while preserving flat 'color levels' in the original image. |
+| `lanczos2`          | Gets the Lanczos kernel sampler that implements smooth interpolation with a radius of 2 pixels. This algorithm provides sharpened results when compared to others when downsampling. |
+| `lanczos3`          | Gets the Lanczos kernel sampler that implements smooth interpolation with a radius of 3 pixels This algorithm provides sharpened results when compared to others when downsampling. |
+| `lanczos5`          | Gets the Lanczos kernel sampler that implements smooth interpolation with a radius of 5 pixels This algorithm provides sharpened results when compared to others when downsampling. |
+| `lanczos8`          | Gets the Lanczos kernel sampler that implements smooth interpolation with a radius of 8 pixels This algorithm provides sharpened results when compared to others when downsampling. |
+| `mitchellnetravali` | Gets the Mitchell-Netravali sampler. This seperable cubic algorithm yields a very good equilibrium between detail preservation (sharpness) and smoothness. |
+| `nearestneightbour` | Gets the Nearest-Neighbour sampler that implements the nearest neighbor algorithm. This uses a very fast, unscaled filter which will select the closest pixel to the new pixels position. |
+| `robidoux`          | Gets the Robidoux sampler. This algorithm developed by Nicolas Robidoux providing a very good equilibrium between detail preservation (sharpness) and smoothness comparable to `mitchellnetravali`. |
+| `robidouxsharp`     | Gets the Robidoux Sharp sampler. A sharpened form of the `robidoux` sampler. |
+| `spline`            | Gets the Spline sampler. A separable cubic algorithm similar to `mitchellnetravali` but yielding smoother results. |
+| `triangle`          | Gets the Triangle sampler, otherwise known as Bilinear. This interpolation algorithm can be used where perfect image transformation with pixel matching is impossible, so that one can calculate and assign appropriate intensity values to pixels. |
+| `welch`             | Gets the Welch sampler. A high speed algorithm that delivers very sharpened results. |
+
+### Resize Mode
+
+Specify how image resizing is processed. These options are for the `--resize-mode` command.
+
+| Option    |                                                              |
+| --------- | ------------------------------------------------------------ |
+| `boxpad`  | Pads the image to fit the bound of the container without resizing the original source. When downscaling, performs the same functionality as `pad`. |
+| `crop`    | Crops the resized image to fit the bounds of its container.  |
+| `manual`  | The target location and size of the resized image has been manually set. |
+| `max`     | Constrains the resized image to fit the bounds of its container maintaining the original aspect ratio. |
+| `min`     | Resizes the image until the shortest side reaches the set given dimension. Upscaling is disabled in this mode and the original image will be returned if attempted. |
+| `pad`     | Pads the resized image to fit the bounds of its container. If only one dimension is passed, will maintain the original aspect ratio. |
+| `stretch` | Stretches the resized image to fit the bounds of its container. |
+
+### Position (AnchorPositionMode)
+
+Anchor positions to apply to resized images. These options are for the `--position` command.
+
+https://docs.sixlabors.com/api/ImageSharp/SixLabors.ImageSharp.Processing.AnchorPositionMode.html
+
+| Option        |                                                              |
+| ------------- | ------------------------------------------------------------ |
+| `bottom`      | Anchors the position of the image to the bottom of it's bounding container. |
+| `bottomleft`  | Anchors the position of the image to the bottom left side of it's bounding container. |
+| `bottomright` | Anchors the position of the image to the bottom right side of it's bounding container. |
+| `center`      | Anchors the position of the image to the center of it's bounding container. |
+| `left`        | Anchors the position of the image to the left of it's bounding container. |
+| `right`       | Anchors the position of the image to the right of it's bounding container. |
+| `top`         | Anchors the position of the image to the top of it's bounding container. |
+| `topleft`     | Anchors the position of the image to the top left side of it's bounding container. |
+| `topright`    | Anchors the position of the image to the top right side of it's bounding container. |
+
+
 
 
 
