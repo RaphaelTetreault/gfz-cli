@@ -1,16 +1,16 @@
-# `gfz-cli` Commands
+# `gfz` Command Line Interface Usage Guide
 
 [TOC]
 
 ## Operating System
 
-This document provides examples using Windows and calls the `gfz-cli.exe` program. Calling the tool will depending on your operating system. Please review the table below and replace instances of `gfz-cli.exe` with the appropriate call to the program.
+This document provides examples using Windows and calls the `gfz.exe` program. Calling the tool will depending on your operating system. Please review the table below and replace instances of `gfz.exe` with the appropriate call to the program.
 
-| Operating System | Program Call  |
-| ---------------- | ------------- |
-| Windows          | `glz-cli.exe` |
-| Linux            | `./gfz-cli`   |
-| macOS            | `gfz-cli`     |
+| Operating System | Program Call |
+| ---------------- | ------------ |
+| Windows          | `gfz.exe`    |
+| Linux            | `./gfz`      |
+| macOS            | `gfz`        |
 
 
 
@@ -43,7 +43,7 @@ Review supported image types on SixLabors' website. https://docs.sixlabors.com/a
 `gfz-cli` has a usage pattern for all actions. The program accepts 3 un-labelled ordered parameters followed by any number of relevant options.
 
 ```shell
-gfz-cli.exe [action] [input-path] [output-path] [other-options]
+gfz.exe [action] [input-path] [output-path] [other-options]
 ```
 
 **Action**: specifies the action to perform. *This parameter is **required***. 
@@ -95,14 +95,14 @@ Compress a folder to `.arc`.
 
 ```shell
 # Compress contents of "in/dlg/"" creating "in/dlg.arc"
-gfz-cli.exe arc-compress ./in/dlg/
+gfz.exe arc-compress ./in/dlg/
 ```
 
 Compress a folder to `.arc` and set destination path.
 
 ```shell
 # Compress contents of "in/dlg/"" creating "out/dlg.arc"
-gfz-cli.exe arc-compress in/dlg/ out/
+gfz.exe arc-compress in/dlg/ out/
 ```
 
 ### Decompress ARC
@@ -113,14 +113,14 @@ Decompress an `.arc` file.
 
 ```shell
 # Decompress contents of "in/chara/face_tpl.arc" creating "in/chara/face_tpl/"
-gfz-cli.exe arc-decompress in/chara/face_tpl.arc
+gfz.exe arc-decompress in/chara/face_tpl.arc
 ```
 
 Decompress an `.arc` file and set the destination path.
 
 ```shell
 # Decompress contents of "in/dlg/"" creating "out/dlg.arc"
-gfz-cli.exe arc-decompress in/chara/face_tpl.arc out/
+gfz.exe arc-decompress in/chara/face_tpl.arc out/
 ```
 
 Decompress all `.arc` files inside a folder.
@@ -128,7 +128,7 @@ Decompress all `.arc` files inside a folder.
 ```shell
 # Decompress contents of all .arc files in "in/"
 # "--search-pattern *.arc" is implicit
-gfz-cli.exe arc-decompress in/ --search-subdirs
+gfz.exe arc-decompress in/ --search-subdirs
 ```
 
 Decompress all `.arc` files inside a folder and its subfolders and set the destination path. 
@@ -136,7 +136,7 @@ Decompress all `.arc` files inside a folder and its subfolders and set the desti
 ```shell
 # Decompress contents of all .arc files in "in/" to "out/" and its subdirectories
 # "--search-pattern *.arc" is implicit
-gfz-cli.exe arc-decompress in/ out/ --search-subdirs
+gfz.exe arc-decompress in/ out/ --search-subdirs
 ```
 
 
@@ -155,7 +155,7 @@ Note: The input file can be the compress `cardata.lz` or unpacked `cardata` file
 
 ```shell
 # Convert input file "in/game/cardata.tsv" to binary "in/game/cardata.lz"
-gfz-cli.exe cardata-bin-to-tsv in/game/cardata.lz
+gfz.exe cardata-bin-to-tsv in/game/cardata.lz
 ```
 
 ### Convert spreadsheet into `cardata.lz`
@@ -164,7 +164,7 @@ Convert ***input-path*** file `cardata.tsv` to `cardata.lz` at the current path 
 
 ```shell
 # Convert input file "in/game/cardata.tsv" to binary "in/game/cardata.lz"
-gfz-cli.exe cardata-tsv-to-bin in/game/cardata.tsv
+gfz.exe cardata-tsv-to-bin in/game/cardata.tsv
 ```
 
 
@@ -194,7 +194,7 @@ Extract images inside ***input-path*** (file or directory) at the current path o
 ```shell
 # Extract images from emblem.gci
 # "--search-pattern *fz*.dat.gci" is implicit
-gfz-cli.exe emblem-to-image in/emblem.gci
+gfz.exe emblem-to-image in/emblem.gci
 ```
 
 Extract all images from an emblem archive.
@@ -203,7 +203,7 @@ Extract images inside ***input-path*** (file or directory) at the current path o
 
 ```shell
 # Extract images from "emblem.bin" creating "in/emblem/emblems/"
-gfz-cli.exe emblem-to-image in/emblem/emblems.bin
+gfz.exe emblem-to-image in/emblem/emblems.bin
 ```
 
 ### Convert Image to Emblem
@@ -212,14 +212,14 @@ Convert ***input-path*** (file or directory) to an emblem archive at the current
 
 ```shell
 # Convert source image to a .gci emblem
-gfz-cli.exe image-to-emblem-gci in/source.png
+gfz.exe image-to-emblem-gci in/source.png
 ```
 
 Convert ***input-path*** (file or directory) to an emblem archive at the current path or at ***output-path*** if specified.
 
 ```shell
 # Convert source images inside target directory to a .bin emblem archive
-gfz-cli.exe image-to-emblem-bin in/source/ --search-pattern *.png
+gfz.exe image-to-emblem-bin in/source/ --search-pattern *.png
 ```
 
 #### Image Options
@@ -239,7 +239,7 @@ Extract all files including system files from ISO image.
 ```shell
 # Extract files from ISO
 # Creates "in/image/" with subdirectories "./sys/" and "./files"
-gfz-cli.exe extract-iso-files in/image.iso
+gfz.exe extract-iso-files in/image.iso
 ```
 
 
@@ -256,14 +256,14 @@ Compress a specific file.
 
 ```shell
 # Compress the file at "in/stage/st01.tpl" to "in/stage/st01.tpl.lz"
-gfz-cli.exe lz-compress in/stage/st01.tpl
+gfz.exe lz-compress in/stage/st01.tpl
 ```
 
 Compress all files in folder and subfolders.
 
 ```shell
 # Compress all files ending in .gma inside the "in/" directory and its subdirectories
-gfz-cli.exe lz-compress in/ --search-pattern *.gma --search-subdirs
+gfz.exe lz-compress in/ --search-pattern *.gma --search-subdirs
 ```
 
 #### Specifying F-Zero AX/GX Formats
@@ -274,7 +274,7 @@ Add the option `--format ax` if you wish to compress a file for use in F-Zero AX
 
 ```shell
 # Compress file to .lz meant for use with F-Zero AX
-gfz-cli.exe lz-compress in/stage/st01.gma --format ax
+gfz.exe lz-compress in/stage/st01.gma --format ax
 ```
 
 ### LZ Decompression
@@ -285,7 +285,7 @@ Decompress specific `.lz` file.
 
 ```shell
 # Decompress contents of "in/stage/st01.gma.lz" creating "in/stage/st01.gma"
-gfz-cli.exe lz-decompress in/stage/st01.gma.lz
+gfz.exe lz-decompress in/stage/st01.gma.lz
 ```
 
 Decompress all `.lz` files in a folder and its subfolders.
@@ -293,7 +293,7 @@ Decompress all `.lz` files in a folder and its subfolders.
 ```shell
 # Decompress contents of all .lz files in "in/" and its subdirectories
 # "--search-pattern *.lz" is implicit
-gfz-cli.exe lz-decompress in/ --search-subdirs
+gfz.exe lz-decompress in/ --search-subdirs
 ```
 
 
@@ -308,7 +308,7 @@ These arguments will create a folder in the same directory as the source file wi
 
 ```shell
 # Unpack all textures inside "in/bg/bg_mut.tpl" to "in/bg/bg_mut/"
-gfz-cli.exe tpl-unpack in/bg/bg_mut.tpl
+gfz.exe tpl-unpack in/bg/bg_mut.tpl
 ```
 
 You can also unpack all `.tpl` files in a directory.
@@ -316,7 +316,7 @@ You can also unpack all `.tpl` files in a directory.
 ```shell
 # Unpack all textures inside "in/bg/bg_mut.tpl" to "in/bg/" and its subdirectories
 # "--search-pattern "*.tpl" is implicit
-gfz-cli.exe tpl-unpack in/bg/ --search-subdirs
+gfz.exe tpl-unpack in/bg/ --search-subdirs
 ```
 
 ### Unpacking Options
@@ -332,7 +332,7 @@ When unpacking a `.tpl` file, you can ask the unpacker to also save each texture
 
 ```shell
 # Unpack "in/bg/bg_mut.tpl" textures and all textures' valid mipmaps
-gfz-cli.exe tpl-unpack in/bg/bg_mut.tpl --unpack-mipmaps
+gfz.exe tpl-unpack in/bg/bg_mut.tpl --unpack-mipmaps
 ```
 
 #### Unpack Corrupted CMPR Textures
@@ -343,7 +343,7 @@ You may specify that the unpacker output these corrupted/incomplete textures. Th
 
 ```shell
 # # Unpack "in/bg/bg_mut.tpl" textures and all textures' mipmaps 
-gfz-cli.exe tpl-unpack in/bg/bg_mut.tpl --unpack-mipmaps --unpack-corrupted-cmpr
+gfz.exe tpl-unpack in/bg/bg_mut.tpl --unpack-mipmaps --unpack-corrupted-cmpr
 ```
 
 
@@ -356,11 +356,11 @@ https://docs.sixlabors.com/api/ImageSharp/SixLabors.ImageSharp.Processing.Resize
 
 | Option Token            | Brief Description                                            |
 | ----------------------- | ------------------------------------------------------------ |
-| `--width`               | The desired image width. May not be result width depending on `resize-mode` option. |
-| `--height`              | The desired image height. May not be result height depending on `resize-mode` option. |
 | `--resize`              | Whether to resize image.                                     |
 | `--resize-mode`         | How the image should be resized. See [resize mode](#resize-mode). |
 | `--resampler`           | The resampler to use when scaling image. See [resamplers](#resamplers). |
+| `--width`               | The desired image width. May not be result width depending on `resize-mode` option. |
+| `--height`              | The desired image height. May not be result height depending on `resize-mode` option. |
 | `--compand`             | Whether to compress or expand individual pixel colors when scaling image. |
 | `--pad-color`           | The padding color when scaling image.                        |
 | `--position`            | Anchor positions to apply to resize image. See [position](#Position-(AnchorPositionMode)). |
