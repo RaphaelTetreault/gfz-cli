@@ -1,5 +1,5 @@
 # gfz-cli
-![build main workflow](https://github.com/RaphaelTetreault/gfz-cli/blob/main/.github/workflows/dotnet.yml/badge.svg?branch=main)
+![build status main branch workflow](https://github.com/RaphaelTetreault/gfz-cli/blob/main/.github/workflows/dotnet.yml/badge.svg)
 
 A command line tool for handling F-Zero GX and F-Zero AX files.
 
