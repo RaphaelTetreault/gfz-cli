@@ -66,7 +66,8 @@ namespace Manifold.GFZCLI
                 // ISO
                 case GfzCliAction.extract_iso_files: ActionsISO.IsoExtractAll(options); break;
                 // EMBLEM
-                case GfzCliAction.emblem_to_image: ActionsEmblem.EmblemToImage(options); break;
+                case GfzCliAction.emblem_bin_to_image: ActionsEmblem.EmblemBinToImage(options); break;
+                case GfzCliAction.emblem_gci_to_image: ActionsEmblem.EmblemGciToImage(options); break;
                 case GfzCliAction.image_to_emblem_bin: ActionsEmblem.ImageToEmblemBIN(options); break;
                 case GfzCliAction.image_to_emblem_gci: ActionsEmblem.ImageToEmblemGCI(options); break;
                 // LIVE CAMERA STAGE

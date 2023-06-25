@@ -194,7 +194,7 @@ Extract images inside ***input-path*** (file or directory) at the current path o
 ```shell
 # Extract images from emblem.gci
 # "--search-pattern *fz*.dat.gci" is implicit
-gfz.exe emblem-to-image in/emblem.gci
+gfz.exe emblem-gci-to-image in/emblem.gci
 ```
 
 Extract all images from an emblem archive.
@@ -203,7 +203,7 @@ Extract images inside ***input-path*** (file or directory) at the current path o
 
 ```shell
 # Extract images from "emblem.bin" creating "in/emblem/emblems/"
-gfz.exe emblem-to-image in/emblem/emblems.bin
+gfz.exe emblem-bin-to-image in/emblem/emblems.bin
 ```
 
 ### Convert Image to Emblem

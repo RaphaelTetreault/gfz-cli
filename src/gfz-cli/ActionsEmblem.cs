@@ -16,28 +16,60 @@ namespace Manifold.GFZCLI
     public static class ActionsEmblem
     {
 
-        public static void EmblemToImage(Options options)
+        public static void EmblemBinToImage(Options options)
         {
-            var inputFile = new FilePath(options.InputPath);
-            bool isGCI = inputFile.IsExtension(EmblemGCI.Extension);
-            bool isBIN = inputFile.IsExtension(EmblemBIN.Extension);
+            Terminal.WriteLine("Emblem: converting emblems from BIN files.");
+            int binCount = DoFileInFileOutTasks(options, EmblemBinToImages);
+            Terminal.WriteLine($"Emblem: done converting {binCount} file{Plural(binCount)}.");
+        }
 
-            if (isBIN)
+        public static void EmblemGciToImage(Options options)
+        {
+            // In this case where no search pattern is set, find *FZE*.GCI (emblem) files.
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = "*fze*.dat.gci";
+
+            Terminal.WriteLine("Emblem: converting emblems from GCI files.");
+            int gciCount = DoFileInFileOutTasks(options, EmblemGciToImage);
+            Terminal.WriteLine($"Emblem: done converting {gciCount} file{Plural(gciCount)}.");
+        }
+
+        private static void EmblemBinToImages(Options options, FilePath inputFile, FilePath outputFile)
+        {
+            // Read BIN Emblem data
+            var emblemBIN = new EmblemBIN();
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemBIN.endianness))
             {
-                Terminal.WriteLine("Emblem: converting emblems from BIN files.");
-                int binCount = DoFileInFileOutTasks(options, EmblemBinToImages);
-                Terminal.WriteLine($"Emblem: done converting {binCount} file{(binCount != 1 ? 's' : "")}.");
+                emblemBIN.Deserialize(reader);
+                emblemBIN.FileName = Path.GetFileNameWithoutExtension(inputFile);
             }
-            else if (isGCI)
-            {
-                // In this case where no search pattern is set, find *FZE*.GCI (emblem) files.
-                bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-                if (hasNoSearchPattern)
-                    options.SearchPattern = "*fze*.dat.gci";
 
-                Terminal.WriteLine("Emblem: converting emblems from GCI files.");
-                int gciCount = DoFileInFileOutTasks(options, EmblemGciToImage);
-                Terminal.WriteLine($"Emblem: done converting {gciCount} file{(gciCount != 1 ? 's' : "")}.");
+            // Prepare image encoder
+            var encoder = new PngEncoder();
+            encoder.CompressionLevel = PngCompressionLevel.BestCompression;
+            outputFile.AppendDirectory(emblemBIN.FileName);
+            outputFile.SetExtensions(".png");
+
+            // Info for file write + console print
+            var fileWriteInfo = new FileWriteInfo()
+            {
+                InputFilePath = inputFile,
+                PrintDesignator = "Emblem",
+            };
+
+            // Write out each emblem in file
+            int formatLength = emblemBIN.Emblems.LengthToFormat();
+            for (int i = 0; i < emblemBIN.Emblems.Length; i++)
+            {
+                var emblem = emblemBIN.Emblems[i];
+                int index = i + 1;
+                string indexStr = index.PadLeft(formatLength, '0');
+                outputFile.SetName($"{inputFile.Name}-{indexStr}");
+                fileWriteInfo.PrintActionDescription = $"converting emblem {indexStr} of";
+                fileWriteInfo.OutputFilePath = outputFile;
+                EnsureDirectoriesExist(outputFile);
+                WriteImage(options, encoder, emblem.Texture, fileWriteInfo);
             }
         }
 
@@ -86,42 +118,6 @@ namespace Manifold.GFZCLI
                 fileWriteInfo.OutputFilePath = outputFile;
                 fileWriteInfo.PrintActionDescription = "converting emblem";
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
-            }
-        }
-
-        private static void EmblemBinToImages(Options options, FilePath inputFile, FilePath outputFile)
-        {
-            // Read BIN Emblem data
-            var emblemBIN = new EmblemBIN();
-            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemBIN.endianness))
-            {
-                emblemBIN.Deserialize(reader);
-                emblemBIN.FileName = Path.GetFileNameWithoutExtension(inputFile);
-            }
-
-            // Prepare image encoder
-            var encoder = new PngEncoder();
-            encoder.CompressionLevel = PngCompressionLevel.BestCompression;
-            outputFile.SetExtensions(".png");
-
-            // Info for file write + console print
-            var fileWriteInfo = new FileWriteInfo()
-            {
-                InputFilePath = inputFile,
-                PrintDesignator = "Emblem",
-            };
-
-            // Write out each emblem in file
-            int formatLength = emblemBIN.Emblems.LengthToFormat();
-            for (int i = 0; i < emblemBIN.Emblems.Length; i++)
-            {
-                var emblem = emblemBIN.Emblems[i];
-                int index = i + 1;
-                string indexStr = index.PadLeft(formatLength, '0');
-                outputFile.SetName($"{inputFile.Name}-{indexStr}");
-                fileWriteInfo.PrintActionDescription = $"converting emblem {indexStr} of";
-                fileWriteInfo.OutputFilePath = outputFile;
-                WriteImage(options, encoder, emblem.Texture, fileWriteInfo);
             }
         }
 

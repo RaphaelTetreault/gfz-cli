@@ -12,7 +12,8 @@
 
         extract_iso_files,
 
-        emblem_to_image,
+        emblem_bin_to_image,
+        emblem_gci_to_image,
         image_to_emblem_bin,
         image_to_emblem_gci,
 
