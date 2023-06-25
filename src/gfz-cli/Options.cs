@@ -7,7 +7,6 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
 using System.IO;
-using System.Text.Json.Serialization;
 
 namespace Manifold.GFZCLI
 {
