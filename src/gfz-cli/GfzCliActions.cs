@@ -7,6 +7,8 @@
         arc_decompress,
         arc_compress,
 
+        auto_rename_gci,
+
         cardata_bin_to_tsv,
         cardata_tsv_to_bin,
 

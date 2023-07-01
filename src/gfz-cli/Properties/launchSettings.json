@@ -66,6 +66,10 @@
     "arc-compress": {
       "commandName": "Project",
       "commandLineArgs": "arc-compress D:\\test-gfz\\maybe\\jpeg\\compo\\ --search-subdirs --overwrite --search-pattern \"*\""
+    },
+    "gci": {
+      "commandName": "Project",
+      "commandLineArgs": "auto-rename-gci D:\\test-gfz\\ --search-subdirs --search-pattern \"*.gci\""
     }
   }
 }

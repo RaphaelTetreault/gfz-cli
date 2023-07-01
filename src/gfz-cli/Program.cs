@@ -60,6 +60,8 @@ namespace Manifold.GFZCLI
                 // ARC
                 case GfzCliAction.arc_compress: ActionsARC.ArcCompress(options); break;
                 case GfzCliAction.arc_decompress: ActionsARC.ArcDecompress(options); break;
+                //
+                case GfzCliAction.auto_rename_gci: ActionsGCI.RenameGCI(options); break;
                 // CARDATA
                 case GfzCliAction.cardata_bin_to_tsv: ActionsCarData.CarDataBinToTsv(options); break;
                 case GfzCliAction.cardata_tsv_to_bin: ActionsCarData.CarDataTsvToBin(options); break;
