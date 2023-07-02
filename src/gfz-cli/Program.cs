@@ -72,6 +72,8 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.emblem_gci_to_image: ActionsEmblem.EmblemGciToImage(options); break;
                 case GfzCliAction.image_to_emblem_bin: ActionsEmblem.ImageToEmblemBIN(options); break;
                 case GfzCliAction.image_to_emblem_gci: ActionsEmblem.ImageToEmblemGCI(options); break;
+                //
+                case GfzCliAction.read_ghost: ActionsGhost.ReadGhosts(options); break;
                 // LIVE CAMERA STAGE
                 case GfzCliAction.live_camera_stage_bin_to_tsv: ActionsLiveCameraStage.LiveCameraStageBinToTsv(options); break;
                 case GfzCliAction.live_camera_stage_tsv_to_bin: ActionsLiveCameraStage.LiveCameraStageTsvToBin(options); break;
@@ -81,6 +83,9 @@ namespace Manifold.GFZCLI
                 // TPL
                 case GfzCliAction.tpl_unpack: ActionsTPL.TplUnpack(options); break;
                 //case GfzCliAction.tpl_pack: TplPack(options); break;
+
+                //
+                case GfzCliAction.dump_hex: ActionsMisc.DumpHex32(options); break;
 
                 // UNSET
                 case GfzCliAction.none:
