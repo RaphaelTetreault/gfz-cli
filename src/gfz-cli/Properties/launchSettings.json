@@ -71,9 +71,9 @@
       "commandName": "Project",
       "commandLineArgs": "auto-rename-gci D:\\test-gfz\\ --search-subdirs --search-pattern \"*.gci\""
     },
-    "dump-hex-32": {
+    "read-ghost": {
       "commandName": "Project",
-      "commandLineArgs": "read-ghost D:\\gfzj01\\staff_ghost\\ --search-subdirs --search-pattern \"ghost1.dat\" --overwrite"
+      "commandLineArgs": "read-ghost D:\\gfzj01\\staff_ghost\\ --search-subdirs --search-pattern \"*.dat\" --overwrite"
     }
   }
 }
