@@ -23,7 +23,7 @@ namespace Manifold.GFZCLI
             gci.Deserialize(reader);
             reader.SeekBegin();
 
-            string name = GetName(gci.UniqueID, reader);
+            string name = GetName(gci.header.UniqueID, reader);
             outputFilePath.SetName(name);
 
             var fileWrite = () =>

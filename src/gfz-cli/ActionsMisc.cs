@@ -19,7 +19,7 @@ namespace Manifold.GFZCLI
             string outputPath = GetOutputDirectory(options);
             FilePath fileOutputPath = new FilePath(outputPath);
             fileOutputPath.SetName("test");
-            fileOutputPath.SetExtension("tsv");
+            fileOutputPath.PushExtension("tsv");
             using var writer = new StreamWriter(File.Create(fileOutputPath));
 
             writer.WriteNextCol("Filename:");

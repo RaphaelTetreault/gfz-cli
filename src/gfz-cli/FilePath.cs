@@ -150,7 +150,7 @@ namespace Manifold.GFZCLI
             string[] entensionsSplit = extensions.Split('.');
             SetExtensions(entensionsSplit);
         }
-        public void SetExtension(string value)
+        public void PushExtension(string value)
         {
             PopExtension();
 

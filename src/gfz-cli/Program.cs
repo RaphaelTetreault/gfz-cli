@@ -73,7 +73,7 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.image_to_emblem_bin: ActionsEmblem.ImageToEmblemBIN(options); break;
                 case GfzCliAction.image_to_emblem_gci: ActionsEmblem.ImageToEmblemGCI(options); break;
                 //
-                case GfzCliAction.read_ghost: ActionsGhost.ReadGhosts(options); break;
+                case GfzCliAction.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
                 // LIVE CAMERA STAGE
                 case GfzCliAction.live_camera_stage_bin_to_tsv: ActionsLiveCameraStage.LiveCameraStageBinToTsv(options); break;
                 case GfzCliAction.live_camera_stage_tsv_to_bin: ActionsLiveCameraStage.LiveCameraStageTsvToBin(options); break;

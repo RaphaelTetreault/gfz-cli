@@ -19,7 +19,7 @@
         image_to_emblem_bin,
         image_to_emblem_gci,
 
-        read_ghost,
+        gci_extract_ghost,
 
         live_camera_stage_bin_to_tsv,
         live_camera_stage_tsv_to_bin,

@@ -1,5 +1,7 @@
-﻿using GameCube.GFZ.Ghosts;
+﻿using GameCube.GCI;
+using GameCube.GFZ.Ghosts;
 using Manifold.IO;
+using System;
 using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 
@@ -7,26 +9,28 @@ namespace Manifold.GFZCLI
 {
     public class ActionsGhost
     {
-        public static void ReadGhosts(Options options)
+        public static void ExtractGhostFromGci(Options options)
         {
             //string[] files = GetInputFiles(options);
-            Terminal.WriteLine("Ghost: reading ghost data.");
-            int binCount = DoFileInFileOutTasks(options, ReadGhost);
-            Terminal.WriteLine($"Ghost: done reading {binCount} file{Plural(binCount)}.");
+            Terminal.WriteLine("Ghost: extracting ghost data.");
+            int binCount = DoFileInFileOutTasks(options, ExtractGhostDataFromGci);
+            Terminal.WriteLine($"Ghost: done extracting ghost data from {binCount} file{Plural(binCount)}.");
         }
 
-        private static void ReadGhost(Options options, FilePath inputFile, FilePath outputFile)
+        private static void ExtractGhostDataFromGci(Options options, FilePath inputFile, FilePath outputFile)
         {
             // Read BIN Emblem data
-            var ghost = new GhostData();
-            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), GhostData.endianness))
+            var gci = new GhostDataGCI();
+            GhostData ghost;
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), Gci.endianness))
             {
-                ghost.Deserialize(reader);
+                gci.Deserialize(reader);
+                ghost = gci.GhostData;
                 ghost.FileName = Path.GetFileNameWithoutExtension(inputFile);
             }
 
             // TODO: parameterize extensions
-            outputFile.AppendExtension(".bin");
+            outputFile.SetExtensions(GhostData.fileExtension);
             var fileWrite = () =>
             {
                 using var writer = new EndianBinaryWriter(File.Create(outputFile), GhostData.endianness);
