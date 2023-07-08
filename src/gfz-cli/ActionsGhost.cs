@@ -19,10 +19,10 @@ namespace Manifold.GFZCLI
 
         private static void ExtractGhostDataFromGci(Options options, FilePath inputFile, FilePath outputFile)
         {
-            // Read BIN Emblem data
+            // 
             var gci = new GhostDataGCI();
             GhostData ghost;
-            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), Gci.endianness))
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), GhostDataGCI.endianness))
             {
                 gci.Deserialize(reader);
                 ghost = gci.GhostData;

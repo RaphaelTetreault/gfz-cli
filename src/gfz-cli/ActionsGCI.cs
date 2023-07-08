@@ -17,27 +17,29 @@ namespace Manifold.GFZCLI
 
         public static void RenameGciFile(Options options, FilePath inputFilePath, FilePath outputFilePath)
         {
-            Gci gci = new Gci();
-            inputFilePath.ThrowIfDoesNotExist();
-            using var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), Gci.endianness);
-            gci.Deserialize(reader);
-            reader.SeekBegin();
+            // Can no longer do generic renaming due to changes in structures
+            throw new System.NotImplementedException();
 
-            string name = GetName(gci.header.UniqueID, reader);
-            outputFilePath.SetName(name);
+            //inputFilePath.ThrowIfDoesNotExist();
+            //using var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), Gci.endianness);
+            //gci.Deserialize(reader);
+            //reader.SeekBegin();
 
-            var fileWrite = () =>
-            {
-                File.Copy(inputFilePath, outputFilePath, options.OverwriteFiles);
-            };
-            var info = new FileWriteInfo()
-            {
-                InputFilePath = inputFilePath,
-                OutputFilePath = outputFilePath,
-                PrintDesignator = "GCI",
-                PrintActionDescription = "renaming file",
-            };
-            FileWriteOverwriteHandler(options, fileWrite, info);
+            //string name = GetName(gci.header.UniqueID, reader);
+            //outputFilePath.SetName(name);
+
+            //var fileWrite = () =>
+            //{
+            //    File.Copy(inputFilePath, outputFilePath, options.OverwriteFiles);
+            //};
+            //var info = new FileWriteInfo()
+            //{
+            //    InputFilePath = inputFilePath,
+            //    OutputFilePath = outputFilePath,
+            //    PrintDesignator = "GCI",
+            //    PrintActionDescription = "renaming file",
+            //};
+            //FileWriteOverwriteHandler(options, fileWrite, info);
         }
 
         public static string GetName(ushort uniqueID, EndianBinaryReader reader)
