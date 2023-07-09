@@ -73,7 +73,7 @@
     },
     "gci-extract-ghost": {
       "commandName": "Project",
-      "commandLineArgs": "gci-extract-ghost D:\\gfzj01\\staff_ghost\\ --search-subdirs --search-pattern \"*fzg*.gci\""
+      "commandLineArgs": "gci-extract-ghost D:\\gfzj01\\staff_ghost\\ --search-subdirs --search-pattern \"8P-GFZE-fzg003c3d1b98814015.dat.gci"
     }
   }
 }

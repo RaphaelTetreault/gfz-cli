@@ -42,8 +42,10 @@ namespace Manifold.GFZCLI
             Directory.CreateDirectory(outputDirectory);
 
             // Prepare image encoder
-            var encoder = new PngEncoder();
-            encoder.CompressionLevel = PngCompressionLevel.BestCompression;
+            var encoder = new PngEncoder
+            {
+                CompressionLevel = PngCompressionLevel.BestCompression
+            };
             outputFile.SetExtensions(".png");
             outputFile.AppendDirectory(tpl.FileName);
 
@@ -136,7 +138,7 @@ namespace Manifold.GFZCLI
                 //var encoding = Encoding.EncodingRGB5A3;
                 //var encoding = Encoding.EncodingIA8;
                 //var encoding = Encoding.EncodingIA4;
-                var blocks = Texture.CreateTextureDirectColorBlocks(texture, encoding, out int bch, out int bcv);
+                var blocks = Texture.CreateDirectColorBlocksFromTexture(texture, encoding, out int bch, out int bcv);
                 encoding.WriteTexture(writer, blocks);
 
                 writer.BaseStream.Position = 0;

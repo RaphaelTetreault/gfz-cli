@@ -10,6 +10,7 @@ using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 using static Manifold.GFZCLI.GfzCliImageUtilities;
 using static Manifold.GFZCLI.Program;
+using GameCube.GCI;
 
 namespace Manifold.GFZCLI
 {
@@ -46,8 +47,10 @@ namespace Manifold.GFZCLI
             }
 
             // Prepare image encoder
-            var encoder = new PngEncoder();
-            encoder.CompressionLevel = PngCompressionLevel.BestCompression;
+            var encoder = new PngEncoder
+            {
+                CompressionLevel = PngCompressionLevel.BestCompression
+            };
             outputFile.AppendDirectory(emblemBIN.FileName);
             outputFile.SetExtensions(".png");
 
@@ -84,8 +87,10 @@ namespace Manifold.GFZCLI
             }
 
             // Prepare image encoder
-            var encoder = new PngEncoder();
-            encoder.CompressionLevel = PngCompressionLevel.BestCompression;
+            var encoder = new PngEncoder
+            {
+                CompressionLevel = PngCompressionLevel.BestCompression
+            };
             // Strip .dat.gci extensions
             outputFile.SetExtensions("png");
 
@@ -108,7 +113,7 @@ namespace Manifold.GFZCLI
             {
                 // Strip original file name, replace with GC game code
                 FilePath textureOutput = new FilePath(outputFile);
-                textureOutput.SetName($"{emblemGCI.GameCode}-icon");
+                textureOutput.SetName($"{emblemGCI.Header}-icon");
                 fileWriteInfo.OutputFilePath = textureOutput;
                 fileWriteInfo.PrintActionDescription = "converting emblem icon";
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
@@ -143,12 +148,12 @@ namespace Manifold.GFZCLI
         public static Emblem ImageToEmblemBin(Options options, FilePath inputFile)
         {
             // Make sure some option parameters are appropriate
-            bool isTooLarge = IImageResizeOptions.IsSizeTooLarge(options, Emblem._Width, Emblem._Height);
+            bool isTooLarge = IImageResizeOptions.IsSizeTooLarge(options, Emblem.Width, Emblem.Height);
             if (isTooLarge)
             {
                 string msg =
                     $"Requested resize ({options.Width},{options.Height}) exceeds the maximum " +
-                    $"bounds of an emblem ({Emblem._Width},{Emblem._Height}).";
+                    $"bounds of an emblem ({Emblem.Width},{Emblem.Height}).";
                 throw new ArgumentException(msg);
             }
 
@@ -159,8 +164,8 @@ namespace Manifold.GFZCLI
             // Resize image to fit inside bounds of 64x64
             ResizeOptions ResizeOptions = IImageResizeOptions.GetResizeOptions(options);
             // Emblem size is either 62x62 (1px alpha border, as intended) or 64x64 ("hacker" option)
-            int emblemX = options.EmblemHasAlphaBorder ? Emblem._Width - 2 : Emblem._Width;
-            int emblemY = options.EmblemHasAlphaBorder ? Emblem._Height - 2 : Emblem._Height;
+            int emblemX = options.EmblemHasAlphaBorder ? Emblem.Width - 2 : Emblem.Width;
+            int emblemY = options.EmblemHasAlphaBorder ? Emblem.Height - 2 : Emblem.Height;
             // Choose lowest dimensions as the default size (ie: preserve pixel-perfect if possible)
             int defaultX = Math.Min(emblemX, image.Width);
             int defaultY = Math.Min(emblemY, image.Height);
@@ -171,12 +176,12 @@ namespace Manifold.GFZCLI
             // Create emblem, textures
             Emblem emblem = new Emblem();
             Texture imageTexture = ImageToTexture(image, TextureFormat.RGB5A3);
-            Texture emblemTexture = new Texture(Emblem._Width, Emblem._Height, TextureColor.Clear, TextureFormat.RGB5A3);
+            Texture emblemTexture = new Texture(Emblem.Width, Emblem.Height, TextureColor.Clear, TextureFormat.RGB5A3);
 
             // Copy image texture to emblem center
             // Only works if image is 64px or less! Resize code block prepares this.
-            int offsetX = (emblem.Width - image.Width) / 2;
-            int offsetY = (emblem.Height - image.Height) / 2;
+            int offsetX = (Emblem.Width - image.Width) / 2;
+            int offsetY = (Emblem.Height - image.Height) / 2;
             Texture.Copy(imageTexture, emblemTexture, offsetX, offsetY);
 
             // Write some useful information to the terminal
@@ -227,41 +232,41 @@ namespace Manifold.GFZCLI
             return emblems;
         }
 
+        // TODO: should this be in Emblem class?
+        private static string GetFileName(string fileName)
+        {
+            const int maxChars = 20;
+            string fileName20Char = fileName.PadLeft(maxChars, '-');
+            fileName20Char = fileName20Char.Substring(0, maxChars);
+
+            // TODO: get strings from gamecode
+            string name = $"XX-GFZX-fzX020-{fileName20Char}";
+            return name;
+        }
+
         public static void ImageToEmblemGci(Options options, FilePath inputFile, FilePath outputFile)
         {
-            outputFile.SetExtensions(".dat.gci");
-            string fileName = EmblemGCI.GetFileName(outputFile.Name, GameCube.GFZ.GameCode.GFZJ01);
+            string fileName = GetFileName(outputFile.Name);
             outputFile.SetName(fileName);
+            outputFile.SetExtensions(".dat.gci");
 
             // Load image
             Image<Rgba32> image = Image.Load<Rgba32>(inputFile);
-            // TODO: appropriate scaling and stuff - genericize previous code
             Image<Rgba32> imagePreview = image.Clone();
             //
-            image.Mutate(ipc => ipc.Resize(64, 64));
-            imagePreview.Mutate(ipc => ipc.Resize(32, 32));
+            image.Mutate(ipc => ipc.Resize(Emblem.Width, Emblem.Height));
+            imagePreview.Mutate(ipc => ipc.Resize(Gci<Emblem>.IconWidth, Gci<Emblem>.IconHeight));
 
             Texture emblemTexture = ImageToTexture(image);
             Texture emblemPreview = ImageToTexture(imagePreview);
-            Emblem emblem = new Emblem()
-            {
-                Texture = emblemTexture
-            };
-            //
-            MenuBanner banner = new MenuBanner();
-            banner.Texture = new Texture(96, 32, new TextureColor(0, 255, 255), TextureFormat.RGB5A3);
-            Texture.Copy(emblemPreview, banner.Texture, 64, 0);
-            //
-            MenuIcon icon = new MenuIcon();
-            icon.Texture = new Texture(32, 32, new TextureColor(255, 255, 0), TextureFormat.RGB5A3);
-            //
+            Texture banner = new Texture(Gci<Emblem>.BannerWidth, Gci<Emblem>.BannerHeight, Gci<Emblem>.DirectFormat);
+            Texture[] icons = new Texture[] { emblemPreview };
+            Emblem emblem = new Emblem(emblemTexture);
             EmblemGCI gci = new EmblemGCI();
-            gci.Banner = banner;
-            gci.Icon = icon;
-            gci.Emblem = emblem;
-            gci.SafeSetInternalFileName(outputFile.NameAndExtensions);
-            // TODO: not hardcoded
-            gci.SetRegionCode(GameCube.GFZ.GameCode.GFZJ01);
+            gci.SetFileData();
+            gci.SetBanner();
+            gci.SetIcons();
+            gci.SetFileName();
 
             //  
             var fileWrite = () =>
