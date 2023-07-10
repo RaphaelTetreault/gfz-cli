@@ -49,7 +49,8 @@
       "commandLineArgs": "image-to-emblem-bin D:\\desktop\\pkmn C:\\gfzj01-working\\files\\emblem\\sample.bin -p * -o"
     },
     "image-to-emblem-gci": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "image-to-emblem-gci D:\\desktop\\pkmn C:\\gfzj01-working\\files\\emblem\\sample -p \"1.png\" "
     },
     "WSL": {
       "commandName": "WSL2",

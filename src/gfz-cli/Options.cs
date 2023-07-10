@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using GameCube.AmusementVision;
+using GameCube.DiskImage;
 using GameCube.GFZ.Stage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -27,6 +28,11 @@ namespace Manifold.GFZCLI
         public string SerializationFormatStr { get; set; } = "gx";
         public SerializeFormat SerializeFormat => Enum.Parse<SerializeFormat>(SerializationFormatStr, true);
         public AvGame AvGame => GetAvFormat(SerializeFormat);
+
+        // TODO:
+        public string RegionStr { get; set; } = string.Empty;
+        public Region Region { get; set; } = Region.Japan;
+
 
         // ITplOptions
         public bool TplUnpackMipmaps { get; set; }
@@ -112,5 +118,20 @@ namespace Manifold.GFZCLI
             Color color = new Color(new Rgba32(r, g, b, a));
             return color;
         }
+
+        public void ThrowIfInvalidRegion()
+        {
+            switch (Region)
+            {
+                case Region.Japan:
+                case Region.NorthAmerica:
+                case Region.Europe:
+                    return;
+
+                default:
+                    string msg = $"Invalid region \"{RegionStr}\".";
+                    throw new ArgumentException(msg);
+            }
+        } 
     }
 }

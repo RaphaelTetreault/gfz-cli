@@ -1,4 +1,5 @@
 ﻿using GameCube.GFZ.Emblem;
+using GameCube.GFZ.GCI;
 using GameCube.GX.Texture;
 using Manifold.IO;
 using SixLabors.ImageSharp;
@@ -10,7 +11,6 @@ using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 using static Manifold.GFZCLI.GfzCliImageUtilities;
 using static Manifold.GFZCLI.Program;
-using GameCube.GCI;
 
 namespace Manifold.GFZCLI
 {
@@ -103,20 +103,22 @@ namespace Manifold.GFZCLI
 
             // BANNER
             {
-                FilePath textureOutput = new FilePath(outputFile);
+                FilePath textureOutput = new(outputFile);
                 textureOutput.SetName($"{outputFile.Name}-banner");
                 fileWriteInfo.OutputFilePath = textureOutput;
                 fileWriteInfo.PrintActionDescription = "converting emblem banner";
-                WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
+                WriteImage(options, encoder, emblemGCI.Banner, fileWriteInfo);
             }
             // ICON
+            for (int i = 0; i < emblemGCI.Icons.Length; i++)
             {
+                var icon = emblemGCI.Icons[i];
                 // Strip original file name, replace with GC game code
-                FilePath textureOutput = new FilePath(outputFile);
-                textureOutput.SetName($"{emblemGCI.Header}-icon");
+                FilePath textureOutput = new(outputFile);
+                textureOutput.SetName($"{emblemGCI.Header}-icon{i}");
                 fileWriteInfo.OutputFilePath = textureOutput;
-                fileWriteInfo.PrintActionDescription = "converting emblem icon";
-                WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
+                fileWriteInfo.PrintActionDescription = $"converting emblem icon #{i}";
+                WriteImage(options, encoder, icon, fileWriteInfo);
             }
             // EMBLEM
             {
@@ -125,6 +127,7 @@ namespace Manifold.GFZCLI
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
             }
         }
+
 
         public static void ImageToEmblemBIN(Options options)
         {
@@ -135,14 +138,14 @@ namespace Manifold.GFZCLI
 
         public static void ImageToEmblemGCI(Options options)
         {
-            // In this case where no search pattern is set, find *fz*.dat.gci (emblem) files.
+            // In this case where no search pattern is set, find *fze*.dat.gci (emblem) files.
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)
-                options.SearchPattern = "*fz*.dat.gci";
+                options.SearchPattern = "*fze*.dat.gci";
 
             Terminal.WriteLine("Emblem: converting image(s) to emblem.dat.gci.");
             int gciCount = DoFileInFileOutTasks(options, ImageToEmblemGci);
-            Terminal.WriteLine($"Emblem: done converting {gciCount} image{(gciCount != 1 ? 's' : "")}.");
+            Terminal.WriteLine($"Emblem: done converting {gciCount} image{Plural(gciCount)}.");
         }
 
         public static Emblem ImageToEmblemBin(Options options, FilePath inputFile)
@@ -157,32 +160,15 @@ namespace Manifold.GFZCLI
                 throw new ArgumentException(msg);
             }
 
+            // Load image, get resize parameters, resize image
             Image<Rgba32> image = Image.Load<Rgba32>(inputFile);
-
-            // TODO: auto-magically handle 64x64 images
-
-            // Resize image to fit inside bounds of 64x64
-            ResizeOptions ResizeOptions = IImageResizeOptions.GetResizeOptions(options);
-            // Emblem size is either 62x62 (1px alpha border, as intended) or 64x64 ("hacker" option)
-            int emblemX = options.EmblemHasAlphaBorder ? Emblem.Width - 2 : Emblem.Width;
-            int emblemY = options.EmblemHasAlphaBorder ? Emblem.Height - 2 : Emblem.Height;
-            // Choose lowest dimensions as the default size (ie: preserve pixel-perfect if possible)
-            int defaultX = Math.Min(emblemX, image.Width);
-            int defaultY = Math.Min(emblemY, image.Height);
-            // Set size override, then resize image
-            ResizeOptions.Size = IImageResizeOptions.GetResizeSize(options, defaultX, defaultY);
-            image.Mutate(ipc => ipc.Resize(ResizeOptions));
-
-            // Create emblem, textures
-            Emblem emblem = new Emblem();
-            Texture imageTexture = ImageToTexture(image, TextureFormat.RGB5A3);
-            Texture emblemTexture = new Texture(Emblem.Width, Emblem.Height, TextureColor.Clear, TextureFormat.RGB5A3);
-
-            // Copy image texture to emblem center
-            // Only works if image is 64px or less! Resize code block prepares this.
-            int offsetX = (Emblem.Width - image.Width) / 2;
-            int offsetY = (Emblem.Height - image.Height) / 2;
-            Texture.Copy(imageTexture, emblemTexture, offsetX, offsetY);
+            ResizeOptions resizeOptions = GetEmblemResizeOptions(options, image.Width, image.Height, Emblem.Width, Emblem.Height, options.EmblemHasAlphaBorder);
+            image.Mutate(ipc => ipc.Resize(resizeOptions));
+            // Create emblem, convert image to texture
+            Emblem emblem = new()
+            {
+                Texture = ImageAsCenteredTexture(image, Emblem.Width, Emblem.Height)
+            };
 
             // Write some useful information to the terminal
             lock (lock_ConsoleWrite)
@@ -194,8 +180,6 @@ namespace Manifold.GFZCLI
                 Terminal.WriteLine();
             }
 
-            // Assign return
-            emblem.Texture = emblemTexture;
             return emblem;
         }
 
@@ -216,15 +200,11 @@ namespace Manifold.GFZCLI
 
             var fileWrite = () =>
             {
-                using (var fileStream = File.Create(outputFilePath))
-                {
-                    using (var writer = new EndianBinaryWriter(fileStream, EmblemBIN.endianness))
-                    {
-                        var emblemBin = new EmblemBIN();
-                        emblemBin.Emblems = emblems;
-                        emblemBin.Serialize(writer);
-                    }
-                }
+                using var fileStream = File.Create(outputFilePath);
+                using var writer = new EndianBinaryWriter(fileStream, EmblemBIN.endianness);
+                EmblemBIN emblemBin = new();
+                emblemBin.Emblems = emblems;
+                emblemBin.Serialize(writer);
             };
 
             FileWriteOverwriteHandler(options, fileWrite, info);
@@ -232,53 +212,45 @@ namespace Manifold.GFZCLI
             return emblems;
         }
 
-        // TODO: should this be in Emblem class?
-        private static string GetFileName(string fileName)
-        {
-            const int maxChars = 20;
-            string fileName20Char = fileName.PadLeft(maxChars, '-');
-            fileName20Char = fileName20Char.Substring(0, maxChars);
-
-            // TODO: get strings from gamecode
-            string name = $"XX-GFZX-fzX020-{fileName20Char}";
-            return name;
-        }
-
         public static void ImageToEmblemGci(Options options, FilePath inputFile, FilePath outputFile)
         {
-            string fileName = GetFileName(outputFile.Name);
-            outputFile.SetName(fileName);
-            outputFile.SetExtensions(".dat.gci");
-
             // Load image
-            Image<Rgba32> image = Image.Load<Rgba32>(inputFile);
-            Image<Rgba32> imagePreview = image.Clone();
-            //
-            image.Mutate(ipc => ipc.Resize(Emblem.Width, Emblem.Height));
-            imagePreview.Mutate(ipc => ipc.Resize(Gci<Emblem>.IconWidth, Gci<Emblem>.IconHeight));
+            Image<Rgba32> emblemImage = Image.Load<Rgba32>(inputFile);
+            Image<Rgba32> iconImage = emblemImage.Clone();
+            // Get resize targets
+            ResizeOptions emblemResize = GetEmblemResizeOptions(options, emblemImage.Width, emblemImage.Height, Emblem.Width, Emblem.Height, options.EmblemHasAlphaBorder);
+            ResizeOptions iconResize = GetEmblemResizeOptions(options, emblemImage.Width, emblemImage.Height, EmblemGCI.IconWidth, EmblemGCI.IconHeight, false);
+            // Resize images
+            emblemImage.Mutate(ipc => ipc.Resize(emblemResize));
+            iconImage.Mutate(ipc => ipc.Resize(iconResize));
 
-            Texture emblemTexture = ImageToTexture(image);
-            Texture emblemPreview = ImageToTexture(imagePreview);
-            Texture banner = new Texture(Gci<Emblem>.BannerWidth, Gci<Emblem>.BannerHeight, Gci<Emblem>.DirectFormat);
-            Texture[] icons = new Texture[] { emblemPreview };
-            Emblem emblem = new Emblem(emblemTexture);
-            EmblemGCI gci = new EmblemGCI();
-            gci.SetFileData();
-            gci.SetBanner();
-            gci.SetIcons();
-            gci.SetFileName();
+            // Construct data for GCI
+            Texture emblemTexture = ImageAsCenteredTexture(emblemImage, Emblem.Width, Emblem.Height);
+            Texture iconTexture = ImageAsCenteredTexture(iconImage, EmblemGCI.IconWidth, EmblemGCI.IconHeight);
+            Texture banner = new(EmblemGCI.BannerWidth, EmblemGCI.BannerHeight, EmblemGCI.DirectFormat);
+            // todo: blank banner!
+            Texture[] icons = new[] { iconTexture };
+            Emblem emblem = new(emblemTexture);
+            EmblemGCI emblemGci = new(options.Region);
+            options.ThrowIfInvalidRegion();
 
-            //  
+            // Get name for output file
+            string gciFileName = EmblemGCI.FormatGciFileName(GfzGciFileType.Emblem, emblemGci.Header, outputFile.Name, out string fileName);
+            outputFile.SetName(gciFileName);
+
+            // Assign data
+            emblemGci.Emblem = emblem;
+            emblemGci.SetBanner(banner);
+            emblemGci.SetIcons(icons);
+            emblemGci.SetFileName(fileName);
+
+            // Write file
             var fileWrite = () =>
             {
                 // Save emblem
-                using (var fileStream = File.Create(outputFile))
-                {
-                    using (var writer = new EndianBinaryWriter(fileStream, EmblemGCI.endianness))
-                    {
-                        gci.Serialize(writer);
-                    }
-                }
+                using var fileStream = File.Create(outputFile);
+                using var writer = new EndianBinaryWriter(fileStream, EmblemGCI.endianness);
+                emblemGci.Serialize(writer);
             };
             var info = new FileWriteInfo()
             {
@@ -289,5 +261,50 @@ namespace Manifold.GFZCLI
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
+
+
+        private static ResizeOptions GetEmblemResizeOptions(Options options, int imageWidth, int imageHeight, int resizeWidth, int resizeHeight, bool resizeHasAlphaBorder)
+        {
+            // Resize image to fit inside bounds of image.
+            // eg: emblem is 64x64
+            ResizeOptions resizeOptions = IImageResizeOptions.GetResizeOptions(options);
+
+            // Emblem size is either 62x62 (1px alpha border, as intended) or 64x64 ("hacker" option)
+            if (resizeHasAlphaBorder)
+            {
+                resizeWidth -= 2;
+                resizeHeight -= 2;
+            }
+            // Choose lowest dimensions as the default size (ie: preserve pixel-perfect if possible)
+            int defaultX = Math.Min(resizeWidth, imageWidth);
+            int defaultY = Math.Min(resizeHeight, imageHeight);
+            // Set size override, then resize image
+            resizeOptions.Size = IImageResizeOptions.GetResizeSize(options, defaultX, defaultY);
+
+            return resizeOptions;
+        }
+        private static Texture ImageAsCenteredTexture(Image<Rgba32> image, int boundsX, int boundsY)
+        {
+            bool isInvalidSize = image.Width > boundsX || image.Height > boundsY;
+            if (isInvalidSize)
+            {
+                string msg =
+                    $"Image size ({image.Width}, {image.Height}) cannot be " +
+                    $"larger than bounds ({boundsX}, {boundsY}).";
+                throw new ArgumentException(msg);
+            }
+
+            Texture imageAsTexture = ImageToTexture(image, TextureFormat.RGB5A3);
+            Texture centeredTexture = new(boundsX, boundsY, TextureColor.Clear, TextureFormat.RGB5A3);
+
+            // Copy image texture to emblem center
+            // Only works if image is less than bounds!
+            int offsetX = (boundsX - image.Width) / 2;
+            int offsetY = (boundsX - image.Height) / 2;
+            Texture.Copy(imageAsTexture, centeredTexture, offsetX, offsetY);
+
+            return centeredTexture;
+        }
+
     }
 }
