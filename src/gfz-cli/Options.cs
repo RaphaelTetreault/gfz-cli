@@ -28,11 +28,8 @@ namespace Manifold.GFZCLI
         public string SerializationFormatStr { get; set; } = "gx";
         public SerializeFormat SerializeFormat => Enum.Parse<SerializeFormat>(SerializationFormatStr, true);
         public AvGame AvGame => GetAvFormat(SerializeFormat);
-
-        // TODO:
-        public string RegionStr { get; set; } = string.Empty;
-        public Region Region { get; set; } = Region.Japan;
-
+        public string SerializeRegionStr { get; set; } = "japan";
+        public Region SerializationRegion => GetRegion(SerializeRegionStr);
 
         // ITplOptions
         public bool TplUnpackMipmaps { get; set; }
@@ -58,8 +55,6 @@ namespace Manifold.GFZCLI
         [Option("emblem-border")]
         public bool EmblemHasAlphaBorder { get; set; } = true;
 
-        //[Option("arc-root")]
-        //public string ArchiveRoot { get; set; } = string.Empty;
 
 
         /// <summary>
@@ -78,6 +73,39 @@ namespace Manifold.GFZCLI
                 case SerializeFormat.GX: return AvGame.FZeroGX;
                 default:
                     string msg = $"No {nameof(SerializeFormat)} \"{serializeFormat}\" defined.";
+                    throw new ArgumentException(msg);
+            }
+        }
+        private static Region GetRegion(string regionStr)
+        {
+            string regionStrClean = regionStr.ToUpper();
+
+            switch (regionStrClean)
+            {
+                case "J":
+                //case "JAPAN":
+                case "JP":
+                //case "JPN":
+                //case "NTSCJ":
+                //case "NTSC-J":
+                    return Region.Japan;
+
+                case "E":
+                case "NA":
+                //case "NTSCE":
+                //case "NTSC-E":
+                //case "US":
+                //case "USA":
+                    return Region.NorthAmerica;
+
+                case "P":
+                case "EU":
+                //case "EUROPE":
+                //case "PAL":
+                    return Region.Europe;
+
+                default:
+                    string msg = $"Could not parge {nameof(Region)} \"{regionStr}\"";
                     throw new ArgumentException(msg);
             }
         }
@@ -121,7 +149,7 @@ namespace Manifold.GFZCLI
 
         public void ThrowIfInvalidRegion()
         {
-            switch (Region)
+            switch (SerializationRegion)
             {
                 case Region.Japan:
                 case Region.NorthAmerica:
@@ -129,7 +157,7 @@ namespace Manifold.GFZCLI
                     return;
 
                 default:
-                    string msg = $"Invalid region \"{RegionStr}\".";
+                    string msg = $"Invalid region \"{SerializeRegionStr}\".";
                     throw new ArgumentException(msg);
             }
         } 

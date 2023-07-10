@@ -231,7 +231,7 @@ namespace Manifold.GFZCLI
             // todo: blank banner!
             Texture[] icons = new[] { iconTexture };
             Emblem emblem = new(emblemTexture);
-            EmblemGCI emblemGci = new(options.Region);
+            EmblemGCI emblemGci = new(options.SerializationRegion);
             options.ThrowIfInvalidRegion();
 
             // Get name for output file
