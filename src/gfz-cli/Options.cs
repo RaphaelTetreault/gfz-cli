@@ -28,7 +28,7 @@ namespace Manifold.GFZCLI
         public string SerializationFormatStr { get; set; } = "gx";
         public SerializeFormat SerializeFormat => Enum.Parse<SerializeFormat>(SerializationFormatStr, true);
         public AvGame AvGame => GetAvFormat(SerializeFormat);
-        public string SerializeRegionStr { get; set; } = "japan";
+        public string SerializeRegionStr { get; set; } = "J";
         public Region SerializationRegion => GetRegion(SerializeRegionStr);
 
         // ITplOptions
