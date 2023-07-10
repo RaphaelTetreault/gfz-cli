@@ -427,5 +427,3 @@ https://docs.sixlabors.com/api/ImageSharp/SixLabors.ImageSharp.Processing.Anchor
 ## Work-in-Progress Notes
 
 Remove instances of setting output path and instead provide that info before actions, perhaps in [About this Document](#about-this-document)?
-
-Does GitHub contributions finally work?
