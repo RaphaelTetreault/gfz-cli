@@ -85,7 +85,7 @@ namespace Manifold.GFZCLI
                 //case GfzCliAction.tpl_pack: TplPack(options); break;
 
                 //
-                case GfzCliAction.dump_hex: ActionsMisc.DumpHex32(options); break;
+                //case GfzCliAction.dump_hex: ActionsMisc.DumpHex32(options); break;
 
                 // UNSET
                 case GfzCliAction.none:
