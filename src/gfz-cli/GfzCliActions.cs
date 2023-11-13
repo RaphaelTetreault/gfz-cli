@@ -27,6 +27,9 @@
         lz_compress,
         lz_decompress,
 
+        rel_decrypt_line__,
+        rel_encrypt_line__,
+
         tpl_unpack,
 
         //

@@ -26,7 +26,7 @@ namespace Manifold.GFZCLI
             bool noArgumentsPassed = args.Length == 0;
             if (noArgumentsPassed)
             {
-                string msg = "You must call this program using arguments via the Console/Terminal. ";
+                string msg = "You must call this program using arguments via the Console/Terminal.";
                 Terminal.WriteLine(msg, ConsoleColor.Black, ConsoleColor.Red);
                 Terminal.WriteLine();
                 // Force help page
@@ -80,6 +80,9 @@ namespace Manifold.GFZCLI
                 // LZ
                 case GfzCliAction.lz_compress: ActionsLZ.LzCompress(options); break;
                 case GfzCliAction.lz_decompress: ActionsLZ.LzDecompress(options); break;
+                // REL
+                case GfzCliAction.rel_decrypt_line__: ActionsREL.DecryptEnemyLine__(options); break;
+                case GfzCliAction.rel_encrypt_line__: ActionsREL.EncryptEnemyLine__(options); break;
                 // TPL
                 case GfzCliAction.tpl_unpack: ActionsTPL.TplUnpack(options); break;
                 //case GfzCliAction.tpl_pack: TplPack(options); break;

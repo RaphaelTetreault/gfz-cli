@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using GameCube.AmusementVision;
 using GameCube.DiskImage;
+using GameCube.GFZ;
 using GameCube.GFZ.Stage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -109,6 +110,44 @@ namespace Manifold.GFZCLI
                     throw new ArgumentException(msg);
             }
         }
+        public static GameCode GetGameCode(AvGame avGame, Region region)
+        {
+            GameCode code = 0;
+
+            // Add region
+            switch (region)
+            {
+                case Region.Japan:
+                    code += (int)GameCodeFields.Japan;
+                    break;
+                case Region.NorthAmerica:
+                    code += (int)GameCodeFields.NorthAmerica;
+                    break;
+                case Region.Europe:
+                    code += (int)GameCodeFields.Europe;
+                    break;
+
+                default:
+                    throw new NotImplementedException(region.ToString());
+            }
+
+            // Add game
+            switch (avGame)
+            {
+                case AvGame.FZeroAX:
+                    code += (int)GameCodeFields.AX;
+                    break;
+                case AvGame.FZeroGX:
+                    code += (int)GameCodeFields.GX;
+                    break;
+
+                default:
+                    throw new NotImplementedException(avGame.ToString());
+            }
+
+            return code;
+        }
+
         private static Color StringToColor(string value)
         {
             byte r = 0;
@@ -160,6 +199,11 @@ namespace Manifold.GFZCLI
                     string msg = $"Invalid region \"{SerializeRegionStr}\".";
                     throw new ArgumentException(msg);
             }
-        } 
+        }
+        public GameCode GetGameCode()
+        {
+            GameCode gameCode = GetGameCode(AvGame, SerializationRegion);
+            return gameCode;
+        }
     }
 }
