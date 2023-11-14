@@ -9,7 +9,7 @@ This document provides examples using Windows and calls the `gfz.exe` program. C
 | Operating System | Program Call |
 | ---------------- | ------------ |
 | Windows          | `gfz.exe`    |
-| Linux            | `./gfz`      |
+| Linux            | `gfz`        |
 | macOS            | `gfz`        |
 
 
@@ -74,12 +74,13 @@ gfz.exe [action] [input-path] [output-path] [other-options]
 
 There are a few options that apply to all actions.
 
-| Option Token       | Brief Description                                            |
-| ------------------ | ------------------------------------------------------------ |
-| `--overwrite`      | Allow overwriting output files. Off by default.              |
-| `--search-pattern` | When ***input-path*** is a directory, the search pattern applied to find files in that directory. Uses single (`?`) and multi (`*`) character wildcards. |
-| `--search-subdirs` | When ***input-path*** is a directory, the search pattern applies to subdirectories. Off by default. |
-| `--format`         | The target serialization format used. Either `ax` or `gx`. Set to `gx` by default. |
+| Short Op | Long Option        | Brief Description                                            |
+| -------- | ------------------ | ------------------------------------------------------------ |
+| `-o`     | `--overwrite`      | Allow overwriting output files. Off by default.              |
+| `-p`     | `--search-pattern` | When ***input-path*** is a directory, the search pattern applied to find files in that directory. Uses single (`?`) and multi (`*`) character wildcards. |
+| `-s`     | `--search-subdirs` | When ***input-path*** is a directory, the search pattern applies to subdirectories. Off by default. |
+| `-f`     | `--format`         | The target serialization format used. Either `ax` or `gx`. Set to `gx` by default. |
+| `-r`     | `--region`         | The target serialization region used. Options include Japan (`j`, `jp`), Europe (`p`, `eu`), and North America (`e`, `na`). Only needed when IO requires specific knowledge of region. Set to `j` by default. |
 
 
 
@@ -295,6 +296,52 @@ Decompress all `.lz` files in a folder and its subfolders.
 # "--search-pattern *.lz" is implicit
 gfz.exe lz-decompress in/ --search-subdirs
 ```
+
+
+
+## REL Files
+
+Actions for managing `.rel` files.
+
+### enemy_line line__ file
+
+The file at path `./enemy_line/line__.bin` is an obfuscated `.rel.lz` file that contains a sizeable chunk of game data. The game does a few things to hide the nature of the file.
+
+#### Decrypt line__.bin
+
+To decrypt the file.
+
+```shell
+# Decrypt file at path to *.rel.lz and *.rel
+gfz.exe rel-decrypt-line__ in/enemy_line/line__.bin
+```
+
+You must specify the region and serialization formats as they differ between regions.
+
+```shell
+# The default region information and search "*line__.bin"
+gfz.exe rel-decrypt-line__ in/ -search-subdirs --region j
+```
+
+Right now only GX is supported. AX stores the data elsewhere.
+
+#### Encrypt line__.rel
+
+To encrypt the file.
+
+```shell
+# Encrypt file at path to *.rel.lz and *.bin
+gfz.exe rel-encrypt-line__ in/enemy_line/line__.rel
+```
+
+You must specify the region and serialization formats as they differ between regions.
+
+```shell
+# The default region information and search "*line__.rel"
+gfz.exe rel-encrypt-line__ in/enemy_line/line__.rel --search-subdirs --region j
+```
+
+Right now only GX is supported. AX stores the data elsewhere.
 
 
 

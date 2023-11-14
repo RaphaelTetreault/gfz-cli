@@ -26,7 +26,7 @@ namespace Manifold.GFZCLI
             bool noArgumentsPassed = args.Length == 0;
             if (noArgumentsPassed)
             {
-                string msg = "You must call this program using arguments via the Console/Terminal. ";
+                string msg = "You must call this program using arguments via the Console/Terminal.";
                 Terminal.WriteLine(msg, ConsoleColor.Black, ConsoleColor.Red);
                 Terminal.WriteLine();
                 // Force help page
@@ -60,6 +60,8 @@ namespace Manifold.GFZCLI
                 // ARC
                 case GfzCliAction.arc_compress: ActionsARC.ArcCompress(options); break;
                 case GfzCliAction.arc_decompress: ActionsARC.ArcDecompress(options); break;
+                // GCI Utility
+                //case GfzCliAction.auto_rename_gci: ActionsGCI.RenameGCI(options); break;
                 // CARDATA
                 case GfzCliAction.cardata_bin_to_tsv: ActionsCarData.CarDataBinToTsv(options); break;
                 case GfzCliAction.cardata_tsv_to_bin: ActionsCarData.CarDataTsvToBin(options); break;
@@ -70,15 +72,23 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.emblem_gci_to_image: ActionsEmblem.EmblemGciToImage(options); break;
                 case GfzCliAction.image_to_emblem_bin: ActionsEmblem.ImageToEmblemBIN(options); break;
                 case GfzCliAction.image_to_emblem_gci: ActionsEmblem.ImageToEmblemGCI(options); break;
+                //
+                case GfzCliAction.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
                 // LIVE CAMERA STAGE
                 case GfzCliAction.live_camera_stage_bin_to_tsv: ActionsLiveCameraStage.LiveCameraStageBinToTsv(options); break;
                 case GfzCliAction.live_camera_stage_tsv_to_bin: ActionsLiveCameraStage.LiveCameraStageTsvToBin(options); break;
                 // LZ
                 case GfzCliAction.lz_compress: ActionsLZ.LzCompress(options); break;
                 case GfzCliAction.lz_decompress: ActionsLZ.LzDecompress(options); break;
+                // REL
+                case GfzCliAction.rel_decrypt_line__: ActionsREL.DecryptLine__(options); break;
+                case GfzCliAction.rel_encrypt_line__: ActionsREL.EncryptLine__(options); break;
                 // TPL
                 case GfzCliAction.tpl_unpack: ActionsTPL.TplUnpack(options); break;
                 //case GfzCliAction.tpl_pack: TplPack(options); break;
+
+                //
+                //case GfzCliAction.dump_hex: ActionsMisc.DumpHex32(options); break;
 
                 // UNSET
                 case GfzCliAction.none:

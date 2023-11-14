@@ -7,6 +7,8 @@
         arc_decompress,
         arc_compress,
 
+        auto_rename_gci,
+
         cardata_bin_to_tsv,
         cardata_tsv_to_bin,
 
@@ -17,12 +19,20 @@
         image_to_emblem_bin,
         image_to_emblem_gci,
 
+        gci_extract_ghost,
+
         live_camera_stage_bin_to_tsv,
         live_camera_stage_tsv_to_bin,
 
         lz_compress,
         lz_decompress,
 
+        rel_decrypt_line__,
+        rel_encrypt_line__,
+
         tpl_unpack,
+
+        //
+        dump_hex,
     }
 }

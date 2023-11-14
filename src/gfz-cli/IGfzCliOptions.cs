@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using GameCube.DiskImage;
 using GameCube.GFZ.Stage;
 using System.IO;
 
@@ -12,6 +13,7 @@ namespace Manifold.GFZCLI
             public const char SearchPattern = 'p';
             public const char SearchSubdirectories = 's';
             public const char SerializationFormat = 'f';
+            public const char SerializationRegion = 'r';
         }
 
         internal static class Args
@@ -26,6 +28,7 @@ namespace Manifold.GFZCLI
             public const string SearchPattern = "search-pattern";
             public const string SearchSubdirectories = "search-subdirs";
             public const string SerializationFormat = "format";
+            public const string SerializationRegion = "region";
 
             public const string TplUnpackMipmaps = "tpl-unpack-mipmaps";
             public const string TplUnpackSaveCorruptedTextures = "tpl-unpack-corrupted-cmpr";
@@ -67,11 +70,9 @@ namespace Manifold.GFZCLI
             public const string SerializationFormat =
                 "The format used when serializing.\n" +
                 "\tOptions: \"ax\", \"gx\". Set to \"gx\" by default.";
-
-            public const string TplUnpackMipmaps =
-                "tpl-unpack (option): Export mipmap textures.";
-            public const string TplUnpackSaveCorruptedTextures =
-                "tpl-unpack (option): Export corrupted CMPR mipmap textures.";
+            public const string SerializationRegion =
+                "The region used when serializing.\n" +
+                "\tOptions: \"J\" (JP), \"E\" (NA), \"P\" (EU). Set to \"J\" by default.";
         }
 
 
@@ -124,9 +125,16 @@ namespace Manifold.GFZCLI
         [Option(ArgsShort.SerializationFormat, Args.SerializationFormat, HelpText = Help.SerializationFormat)]
         public string SerializationFormatStr { get; set; }
         /// <summary>
-        ///     Which game to serialize
+        ///     Which game to serialize.
         /// </summary>
         public SerializeFormat SerializeFormat { get; }
+
+        [Option(ArgsShort.SerializationRegion, Args.SerializationRegion, HelpText = Help.SerializationRegion)]
+        public string SerializeRegionStr { get; set; }
+        /// <summary>
+        ///     Which region to serialize to.
+        /// </summary>
+        public Region SerializationRegion { get; }
 
     }
 }

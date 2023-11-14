@@ -51,6 +51,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.Emblem", "..\.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.DiskImage", "..\..\libs\GameCube.Core\src\GameCube.DiskImage\GameCube.DiskImage.csproj", "{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GCI", "..\..\libs\GameCube.Core\src\GameCube.GCI\GameCube.GCI.csproj", "{389098C7-62D4-4E44-A8A6-03B749CD764F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.Replay", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Replay\GameCube.GFZ.Replay.csproj", "{75153813-979F-4802-BB80-FB03AA853751}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.Common", "..\..\libs\GameCube.Core\src\GameCube.Common\GameCube.Common.csproj", "{01014172-CB65-438C-BA04-BA22619A679B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameCube.GFZ.GCI", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GCI\GameCube.GFZ.GCI.csproj", "{52E58322-E8AC-46B6-95DE-82B71069FD5E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -251,6 +259,38 @@ Global
 		{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}.Release|x64.ActiveCfg = Release|Any CPU
 		{61FBA1BF-80A4-4E23-BC10-E12E5BA446B3}.Release|x64.Build.0 = Release|Any CPU
+		{389098C7-62D4-4E44-A8A6-03B749CD764F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{389098C7-62D4-4E44-A8A6-03B749CD764F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{389098C7-62D4-4E44-A8A6-03B749CD764F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{389098C7-62D4-4E44-A8A6-03B749CD764F}.Debug|x64.Build.0 = Debug|Any CPU
+		{389098C7-62D4-4E44-A8A6-03B749CD764F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{389098C7-62D4-4E44-A8A6-03B749CD764F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{389098C7-62D4-4E44-A8A6-03B749CD764F}.Release|x64.ActiveCfg = Release|Any CPU
+		{389098C7-62D4-4E44-A8A6-03B749CD764F}.Release|x64.Build.0 = Release|Any CPU
+		{75153813-979F-4802-BB80-FB03AA853751}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75153813-979F-4802-BB80-FB03AA853751}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75153813-979F-4802-BB80-FB03AA853751}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{75153813-979F-4802-BB80-FB03AA853751}.Debug|x64.Build.0 = Debug|Any CPU
+		{75153813-979F-4802-BB80-FB03AA853751}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75153813-979F-4802-BB80-FB03AA853751}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75153813-979F-4802-BB80-FB03AA853751}.Release|x64.ActiveCfg = Release|Any CPU
+		{75153813-979F-4802-BB80-FB03AA853751}.Release|x64.Build.0 = Release|Any CPU
+		{01014172-CB65-438C-BA04-BA22619A679B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01014172-CB65-438C-BA04-BA22619A679B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01014172-CB65-438C-BA04-BA22619A679B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{01014172-CB65-438C-BA04-BA22619A679B}.Debug|x64.Build.0 = Debug|Any CPU
+		{01014172-CB65-438C-BA04-BA22619A679B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01014172-CB65-438C-BA04-BA22619A679B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01014172-CB65-438C-BA04-BA22619A679B}.Release|x64.ActiveCfg = Release|Any CPU
+		{01014172-CB65-438C-BA04-BA22619A679B}.Release|x64.Build.0 = Release|Any CPU
+		{52E58322-E8AC-46B6-95DE-82B71069FD5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52E58322-E8AC-46B6-95DE-82B71069FD5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52E58322-E8AC-46B6-95DE-82B71069FD5E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{52E58322-E8AC-46B6-95DE-82B71069FD5E}.Debug|x64.Build.0 = Debug|Any CPU
+		{52E58322-E8AC-46B6-95DE-82B71069FD5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52E58322-E8AC-46B6-95DE-82B71069FD5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52E58322-E8AC-46B6-95DE-82B71069FD5E}.Release|x64.ActiveCfg = Release|Any CPU
+		{52E58322-E8AC-46B6-95DE-82B71069FD5E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
