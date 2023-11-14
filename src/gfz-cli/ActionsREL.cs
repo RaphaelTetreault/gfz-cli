@@ -25,7 +25,7 @@ namespace Manifold.GFZCLI
             DoFileInFileOutTasks(options, EncryptLine);
         }
 
-        public static void CryptEnemyLine(Options options, FilePath inputFile, FilePath outputFile, bool doEncrypt, string extension)
+        public static void CryptLine(Options options, FilePath inputFile, FilePath outputFile, bool doEncrypt, string extension)
         {
             // Remove extension
             outputFile.PopExtension();
@@ -53,7 +53,7 @@ namespace Manifold.GFZCLI
         public static void DecryptLine(Options options, FilePath inputFile, FilePath outputFile)
         {
             // Step 1: Decrypt line__.bin into line__.rel.lz
-            CryptEnemyLine(options, inputFile, outputFile, false, "rel.lz");
+            CryptLine(options, inputFile, outputFile, false, "rel.lz");
             
             // Step 2: Get path to line__.rel.lz
             FilePath lzInputFile = new FilePath(outputFile);
@@ -75,7 +75,7 @@ namespace Manifold.GFZCLI
             FilePath lzOutputFile = new FilePath(lzInputFile);
 
             // Step 3: Encrypt line_rel.lz into line__.bin
-            CryptEnemyLine(options, lzInputFile, lzOutputFile, true, "bin");
+            CryptLine(options, lzInputFile, lzOutputFile, true, "bin");
         }
 
     }
