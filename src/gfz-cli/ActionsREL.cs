@@ -15,6 +15,7 @@ namespace Manifold.GFZCLI
 
             DoFileInFileOutTasks(options, DecryptLine);
         }
+
         public static void EncryptLine__(Options options)
         {
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
