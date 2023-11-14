@@ -1,5 +1,4 @@
 ﻿using GameCube.GFZ;
-using GameCube.GFZ.LZ;
 using GameCube.GFZ.REL;
 using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
@@ -8,23 +7,21 @@ namespace Manifold.GFZCLI
 {
     public static class ActionsREL
     {
-        public static void DecryptEnemyLine__(Options options)
+        public static void DecryptLine__(Options options)
         {
-            // 
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)
                 options.SearchPattern = $"*line__.bin";
 
-            DoFileInFileOutTasks(options, DecryptEnemyLine);
+            DoFileInFileOutTasks(options, DecryptLine);
         }
-        public static void EncryptEnemyLine__(Options options)
+        public static void EncryptLine__(Options options)
         {
-            // 
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)
                 options.SearchPattern = $"*line__.rel";
 
-            DoFileInFileOutTasks(options, EncryptEnemyLine);
+            DoFileInFileOutTasks(options, EncryptLine);
         }
 
         public static void CryptEnemyLine(Options options, FilePath inputFile, FilePath outputFile, bool doEncrypt, string extension)
@@ -51,10 +48,34 @@ namespace Manifold.GFZCLI
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
-        public static void DecryptEnemyLine(Options options, FilePath inputFile, FilePath outputFile)
-            => CryptEnemyLine(options, inputFile, outputFile, false, "rel2");
-        public static void EncryptEnemyLine(Options options, FilePath inputFile, FilePath outputFile)
-            => CryptEnemyLine(options, inputFile, outputFile, true, "bin2");
+
+        public static void DecryptLine(Options options, FilePath inputFile, FilePath outputFile)
+        {
+            // Step 1: Decrypt line__.bin into line__.rel.lz
+            CryptEnemyLine(options, inputFile, outputFile, false, "rel.lz");
+            
+            // Step 2: Get path to line__.rel.lz
+            FilePath lzInputFile = new FilePath(outputFile);
+            lzInputFile.SetExtensions("rel.lz");
+            FilePath lzOutputFile = new FilePath(lzInputFile);
+
+            // Step 3: Decompress line__.rel.lz into line__.rel
+            ActionsLZ.LzDecompressFile(options, lzInputFile, lzOutputFile);
+        }
+
+        public static void EncryptLine(Options options, FilePath inputFile, FilePath outputFile)
+        {
+            // Step 1: Compress line__.rel to line__.rel.lz
+            ActionsLZ.LzCompressFile(options, inputFile, outputFile);
+
+            // Step 2: Get path to line__.rel.lz
+            FilePath lzInputFile = new FilePath(outputFile);
+            lzInputFile.PushExtension("lz");
+            FilePath lzOutputFile = new FilePath(lzInputFile);
+
+            // Step 3: Encrypt line_rel.lz into line__.bin
+            CryptEnemyLine(options, lzInputFile, lzOutputFile, true, "bin");
+        }
 
     }
 }

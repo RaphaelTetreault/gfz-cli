@@ -78,7 +78,7 @@
     },
     "rel": {
       "commandName": "Project",
-      "commandLineArgs": "rel-encrypt-line__ D:\\gfzj01\\ -s"
+      "commandLineArgs": "rel-encrypt-line__ D:\\gfzj01\\ -s -o"
     }
   }
 }
