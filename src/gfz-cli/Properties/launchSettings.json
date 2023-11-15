@@ -79,6 +79,10 @@
     "rel": {
       "commandName": "Project",
       "commandLineArgs": "rel-encrypt-line__ D:\\gfzj01\\ -s -o"
+    },
+    "rel-patch": {
+      "commandName": "Project",
+      "commandLineArgs": "linerel-patch D:\\gfzj01\\ -s"
     }
   }
 }

@@ -29,6 +29,7 @@
 
         rel_decrypt_line__,
         rel_encrypt_line__,
+        linerel_patch,
 
         tpl_unpack,
 

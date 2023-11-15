@@ -1,11 +1,13 @@
 ﻿using GameCube.GFZ;
 using GameCube.GFZ.LineREL;
+using Manifold.IO;
 using System.IO;
+using System.Threading.Tasks;
 using static Manifold.GFZCLI.GfzCliUtilities;
 
 namespace Manifold.GFZCLI
 {
-    public static class ActionsREL
+    public static class ActionsLineREL
     {
         public static void DecryptLine__(Options options)
         {
@@ -44,7 +46,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = "REL",
+                PrintDesignator = "LineREL",
                 PrintActionDescription = doEncrypt ? "encrypting file" : "decrypting file",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
@@ -54,7 +56,7 @@ namespace Manifold.GFZCLI
         {
             // Step 1: Decrypt line__.bin into line__.rel.lz
             CryptLine(options, inputFile, outputFile, false, "rel.lz");
-            
+
             // Step 2: Get path to line__.rel.lz
             FilePath lzInputFile = new FilePath(outputFile);
             lzInputFile.SetExtensions("rel.lz");
@@ -76,6 +78,42 @@ namespace Manifold.GFZCLI
 
             // Step 3: Encrypt line_rel.lz into line__.bin
             CryptLine(options, lzInputFile, lzOutputFile, true, "bin");
+        }
+
+        public static void PatchStageNames(Options options)
+        {
+            // Default search
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = $"*line__.rel";
+
+            // Get file path, ensure it exists
+            string[] inputFiles = GetInputFiles(options);
+            if (inputFiles.Length != 1)
+            {
+                throw new System.Exception();
+            }
+
+            FilePath inputFilePath = new FilePath(inputFiles[0]);
+            inputFilePath.ThrowIfDoesNotExist();
+
+            // Patch file
+            using var file = File.Open(inputFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            using var writer = new EndianBinaryWriter(file, Line.endianness);
+            {
+                int address = 0;
+                uint value = 0xDEADDEAD;
+                writer.JumpToAddress(address);
+                writer.Write(value);
+            }
+
+            // Message in console
+            lock (Program.lock_ConsoleWrite)
+            {
+                Terminal.Write($"LineREL: patched file ");
+                Terminal.Write(inputFilePath, Program.FileNameColor);
+                Terminal.Write(". ");
+            }
         }
 
     }

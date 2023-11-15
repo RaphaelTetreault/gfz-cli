@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.GMA", "..\..\l
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.LZ", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.LZ\GameCube.GFZ.LZ.csproj", "{DE5543B1-1FD7-461B-A4B6-CF14042D49DD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.REL", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.REL\GameCube.GFZ.REL.csproj", "{DF794563-E81A-4CE9-AE46-0AD10340946C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.LineREL", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.REL\GameCube.GFZ.LineREL.csproj", "{DF794563-E81A-4CE9-AE46-0AD10340946C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.Stage", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Stage\GameCube.GFZ.Stage.csproj", "{86034AF9-B882-44A3-AE45-35888AD1EFC9}"
 EndProject
@@ -57,7 +57,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.Replay", "..\.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.Common", "..\..\libs\GameCube.Core\src\GameCube.Common\GameCube.Common.csproj", "{01014172-CB65-438C-BA04-BA22619A679B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameCube.GFZ.GCI", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GCI\GameCube.GFZ.GCI.csproj", "{52E58322-E8AC-46B6-95DE-82B71069FD5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.GCI", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GCI\GameCube.GFZ.GCI.csproj", "{52E58322-E8AC-46B6-95DE-82B71069FD5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
