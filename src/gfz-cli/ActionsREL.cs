@@ -1,5 +1,5 @@
 ﻿using GameCube.GFZ;
-using GameCube.GFZ.REL;
+using GameCube.GFZ.LineREL;
 using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 
@@ -35,8 +35,8 @@ namespace Manifold.GFZCLI
             var fileWrite = () =>
             {
                 GameCode gameCode = options.GetGameCode();
-                var lookup = EnemyLineLookup.GetInfo(gameCode);
-                using var stream = EnemyLineUtility.Crypt(inputFile, lookup);
+                var lookup = LineLookup.GetInfo(gameCode);
+                using var stream = LineUtility.Crypt(inputFile, lookup);
                 using var writer = File.Create(outputFile);
                 writer.Write(stream.ToArray());
             };
