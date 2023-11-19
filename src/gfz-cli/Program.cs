@@ -9,6 +9,7 @@ namespace Manifold.GFZCLI
         public const ConsoleColor FileNameColor = ConsoleColor.Cyan;
         public const ConsoleColor OverwriteFileColor = ConsoleColor.DarkYellow;
         public const ConsoleColor WriteFileColor = ConsoleColor.Green;
+        public const ConsoleColor SubTaskColor = ConsoleColor.DarkGray;
         public static readonly string[] Help = new string[] { "--help" };
 
         /// <summary>
@@ -80,10 +81,13 @@ namespace Manifold.GFZCLI
                 // LZ
                 case GfzCliAction.lz_compress: ActionsLZ.LzCompress(options); break;
                 case GfzCliAction.lz_decompress: ActionsLZ.LzDecompress(options); break;
-                // REL
-                case GfzCliAction.rel_decrypt_line__: ActionsLineREL.DecryptLine__(options); break;
-                case GfzCliAction.rel_encrypt_line__: ActionsLineREL.EncryptLine__(options); break;
-                case GfzCliAction.linerel_patch: ActionsLineREL.PatchStageNames(options); break;
+                // line__.rel
+                case GfzCliAction.linerel_decrypt: ActionsLineREL.DecryptLine__(options); break;
+                case GfzCliAction.linerel_encrypt: ActionsLineREL.EncryptLine__(options); break;
+                case GfzCliAction.linerel_test: ActionsLineREL.PatchTest(options); break;
+                case GfzCliAction.linerel_bgm: ActionsLineREL.PatchBgm(options); break;
+                case GfzCliAction.linerel_bgmfl: ActionsLineREL.PatchBgmFinalLap(options); break;
+                case GfzCliAction.linerel_bgm_both: ActionsLineREL.PatchBgmBoth(options); break;
                 // TPL
                 case GfzCliAction.tpl_unpack: ActionsTPL.TplUnpack(options); break;
                 //case GfzCliAction.tpl_pack: TplPack(options); break;

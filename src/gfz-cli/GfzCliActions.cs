@@ -27,9 +27,12 @@
         lz_compress,
         lz_decompress,
 
-        rel_decrypt_line__,
-        rel_encrypt_line__,
-        linerel_patch,
+        linerel_decrypt,
+        linerel_encrypt,
+        linerel_test,
+        linerel_bgm,
+        linerel_bgmfl,
+        linerel_bgm_both,
 
         tpl_unpack,
 
