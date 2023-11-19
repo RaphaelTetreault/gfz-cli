@@ -1,0 +1,105 @@
+# BGM Table
+
+This table outlines all the background music (BGM) songs in F-Zero GX. Only select songs are present in F-Zero AX.
+
+TODO: Add column which songs are present in AX.
+
+| Hex  | Dec  | Song Name       | AX   |
+| ---- | ---- | --------------- | ---- |
+| 01   | 1    | adv_gc          |      |
+| 02   | 2    | bblue           |      |
+| 03   | 3    | _(unused)_      |      |
+| 04   | 4    | casino          |      |
+| 05   | 5    | casino_b        |      |
+| 06   | 6    | course_view     |      |
+| 07   | 7    | course_view_ac  |      |
+| 08   | 8    | customize       |      |
+| 09   | 9    | elev            |      |
+| 0A   | 10   | elev_b          |      |
+| 0B   | 11   | fire            |      |
+| 0C   | 12   | fire_b          |      |
+| 0D   | 13   | forest          |      |
+| 0E   | 14   | forest_b        |      |
+| 0F   | 15   | garage          |      |
+| 10   | 16   | goal            |      |
+| 11   | 17   | _(unused)_      |      |
+| 12   | 18   | interview       |      |
+| 13   | 19   | interview_out   |      |
+| 14   | 20   | lightning       |      |
+| 15   | 21   | lightning_b     |      |
+| 16   | 22   | meteor          |      |
+| 17   | 23   | meteor_b        |      |
+| 18   | 24   | missionclear    |      |
+| 19   | 25   | mutecity        |      |
+| 1A   | 26   | mutecity_b      |      |
+| 1B   | 27   | ocean           |      |
+| 1C   | 28   | ocean_b         |      |
+| 1D   | 29   | _(unused)_      |      |
+| 1E   | 30   | over            |      |
+| 1F   | 31   | _(unused)_      |      |
+| 20   | 32   | profile         |      |
+| 21   | 33   | ptown           |      |
+| 22   | 34   | ptown_b         |      |
+| 23   | 35   | rainbow         |      |
+| 24   | 36   | rainbow_b       |      |
+| 25   | 37   | redcanyon       |      |
+| 26   | 38   | replay          |      |
+| 27   | 39   | retire          |      |
+| 28   | 40   | roll            |      |
+| 29   | 41   | sand            |      |
+| 2A   | 42   | sand_b          |      |
+| 2B   | 43   | secret_bb       |      |
+| 2C   | 44   | secret_mc       |      |
+| 2D   | 45   | selector        |      |
+| 2E   | 46   | selector_yobi   |      |
+| 2F   | 47   | story7          |      |
+| 30   | 48   | story9          |      |
+| 31   | 49   | storyend        |      |
+| 32   | 50   | tower           |      |
+| 33   | 51   | tower_b         |      |
+| 34   | 52   | _(unused)_      |      |
+| 35   | 53   | winingrun       |      |
+| 36   | 54   | _(unused)_      |      |
+| 37   | 55   | yobi2           |      |
+| 38   | 56   | antonio_t       |      |
+| 39   | 57   | arbingordon_t   |      |
+| 3A   | 58   | arrowm_t        |      |
+| 3B   | 59   | arrows_t        |      |
+| 3C   | 60   | baba_t          |      |
+| 3D   | 61   | beastman_t      |      |
+| 3E   | 62   | billy_t         |      |
+| 3F   | 63   | biorex_t        |      |
+| 40   | 64   | blackshadow_t   |      |
+| 41   | 65   | bloodfalcon_t   |      |
+| 42   | 66   | captainfalcon_t |      |
+| 43   | 67   | clash_t         |      |
+| 44   | 68   | daigoroh_t      |      |
+| 45   | 69   | daisangen_t     |      |
+| 46   | 70   | deathbone_t     |      |
+| 47   | 71   | digiboy_t       |      |
+| 48   | 72   | don_t           |      |
+| 49   | 73   | draq_t          |      |
+| 4A   | 74   | ead_t           |      |
+| 4B   | 75   | gazelle_t       |      |
+| 4C   | 76   | gommer_t        |      |
+| 4D   | 77   | jacklevin_t     |      |
+| 4E   | 78   | jamesmcloud_t   |      |
+| 4F   | 79   | jodysummer_t    |      |
+| 50   | 80   | kate_t          |      |
+| 51   | 81   | leon_t          |      |
+| 52   | 82   | lily_t          |      |
+| 53   | 83   | michaelchain_t  |      |
+| 54   | 84   | octman_t        |      |
+| 55   | 85   | pico_t          |      |
+| 56   | 86   | pj_t            |      |
+| 57   | 87   | prisia_t        |      |
+| 58   | 88   | qqq_t           |      |
+| 59   | 89   | rogerbuster_t   |      |
+| 5A   | 90   | samuraigoroh_t  |      |
+| 5B   | 91   | sharock_t       |      |
+| 5C   | 92   | silverneelsen_t |      |
+| 5D   | 93   | spade_t         |      |
+| 5E   | 94   | stewart_t       |      |
+| 5F   | 95   | tanaka_t        |      |
+| 60   | 96   | zoda_t          |      |
+
