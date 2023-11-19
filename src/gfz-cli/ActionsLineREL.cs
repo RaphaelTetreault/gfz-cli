@@ -162,9 +162,8 @@ namespace Manifold.GFZCLI
             // Patch BGM FL
             byte stageIndex = options.StageIndex;
             byte bgmflIndex = options.BgmFinalLapIndex;
-            ushort offset = GetBgmLoopPointOffset(bgmflIndex);
-            LineRelPrintAction($"set stage {stageIndex} final lap bgm to {bgmflIndex} (loop offset 0x{offset:x4}).");
-            LineUtility.PatchStageBgmFinalLap(writer, info, stageIndex, bgmflIndex, offset);
+            LineRelPrintAction($"set stage {stageIndex} final lap bgm to {bgmflIndex}.");
+            LineUtility.PatchStageBgmFinalLap(writer, info, stageIndex, bgmflIndex);
         }
         private static void PatchBgmBoth(Options options, EndianBinaryWriter writer)
         {
@@ -177,29 +176,5 @@ namespace Manifold.GFZCLI
         public static void PatchBgmFinalLap(Options options) => Patch(options, PatchBgmFinalLap);
         public static void PatchBgmBoth(Options options) => Patch(options, PatchBgmBoth);
         public static void PatchTest(Options options) => Patch(options, PatchTest);
-
-        // TODO: move to some static class for "stock" game data references
-        // TODO 2: make sure this works for other versions of the game -- brief check looks the same
-        private static ushort GetBgmLoopPointOffset(byte bgmIndex)
-        {
-            switch (bgmIndex)
-            {
-                case 0x33: return 0x0400; // Aeropolis
-                case 0x17: return 0x0500; // Meteor Stream
-                case 0x1A: return 0x0600; // Mute City
-                case 0x15: return 0x0700; // Lightning
-                case 0x22: return 0x0800; // Port Town
-                case 0x0E: return 0x0900; // Green Plant
-                case 0x2A: return 0x0A00; // Sand Ocean
-                case 0x24: return 0x0B00; // Phantom Road
-                case 0x0C: return 0x0C00; // Fire Field
-                case 0x1C: return 0x0D00; // Big Blue
-                case 0x0A: return 0x0E00; // Cosmo Terminal
-                case 0x05: return 0x0F00; // Casino Palace
-                case 0xFF: return 0xFFFF; // No BGM
-
-                default: return 0xFFFF;
-            }
-        }
     }
 }
