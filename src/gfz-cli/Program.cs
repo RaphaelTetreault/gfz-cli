@@ -82,8 +82,8 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.lz_compress: ActionsLZ.LzCompress(options); break;
                 case GfzCliAction.lz_decompress: ActionsLZ.LzDecompress(options); break;
                 // line__.rel
-                case GfzCliAction.linerel_decrypt: ActionsLineREL.DecryptLine__(options); break;
-                case GfzCliAction.linerel_encrypt: ActionsLineREL.EncryptLine__(options); break;
+                case GfzCliAction.linerel_decrypt: ActionsLineREL.DecryptLineRel(options); break;
+                case GfzCliAction.linerel_encrypt: ActionsLineREL.EncryptLineRel(options); break;
                 case GfzCliAction.linerel_test: ActionsLineREL.PatchTest(options); break;
                 case GfzCliAction.linerel_bgm: ActionsLineREL.PatchBgm(options); break;
                 case GfzCliAction.linerel_bgmfl: ActionsLineREL.PatchBgmFinalLap(options); break;

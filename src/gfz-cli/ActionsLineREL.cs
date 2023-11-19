@@ -13,7 +13,7 @@ namespace Manifold.GFZCLI
         public delegate void PatchLineREL(Options options, EndianBinaryWriter writer);
 
 
-        public static void DecryptLine__(Options options)
+        public static void DecryptLineRel(Options options)
         {
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)
@@ -22,7 +22,7 @@ namespace Manifold.GFZCLI
             DoFileInFileOutTasks(options, DecryptLine);
         }
 
-        public static void EncryptLine__(Options options)
+        public static void EncryptLineRel(Options options)
         {
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)
@@ -46,12 +46,13 @@ namespace Manifold.GFZCLI
                 using var writer = File.Create(outputFile);
                 writer.Write(stream.ToArray());
             };
+            string verb = doEncrypt ? "encrypting" : "decrypting";
             var info = new FileWriteInfo()
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
                 PrintDesignator = "LineREL",
-                PrintActionDescription = doEncrypt ? "encrypting file" : "decrypting file",
+                PrintActionDescription = $"{verb} file with region {options.SerializationRegion}",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
@@ -96,9 +97,8 @@ namespace Manifold.GFZCLI
             if (inputFiles.Length != 1)
             {
                 string msg = $"Input arguments found {inputFiles.Length} files, must only be 1 file.";
-                throw new System.ArgumentException(msg);
+                throw new ArgumentException(msg);
             }
-
             FilePath inputFilePath = new FilePath(inputFiles[0]);
             inputFilePath.ThrowIfDoesNotExist();
 
@@ -107,7 +107,7 @@ namespace Manifold.GFZCLI
             {
                 Terminal.Write($"LineREL: opening file ");
                 Terminal.Write(inputFilePath, Program.FileNameColor);
-                Terminal.Write(".\n");
+                Terminal.Write($" with region {options.SerializationRegion}.\n");
             }
 
             // Open file, set up writer, get action to patch file through writer
@@ -179,6 +179,7 @@ namespace Manifold.GFZCLI
         public static void PatchTest(Options options) => Patch(options, PatchTest);
 
         // TODO: move to some static class for "stock" game data references
+        // TODO 2: make sure this works for other versions of the game -- brief check looks the same
         private static ushort GetBgmLoopPointOffset(byte bgmIndex)
         {
             switch (bgmIndex)

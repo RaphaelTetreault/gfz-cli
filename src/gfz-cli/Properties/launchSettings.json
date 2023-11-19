@@ -78,11 +78,11 @@
     },
     "rel-patch": {
       "commandName": "Project",
-      "commandLineArgs": "linerel-bgm-both D:\\gfzj01\\ -s --stage 1 --bgm 38 --bgmfl 15"
+      "commandLineArgs": "linerel-bgm-both D:\\gfzj01\\ -s --stage 1 --bgm 255 --bgmfl 255"
     },
     "rel-encrypt": {
       "commandName": "Project",
-      "commandLineArgs": "linerel-encrypt D:\\gfzj01\\ -s -o"
+      "commandLineArgs": "linerel-encrypt D:\\gfzj01\\ -r jp -s -o"
     }
   }
 }
