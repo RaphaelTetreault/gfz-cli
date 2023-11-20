@@ -68,6 +68,8 @@ gfz.exe [action] [input-path] [output-path] [other-options]
 | `image-to-emblem-gci` | Convert images into `.gci` emblems files.                    |
 | `lz-compress`         | Compress contents of a folder into an `.lz` archive.         |
 | `lz-decompress`       | Decompress contents of an `.lz` archive to a folder.         |
+| `rel-decrypt-line__`  | Decrypt and decompress `./enemy_line/line__.bin` into `line_rel`. |
+| `rel-encrypt-line__`  | Encrypt and compress `line_rel` into `line__.bin`.           |
 | `tpl-unpack`          | Unpack textures inside a `.tpl` archive to a folder as `.png` files. |
 
 ## General Options
