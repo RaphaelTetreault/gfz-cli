@@ -66,10 +66,13 @@ gfz.exe [action] [input-path] [output-path] [other-options]
 | `emblem-to-image`     | Convert `.gci` and`.bin` emblems into `.png` files.          |
 | `image-to-emblem-bin` | Convert multiple images into a single `.bin` emblem archive. |
 | `image-to-emblem-gci` | Convert images into `.gci` emblems files.                    |
+| `linerel-decrypt`     | Decrypt and decompress `line__.bin` into `line__.rel`. Requires use of `-r` or `--region` to specify game region. |
+| `linerel-encrypt`     | Encrypt and compress `line__.rel` into `line__.bin`. Requires use of `-r` or `--region` to specify game region. |
+| `linerel-bgm`         | Patch a stage's background music. Requires use of `-r` or `--region` to specify game region. |
+| `linerel-bgmfl`       | Patch a stage's final lap background music. Requires use of `-r` or `--region` to specify game region. |
+| `linerel-bgm-both`    | Patch both a stage's background music and it's final lap background music. Requires use of `-r` or `--region` to specify game region. |
 | `lz-compress`         | Compress contents of a folder into an `.lz` archive.         |
 | `lz-decompress`       | Decompress contents of an `.lz` archive to a folder.         |
-| `rel-decrypt-line__`  | Decrypt and decompress `./enemy_line/line__.bin` into `line_rel`. |
-| `rel-encrypt-line__`  | Encrypt and compress `line_rel` into `line__.bin`.           |
 | `tpl-unpack`          | Unpack textures inside a `.tpl` archive to a folder as `.png` files. |
 
 ## General Options
@@ -301,9 +304,9 @@ gfz.exe lz-decompress in/ --search-subdirs
 
 
 
-## REL Files
+## LineREL File
 
-Actions for managing `.rel` files.
+Actions for managing `./enemy_line/line__.bin` / `line__.rel` files.
 
 ### enemy_line line__ file
 
@@ -315,14 +318,14 @@ To decrypt the file.
 
 ```shell
 # Decrypt file at path to *.rel.lz and *.rel
-gfz.exe rel-decrypt-line__ in/enemy_line/line__.bin
+gfz.exe linerel-decrypt in/enemy_line/line__.bin
 ```
 
 You must specify the region and serialization formats as they differ between regions.
 
 ```shell
 # The default region information and search "*line__.bin"
-gfz.exe rel-decrypt-line__ in/ -search-subdirs --region j
+gfz.exe linerel-decrypt in/ -search-subdirs --region j
 ```
 
 Right now only GX is supported. AX stores the data elsewhere.
@@ -344,6 +347,40 @@ gfz.exe rel-encrypt-line__ in/enemy_line/line__.rel --search-subdirs --region j
 ```
 
 Right now only GX is supported. AX stores the data elsewhere.
+
+#### Patch BGM
+
+TODO: enhance this section.
+
+Refer to document `./bgm.md` for BGM index mapping.
+
+```shell
+# Set stage index 1 (Mute City [Twist Road]) to BGM 38 (Brain Cleaner (Replay)).
+gfz.exe linerel-bgm in/enemy_line/line__.rel --stage 1 --bgm 38
+```
+
+#### Patch BGM (Final Lap)
+
+Note: only works in conjunction with proper BGM. Can be used to null out final lap BGM.
+
+Refer to document `./bgm.md` for BGM index mapping.
+
+```shell
+# Set stage index 1 (Mute City [Twist Road]) to Final Lap BGM 255 (0xFF)
+# This effectively removes the final lap BGM from playing on any stage.
+gfz.exe linerel-bgm in/enemy_line/line__.rel --stage 1 --bgmfl 255
+```
+
+#### Patch BGM (Both Regular and Final Lap)
+
+Refer to document `./bgm.md` for BGM index mapping.
+
+```shell
+# Set stage index 1 (Mute City [Twist Road]) to
+#		BGM 27, Infinite Blue (Big Blue)
+#		Final Lap BGM 28, Infinite Blue (Big Blue) (Part B)
+gfz.exe linerel-bgm in/enemy_line/line__.rel --stage 1 --bgm 27 --bgmfl 28
+```
 
 
 
