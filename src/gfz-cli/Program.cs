@@ -88,7 +88,7 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.linerel_bgm: ActionsLineREL.PatchBgm(options); break;
                 case GfzCliAction.linerel_bgmfl: ActionsLineREL.PatchBgmFinalLap(options); break;
                 case GfzCliAction.linerel_bgm_both: ActionsLineREL.PatchBgmBoth(options); break;
-                case GfzCliAction.linerel_name_stage: ActionsLineREL.PatchCourseName(options); break;
+                //case GfzCliAction.linerel_name_stage: ActionsLineREL.PatchCourseName(options); break;
                 // TPL
                 case GfzCliAction.tpl_unpack: ActionsTPL.TplUnpack(options); break;
                 //case GfzCliAction.tpl_pack: TplPack(options); break;
