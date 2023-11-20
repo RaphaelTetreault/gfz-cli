@@ -9,6 +9,7 @@ namespace Manifold.GFZCLI
             public const string BgmIndex = "bgm";
             public const string BgmFlIndex = "bgmfl";
             public const string StageIndex = "stage";
+            public const string Value = "value";
         }
 
         internal static class Help
@@ -19,6 +20,8 @@ namespace Manifold.GFZCLI
                 "The numeric index of a background music (BGM) song, used for stage final lap bgm.";
             public const string StageIndex =
                 "The numeric index of a stage (byte).";
+            public const string Value =
+                "The value of the parameter.";
         }
 
         /// <summary>
@@ -38,5 +41,11 @@ namespace Manifold.GFZCLI
         /// </summary>
         [Option(Args.StageIndex, HelpText = Help.StageIndex)]
         public byte StageIndex { get; set; }
+
+        /// <summary>
+        ///     
+        /// </summary>
+        [Option(Args.Value, HelpText = Help.Value)]
+        public string Value { get; set; }
     }
 }

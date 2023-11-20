@@ -78,7 +78,7 @@
     },
     "rel-patch": {
       "commandName": "Project",
-      "commandLineArgs": "linerel-bgm-both D:\\gfzj01\\ -s --stage 1 --bgm 255 --bgmfl 255"
+      "commandLineArgs": "linerel-name-stage D:\\gfzj01\\ -s --stage 1 --value \"Twister Roader\""
     },
     "rel-encrypt": {
       "commandName": "Project",

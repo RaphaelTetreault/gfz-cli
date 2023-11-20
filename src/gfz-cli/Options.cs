@@ -61,6 +61,7 @@ namespace Manifold.GFZCLI
         public byte BgmIndex { get; set; } = 254; // default to invalid state
         public byte BgmFinalLapIndex { get; set; } = 254; // default to invalid state
         public byte StageIndex { get; set; } = 254; // default to invalid state
+        public string Value { get; set; } = string.Empty;
 
 
 

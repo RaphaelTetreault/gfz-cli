@@ -27,12 +27,13 @@
         lz_compress,
         lz_decompress,
 
-        linerel_decrypt,
-        linerel_encrypt,
-        linerel_test,
         linerel_bgm,
         linerel_bgmfl,
         linerel_bgm_both,
+        linerel_decrypt,
+        linerel_encrypt,
+        linerel_name_stage,
+        linerel_name_venue,
 
         tpl_unpack,
 

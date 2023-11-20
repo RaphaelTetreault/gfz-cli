@@ -170,11 +170,94 @@ namespace Manifold.GFZCLI
             PatchBgm(options, writer);
             PatchBgmFinalLap(options, writer);
         }
+        //private static void PatchCourseName(Options options, EndianBinaryReader reader, EndianBinaryWriter writer)
+        private static void PatchCourseName(Options options, EndianBinaryWriter writer)
+        {
+            // TEMP - make func to accept this param
+            EndianBinaryReader reader = new EndianBinaryReader(writer.BaseStream, writer.Endianness);
+
+            // get addresses
+            GameCode gameCode = options.GetGameCode();
+            LineInformation info = LineLookup.GetInfo(gameCode);
+            DataBlock courseNameOffsetsInfo = info.CourseNameOffsets;
+            Pointer courseNameOffsetsTablePtr = courseNameOffsetsInfo.Address; // offsets from base to name
+            int numEntries = 111 * 6; // bleh hard coded
+
+            // prepare variables
+            Offset[] courseNameOffets = new Offset[numEntries];
+            ShiftJisCString[] cStrings = new ShiftJisCString[numEntries];
+            //GenericCString[] cStrings = new GenericCString[numEntries];
+
+            // Read offsets for each stage name
+            // Create string for each pointer
+            for (int i = 0; i < courseNameOffets.Length; i++)
+            {
+                int offset = i * 8; // CORRECT STRIDE?
+                Pointer address = courseNameOffsetsTablePtr + offset;
+                reader.JumpToAddress(address);
+                reader.Read(ref courseNameOffets[i]);
+                cStrings[i] = new ShiftJisCString();
+                //cStrings[i] = new GenericCString(info.TextEncoding);
+            }
+
+            // Read strings at constructed address
+            for (int i = 0; i < numEntries; i++)
+            {
+                Pointer address = info.CourseNamesBaseAddress + courseNameOffets[i];
+                reader.JumpToAddress(address);
+                cStrings[i].Deserialize(reader);
+            }
+
+            // Validate index. 27 names in table.
+            if (options.StageIndex > 27)
+                throw new ArgumentException();
+
+            // Modify entry
+            cStrings[options.StageIndex] = new ShiftJisCString(options.Value);
+            //cStrings[options.StageIndex] = new GenericCString(info.TextEncoding, options.Value);
+
+            // compute new array size
+            int cstringsSize = 0;
+            foreach (CString cstring in cStrings)
+                cstringsSize += cstring.Encoding.GetByteCount(cstring) + 1; // +1 for null terminator
+
+            return;
+
+            // Make sure new table fits with edits
+            //int remainingBytes = courseNameOffsetsInfo.Size - cstringsSize;
+            //if (remainingBytes < 0)
+            //    throw new ArgumentException();
+
+            // write strings to table
+            int nameTableAddress = info.CourseNamesEnglish.Address; // this is base of one of 2 tables
+            writer.JumpToAddress(nameTableAddress);
+            foreach (var cString in cStrings)
+                writer.Write(cString);
+            //writer.WritePadding(0xFF, remainingBytes);
+
+            // write string pointers
+            for (int i = 0; i < numEntries; i++)
+            {
+                // Get offset from base of name table to string
+                CString cstring = cStrings[i];
+                Offset nameOffset =  cstring.AddressRange.startAddress - info.CourseNamesBaseAddress;
+
+                // Overwrite offset in offsets table
+                int stride = i * 8;
+                int address = courseNameOffsetsTablePtr + stride;
+                writer.JumpToAddress(address);
+                writer.Write(nameOffset);
+            }
+
+            //
+            LineRelPrintAction($"Set stage {options.StageIndex} name to [{options.Value}].");// Bytes spare in table: {remainingBytes}.");
+        }
 
         // The same code but wrapped in the code that manages getting options setup, the console printed to.
         public static void PatchBgm(Options options) => Patch(options, PatchBgm);
         public static void PatchBgmFinalLap(Options options) => Patch(options, PatchBgmFinalLap);
         public static void PatchBgmBoth(Options options) => Patch(options, PatchBgmBoth);
         public static void PatchTest(Options options) => Patch(options, PatchTest);
+        public static void PatchCourseName(Options options) => Patch(options, PatchCourseName);
     }
 }
