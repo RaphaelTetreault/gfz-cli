@@ -5,7 +5,7 @@ namespace Manifold.GFZCLI
 {
     public static class Program
     {
-        public static readonly object lock_ConsoleWrite = new();
+        public static object lock_ConsoleWrite { get; } = new();
         public const ConsoleColor FileNameColor = ConsoleColor.Cyan;
         public const ConsoleColor OverwriteFileColor = ConsoleColor.DarkYellow;
         public const ConsoleColor WriteFileColor = ConsoleColor.Green;
@@ -73,7 +73,9 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.emblem_gci_to_image: ActionsEmblem.EmblemGciToImage(options); break;
                 case GfzCliAction.image_to_emblem_bin: ActionsEmblem.ImageToEmblemBIN(options); break;
                 case GfzCliAction.image_to_emblem_gci: ActionsEmblem.ImageToEmblemGCI(options); break;
-                //
+                // FMI
+                case GfzCliAction.fmi_to_json: ActionsFMI.FmiToJson(options); break;
+                // GCI
                 case GfzCliAction.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
                 // LIVE CAMERA STAGE
                 case GfzCliAction.live_camera_stage_bin_to_tsv: ActionsLiveCameraStage.LiveCameraStageBinToTsv(options); break;

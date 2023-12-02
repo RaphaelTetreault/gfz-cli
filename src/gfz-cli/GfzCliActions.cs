@@ -19,6 +19,9 @@
         image_to_emblem_bin,
         image_to_emblem_gci,
 
+        fmi_to_json,
+        fmi_from_json,
+
         gci_extract_ghost,
 
         live_camera_stage_bin_to_tsv,
