@@ -86,7 +86,7 @@
     },
     "fmi-to-json": {
       "commandName": "Project",
-      "commandLineArgs": "fmi-to-json D:\\gfzj01\\ -s"
+      "commandLineArgs": "fmi-to-json D:\\gfzj01\\ -s -o"
     }
   }
 }

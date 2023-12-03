@@ -1,16 +1,10 @@
-﻿using Manifold.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GameCube.GFZ.FMI;
+using Manifold.IO;
 using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 using static Manifold.GFZCLI.GfzCliImageUtilities;
 using static Manifold.GFZCLI.Program;
-using GameCube.GFZ.LineREL;
-using GameCube.GFZ;
-using GameCube.GFZ.FMI;
+using System;
 
 namespace Manifold.GFZCLI
 {
@@ -31,15 +25,15 @@ namespace Manifold.GFZCLI
         private static void FmiToJson(Options options, FilePath inputFile, FilePath outputFile)
         {
             //
-            outputFile.SetExtensions(".json");
+            outputFile.SetExtensions(".test.txt");
 
             // 
             var fileWrite = () =>
             {
                 // Read data
-                Fmi fmi = new Fmi();
-                using EndianBinaryReader reader = new EndianBinaryReader(File.OpenRead(inputFile), Fmi.endianness);
-                fmi.Deserialize(reader);
+                FmiFile fmiFile = new FmiFile();
+                using EndianBinaryReader reader = new(File.OpenRead(inputFile), FmiFile.endianness);
+                fmiFile.Deserialize(reader);
 
                 // write data
             };
