@@ -28,6 +28,7 @@ namespace Manifold.GFZCLI
                 throw new Exception(msg);
             }
             // Construct output file name
+            // TODO: add / to end if not there, otherwise output of code below is parent dir
             string fileName = new FilePath(options.InputPath).PopDirectory(); // filename is "[input dir].arc"
             string directory = GetOutputDirectory(options);
             FilePath outputFile = new();
