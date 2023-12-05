@@ -39,27 +39,6 @@ namespace Manifold.GFZCLI
                 using StreamWriter writer = new StreamWriter(outputFile);
                 fmiFile.Value.Serialize(writer);
                 writer.Flush();
-
-                lock (lock_ConsoleWrite)
-                {
-                    bool doPrint = false;
-                    foreach (var x in fmiFile.Value.Emitters)
-                        if (x.ScaleMin != x.ScaleMax)
-                        {
-                            doPrint = true;
-                            break;
-                        }
-
-                    if (doPrint)
-                    {
-                        Console.WriteLine($"File: {inputFile}");
-                        foreach (var x in fmiFile.Value.Emitters)
-                        {
-                            Console.WriteLine($"Unk emitter: {x.ScaleMin}, {x.ScaleMax}");
-                        }
-                    }
-                }
-
             };
             var info = new FileWriteInfo()
             {
