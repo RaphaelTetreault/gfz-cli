@@ -10,7 +10,7 @@ namespace Manifold.GFZCLI
 {
     public static class ActionsFMI
     {
-        public static void FmiToJson(Options options)
+        public static void FmiToPlainText(Options options)
         {
             // Default search
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
@@ -21,11 +21,22 @@ namespace Manifold.GFZCLI
             int binCount = DoFileInFileOutTasks(options, FmiToJson);
             Terminal.WriteLine($"FMI: done converting {binCount} file{Plural(binCount)}.");
         }
+        public static void FmiFromPlaintext(Options options)
+        {
+            // Default search
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = $"*rainp.fmi.txt";
+
+            Terminal.WriteLine("FMI: converting FMI from plain text files.");
+            int binCount = DoFileInFileOutTasks(options, FmiFromPlaintext);
+            Terminal.WriteLine($"FMI: done converting {binCount} file{Plural(binCount)}.");
+        }
 
         private static void FmiToJson(Options options, FilePath inputFile, FilePath outputFile)
         {
             //
-            outputFile.SetExtensions(".test.txt");
+            outputFile.SetExtensions(".fmi.txt");
 
             // 
             var fileWrite = () =>
@@ -36,7 +47,7 @@ namespace Manifold.GFZCLI
                 fmiFile.Deserialize(reader);
 
                 // write to file
-                using StreamWriter writer = new StreamWriter(outputFile);
+                using PlainTextWriter writer = new(outputFile);
                 fmiFile.Value.Serialize(writer);
                 writer.Flush();
             };
@@ -45,7 +56,35 @@ namespace Manifold.GFZCLI
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
                 PrintDesignator = "FMI",
-                PrintActionDescription = $"converting FMI to JSON for",
+                PrintActionDescription = $"converting FMI binary to plain text for",
+            };
+            FileWriteOverwriteHandler(options, fileWrite, info);
+        }
+
+        private static void FmiFromPlaintext(Options options, FilePath inputFile, FilePath outputFile)
+        {
+            //
+            //outputFile.SetExtensions(".fmi");
+
+            // 
+            var fileWrite = () =>
+            {
+                // Read data
+                FmiFile fmiFile = new FmiFile();
+                using PlainTextReader reader = new(File.OpenRead(inputFile));
+                fmiFile.Value.Deserialize(reader);
+
+                // write to file
+                //using StreamWriter writer = new StreamWriter(outputFile);
+                //fmiFile.Value.Serialize(writer);
+                //writer.Flush();
+            };
+            var info = new FileWriteInfo()
+            {
+                InputFilePath = inputFile,
+                OutputFilePath = outputFile,
+                PrintDesignator = "FMI",
+                PrintActionDescription = $"converting FMI plain text to binary for",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }

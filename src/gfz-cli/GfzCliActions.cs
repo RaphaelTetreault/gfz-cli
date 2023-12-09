@@ -19,8 +19,8 @@
         image_to_emblem_bin,
         image_to_emblem_gci,
 
-        fmi_to_json,
-        fmi_from_json,
+        fmi_to_plaintext,
+        fmi_from_plaintext,
 
         gci_extract_ghost,
 

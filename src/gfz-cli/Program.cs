@@ -74,7 +74,8 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.image_to_emblem_bin: ActionsEmblem.ImageToEmblemBIN(options); break;
                 case GfzCliAction.image_to_emblem_gci: ActionsEmblem.ImageToEmblemGCI(options); break;
                 // FMI
-                case GfzCliAction.fmi_to_json: ActionsFMI.FmiToJson(options); break;
+                case GfzCliAction.fmi_to_plaintext: ActionsFMI.FmiToPlainText(options); break;
+                case GfzCliAction.fmi_from_plaintext: ActionsFMI.FmiFromPlaintext(options); break;
                 // GCI
                 case GfzCliAction.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
                 // LIVE CAMERA STAGE

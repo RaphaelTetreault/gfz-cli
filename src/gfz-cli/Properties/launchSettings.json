@@ -84,9 +84,9 @@
       "commandName": "Project",
       "commandLineArgs": "linerel-encrypt D:\\gfzj01\\ -r jp -s -o"
     },
-    "fmi-to-json": {
+    "fmi-plaintext": {
       "commandName": "Project",
-      "commandLineArgs": "fmi-to-json D:\\gfzj01\\ -s -o"
+      "commandLineArgs": "fmi-from-plaintext D:\\gfzj01\\ -s -o"
     }
   }
 }
