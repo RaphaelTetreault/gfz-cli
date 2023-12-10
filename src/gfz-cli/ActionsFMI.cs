@@ -64,18 +64,43 @@ namespace Manifold.GFZCLI
         private static void FmiFromPlaintext(Options options, FilePath inputFile, FilePath outputFile)
         {
             //
-            //outputFile.SetExtensions(".fmi");
+            outputFile.SetExtensions(".fmi.fmi");
 
             // 
             var fileWrite = () =>
             {
                 // Read data
-                FmiFile fmiFile = new FmiFile();
-                using PlainTextReader reader = new(File.OpenRead(inputFile));
+                FmiFile fmiFile = new();
+                using PlainTextReader reader = new(inputFile);
                 fmiFile.Value.Deserialize(reader);
 
-                // write to file
-                //using StreamWriter writer = new StreamWriter(outputFile);
+                foreach (var line in reader.Lines)
+                {
+                    Console.WriteLine(line);
+                }
+                Console.WriteLine();
+
+                Console.WriteLine("Emitters");
+                foreach (var emitter in fmiFile.Value.Emitters)
+                {
+                    Console.WriteLine(emitter.Position);
+                    Console.WriteLine(emitter.TargetOffset);
+                    Console.WriteLine(emitter.Scale);
+                    Console.WriteLine(emitter.AccelColor);
+                    Console.WriteLine(emitter.BoostColor);
+                }
+                Console.WriteLine("Positions");
+                for (int i = 0; i < fmiFile.Value.Positions.Length; i++)
+                {
+                    Console.WriteLine(fmiFile.Value.Names[i]);
+                    var pos = fmiFile.Value.Positions[i];
+                    Console.WriteLine(pos.Position);
+                    Console.WriteLine(pos.PositionType);
+                }
+                Console.WriteLine();
+
+                //// write to file
+                //using EndianBinaryWriter writer = new(File.Create(outputFile), FmiFile.endianness);
                 //fmiFile.Value.Serialize(writer);
                 //writer.Flush();
             };
