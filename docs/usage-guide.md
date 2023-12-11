@@ -234,6 +234,44 @@ The image to emblem code path supports using `SixLabors.ImageSharp`'s `ResizeOpt
 
 
 
+## FMI
+
+The FMI file type contains a few bits of information related to vehicles. Specifically, the position and colour of boosters and position data for custom parts, secondary and tertiary, machine animations joints (Fire Stingray, Rainbow Phoenix).
+
+As a preliminary test, `gfz-cli` adds a plaintext serializer for FMI editing.
+
+The "useful" FMI files live inside compressed ARC.LZ files in `./vehicle`. The below examples use a path available if the file `./vehicle/bfalcon_p.arc.lz` is uncompressed.
+
+### FMI to Plaintext
+
+```shell
+# Create an *.fmi.txt file from *.fmi
+gfz.exe fmi-to-plaintext in/vehicle/bfalcon_p/vehicle/bfalcon/bfalcon.fmi
+```
+
+You can batch-process by using a directory path with relevant options.
+
+```shell
+# Create an *.fmi.txt file from all FMI files in a directory
+gfz.exe fmi-to-plaintext in/vehicle/ -s
+```
+
+###  FMI from Plaintext (*.fmi.txt)
+
+```shell
+# Create an *.fmi file from *.fmi.txt
+gfz.exe fmi-to-plaintext in/vehicle/bfalcon_p/vehicle/bfalcon/bfalcon.fmi.txt
+```
+
+Create an `*.fmi.txt` file from all `*.fmi` files in a directory
+
+```shell
+# Create *.fmi files for each *.fmi.txt in directory
+gfz.exe fmi-from-plaintext in/vehicle/ -s
+```
+
+
+
 ## ISO Images
 
 Actions for handling GameCube ISO images.
