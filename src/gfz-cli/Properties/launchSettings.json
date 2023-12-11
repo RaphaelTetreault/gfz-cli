@@ -86,7 +86,7 @@
     },
     "fmi-plaintext": {
       "commandName": "Project",
-      "commandLineArgs": "fmi-from-plaintext D:\\gfzj01\\ -s -o"
+      "commandLineArgs": "fmi-to-plaintext D:\\gfzj01\\ -s -o"
     }
   }
 }
