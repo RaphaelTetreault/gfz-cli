@@ -255,8 +255,9 @@ namespace Manifold.GFZCLI
         public static void EnsureDirectoriesExist(string filePath)
         {
             var directory = Path.GetDirectoryName(filePath);
-            if (directory is not null)
-                Directory.CreateDirectory(directory);
+            bool hasParentDirectory = !string.IsNullOrWhiteSpace(directory);
+            if (hasParentDirectory)
+                Directory.CreateDirectory(directory!);
         }
         public static void EnsureDirectoriesExist(string[] filesPaths)
         {

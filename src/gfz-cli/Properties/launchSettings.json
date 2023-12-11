@@ -66,7 +66,7 @@
     },
     "arc-compress": {
       "commandName": "Project",
-      "commandLineArgs": "arc-compress D:\\test-gfz\\maybe\\jpeg\\compo\\ --search-subdirs --overwrite --search-pattern \"*\""
+      "commandLineArgs": "arc-compress D:\\gfzj01\\vehicle\\vehicle_sel --search-subdirs --overwrite --search-pattern \"*\""
     },
     "gci": {
       "commandName": "Project",
@@ -83,6 +83,10 @@
     "rel-encrypt": {
       "commandName": "Project",
       "commandLineArgs": "linerel-encrypt D:\\gfzj01\\ -r jp -s -o"
+    },
+    "fmi-plaintext": {
+      "commandName": "Project",
+      "commandLineArgs": "fmi-to-plaintext D:\\gfzj01\\ -s -o"
     }
   }
 }
