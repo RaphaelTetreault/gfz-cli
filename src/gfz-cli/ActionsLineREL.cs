@@ -1,7 +1,9 @@
-﻿using GameCube.GFZ;
+﻿using GameCube.DiskImage;
+using GameCube.GFZ;
 using GameCube.GFZ.LineREL;
 using Manifold.IO;
 using System;
+using System.Data;
 using System.IO;
 using System.Threading.Tasks;
 using static Manifold.GFZCLI.GfzCliUtilities;
@@ -131,7 +133,8 @@ namespace Manifold.GFZCLI
             lock (Program.lock_ConsoleWrite)
             {
                 Terminal.Write($"\tLineREL: ", Program.SubTaskColor);
-                Terminal.WriteLine(text, Program.SubTaskColor);
+                Terminal.Write(text, Program.SubTaskColor);
+                Terminal.WriteLine();
             }
         }
 
@@ -213,27 +216,42 @@ namespace Manifold.GFZCLI
                 throw new ArgumentException();
 
             // Modify entry
-            cStrings[options.StageIndex] = new ShiftJisCString(options.Value);
-            //cStrings[options.StageIndex] = new GenericCString(info.TextEncoding, options.Value);
+            int baseIndex = GetLanguageIndex(options.SerializationRegion);
+            int stageIndex = + baseIndex + options.StageIndex * 6;
 
-            // compute new array size
-            int cstringsSize = 0;
-            foreach (CString cstring in cStrings)
-                cstringsSize += cstring.Encoding.GetByteCount(cstring) + 1; // +1 for null terminator
+            options.Value = options.Value.Replace("\\n", "\n"); // TEMP
+            options.Value = options.Value.Replace("\\t", "\t"); // TEMP
+            options.Value = options.Value.Replace("\\b", "\b"); // TEMP
 
-            return;
+            cStrings[stageIndex] = new ShiftJisCString(options.Value);
 
-            // Make sure new table fits with edits
-            //int remainingBytes = courseNameOffsetsInfo.Size - cstringsSize;
-            //if (remainingBytes < 0)
-            //    throw new ArgumentException();
+            // Make memory pool
+            MemoryArea englishCourseNamesArea = new(info.CourseNamesEnglish);
+            MemoryArea translatedCourseNamesArea = new(info.CourseNamesTranslations);
+            MemoryPool memoryPool = new(englishCourseNamesArea, translatedCourseNamesArea);
 
-            // write strings to table
-            int nameTableAddress = info.CourseNamesEnglish.Address; // this is base of one of 2 tables
-            writer.JumpToAddress(nameTableAddress);
+            // Merge string references
+            CString.MergeReferences(ref cStrings);
+            // Mark strings as unwritten
             foreach (var cString in cStrings)
-                writer.Write(cString);
-            //writer.WritePadding(0xFF, remainingBytes);
+                cString.AddressRange = new();
+            // Write strings back into pool
+            foreach (var str in cStrings)
+            {
+                // Skip re-serializing a shared string that is already written
+                if (str.AddressRange.startAddress != Pointer.Null)
+                    continue;
+                // Write strings in pool
+                Pointer pointer = memoryPool.AllocateMemoryWithError(str.GetSerializedLength());
+
+                if (pointer.IsNull)
+                    Console.WriteLine(str);
+
+                writer.JumpToAddress(pointer);
+                str.Serialize(writer);
+            }
+            // Pad out remaining memory
+            memoryPool.PadEmptyMemory(writer, 0xAA);
 
             // write string pointers
             for (int i = 0; i < numEntries; i++)
@@ -253,11 +271,24 @@ namespace Manifold.GFZCLI
             LineRelPrintAction($"Set stage {options.StageIndex} name to [{options.Value}].");// Bytes spare in table: {remainingBytes}.");
         }
 
+        private static int GetLanguageIndex(Region region)
+        {
+            return region switch
+            {
+                Region.Japan => 6,
+                Region.NorthAmerica => 1,
+                Region.Europe => 1,
+                Region.RegionFree => 1,
+                Region _ => 1,
+            };
+        }
+
         // The same code but wrapped in the code that manages getting options setup, the console printed to.
         public static void PatchBgm(Options options) => Patch(options, PatchBgm);
         public static void PatchBgmFinalLap(Options options) => Patch(options, PatchBgmFinalLap);
         public static void PatchBgmBoth(Options options) => Patch(options, PatchBgmBoth);
         public static void PatchTest(Options options) => Patch(options, PatchTest);
         public static void PatchCourseName(Options options) => Patch(options, PatchCourseName);
+
     }
 }
