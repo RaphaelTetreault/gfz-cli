@@ -3,9 +3,8 @@ using GameCube.GFZ;
 using GameCube.GFZ.LineREL;
 using Manifold.IO;
 using System;
-using System.Data;
 using System.IO;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using static Manifold.GFZCLI.GfzCliUtilities;
 
 namespace Manifold.GFZCLI
@@ -58,6 +57,41 @@ namespace Manifold.GFZCLI
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
+        //public static void WriteLockedMessage(Options options, FileWriteInfo info)
+        //{
+        //    bool outputFileExists = File.Exists(info.OutputFilePath);
+        //    bool doWriteFile = !outputFileExists || options.OverwriteFiles;
+        //    bool isOverwritingFile = outputFileExists && doWriteFile;
+        //    var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
+        //    var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
+
+        //    lock (Program.lock_ConsoleWrite)
+        //    {
+        //        Terminal.Write($"{info.PrintDesignator}: ");
+        //        if (doWriteFile)
+        //        {
+        //            Terminal.Write(info.PrintActionDescription);
+        //            Terminal.Write(" ");
+        //            Terminal.Write(info.InputFilePath, FileNameColor);
+        //            Terminal.Write(". ");
+        //            Terminal.Write(writeMsg, writeColor);
+        //            Terminal.Write(" file ");
+        //            Terminal.Write(info.OutputFilePath, FileNameColor);
+        //        }
+        //        else
+        //        {
+        //            Terminal.Write("skip ");
+        //            Terminal.Write(info.PrintActionDescription);
+        //            Terminal.Write(" ");
+        //            Terminal.Write(info.InputFilePath, FileNameColor);
+        //            Terminal.Write(" since ");
+        //            Terminal.Write(info.OutputFilePath, FileNameColor);
+        //            Terminal.Write(" already exists. ");
+        //            Terminal.Write(info.PrintMoreInfoOnSkip);
+        //        }
+        //        Terminal.WriteLine();
+        //    }
+        //}
 
         public static void DecryptLine(Options options, FilePath inputFile, FilePath outputFile)
         {
@@ -189,7 +223,6 @@ namespace Manifold.GFZCLI
             // prepare variables
             Offset[] courseNameOffets = new Offset[numEntries];
             ShiftJisCString[] cStrings = new ShiftJisCString[numEntries];
-            //GenericCString[] cStrings = new GenericCString[numEntries];
 
             // Read offsets for each stage name
             // Create string for each pointer
@@ -200,34 +233,33 @@ namespace Manifold.GFZCLI
                 reader.JumpToAddress(address);
                 reader.Read(ref courseNameOffets[i]);
                 cStrings[i] = new ShiftJisCString();
-                //cStrings[i] = new GenericCString(info.TextEncoding);
             }
-
             // Read strings at constructed address
             for (int i = 0; i < numEntries; i++)
             {
-                Pointer address = info.CourseNamesBaseAddress + courseNameOffets[i];
+                Pointer address = info.StringTableBaseAddress + courseNameOffets[i];
                 reader.JumpToAddress(address);
                 cStrings[i].Deserialize(reader);
             }
 
-            // Validate index. 27 names in table.
-            if (options.StageIndex > 27)
-                throw new ArgumentException();
+            // Validate index
+            if (options.StageIndex >= 111)
+            {
+                string msg = "Stage index must be a value in the range 0-110.";
+                throw new ArgumentException(msg);
+            }
 
             // Modify entry
-            int baseIndex = GetLanguageIndex(options.SerializationRegion);
-            int stageIndex = + baseIndex + options.StageIndex * 6;
-
-            options.Value = options.Value.Replace("\\n", "\n"); // TEMP
-            options.Value = options.Value.Replace("\\t", "\t"); // TEMP
-            options.Value = options.Value.Replace("\\b", "\b"); // TEMP
-
+            int baseIndex = GetLanguageBaseIndex(options.SerializationRegion);
+            int stageIndex = baseIndex + options.StageIndex * 6; // stride of 6
+            // Convert all escape sequences into Unicode characters
+            options.Value = Regex.Unescape(options.Value);
+            // Convert Unicode into Shift-JIS
             cStrings[stageIndex] = new ShiftJisCString(options.Value);
 
             // Make memory pool
             MemoryArea englishCourseNamesArea = new(info.CourseNamesEnglish);
-            MemoryArea translatedCourseNamesArea = new(info.CourseNamesTranslations);
+            MemoryArea translatedCourseNamesArea = new(info.CourseNamesLocalizations);
             MemoryPool memoryPool = new(englishCourseNamesArea, translatedCourseNamesArea);
 
             // Merge string references
@@ -242,7 +274,7 @@ namespace Manifold.GFZCLI
                 if (str.AddressRange.startAddress != Pointer.Null)
                     continue;
                 // Write strings in pool
-                Pointer pointer = memoryPool.AllocateMemoryWithError(str.GetSerializedLength());
+                Pointer pointer = memoryPool.AllocateMemoryWithError(str.GetSerializedLength());//, 4);
 
                 if (pointer.IsNull)
                     Console.WriteLine(str);
@@ -258,7 +290,7 @@ namespace Manifold.GFZCLI
             {
                 // Get offset from base of name table to string
                 CString cstring = cStrings[i];
-                Offset nameOffset =  cstring.AddressRange.startAddress - info.CourseNamesBaseAddress;
+                Offset nameOffset =  cstring.AddressRange.startAddress - info.StringTableBaseAddress;
 
                 // Overwrite offset in offsets table
                 int stride = i * 8;
@@ -271,17 +303,21 @@ namespace Manifold.GFZCLI
             LineRelPrintAction($"Set stage {options.StageIndex} name to [{options.Value}].");// Bytes spare in table: {remainingBytes}.");
         }
 
-        private static int GetLanguageIndex(Region region)
+        private static int GetLanguageBaseIndex(Region region)
         {
             return region switch
             {
                 Region.Japan => 6,
                 Region.NorthAmerica => 1,
-                Region.Europe => 1,
-                Region.RegionFree => 1,
-                Region _ => 1,
+                //Region.Europe => 1,
+                //Region.RegionFree => 1,
+                Region _ => throw new NotImplementedException($"Region: {region}"),
             };
         }
+
+
+
+
 
         // The same code but wrapped in the code that manages getting options setup, the console printed to.
         public static void PatchBgm(Options options) => Patch(options, PatchBgm);
