@@ -78,7 +78,7 @@
     },
     "rel-patch": {
       "commandName": "Project",
-      "commandLineArgs": "linerel-name-stage D:\\gfzj01\\ -s --stage 1 --value \"Twist Road \\u2605\""
+      "commandLineArgs": "linerel-set-difficulty D:\\gfzj01\\ -s --stage 1 --difficulty 10"
     },
     "rel-encrypt": {
       "commandName": "Project",

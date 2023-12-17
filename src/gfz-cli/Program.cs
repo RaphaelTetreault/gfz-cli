@@ -85,14 +85,15 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.lz_compress: ActionsLZ.LzCompress(options); break;
                 case GfzCliAction.lz_decompress: ActionsLZ.LzDecompress(options); break;
                 // line__.rel
-                case GfzCliAction.linerel_decrypt: ActionsLineREL.DecryptLineRel(options); break;
-                case GfzCliAction.linerel_encrypt: ActionsLineREL.EncryptLineRel(options); break;
                 case GfzCliAction.linerel_bgm: ActionsLineREL.PatchBgm(options); break;
                 case GfzCliAction.linerel_bgmfl: ActionsLineREL.PatchBgmFinalLap(options); break;
                 case GfzCliAction.linerel_bgm_both: ActionsLineREL.PatchBgmBoth(options); break;
-                case GfzCliAction.linerel_name_stage: ActionsLineREL.PatchCourseName(options); break;
-                case GfzCliAction.linerel_clear_unused_stage_names: ActionsLineREL.PatchClearUnusedCourseNames(options); break;
                 case GfzCliAction.linerel_clear_all_stage_names: ActionsLineREL.PatchClearAllCourseNames(options); break;
+                case GfzCliAction.linerel_clear_unused_stage_names: ActionsLineREL.PatchClearUnusedCourseNames(options); break;
+                case GfzCliAction.linerel_decrypt: ActionsLineREL.DecryptLineRel(options); break;
+                case GfzCliAction.linerel_encrypt: ActionsLineREL.EncryptLineRel(options); break;
+                case GfzCliAction.linerel_set_difficulty: ActionsLineREL.PatchCourseDifficulty(options); break;
+                case GfzCliAction.linerel_set_name_stage: ActionsLineREL.PatchCourseName(options); break;
                 // TPL
                 case GfzCliAction.tpl_unpack: ActionsTPL.TplUnpack(options); break;
                 //case GfzCliAction.tpl_pack: TplPack(options); break;

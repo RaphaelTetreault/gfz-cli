@@ -16,6 +16,37 @@ namespace Manifold.GFZCLI
 {
     public static class ActionsLineREL
     {
+        private const byte MaxDifficulty = 10;
+        private const byte MaxStageIndex = 110;
+
+        private static void AssertStageIndex(Options options)
+        {
+            // Validate index
+            if (options.StageIndex > MaxStageIndex)
+            {
+                string msg = $"Stage index must be a value in the range 0-{MaxStageIndex}.";
+                throw new ArgumentException(msg);
+            }
+        }
+        private static void AssertDifficulty(Options options)
+        {
+            if (options.Difficulty > MaxDifficulty)
+            {
+                string msg = $"Argument --{nameof(ILineRelOptions.Args.Difficulty)} must be set.";
+                throw new ArgumentException(msg);
+            }
+        }
+        private static void AssertValue(Options options)
+        {
+            if (string.IsNullOrEmpty(options.Value))
+            {
+                string msg = $"Argument --{nameof(ILineRelOptions.Args.Value)} must be set.";
+                throw new ArgumentException(msg);
+            }
+        }
+
+
+
         public delegate void PatchLineREL(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer);
 
 
@@ -146,14 +177,19 @@ namespace Manifold.GFZCLI
             PatchBgm(options, info, reader, writer);
             PatchBgmFinalLap(options, info, reader, writer);
         }
+        private static void PatchCourseDifficulty(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        {
+            AssertDifficulty(options);
+            AssertStageIndex(options);
+
+            Offset offset = options.StageIndex;
+            Pointer pointer = info.CourseSlotDifficulty.Address + offset;
+            writer.JumpToAddress(pointer);
+            writer.Write(options.Difficulty);
+        }
         private static void PatchCourseName(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
-            // Validate index
-            if (options.StageIndex >= 111)
-            {
-                string msg = "Stage index must be a value in the range 0-110.";
-                throw new ArgumentException(msg);
-            }
+            AssertStageIndex(options);
 
             // Get course names from file
             ShiftJisCString[] courseNames = GetCourseNames(info, reader);
@@ -177,7 +213,7 @@ namespace Manifold.GFZCLI
         {
             if (string.IsNullOrEmpty(options.Value))
             {
-                string msg = $"Argument --{nameof(ILineRelOptions.Value)} must be set.";
+                string msg = $"Argument --{nameof(ILineRelOptions.Args.Value)} must be set.";
                 throw new ArgumentException(msg);
             }
 
@@ -194,11 +230,7 @@ namespace Manifold.GFZCLI
         }
         private static void PatchClearUnusedCourseNames(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
-            if (string.IsNullOrEmpty(options.Value))
-            {
-                string msg = $"Argument --{nameof(ILineRelOptions.Value)} must be set.";
-                throw new ArgumentException(msg);
-            }
+            AssertValue(options);
 
             ShiftJisCString[] courseNames = GetCourseNames(info, reader);
 
@@ -326,6 +358,7 @@ namespace Manifold.GFZCLI
         public static void PatchBgm(Options options) => Patch(options, PatchBgm);
         public static void PatchBgmFinalLap(Options options) => Patch(options, PatchBgmFinalLap);
         public static void PatchBgmBoth(Options options) => Patch(options, PatchBgmBoth);
+        public static void PatchCourseDifficulty(Options options) => Patch(options, PatchCourseDifficulty);
         public static void PatchCourseName(Options options) => Patch(options, PatchCourseName);
         public static void PatchClearAllCourseNames(Options options) => Patch(options, PatchClearCourseNames);
         public static void PatchClearUnusedCourseNames(Options options) => Patch(options, PatchClearUnusedCourseNames);
