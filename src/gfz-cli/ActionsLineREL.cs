@@ -1,5 +1,6 @@
 ﻿using GameCube.DiskImage;
 using GameCube.GFZ;
+using GameCube.GFZ.GeneralGameData;
 using GameCube.GFZ.LineREL;
 using Manifold.IO;
 using System;
@@ -11,8 +12,7 @@ namespace Manifold.GFZCLI
 {
     public static class ActionsLineREL
     {
-        public delegate void PatchLineREL(Options options, EndianBinaryWriter writer);
-        public delegate void PatchLineREL2(Options options, EndianBinaryReader reader, EndianBinaryWriter writer);
+        public delegate void PatchLineREL(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer);
 
 
         public static void DecryptLineRel(Options options)
@@ -23,7 +23,6 @@ namespace Manifold.GFZCLI
 
             DoFileInFileOutTasks(options, DecryptLine);
         }
-
         public static void EncryptLineRel(Options options)
         {
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
@@ -32,7 +31,6 @@ namespace Manifold.GFZCLI
 
             DoFileInFileOutTasks(options, EncryptLine);
         }
-
         public static void CryptLine(Options options, FilePath inputFile, FilePath outputFile, bool doEncrypt, string extension)
         {
             // Remove extension
@@ -58,42 +56,6 @@ namespace Manifold.GFZCLI
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
-        //public static void WriteLockedMessage(Options options, FileWriteInfo info)
-        //{
-        //    bool outputFileExists = File.Exists(info.OutputFilePath);
-        //    bool doWriteFile = !outputFileExists || options.OverwriteFiles;
-        //    bool isOverwritingFile = outputFileExists && doWriteFile;
-        //    var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
-        //    var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
-
-        //    lock (Program.lock_ConsoleWrite)
-        //    {
-        //        Terminal.Write($"{info.PrintDesignator}: ");
-        //        if (doWriteFile)
-        //        {
-        //            Terminal.Write(info.PrintActionDescription);
-        //            Terminal.Write(" ");
-        //            Terminal.Write(info.InputFilePath, FileNameColor);
-        //            Terminal.Write(". ");
-        //            Terminal.Write(writeMsg, writeColor);
-        //            Terminal.Write(" file ");
-        //            Terminal.Write(info.OutputFilePath, FileNameColor);
-        //        }
-        //        else
-        //        {
-        //            Terminal.Write("skip ");
-        //            Terminal.Write(info.PrintActionDescription);
-        //            Terminal.Write(" ");
-        //            Terminal.Write(info.InputFilePath, FileNameColor);
-        //            Terminal.Write(" since ");
-        //            Terminal.Write(info.OutputFilePath, FileNameColor);
-        //            Terminal.Write(" already exists. ");
-        //            Terminal.Write(info.PrintMoreInfoOnSkip);
-        //        }
-        //        Terminal.WriteLine();
-        //    }
-        //}
-
         public static void DecryptLine(Options options, FilePath inputFile, FilePath outputFile)
         {
             // Step 1: Decrypt line__.bin into line__.rel.lz
@@ -107,7 +69,6 @@ namespace Manifold.GFZCLI
             // Step 3: Decompress line__.rel.lz into line__.rel
             ActionsLZ.LzDecompressFile(options, lzInputFile, lzOutputFile);
         }
-
         public static void EncryptLine(Options options, FilePath inputFile, FilePath outputFile)
         {
             // Step 1: Compress line__.rel to line__.rel.lz
@@ -122,47 +83,7 @@ namespace Manifold.GFZCLI
             CryptLine(options, lzInputFile, lzOutputFile, true, "bin");
         }
 
-        public static void Patch(Options options, PatchLineREL action)
-        {
-            // Default search
-            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-            if (hasNoSearchPattern)
-                options.SearchPattern = $"*line__.rel";
-
-            // Get file path, ensure it exists
-            string[] inputFiles = GetInputFiles(options);
-            if (inputFiles.Length != 1)
-            {
-                string msg = $"Input arguments found {inputFiles.Length} files, must only be 1 file.";
-                throw new ArgumentException(msg);
-            }
-            FilePath inputFilePath = new FilePath(inputFiles[0]);
-            inputFilePath.ThrowIfDoesNotExist();
-
-            // Indicate opening file
-            lock (Program.lock_ConsoleWrite)
-            {
-                Terminal.Write($"LineREL: opening file ");
-                Terminal.Write(inputFilePath, Program.FileNameColor);
-                Terminal.Write($" with region {options.SerializationRegion}.\n");
-            }
-
-            // Open file, set up writer, get action to patch file through writer
-            using var file = File.Open(inputFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            using var writer = new EndianBinaryWriter(file, Line.endianness);
-            {
-                action.Invoke(options, writer);
-            }
-
-            // Indicate patched file, closure
-            lock (Program.lock_ConsoleWrite)
-            {
-                Terminal.Write($"LineREL: finish patching file ");
-                Terminal.Write(inputFilePath, Program.FileNameColor);
-                Terminal.Write(".\n");
-            }
-        }
-        public static void PatchV2(Options options, PatchLineREL2 action)//, string description = "")
+        public static void Patch(Options options, PatchLineREL patchLineRelAction)
         {
             // Default search
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
@@ -186,69 +107,43 @@ namespace Manifold.GFZCLI
 
             // Open file, set up writer, get action to patch file through writer
             {
+                GameCode gameCode = options.GetGameCode();
+                LineRelInfo info = LineLookup.GetInfo(gameCode);
+
                 using var file = File.Open(inputFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
                 using var reader = new EndianBinaryReader(file, Line.endianness);
                 using var writer = new EndianBinaryWriter(file, Line.endianness);
-                action.Invoke(options, reader, writer);
+                patchLineRelAction.Invoke(options, info, reader, writer);
             }
 
             //
             Terminal.WriteLine();
         }
 
-        private static void LineRelPrintAction(string text)
-        {
-            lock (Program.lock_ConsoleWrite)
-            {
-                Terminal.Write($"\tLineREL: ", Program.SubTaskColor);
-                Terminal.Write(text, Program.SubTaskColor);
-                Terminal.WriteLine();
-            }
-        }
 
         // The code that actually patches
-        private static void PatchTest(Options options, EndianBinaryWriter writer)
+        private static void PatchBgm(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
-            int address = 0;
-            uint value = 0xDEADDEAD;
-            writer.JumpToAddress(address);
-            writer.Write(value);
+            byte stageIndex = options.StageIndex;
+            byte bgmIndex = options.BgmFinalLapIndex;
+            LineUtility.PatchStageBgm(writer, info, stageIndex, bgmIndex);
+            Terminal.Write($"Set stage {stageIndex} bgm to {bgmIndex} ({(Bgm)bgmIndex}).");
         }
-        private static void PatchBgm(Options options, EndianBinaryWriter writer)
+        private static void PatchBgmFinalLap(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
-            // Get game-specific information
-            GameCode gameCode = options.GetGameCode();
-            LineInformation info = LineLookup.GetInfo(gameCode);
-
-            // Patch BGM
-            LineRelPrintAction($"set stage {options.StageIndex} bgm to {options.BgmIndex}.");
-            LineUtility.PatchStageBgm(writer, info, options.StageIndex, options.BgmIndex);
-        }
-        private static void PatchBgmFinalLap(Options options, EndianBinaryWriter writer)
-        {
-            // Get game-specific information
-            GameCode gameCode = options.GetGameCode();
-            LineInformation info = LineLookup.GetInfo(gameCode);
-
             // Patch BGM FL
             byte stageIndex = options.StageIndex;
             byte bgmflIndex = options.BgmFinalLapIndex;
-            LineRelPrintAction($"set stage {stageIndex} final lap bgm to {bgmflIndex}.");
             LineUtility.PatchStageBgmFinalLap(writer, info, stageIndex, bgmflIndex);
+            Terminal.Write($"Set stage {stageIndex} final lap bgm to {bgmflIndex} ({(Bgm)bgmflIndex}).");
         }
-        private static void PatchBgmBoth(Options options, EndianBinaryWriter writer)
+        private static void PatchBgmBoth(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
-            PatchBgm(options, writer);
-            PatchBgmFinalLap(options, writer);
+            PatchBgm(options, info, reader, writer);
+            PatchBgmFinalLap(options, info, reader, writer);
         }
-        //private static void PatchCourseName(Options options, EndianBinaryReader reader, EndianBinaryWriter writer)
-
-        private static void PatchCourseNameV2(Options options, EndianBinaryReader reader, EndianBinaryWriter writer)
+        private static void PatchCourseName(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
-            // Get line__.rel information
-            GameCode gameCode = options.GetGameCode();
-            LineInformation info = LineLookup.GetInfo(gameCode);
-
             // Prepare information for strings
             int courseNamesCount = info.CourseNameOffsetsArrayPointer.length;
             RelocationEntry[] courseNameOffsets = new RelocationEntry[courseNamesCount];
@@ -278,7 +173,7 @@ namespace Manifold.GFZCLI
             }
 
             // Modify entry
-            int baseIndex = GetLanguageBaseIndex(options.SerializationRegion);
+            int baseIndex = GetCourseNameBaseIndexByRegion(options.SerializationRegion);
             int stageIndex = baseIndex + options.StageIndex * info.CourseNameLanguages;
             // Convert all escape sequences into Unicode characters
             string editedCourseName = Regex.Unescape(options.Value);
@@ -328,101 +223,7 @@ namespace Manifold.GFZCLI
             Terminal.Write($"Set stage {options.StageIndex} name to \"{options.Value}\". ");
             Terminal.Write($"Bytes remaining: {memoryPool.RemainingMemorySize()}.");
         }
-        private static void PatchCourseName(Options options, EndianBinaryWriter writer)
-        {
-            // TEMP - make func to accept this param
-            EndianBinaryReader reader = new EndianBinaryReader(writer.BaseStream, writer.Endianness);
-
-            // get addresses
-            GameCode gameCode = options.GetGameCode();
-            LineInformation info = LineLookup.GetInfo(gameCode);
-            ArrayPointer32 courseNameOffsetsInfo = info.CourseNameOffsetsArrayPointer;
-            Pointer courseNameOffsetsTablePtr = courseNameOffsetsInfo.address; // offsets from base to name
-            int numEntries = 111 * 6; // bleh hard coded
-
-            // prepare variables
-            Offset[] courseNameOffets = new Offset[numEntries];
-            ShiftJisCString[] cStrings = new ShiftJisCString[numEntries];
-
-            // Read offsets for each stage name
-            // Create string for each pointer
-            for (int i = 0; i < courseNameOffets.Length; i++)
-            {
-                int offset = i * 8; // CORRECT STRIDE?
-                Pointer address = courseNameOffsetsTablePtr + offset;
-                reader.JumpToAddress(address);
-                reader.Read(ref courseNameOffets[i]);
-                cStrings[i] = new ShiftJisCString();
-            }
-            // Read strings at constructed address
-            for (int i = 0; i < numEntries; i++)
-            {
-                Pointer address = info.StringTableBaseAddress + courseNameOffets[i];
-                reader.JumpToAddress(address);
-                cStrings[i].Deserialize(reader);
-            }
-
-            // Validate index
-            if (options.StageIndex >= 111)
-            {
-                string msg = "Stage index must be a value in the range 0-110.";
-                throw new ArgumentException(msg);
-            }
-
-            // Modify entry
-            int baseIndex = GetLanguageBaseIndex(options.SerializationRegion);
-            int stageIndex = baseIndex + options.StageIndex * 6; // stride of 6
-            // Convert all escape sequences into Unicode characters
-            options.Value = Regex.Unescape(options.Value);
-            // Convert Unicode into Shift-JIS
-            cStrings[stageIndex] = new ShiftJisCString(options.Value);
-
-            // Make memory pool
-            MemoryArea englishCourseNamesArea = new(info.CourseNamesEnglish);
-            MemoryArea translatedCourseNamesArea = new(info.CourseNamesLocalizations);
-            MemoryPool memoryPool = new(englishCourseNamesArea, translatedCourseNamesArea);
-
-            // Merge string references
-            CString.MergeReferences(ref cStrings);
-            // Mark strings as unwritten
-            foreach (var cString in cStrings)
-                cString.AddressRange = new();
-            // Write strings back into pool
-            foreach (var str in cStrings)
-            {
-                // Skip re-serializing a shared string that is already written
-                if (str.AddressRange.startAddress != Pointer.Null)
-                    continue;
-                // Write strings in pool
-                Pointer pointer = memoryPool.AllocateMemoryWithError(str.GetSerializedLength());//, 4);
-
-                if (pointer.IsNull)
-                    Console.WriteLine(str);
-
-                writer.JumpToAddress(pointer);
-                str.Serialize(writer);
-            }
-            // Pad out remaining memory
-            memoryPool.PadEmptyMemory(writer, 0xAA);
-
-            // write string pointers
-            for (int i = 0; i < numEntries; i++)
-            {
-                // Get offset from base of name table to string
-                CString cstring = cStrings[i];
-                Offset nameOffset = cstring.AddressRange.startAddress - info.StringTableBaseAddress;
-
-                // Overwrite offset in offsets table
-                int stride = i * 8;
-                int address = courseNameOffsetsTablePtr + stride;
-                writer.JumpToAddress(address);
-                writer.Write(nameOffset);
-            }
-
-            //
-            LineRelPrintAction($"Set stage {options.StageIndex} name to [{options.Value}].");// Bytes spare in table: {remainingBytes}.");
-        }
-        private static int GetLanguageBaseIndex(Region region)
+        private static int GetCourseNameBaseIndexByRegion(Region region)
         {
             return region switch
             {
@@ -435,13 +236,11 @@ namespace Manifold.GFZCLI
         }
 
 
-
         // The same code but wrapped in the code that manages getting options setup, the console printed to.
         public static void PatchBgm(Options options) => Patch(options, PatchBgm);
         public static void PatchBgmFinalLap(Options options) => Patch(options, PatchBgmFinalLap);
         public static void PatchBgmBoth(Options options) => Patch(options, PatchBgmBoth);
-        public static void PatchTest(Options options) => Patch(options, PatchTest);
-        public static void PatchCourseName(Options options) => PatchV2(options, PatchCourseNameV2);
+        public static void PatchCourseName(Options options) => Patch(options, PatchCourseName);
 
     }
 }
