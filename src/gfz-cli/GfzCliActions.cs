@@ -36,6 +36,8 @@
         linerel_decrypt,
         linerel_encrypt,
         linerel_name_stage,
+        linerel_clear_all_stage_names,
+        linerel_clear_unused_stage_names,
         linerel_name_venue,
 
         tpl_unpack,
