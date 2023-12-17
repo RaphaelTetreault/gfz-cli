@@ -270,6 +270,22 @@ namespace Manifold.GFZCLI
             writer.JumpToAddress(pointer);
             writer.Write(options.VenueIndex);
         }
+        private static void PatchVenueName(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+        private static void PatchCup(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        {
+            throw new NotImplementedException();
+
+            //AssertStageIndex(options);
+            //AssertVenueIndex(options);
+
+            //Offset offset = options.StageIndex;
+            //Pointer pointer = info.CourseVenueIndex.Address + offset;
+            //writer.JumpToAddress(pointer);
+            //writer.Write(options.VenueIndex);
+        }
 
 
         private static int GetCourseNameBaseIndexByRegion(Region region)

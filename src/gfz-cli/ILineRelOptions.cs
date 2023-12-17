@@ -59,6 +59,8 @@ namespace Manifold.GFZCLI
         /// </summary>
         [Option(Args.VenueIndex, HelpText = Help.VenueIndex)]
         public byte VenueIndex { get; set; }
+        // TODO: use Venue enum
+
 
         /// <summary>
         ///     

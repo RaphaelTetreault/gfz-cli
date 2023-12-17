@@ -92,6 +92,7 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.linerel_clear_unused_stage_names: ActionsLineREL.PatchClearUnusedCourseNames(options); break;
                 case GfzCliAction.linerel_decrypt: ActionsLineREL.DecryptLineRel(options); break;
                 case GfzCliAction.linerel_encrypt: ActionsLineREL.EncryptLineRel(options); break;
+                case GfzCliAction.linerel_set_cup: ActionsLineREL.PatchCup(options); break;
                 case GfzCliAction.linerel_set_difficulty: ActionsLineREL.PatchCourseDifficulty(options); break;
                 case GfzCliAction.linerel_set_name_stage: ActionsLineREL.PatchCourseName(options); break;
                 case GfzCliAction.linerel_set_venue: ActionsLineREL.PatchVenueIndex(options); break;

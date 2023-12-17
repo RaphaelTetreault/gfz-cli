@@ -37,6 +37,7 @@
         linerel_clear_unused_stage_names,
         linerel_decrypt,
         linerel_encrypt,
+        linerel_set_cup,
         linerel_set_difficulty,
         linerel_set_name_stage,
         linerel_set_name_venue,
