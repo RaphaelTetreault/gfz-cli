@@ -230,31 +230,6 @@ namespace Manifold.GFZCLI
                 Region _ => throw new NotImplementedException($"Region: {region}"),
             };
         }
-        //private static ShiftJisCString[] GetCourseNames(LineRelInfo info, EndianBinaryReader reader)
-        //{
-        //    // Prepare information for strings
-        //    int courseNamesCount = info.CourseNameOffsets.length;
-        //    RelocationEntry[] courseNameOffsets = new RelocationEntry[courseNamesCount];
-        //    ShiftJisCString[] courseNames = new ShiftJisCString[courseNamesCount];
-
-        //    //
-        //    Pointer courseNamesBaseAddress = info.CourseNameOffsets.address;
-        //    reader.JumpToAddress(courseNamesBaseAddress);
-        //    for (int i = 0; i < courseNamesCount; i++)
-        //        courseNameOffsets[i].Deserialize(reader);
-
-        //    // Read strings at constructed address
-        //    for (int i = 0; i < courseNamesCount; i++)
-        //    {
-        //        Offset offset = courseNameOffsets[i].addEnd;
-        //        Pointer courseNamePointer = info.StringTableBaseAddress + offset;
-        //        reader.JumpToAddress(courseNamePointer);
-        //        courseNames[i] = new ShiftJisCString();
-        //        courseNames[i].Deserialize(reader);
-        //    }
-
-        //    return courseNames;
-        //}
         private static ShiftJisCString[] GetCourseNames(LineRelInfo info, EndianBinaryReader reader)
         {
             var courseNames = GetStrings(reader, info.StringTableBaseAddress, info.CourseNameOffsets);
