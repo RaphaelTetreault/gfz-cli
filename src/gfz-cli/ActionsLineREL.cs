@@ -230,53 +230,69 @@ namespace Manifold.GFZCLI
                 Region _ => throw new NotImplementedException($"Region: {region}"),
             };
         }
+        //private static ShiftJisCString[] GetCourseNames(LineRelInfo info, EndianBinaryReader reader)
+        //{
+        //    // Prepare information for strings
+        //    int courseNamesCount = info.CourseNameOffsets.length;
+        //    RelocationEntry[] courseNameOffsets = new RelocationEntry[courseNamesCount];
+        //    ShiftJisCString[] courseNames = new ShiftJisCString[courseNamesCount];
+
+        //    //
+        //    Pointer courseNamesBaseAddress = info.CourseNameOffsets.address;
+        //    reader.JumpToAddress(courseNamesBaseAddress);
+        //    for (int i = 0; i < courseNamesCount; i++)
+        //        courseNameOffsets[i].Deserialize(reader);
+
+        //    // Read strings at constructed address
+        //    for (int i = 0; i < courseNamesCount; i++)
+        //    {
+        //        Offset offset = courseNameOffsets[i].addEnd;
+        //        Pointer courseNamePointer = info.StringTableBaseAddress + offset;
+        //        reader.JumpToAddress(courseNamePointer);
+        //        courseNames[i] = new ShiftJisCString();
+        //        courseNames[i].Deserialize(reader);
+        //    }
+
+        //    return courseNames;
+        //}
         private static ShiftJisCString[] GetCourseNames(LineRelInfo info, EndianBinaryReader reader)
         {
-            // Prepare information for strings
-            int courseNamesCount = info.CourseNameOffsets.length;
-            RelocationEntry[] courseNameOffsets = new RelocationEntry[courseNamesCount];
-            ShiftJisCString[] courseNames = new ShiftJisCString[courseNamesCount];
-
-            //
-            Pointer courseNamesBaseAddress = info.CourseNameOffsets.address;
-            reader.JumpToAddress(courseNamesBaseAddress);
-            for (int i = 0; i < courseNamesCount; i++)
-                courseNameOffsets[i].Deserialize(reader);
-
-            // Read strings at constructed address
-            for (int i = 0; i < courseNamesCount; i++)
-            {
-                Offset offset = courseNameOffsets[i].addEnd;
-                Pointer courseNamePointer = info.StringTableBaseAddress + offset;
-                reader.JumpToAddress(courseNamePointer);
-                courseNames[i] = new ShiftJisCString();
-                courseNames[i].Deserialize(reader);
-            }
-
+            var courseNames = GetStrings(reader, info.StringTableBaseAddress, info.CourseNameOffsets);
             return courseNames;
         }
         private static int SetCourseNames(ShiftJisCString[] courseNames, LineRelInfo info, EndianBinaryWriter writer)
         {
-            // Validate strings count
-            int expectedCount = info.CourseNameOffsets.length;
-            if (courseNames.Length != expectedCount)
+            DataBlock[] dataBlocks =
             {
-                string msg = $"Argument {nameof(courseNames)} must be {expectedCount} (was {courseNames.Length}).";
+                info.CourseNamesEnglish,
+                info.CourseNamesLocalizations,
+            };
+            int remainingBytes = SetStrings(courseNames, writer, info.StringTableBaseAddress, info.CourseNameOffsets, dataBlocks);
+            return remainingBytes;
+        }
+
+        private static int SetStrings(ShiftJisCString[] strings, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)
+        {
+            // Validate strings count
+            if (strings.Length != strArrPtr.length)
+            {
+                string msg = $"Argument {nameof(strings)} must be {strArrPtr.length} (was {strings.Length}).";
                 throw new ArgumentException(msg);
             }
 
             // Make memory pool to write strings back into
-            MemoryArea englishCourseNamesArea = new(info.CourseNamesEnglish);
-            MemoryArea translatedCourseNamesArea = new(info.CourseNamesLocalizations);
-            MemoryPool memoryPool = new(englishCourseNamesArea, translatedCourseNamesArea);
+            MemoryArea[] memoryAreas = new MemoryArea[dataBlocks.Length];
+            for (int i = 0; i < memoryAreas.Length; i++)
+                memoryAreas[i] = new MemoryArea(dataBlocks[i]);
+            MemoryPool memoryPool = new(memoryAreas);
 
             // Merge string references
-            CString.MergeReferences(ref courseNames);
+            CString.MergeReferences(ref strings);
             // Mark strings as unwritten
-            foreach (var courseName in courseNames)
+            foreach (var courseName in strings)
                 courseName.AddressRange = new();
             // Write strings back into pool
-            foreach (ShiftJisCString courseName in courseNames)
+            foreach (ShiftJisCString courseName in strings)
             {
                 // Skip re-serializing a shared string that is already written
                 if (courseName.AddressRange.startAddress != Pointer.Null)
@@ -290,19 +306,44 @@ namespace Manifold.GFZCLI
             memoryPool.PadEmptyMemory(writer, 0xAA);
 
             // write string pointers
-            Assert.IsTrue(courseNames.Length == info.CourseNameOffsets.length);
-            writer.JumpToAddress(info.CourseNameOffsets.address);
-            for (int i = 0; i < courseNames.Length; i++)
+            Assert.IsTrue(strings.Length == strArrPtr.length);
+            writer.JumpToAddress(strArrPtr.address);
+            for (int i = 0; i < strings.Length; i++)
             {
                 // Get offset from base of name table to string
-                CString courseName = courseNames[i];
-                Offset offset = courseName.AddressRange.startAddress - info.StringTableBaseAddress;
+                CString courseName = strings[i];
+                Offset offset = courseName.AddressRange.startAddress - stringTableBaseAddress;
                 // Skip REL RelocationEntry info, then write offset
                 writer.JumpToAddress(writer.GetPositionAsPointer() + 4);
                 writer.Write(offset);
             }
 
             return memoryPool.RemainingMemorySize();
+        }
+        private static ShiftJisCString[] GetStrings(EndianBinaryReader reader, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr)
+        {
+            // Prepare information for strings
+            int count = strArrPtr.length;
+            RelocationEntry[] stringOffsets = new RelocationEntry[count];
+            ShiftJisCString[] strings = new ShiftJisCString[count];
+
+            // Get all RelocationEntries, only partially get us to strings
+            Pointer baseAddress = strArrPtr.address;
+            reader.JumpToAddress(baseAddress);
+            for (int i = 0; i < count; i++)
+                stringOffsets[i].Deserialize(reader);
+
+            // Read strings at constructed address
+            for (int i = 0; i < count; i++)
+            {
+                Offset offset = stringOffsets[i].addEnd;
+                Pointer stringPointer = stringTableBaseAddress + offset;
+                reader.JumpToAddress(stringPointer);
+                strings[i] = new ShiftJisCString();
+                strings[i].Deserialize(reader);
+            }
+
+            return strings;
         }
 
 
