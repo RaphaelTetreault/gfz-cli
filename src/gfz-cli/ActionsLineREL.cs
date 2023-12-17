@@ -297,27 +297,7 @@ namespace Manifold.GFZCLI
                 // Get offset from base of name table to string
                 CString courseName = courseNames[i];
                 Offset offset = courseName.AddressRange.startAddress - info.StringTableBaseAddress;
-                //RelocationEntry relocationEntry = new RelocationEntry()
-                //{
-                //    offset = 0x0004,
-                //    type = RelocationType.R_PPC_ADDR32,
-                //    section = 0x05,
-                //    addEnd = courseName.AddressRange.startAddress - info.StringTableBaseAddress,
-                //};
-
-                //if (i == 1)
-                //    relocationEntry = new RelocationEntry()
-                //    {
-                //        offset = 0x08e4,
-                //        type = RelocationType.R_PPC_ADDR32,
-                //        section = 0x05,
-                //        addEnd = courseName.AddressRange.startAddress - info.StringTableBaseAddress,
-                //    };
-
-                // Overwrite
-                //int offset = RelocationEntry.Size * i;
-                //int address = info.CourseNameOffsets.address + offset;
-                //writer.JumpToAddress(address);
+                // Skip REL RelocationEntry info, then write offset
                 writer.JumpToAddress(writer.GetPositionAsPointer() + 4);
                 writer.Write(offset);
             }
