@@ -40,6 +40,7 @@
         linerel_set_difficulty,
         linerel_set_name_stage,
         linerel_set_name_venue,
+        linerel_set_venue,
 
         tpl_unpack,
 

@@ -18,13 +18,23 @@ namespace Manifold.GFZCLI
     {
         private const byte MaxDifficulty = 10;
         private const byte MaxStageIndex = 110;
+        private const byte MaxVenueIndex = 22;
 
         private static void AssertStageIndex(Options options)
         {
             // Validate index
             if (options.StageIndex > MaxStageIndex)
             {
-                string msg = $"Stage index must be a value in the range 0-{MaxStageIndex}.";
+                string msg = $"Argument --{nameof(ILineRelOptions.Args.StageIndex)} must be a value in the range 0-{MaxStageIndex}.";
+                throw new ArgumentException(msg);
+            }
+        }
+        private static void AssertVenueIndex(Options options)
+        {
+            // Validate index
+            if (options.VenueIndex > MaxVenueIndex)
+            {
+                string msg = $"Argument --{nameof(ILineRelOptions.Args.VenueIndex)} must be a value in the range 0-{MaxVenueIndex}.";
                 throw new ArgumentException(msg);
             }
         }
@@ -32,7 +42,7 @@ namespace Manifold.GFZCLI
         {
             if (options.Difficulty > MaxDifficulty)
             {
-                string msg = $"Argument --{nameof(ILineRelOptions.Args.Difficulty)} must be set.";
+                string msg = $"Argument --{nameof(ILineRelOptions.Args.Difficulty)} must a value in the range 0-{MaxDifficulty}.";
                 throw new ArgumentException(msg);
             }
         }
@@ -183,7 +193,7 @@ namespace Manifold.GFZCLI
             AssertStageIndex(options);
 
             Offset offset = options.StageIndex;
-            Pointer pointer = info.CourseSlotDifficulty.Address + offset;
+            Pointer pointer = info.CourseDifficulty.Address + offset;
             writer.JumpToAddress(pointer);
             writer.Write(options.Difficulty);
         }
@@ -250,6 +260,17 @@ namespace Manifold.GFZCLI
             Terminal.Write($"Cleared non-region course names. ");
             Terminal.Write($"Bytes available: {remainingBytes}.");
         }
+        private static void PatchVenueIndex(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        {
+            AssertStageIndex(options);
+            AssertVenueIndex(options);
+
+            Offset offset = options.StageIndex;
+            Pointer pointer = info.CourseVenueIndex.Address + offset;
+            writer.JumpToAddress(pointer);
+            writer.Write(options.VenueIndex);
+        }
+
 
         private static int GetCourseNameBaseIndexByRegion(Region region)
         {
@@ -362,6 +383,7 @@ namespace Manifold.GFZCLI
         public static void PatchCourseName(Options options) => Patch(options, PatchCourseName);
         public static void PatchClearAllCourseNames(Options options) => Patch(options, PatchClearCourseNames);
         public static void PatchClearUnusedCourseNames(Options options) => Patch(options, PatchClearUnusedCourseNames);
+        public static void PatchVenueIndex(Options options) => Patch(options, PatchVenueIndex);
 
     }
 }
