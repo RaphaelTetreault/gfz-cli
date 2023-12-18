@@ -4,11 +4,7 @@ using GameCube.GFZ.GeneralGameData;
 using GameCube.GFZ.LineREL;
 using Manifold.IO;
 using System;
-using System.Buffers;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Reflection.PortableExecutable;
 using System.Text.RegularExpressions;
 using static Manifold.GFZCLI.GfzCliUtilities;
 
@@ -21,6 +17,44 @@ namespace Manifold.GFZCLI
         private const byte MaxVenueIndex = 22;
         private const byte MaxCupCourseIndex = 6;
         private const byte MinCupCourseIndex = 1;
+
+        public delegate void PatchLineREL(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer);
+        public static void Patch(Options options, PatchLineREL patchLineRelAction)
+        {
+            // Default search
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = $"*line__.rel";
+
+            // Check to make sure we have expected input
+            string[] inputFiles = GetInputFiles(options);
+            if (inputFiles.Length != 1)
+            {
+                string msg = $"Input arguments found {inputFiles.Length} files, must only be 1 file.";
+                throw new ArgumentException(msg);
+            }
+            FilePath inputFilePath = new FilePath(inputFiles[0]);
+            inputFilePath.ThrowIfDoesNotExist();
+
+            //
+            Terminal.Write($"LineREL: opening file ");
+            Terminal.Write(inputFilePath, Program.FileNameColor);
+            Terminal.Write($" with region {options.SerializationRegion}. ");
+
+            // Open file, set up writer, get action to patch file through writer
+            {
+                GameCode gameCode = options.GetGameCode();
+                LineRelInfo info = LineLookup.GetInfo(gameCode);
+
+                using var file = File.Open(inputFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                using var reader = new EndianBinaryReader(file, Line.endianness);
+                using var writer = new EndianBinaryWriter(file, Line.endianness);
+                patchLineRelAction.Invoke(options, info, reader, writer);
+            }
+
+            //
+            Terminal.WriteLine();
+        }
 
         private static void AssertCup(Options options)
         {
@@ -93,11 +127,6 @@ namespace Manifold.GFZCLI
             }
         }
 
-
-
-        public delegate void PatchLineREL(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer);
-
-
         public static void DecryptLineRel(Options options)
         {
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
@@ -166,53 +195,15 @@ namespace Manifold.GFZCLI
             CryptLine(options, lzInputFile, lzOutputFile, true, "bin");
         }
 
-        public static void Patch(Options options, PatchLineREL patchLineRelAction)
-        {
-            // Default search
-            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-            if (hasNoSearchPattern)
-                options.SearchPattern = $"*line__.rel";
-
-            // Check to make sure we have expected input
-            string[] inputFiles = GetInputFiles(options);
-            if (inputFiles.Length != 1)
-            {
-                string msg = $"Input arguments found {inputFiles.Length} files, must only be 1 file.";
-                throw new ArgumentException(msg);
-            }
-            FilePath inputFilePath = new FilePath(inputFiles[0]);
-            inputFilePath.ThrowIfDoesNotExist();
-
-            //
-            Terminal.Write($"LineREL: opening file ");
-            Terminal.Write(inputFilePath, Program.FileNameColor);
-            Terminal.Write($" with region {options.SerializationRegion}. ");
-
-            // Open file, set up writer, get action to patch file through writer
-            {
-                GameCode gameCode = options.GetGameCode();
-                LineRelInfo info = LineLookup.GetInfo(gameCode);
-
-                using var file = File.Open(inputFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-                using var reader = new EndianBinaryReader(file, Line.endianness);
-                using var writer = new EndianBinaryWriter(file, Line.endianness);
-                patchLineRelAction.Invoke(options, info, reader, writer);
-            }
-
-            //
-            Terminal.WriteLine();
-        }
-
-
         // The code that actually patches
-        private static void PatchBgm(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        private static void PatchBgm(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
         {
             byte courseIndex = options.CourseIndex;
             byte bgmIndex = options.BgmFinalLapIndex;
             LineUtility.PatchCourseBgm(writer, info, courseIndex, bgmIndex);
             Terminal.Write($"Set course {courseIndex} bgm to {bgmIndex} ({(Bgm)bgmIndex}).");
         }
-        private static void PatchBgmFinalLap(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        private static void PatchBgmFinalLap(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
         {
             // Patch BGM FL
             byte courseIndex = options.CourseIndex;
@@ -220,12 +211,12 @@ namespace Manifold.GFZCLI
             LineUtility.PatchCourseBgmFinalLap(writer, info, courseIndex, bgmflIndex);
             Terminal.Write($"Set course {courseIndex} final lap bgm to {bgmflIndex} ({(Bgm)bgmflIndex}).");
         }
-        private static void PatchBgmBoth(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        private static void PatchBgmBoth(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
         {
             PatchBgm(options, info, reader, writer);
             PatchBgmFinalLap(options, info, reader, writer);
         }
-        private static void PatchCourseDifficulty(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        private static void PatchCourseDifficulty(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
         {
             AssertDifficulty(options);
             AssertCourseIndex(options);
@@ -291,7 +282,7 @@ namespace Manifold.GFZCLI
             Terminal.Write($"Cleared non-region course names. ");
             Terminal.Write($"Bytes available: {remainingBytes}.");
         }
-        private static void PatchSetVenueIndex(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        private static void PatchSetVenueIndex(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
         {
             AssertCourseIndex(options);
             AssertVenueIndex(options);
@@ -356,8 +347,7 @@ namespace Manifold.GFZCLI
             Terminal.Write($"Cleared unused venue names. ");
             Terminal.Write($"Bytes remaining: {remainingBytes}.");
         }
-
-        private static void PatchCup(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        private static void PatchSetCupCourse(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
         {
             // Assertions
             AssertCupCourseIndex(options);
@@ -376,6 +366,7 @@ namespace Manifold.GFZCLI
             PatchCupCourseGmaTplReference(writer, info, cup, cupCourseIndex, courseIndex);
             PatchCupCourseUnknown(writer, info, cup, cupCourseIndex, courseIndex);
         }
+        
         private static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, Cup cup, byte cupCourseIndex, ushort courseIndex)
         {
             Pointer initialAddress = writer.GetPositionAsPointer();
@@ -530,13 +521,13 @@ namespace Manifold.GFZCLI
         }
 
 
-        // The same code but wrapped in the code that manages getting options setup, the console printed to.
+        // The same code but wrapped in a function that prepared the file streams, line__.rel info, etc.
         public static void PatchSetBgm(Options options) => Patch(options, PatchBgm);
         public static void PatchSetBgmFinalLap(Options options) => Patch(options, PatchBgmFinalLap);
         public static void PatchSetBgmAndBgmFinalLap(Options options) => Patch(options, PatchBgmBoth);
         public static void PatchSetCourseDifficulty(Options options) => Patch(options, PatchCourseDifficulty);
         public static void PatchSetCourseName(Options options) => Patch(options, PatchSetCourseName);
-        public static void PatchSetCupCourse(Options options) => Patch(options, PatchCup);
+        public static void PatchSetCupCourse(Options options) => Patch(options, PatchSetCupCourse);
         public static void PatchClearAllCourseNames(Options options) => Patch(options, PatchClearCourseNames);
         public static void PatchClearUnusedCourseNames(Options options) => Patch(options, PatchClearUnusedCourseNames);
         public static void PatchClearAllVenueNames(Options options) => Patch(options, PatchClearVenueNames);
