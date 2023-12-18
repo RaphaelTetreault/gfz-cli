@@ -19,13 +19,48 @@ namespace Manifold.GFZCLI
         private const byte MaxDifficulty = 10;
         private const byte MaxStageIndex = 110;
         private const byte MaxVenueIndex = 22;
+        private const byte MaxCupStageIndex = 6;
+        private const byte MinCupStageIndex = 1;
 
+        private static void AssertCup(Options options)
+        {
+            // Validate index
+            if (!Enum.IsDefined(options.Cup))
+            {
+                string msg =
+                    $"Argument --{nameof(ILineRelOptions.Args.Cup)} " +
+                    $"must be a valid cup value.";
+                throw new ArgumentException(msg);
+            }
+        }
+        private static void AssertCupStageIndex(Options options)
+        {
+            // Validate index
+            if (options.CupStageIndex < MinCupStageIndex || options.CupStageIndex > MaxCupStageIndex)
+            {
+                string msg =
+                    $"Argument --{nameof(ILineRelOptions.Args.CupStageIndex)} " +
+                    $"must be a value in the range 1-{MaxCupStageIndex}.";
+                throw new ArgumentException(msg);
+            }
+        }
         private static void AssertStageIndex(Options options)
         {
             // Validate index
             if (options.StageIndex > MaxStageIndex)
             {
                 string msg = $"Argument --{nameof(ILineRelOptions.Args.StageIndex)} must be a value in the range 0-{MaxStageIndex}.";
+                throw new ArgumentException(msg);
+            }
+        }
+        private static void AssertStageIndexAllow0xFF(Options options)
+        {
+            // Validate index
+            if (options.StageIndex > MaxStageIndex || options.StageIndex == 0xFF)
+            {
+                string msg =
+                    $"Argument --{nameof(ILineRelOptions.Args.StageIndex)} " +
+                    $"must be a value in the range 0-{MaxStageIndex} or exactly {0xFF}.";
                 throw new ArgumentException(msg);
             }
         }
@@ -276,16 +311,40 @@ namespace Manifold.GFZCLI
         }
         private static void PatchCup(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
-            throw new NotImplementedException();
+            // Assertions
+            AssertCupStageIndex(options);
+            AssertCup(options);
+            AssertStageIndexAllow0xFF(options);
+           
+            // Get needed data
+            Cup cup = options.Cup;
+            byte cupStageIndex = (byte)(options.CupStageIndex - 1);
+            ushort stageIndex = options.StageIndex;
 
-            //AssertStageIndex(options);
-            //AssertVenueIndex(options);
-
-            //Offset offset = options.StageIndex;
-            //Pointer pointer = info.CourseVenueIndex.Address + offset;
-            //writer.JumpToAddress(pointer);
-            //writer.Write(options.VenueIndex);
+            // Patch
+            PatchCupCourseStageIndex(writer, info, cup, cupStageIndex, stageIndex);
+            PatchCupCourseGmaTplReference(writer, info, cup, cupStageIndex, stageIndex);
+            PatchCupCourseUnknown(writer, info, cup, cupStageIndex, stageIndex);
         }
+        private static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, Cup cup, byte cupStageIndex, ushort stageIndex)
+        {
+            Pointer initialAddress= writer.GetPositionAsPointer();
+
+            const int CupEntrySize = sizeof(ushort) * 6;
+            Offset cupOffset = (int)cup * CupEntrySize;
+            Offset stageOffset = cupStageIndex * sizeof(ushort);
+            Pointer address = baseAddress + cupOffset + stageOffset;
+            writer.JumpToAddress(address);
+            writer.Write(stageIndex);
+
+            writer.JumpToAddress(initialAddress);
+        }
+        private static void PatchCupCourseStageIndex(EndianBinaryWriter writer, LineRelInfo info, Cup cup, byte cupStageIndex, ushort stageIndex)
+            => PatchCupData(writer, info.CupCourseLut.Address, cup, cupStageIndex, stageIndex);
+        private static void PatchCupCourseGmaTplReference(EndianBinaryWriter writer, LineRelInfo info, Cup cup, byte cupStageIndex, ushort stageIndex)
+            => PatchCupData(writer, info.CupCourseLutAssets.Address, cup, cupStageIndex, stageIndex);
+        private static void PatchCupCourseUnknown(EndianBinaryWriter writer, LineRelInfo info, Cup cup, byte cupStageIndex, ushort stageIndex)
+            => PatchCupData(writer, info.CupCourseLutUnk.Address, cup, cupStageIndex, stageIndex);
 
 
         private static int GetCourseNameBaseIndexByRegion(Region region)
@@ -397,6 +456,7 @@ namespace Manifold.GFZCLI
         public static void PatchBgmBoth(Options options) => Patch(options, PatchBgmBoth);
         public static void PatchCourseDifficulty(Options options) => Patch(options, PatchCourseDifficulty);
         public static void PatchCourseName(Options options) => Patch(options, PatchCourseName);
+        public static void PatchCup(Options options) => Patch(options, PatchCup);
         public static void PatchClearAllCourseNames(Options options) => Patch(options, PatchClearCourseNames);
         public static void PatchClearUnusedCourseNames(Options options) => Patch(options, PatchClearUnusedCourseNames);
         public static void PatchVenueIndex(Options options) => Patch(options, PatchVenueIndex);

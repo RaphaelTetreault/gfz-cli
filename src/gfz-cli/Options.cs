@@ -2,6 +2,7 @@
 using GameCube.AmusementVision;
 using GameCube.DiskImage;
 using GameCube.GFZ;
+using GameCube.GFZ.LineREL;
 using GameCube.GFZ.Stage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -60,6 +61,8 @@ namespace Manifold.GFZCLI
         // LINE REL
         public byte BgmIndex { get; set; } = 254; // default to invalid state
         public byte BgmFinalLapIndex { get; set; } = 254; // default to invalid state
+        public Cup Cup { get; set; } = (Cup)255; // default to invalid state
+        public byte CupStageIndex { get; set; } = 254; // default to invalid state
         public byte Difficulty { get; set; } = 254; // default to invalid state
         public byte StageIndex { get; set; } = 254; // default to invalid state
         public byte VenueIndex { get; set; } = 254; // default to invalid state

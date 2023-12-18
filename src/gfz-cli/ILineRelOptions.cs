@@ -8,6 +8,8 @@ namespace Manifold.GFZCLI
         {
             public const string BgmIndex = "bgm";
             public const string BgmFlIndex = "bgmfl";
+            public const string Cup = "cup";
+            public const string CupStageIndex = "cup-stage";
             public const string Difficulty = "difficulty";
             public const string StageIndex = "stage";
             public const string VenueIndex = "venue";
@@ -20,6 +22,10 @@ namespace Manifold.GFZCLI
                 "The numeric index of a background music (BGM) song, used for stage bgm.";
             public const string BgmFlIndex =
                 "The numeric index of a background music (BGM) song, used for stage final lap bgm.";
+            public const string Cup =
+                "The cup which references a number of stages (typically 5).";
+            public const string CupStageIndex =
+                "The cup which references a number of stages (typically 5).";
             public const string Difficulty =
                 "The stage's star difficulty rating.";
             public const string StageIndex =
@@ -45,6 +51,18 @@ namespace Manifold.GFZCLI
         /// <summary>
         ///     
         /// </summary>
+        [Option(Args.Cup, HelpText = Help.Cup)]
+        public GameCube.GFZ.LineREL.Cup Cup { get; set; }
+
+        /// <summary>
+        ///     
+        /// </summary>
+        [Option(Args.CupStageIndex, HelpText = Help.CupStageIndex)]
+        public byte CupStageIndex { get; set; }
+
+        /// <summary>
+        ///     
+        /// </summary>
         [Option(Args.Difficulty, HelpText = Help.Difficulty)]
         public byte Difficulty { get; set; }
 
@@ -60,7 +78,6 @@ namespace Manifold.GFZCLI
         [Option(Args.VenueIndex, HelpText = Help.VenueIndex)]
         public byte VenueIndex { get; set; }
         // TODO: use Venue enum
-
 
         /// <summary>
         ///     
