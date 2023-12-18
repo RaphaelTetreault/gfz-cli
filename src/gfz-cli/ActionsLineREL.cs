@@ -28,7 +28,7 @@ namespace Manifold.GFZCLI
             if (!Enum.IsDefined(options.Cup))
             {
                 string msg =
-                    $"Argument --{nameof(ILineRelOptions.Args.Cup)} " +
+                    $"Argument --{ILineRelOptions.Args.Cup} " +
                     $"must be a valid cup value.";
                 throw new ArgumentException(msg);
             }
@@ -49,17 +49,20 @@ namespace Manifold.GFZCLI
             // Validate index
             if (options.StageIndex > MaxStageIndex)
             {
-                string msg = $"Argument --{nameof(ILineRelOptions.Args.StageIndex)} must be a value in the range 0-{MaxStageIndex}.";
+                string msg = $"Argument --{ILineRelOptions.Args.StageIndex} must be a value in the range 0-{MaxStageIndex}.";
                 throw new ArgumentException(msg);
             }
         }
         private static void AssertStageIndexAllow0xFF(Options options)
         {
             // Validate index
-            if (options.StageIndex > MaxStageIndex || options.StageIndex == 0xFF)
+            bool isValidIndex = options.StageIndex <= MaxStageIndex;
+            bool isValidException = options.StageIndex == 0xFF;
+            bool isInvalid = !(isValidIndex || isValidException);
+            if (isInvalid)
             {
                 string msg =
-                    $"Argument --{nameof(ILineRelOptions.Args.StageIndex)} " +
+                    $"Argument --{ILineRelOptions.Args.StageIndex} " +
                     $"must be a value in the range 0-{MaxStageIndex} or exactly {0xFF}.";
                 throw new ArgumentException(msg);
             }
@@ -69,7 +72,7 @@ namespace Manifold.GFZCLI
             // Validate index
             if (options.VenueIndex > MaxVenueIndex)
             {
-                string msg = $"Argument --{nameof(ILineRelOptions.Args.VenueIndex)} must be a value in the range 0-{MaxVenueIndex}.";
+                string msg = $"Argument --{ILineRelOptions.Args.VenueIndex} must be a value in the range 0-{MaxVenueIndex}.";
                 throw new ArgumentException(msg);
             }
         }
@@ -77,7 +80,7 @@ namespace Manifold.GFZCLI
         {
             if (options.Difficulty > MaxDifficulty)
             {
-                string msg = $"Argument --{nameof(ILineRelOptions.Args.Difficulty)} must a value in the range 0-{MaxDifficulty}.";
+                string msg = $"Argument --{ILineRelOptions.Args.Difficulty} must a value in the range 0-{MaxDifficulty}.";
                 throw new ArgumentException(msg);
             }
         }
@@ -85,7 +88,7 @@ namespace Manifold.GFZCLI
         {
             if (string.IsNullOrEmpty(options.Value))
             {
-                string msg = $"Argument --{nameof(ILineRelOptions.Args.Value)} must be set.";
+                string msg = $"Argument --{ILineRelOptions.Args.Value} must be set.";
                 throw new ArgumentException(msg);
             }
         }
@@ -315,11 +318,13 @@ namespace Manifold.GFZCLI
             AssertCupStageIndex(options);
             AssertCup(options);
             AssertStageIndexAllow0xFF(options);
-           
+
             // Get needed data
             Cup cup = options.Cup;
             byte cupStageIndex = (byte)(options.CupStageIndex - 1);
-            ushort stageIndex = options.StageIndex;
+            ushort stageIndex = options.StageIndex == 0xFF
+                ? (ushort)0xFFFF
+                : options.StageIndex;
 
             // Patch
             PatchCupCourseStageIndex(writer, info, cup, cupStageIndex, stageIndex);
@@ -328,7 +333,7 @@ namespace Manifold.GFZCLI
         }
         private static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, Cup cup, byte cupStageIndex, ushort stageIndex)
         {
-            Pointer initialAddress= writer.GetPositionAsPointer();
+            Pointer initialAddress = writer.GetPositionAsPointer();
 
             const int CupEntrySize = sizeof(ushort) * 6;
             Offset cupOffset = (int)cup * CupEntrySize;
