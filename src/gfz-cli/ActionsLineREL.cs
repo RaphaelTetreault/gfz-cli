@@ -531,15 +531,15 @@ namespace Manifold.GFZCLI
 
 
         // The same code but wrapped in the code that manages getting options setup, the console printed to.
-        public static void PatchBgm(Options options) => Patch(options, PatchBgm);
-        public static void PatchBgmFinalLap(Options options) => Patch(options, PatchBgmFinalLap);
-        public static void PatchBgmBoth(Options options) => Patch(options, PatchBgmBoth);
+        public static void PatchSetBgm(Options options) => Patch(options, PatchBgm);
+        public static void PatchSetBgmFinalLap(Options options) => Patch(options, PatchBgmFinalLap);
+        public static void PatchSetBgmAndBgmFinalLap(Options options) => Patch(options, PatchBgmBoth);
         public static void PatchSetCourseDifficulty(Options options) => Patch(options, PatchCourseDifficulty);
         public static void PatchSetCourseName(Options options) => Patch(options, PatchSetCourseName);
         public static void PatchSetCupCourse(Options options) => Patch(options, PatchCup);
         public static void PatchClearAllCourseNames(Options options) => Patch(options, PatchClearCourseNames);
         public static void PatchClearUnusedCourseNames(Options options) => Patch(options, PatchClearUnusedCourseNames);
-        public static void PatchClearVenueNames(Options options) => Patch(options, PatchClearVenueNames);
+        public static void PatchClearAllVenueNames(Options options) => Patch(options, PatchClearVenueNames);
         public static void PatchClearUnusedVenueNames(Options options) => Patch(options, PatchClearUnusedVenueNames);
         public static void PatchSetVenueIndex(Options options) => Patch(options, PatchSetVenueIndex);
         public static void PatchSetVenueName(Options options) => Patch(options, PatchSetVenueName);

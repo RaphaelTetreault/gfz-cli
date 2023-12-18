@@ -30,24 +30,21 @@
         lz_compress,
         lz_decompress,
 
-        linerel_bgm,
-        linerel_bgmfl,
-        linerel_bgm_both,
         linerel_clear_all_course_names,
         linerel_clear_all_venue_names,
         linerel_clear_unused_course_names,
         linerel_clear_unused_venue_names,
         linerel_decrypt,
         linerel_encrypt,
-        linerel_set_cup_course,
-        linerel_set_difficulty,
+        linerel_set_bgm,
+        linerel_set_bgmfl,
+        linerel_set_bgm_bgmfl,
+        linerel_set_course_difficulty,
         linerel_set_course_name,
+        linerel_set_cup_course,
         linerel_set_venue,
         linerel_set_venue_name,
 
         tpl_unpack,
-
-        //
-        dump_hex,
     }
 }
