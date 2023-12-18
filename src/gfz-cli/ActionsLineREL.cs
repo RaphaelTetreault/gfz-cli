@@ -17,10 +17,10 @@ namespace Manifold.GFZCLI
     public static class ActionsLineREL
     {
         private const byte MaxDifficulty = 10;
-        private const byte MaxStageIndex = 110;
+        private const byte MaxCourseIndex = 110;
         private const byte MaxVenueIndex = 22;
-        private const byte MaxCupStageIndex = 6;
-        private const byte MinCupStageIndex = 1;
+        private const byte MaxCupCourseIndex = 6;
+        private const byte MinCupCourseIndex = 1;
 
         private static void AssertCup(Options options)
         {
@@ -33,37 +33,37 @@ namespace Manifold.GFZCLI
                 throw new ArgumentException(msg);
             }
         }
-        private static void AssertCupStageIndex(Options options)
+        private static void AssertCupCourseIndex(Options options)
         {
             // Validate index
-            if (options.CupStageIndex < MinCupStageIndex || options.CupStageIndex > MaxCupStageIndex)
+            if (options.CupCourseIndex < MinCupCourseIndex || options.CupCourseIndex > MaxCupCourseIndex)
             {
                 string msg =
-                    $"Argument --{nameof(ILineRelOptions.Args.CupStageIndex)} " +
-                    $"must be a value in the range 1-{MaxCupStageIndex}.";
+                    $"Argument --{nameof(ILineRelOptions.Args.CupCourseIndex)} " +
+                    $"must be a value in the range 1-{MaxCupCourseIndex}.";
                 throw new ArgumentException(msg);
             }
         }
-        private static void AssertStageIndex(Options options)
+        private static void AssertCourseIndex(Options options)
         {
             // Validate index
-            if (options.StageIndex > MaxStageIndex)
+            if (options.CourseIndex > MaxCourseIndex)
             {
-                string msg = $"Argument --{ILineRelOptions.Args.StageIndex} must be a value in the range 0-{MaxStageIndex}.";
+                string msg = $"Argument --{ILineRelOptions.Args.CourseIndex} must be a value in the range 0-{MaxCourseIndex}.";
                 throw new ArgumentException(msg);
             }
         }
-        private static void AssertStageIndexAllow0xFF(Options options)
+        private static void AssertCourseIndexAllow0xFF(Options options)
         {
             // Validate index
-            bool isValidIndex = options.StageIndex <= MaxStageIndex;
-            bool isValidException = options.StageIndex == 0xFF;
+            bool isValidIndex = options.CourseIndex <= MaxCourseIndex;
+            bool isValidException = options.CourseIndex == 0xFF;
             bool isInvalid = !(isValidIndex || isValidException);
             if (isInvalid)
             {
                 string msg =
-                    $"Argument --{ILineRelOptions.Args.StageIndex} " +
-                    $"must be a value in the range 0-{MaxStageIndex} or exactly {0xFF}.";
+                    $"Argument --{ILineRelOptions.Args.CourseIndex} " +
+                    $"must be a value in the range 0-{MaxCourseIndex} or exactly {0xFF}.";
                 throw new ArgumentException(msg);
             }
         }
@@ -207,18 +207,18 @@ namespace Manifold.GFZCLI
         // The code that actually patches
         private static void PatchBgm(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
-            byte stageIndex = options.StageIndex;
+            byte courseIndex = options.CourseIndex;
             byte bgmIndex = options.BgmFinalLapIndex;
-            LineUtility.PatchStageBgm(writer, info, stageIndex, bgmIndex);
-            Terminal.Write($"Set stage {stageIndex} bgm to {bgmIndex} ({(Bgm)bgmIndex}).");
+            LineUtility.PatchCourseBgm(writer, info, courseIndex, bgmIndex);
+            Terminal.Write($"Set course {courseIndex} bgm to {bgmIndex} ({(Bgm)bgmIndex}).");
         }
         private static void PatchBgmFinalLap(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
             // Patch BGM FL
-            byte stageIndex = options.StageIndex;
+            byte courseIndex = options.CourseIndex;
             byte bgmflIndex = options.BgmFinalLapIndex;
-            LineUtility.PatchStageBgmFinalLap(writer, info, stageIndex, bgmflIndex);
-            Terminal.Write($"Set stage {stageIndex} final lap bgm to {bgmflIndex} ({(Bgm)bgmflIndex}).");
+            LineUtility.PatchCourseBgmFinalLap(writer, info, courseIndex, bgmflIndex);
+            Terminal.Write($"Set course {courseIndex} final lap bgm to {bgmflIndex} ({(Bgm)bgmflIndex}).");
         }
         private static void PatchBgmBoth(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
@@ -228,50 +228,43 @@ namespace Manifold.GFZCLI
         private static void PatchCourseDifficulty(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
             AssertDifficulty(options);
-            AssertStageIndex(options);
+            AssertCourseIndex(options);
 
-            Offset offset = options.StageIndex;
+            Offset offset = options.CourseIndex;
             Pointer pointer = info.CourseDifficulty.Address + offset;
             writer.JumpToAddress(pointer);
             writer.Write(options.Difficulty);
         }
-        private static void PatchCourseName(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        private static void PatchSetCourseName(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
-            AssertStageIndex(options);
+            AssertCourseIndex(options);
 
             // Get course names from file
             ShiftJisCString[] courseNames = GetCourseNames(info, reader);
 
             // Modify course name
             int baseIndex = GetCourseNameBaseIndexByRegion(options.SerializationRegion);
-            int stageIndex = baseIndex + options.StageIndex * info.CourseNameLanguages;
+            int courseIndex = baseIndex + options.CourseIndex * info.CourseNameLanguages;
             // Convert all escape sequences into Unicode characters
             string editedCourseName = Regex.Unescape(options.Value);
             // Convert Unicode into Shift-JIS
-            courseNames[stageIndex] = new ShiftJisCString(editedCourseName);
+            courseNames[courseIndex] = new ShiftJisCString(editedCourseName);
 
             // Set course names
             int remainingBytes = SetCourseNames(courseNames, info, writer);
 
             // Write out information
-            Terminal.Write($"Set stage {options.StageIndex} name to \"{options.Value}\". ");
+            Terminal.Write($"Set course {options.CourseIndex} name to \"{options.Value}\". ");
             Terminal.Write($"Bytes remaining: {remainingBytes}.");
         }
         private static void PatchClearCourseNames(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
-            if (string.IsNullOrEmpty(options.Value))
+            DataBlock[] dataBlocks =
             {
-                string msg = $"Argument --{nameof(ILineRelOptions.Args.Value)} must be set.";
-                throw new ArgumentException(msg);
-            }
-
-            // Set all names to same value
-            int courseNamesCount = info.CourseNameOffsets.length;
-            ShiftJisCString[] courseNames = new ShiftJisCString[courseNamesCount];
-            for (int i = 0; i < courseNames.Length; i++)
-                courseNames[i] = options.Value;
-
-            int remainingBytes = SetCourseNames(courseNames, info, writer);
+                info.CourseNamesEnglish,
+                info.CourseNamesLocalizations,
+            };
+            int remainingBytes = ClearStringTable(options,writer, info.StringTableBaseAddress, info.CourseNameOffsets, dataBlocks);
 
             Terminal.Write($"Cleared all course names. ");
             Terminal.Write($"Bytes available: {remainingBytes}.");
@@ -298,60 +291,128 @@ namespace Manifold.GFZCLI
             Terminal.Write($"Cleared non-region course names. ");
             Terminal.Write($"Bytes available: {remainingBytes}.");
         }
-        private static void PatchVenueIndex(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        private static void PatchSetVenueIndex(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
-            AssertStageIndex(options);
+            AssertCourseIndex(options);
             AssertVenueIndex(options);
 
-            Offset offset = options.StageIndex;
+            Offset offset = options.CourseIndex;
             Pointer pointer = info.CourseVenueIndex.Address + offset;
             writer.JumpToAddress(pointer);
             writer.Write(options.VenueIndex);
         }
-        private static void PatchVenueName(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        private static void PatchSetVenueName(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
-            throw new NotImplementedException();
+            // Currently using "venue" as index into table, including JP names.
+            //AssertVenueIndex(options);
+
+            //
+            ShiftJisCString[] venueNames = GetVenueNames(info, reader);
+
+            //
+            int venueIndex = options.VenueIndex;
+            // Convert all escape sequences into Unicode characters
+            string editedVenueName = Regex.Unescape(options.Value);
+            // Convert Unicode into Shift-JIS
+            venueNames[venueIndex] = new ShiftJisCString(editedVenueName);
+
+            //
+            int remainingBytes = SetVenueNames(venueNames, info, writer);
+
+            // Write out information
+            Terminal.Write($"Set venue {options.VenueIndex} name to \"{options.Value}\". ");
+            Terminal.Write($"Bytes remaining: {remainingBytes}.");
         }
+        private static void PatchClearVenueNames(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        {
+            DataBlock[] dataBlocks =
+            {
+                info.VenueNamesEnglish,
+                info.VenueNamesJapanese,
+            };
+            int remainingBytes = ClearStringTable(options, writer, info.StringTableBaseAddress, info.VenueNameOffsets, dataBlocks);
+
+            Terminal.Write($"Cleared all venue names. ");
+            Terminal.Write($"Bytes available: {remainingBytes}.");
+        }
+        private static void PatchClearUnusedVenueNames(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+        {
+            //
+            ShiftJisCString[] venueNames = GetVenueNames(info, reader);
+
+            // Convert all escape sequences into Unicode characters
+            string editedVenueName = Regex.Unescape(options.Value);
+
+            // Clear all unused strings.
+            // TODO: assumptions made here.
+            int start = info.VenueNamesEnglishOffsets.length;
+            for (int i = start; i < venueNames.Length; i++)
+                venueNames[i] = new ShiftJisCString(editedVenueName);
+
+            //
+            int remainingBytes = SetVenueNames(venueNames, info, writer);
+
+            // Write out information
+            Terminal.Write($"Cleared unused venue names. ");
+            Terminal.Write($"Bytes remaining: {remainingBytes}.");
+        }
+
         private static void PatchCup(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
         {
             // Assertions
-            AssertCupStageIndex(options);
+            AssertCupCourseIndex(options);
             AssertCup(options);
-            AssertStageIndexAllow0xFF(options);
+            AssertCourseIndexAllow0xFF(options);
 
             // Get needed data
             Cup cup = options.Cup;
-            byte cupStageIndex = (byte)(options.CupStageIndex - 1);
-            ushort stageIndex = options.StageIndex == 0xFF
+            byte cupCourseIndex = (byte)(options.CupCourseIndex - 1);
+            ushort courseIndex = options.CourseIndex == 0xFF
                 ? (ushort)0xFFFF
-                : options.StageIndex;
+                : options.CourseIndex;
 
             // Patch
-            PatchCupCourseStageIndex(writer, info, cup, cupStageIndex, stageIndex);
-            PatchCupCourseGmaTplReference(writer, info, cup, cupStageIndex, stageIndex);
-            PatchCupCourseUnknown(writer, info, cup, cupStageIndex, stageIndex);
+            PatchCupCourseIndex(writer, info, cup, cupCourseIndex, courseIndex);
+            PatchCupCourseGmaTplReference(writer, info, cup, cupCourseIndex, courseIndex);
+            PatchCupCourseUnknown(writer, info, cup, cupCourseIndex, courseIndex);
         }
-        private static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, Cup cup, byte cupStageIndex, ushort stageIndex)
+        private static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, Cup cup, byte cupCourseIndex, ushort courseIndex)
         {
             Pointer initialAddress = writer.GetPositionAsPointer();
 
             const int CupEntrySize = sizeof(ushort) * 6;
             Offset cupOffset = (int)cup * CupEntrySize;
-            Offset stageOffset = cupStageIndex * sizeof(ushort);
-            Pointer address = baseAddress + cupOffset + stageOffset;
+            Offset courseOffset = cupCourseIndex * sizeof(ushort);
+            Pointer address = baseAddress + cupOffset + courseOffset;
             writer.JumpToAddress(address);
-            writer.Write(stageIndex);
+            writer.Write(courseIndex);
 
             writer.JumpToAddress(initialAddress);
         }
-        private static void PatchCupCourseStageIndex(EndianBinaryWriter writer, LineRelInfo info, Cup cup, byte cupStageIndex, ushort stageIndex)
-            => PatchCupData(writer, info.CupCourseLut.Address, cup, cupStageIndex, stageIndex);
-        private static void PatchCupCourseGmaTplReference(EndianBinaryWriter writer, LineRelInfo info, Cup cup, byte cupStageIndex, ushort stageIndex)
-            => PatchCupData(writer, info.CupCourseLutAssets.Address, cup, cupStageIndex, stageIndex);
-        private static void PatchCupCourseUnknown(EndianBinaryWriter writer, LineRelInfo info, Cup cup, byte cupStageIndex, ushort stageIndex)
-            => PatchCupData(writer, info.CupCourseLutUnk.Address, cup, cupStageIndex, stageIndex);
+        private static void PatchCupCourseIndex(EndianBinaryWriter writer, LineRelInfo info, Cup cup, byte cupCourseIndex, ushort courseIndex)
+            => PatchCupData(writer, info.CupCourseLut.Address, cup, cupCourseIndex, courseIndex);
+        private static void PatchCupCourseGmaTplReference(EndianBinaryWriter writer, LineRelInfo info, Cup cup, byte cupCourseIndex, ushort courseIndex)
+            => PatchCupData(writer, info.CupCourseLutAssets.Address, cup, cupCourseIndex, courseIndex);
+        private static void PatchCupCourseUnknown(EndianBinaryWriter writer, LineRelInfo info, Cup cup, byte cupCourseIndex, ushort courseIndex)
+            => PatchCupData(writer, info.CupCourseLutUnk.Address, cup, cupCourseIndex, courseIndex);
 
+        private static int ClearStringTable(Options options, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)
+        {
+            if (string.IsNullOrEmpty(options.Value))
+            {
+                string msg = $"Argument --{ILineRelOptions.Args.Value} must be set.";
+                throw new ArgumentException(msg);
+            }
 
+            // Set all strings to same value
+            int stringCount = strArrPtr.length;
+            ShiftJisCString[] strings = new ShiftJisCString[stringCount];
+            for (int i = 0; i < strings.Length; i++)
+                strings[i] = options.Value;
+
+            int remainingBytes = SetStrings(strings, writer, stringTableBaseAddress, strArrPtr, dataBlocks);
+            return remainingBytes;
+        }
         private static int GetCourseNameBaseIndexByRegion(Region region)
         {
             return region switch
@@ -363,22 +424,41 @@ namespace Manifold.GFZCLI
                 Region _ => throw new NotImplementedException($"Region: {region}"),
             };
         }
+        private static ShiftJisCString[] GetStrings(EndianBinaryReader reader, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr)
+        {
+            // Prepare information for strings
+            int count = strArrPtr.length;
+            RelocationEntry[] stringOffsets = new RelocationEntry[count];
+            ShiftJisCString[] strings = new ShiftJisCString[count];
+
+            // Get all RelocationEntries, only partially get us to strings
+            Pointer baseAddress = strArrPtr.address;
+            reader.JumpToAddress(baseAddress);
+            for (int i = 0; i < count; i++)
+                stringOffsets[i].Deserialize(reader);
+
+            // Read strings at constructed address
+            for (int i = 0; i < count; i++)
+            {
+                Offset offset = stringOffsets[i].addEnd;
+                Pointer stringPointer = stringTableBaseAddress + offset;
+                reader.JumpToAddress(stringPointer);
+                strings[i] = new ShiftJisCString();
+                strings[i].Deserialize(reader);
+            }
+
+            return strings;
+        }
         private static ShiftJisCString[] GetCourseNames(LineRelInfo info, EndianBinaryReader reader)
         {
             var courseNames = GetStrings(reader, info.StringTableBaseAddress, info.CourseNameOffsets);
             return courseNames;
         }
-        private static int SetCourseNames(ShiftJisCString[] courseNames, LineRelInfo info, EndianBinaryWriter writer)
+        private static ShiftJisCString[] GetVenueNames(LineRelInfo info, EndianBinaryReader reader)
         {
-            DataBlock[] dataBlocks =
-            {
-                info.CourseNamesEnglish,
-                info.CourseNamesLocalizations,
-            };
-            int remainingBytes = SetStrings(courseNames, writer, info.StringTableBaseAddress, info.CourseNameOffsets, dataBlocks);
-            return remainingBytes;
+            var venueNames = GetStrings(reader, info.StringTableBaseAddress, info.VenueNameOffsets);
+            return venueNames;
         }
-
         private static int SetStrings(ShiftJisCString[] strings, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)
         {
             // Validate strings count
@@ -428,30 +508,25 @@ namespace Manifold.GFZCLI
 
             return memoryPool.RemainingMemorySize();
         }
-        private static ShiftJisCString[] GetStrings(EndianBinaryReader reader, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr)
+        private static int SetCourseNames(ShiftJisCString[] courseNames, LineRelInfo info, EndianBinaryWriter writer)
         {
-            // Prepare information for strings
-            int count = strArrPtr.length;
-            RelocationEntry[] stringOffsets = new RelocationEntry[count];
-            ShiftJisCString[] strings = new ShiftJisCString[count];
-
-            // Get all RelocationEntries, only partially get us to strings
-            Pointer baseAddress = strArrPtr.address;
-            reader.JumpToAddress(baseAddress);
-            for (int i = 0; i < count; i++)
-                stringOffsets[i].Deserialize(reader);
-
-            // Read strings at constructed address
-            for (int i = 0; i < count; i++)
+            DataBlock[] dataBlocks =
             {
-                Offset offset = stringOffsets[i].addEnd;
-                Pointer stringPointer = stringTableBaseAddress + offset;
-                reader.JumpToAddress(stringPointer);
-                strings[i] = new ShiftJisCString();
-                strings[i].Deserialize(reader);
-            }
-
-            return strings;
+                info.CourseNamesEnglish,
+                info.CourseNamesLocalizations,
+            };
+            int remainingBytes = SetStrings(courseNames, writer, info.StringTableBaseAddress, info.CourseNameOffsets, dataBlocks);
+            return remainingBytes;
+        }
+        private static int SetVenueNames(ShiftJisCString[] venueNames, LineRelInfo info, EndianBinaryWriter writer)
+        {
+            DataBlock[] dataBlocks =
+            {
+                info.VenueNamesEnglish,
+                info.VenueNamesJapanese,
+            };
+            int remainingBytes = SetStrings(venueNames, writer, info.StringTableBaseAddress, info.VenueNameOffsets, dataBlocks);
+            return remainingBytes;
         }
 
 
@@ -459,12 +534,15 @@ namespace Manifold.GFZCLI
         public static void PatchBgm(Options options) => Patch(options, PatchBgm);
         public static void PatchBgmFinalLap(Options options) => Patch(options, PatchBgmFinalLap);
         public static void PatchBgmBoth(Options options) => Patch(options, PatchBgmBoth);
-        public static void PatchCourseDifficulty(Options options) => Patch(options, PatchCourseDifficulty);
-        public static void PatchCourseName(Options options) => Patch(options, PatchCourseName);
-        public static void PatchCup(Options options) => Patch(options, PatchCup);
+        public static void PatchSetCourseDifficulty(Options options) => Patch(options, PatchCourseDifficulty);
+        public static void PatchSetCourseName(Options options) => Patch(options, PatchSetCourseName);
+        public static void PatchSetCupCourse(Options options) => Patch(options, PatchCup);
         public static void PatchClearAllCourseNames(Options options) => Patch(options, PatchClearCourseNames);
         public static void PatchClearUnusedCourseNames(Options options) => Patch(options, PatchClearUnusedCourseNames);
-        public static void PatchVenueIndex(Options options) => Patch(options, PatchVenueIndex);
+        public static void PatchClearVenueNames(Options options) => Patch(options, PatchClearVenueNames);
+        public static void PatchClearUnusedVenueNames(Options options) => Patch(options, PatchClearUnusedVenueNames);
+        public static void PatchSetVenueIndex(Options options) => Patch(options, PatchSetVenueIndex);
+        public static void PatchSetVenueName(Options options) => Patch(options, PatchSetVenueName);
 
     }
 }

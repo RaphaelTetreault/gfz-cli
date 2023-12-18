@@ -88,15 +88,17 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.linerel_bgm: ActionsLineREL.PatchBgm(options); break;
                 case GfzCliAction.linerel_bgmfl: ActionsLineREL.PatchBgmFinalLap(options); break;
                 case GfzCliAction.linerel_bgm_both: ActionsLineREL.PatchBgmBoth(options); break;
-                case GfzCliAction.linerel_clear_all_stage_names: ActionsLineREL.PatchClearAllCourseNames(options); break;
-                case GfzCliAction.linerel_clear_unused_stage_names: ActionsLineREL.PatchClearUnusedCourseNames(options); break;
+                case GfzCliAction.linerel_clear_all_course_names: ActionsLineREL.PatchClearAllCourseNames(options); break;
+                case GfzCliAction.linerel_clear_all_venue_names: ActionsLineREL.PatchClearVenueNames(options); break;
+                case GfzCliAction.linerel_clear_unused_course_names: ActionsLineREL.PatchClearUnusedCourseNames(options); break;
+                case GfzCliAction.linerel_clear_unused_venue_names: ActionsLineREL.PatchClearUnusedVenueNames(options); break;
                 case GfzCliAction.linerel_decrypt: ActionsLineREL.DecryptLineRel(options); break;
                 case GfzCliAction.linerel_encrypt: ActionsLineREL.EncryptLineRel(options); break;
-                case GfzCliAction.linerel_set_cup: ActionsLineREL.PatchCup(options); break;
-                case GfzCliAction.linerel_set_difficulty: ActionsLineREL.PatchCourseDifficulty(options); break;
-                case GfzCliAction.linerel_set_name_stage: ActionsLineREL.PatchCourseName(options); break;
-                case GfzCliAction.linerel_set_venue: ActionsLineREL.PatchVenueIndex(options); break;
-                //case GfzCliAction.linerel_set_venue_name: ActionsLineREL.PatchVenueIndex(options); break;
+                case GfzCliAction.linerel_set_course_name: ActionsLineREL.PatchSetCourseName(options); break;
+                case GfzCliAction.linerel_set_cup_course: ActionsLineREL.PatchSetCupCourse(options); break;
+                case GfzCliAction.linerel_set_difficulty: ActionsLineREL.PatchSetCourseDifficulty(options); break;
+                case GfzCliAction.linerel_set_venue: ActionsLineREL.PatchSetVenueIndex(options); break;
+                case GfzCliAction.linerel_set_venue_name: ActionsLineREL.PatchSetVenueName(options); break;
                 // TPL
                 case GfzCliAction.tpl_unpack: ActionsTPL.TplUnpack(options); break;
                 //case GfzCliAction.tpl_pack: TplPack(options); break;

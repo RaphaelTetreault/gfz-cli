@@ -9,9 +9,9 @@ namespace Manifold.GFZCLI
             public const string BgmIndex = "bgm";
             public const string BgmFlIndex = "bgmfl";
             public const string Cup = "cup";
-            public const string CupStageIndex = "cup-stage";
+            public const string CupCourseIndex = "cup-course";
             public const string Difficulty = "difficulty";
-            public const string StageIndex = "stage";
+            public const string CourseIndex = "course";
             public const string VenueIndex = "venue";
             public const string Value = "value";
         }
@@ -28,8 +28,8 @@ namespace Manifold.GFZCLI
                 "The cup which references a number of stages (typically 5).";
             public const string Difficulty =
                 "The stage's star difficulty rating.";
-            public const string StageIndex =
-                "The numeric index of a stage (byte).";
+            public const string CourseIndex =
+                "The numeric index of a course.";
             public const string VenueIndex =
                 "The stage's venue.";
             public const string Value =
@@ -51,26 +51,26 @@ namespace Manifold.GFZCLI
         /// <summary>
         ///     
         /// </summary>
+        [Option(Args.CourseIndex, HelpText = Help.CourseIndex)]
+        public byte CourseIndex { get; set; }
+
+        /// <summary>
+        ///     
+        /// </summary>
         [Option(Args.Cup, HelpText = Help.Cup)]
         public GameCube.GFZ.LineREL.Cup Cup { get; set; }
 
         /// <summary>
         ///     
         /// </summary>
-        [Option(Args.CupStageIndex, HelpText = Help.CupStageIndex)]
-        public byte CupStageIndex { get; set; }
+        [Option(Args.CupCourseIndex, HelpText = Help.CupStageIndex)]
+        public byte CupCourseIndex { get; set; }
 
         /// <summary>
         ///     
         /// </summary>
         [Option(Args.Difficulty, HelpText = Help.Difficulty)]
         public byte Difficulty { get; set; }
-
-        /// <summary>
-        ///     
-        /// </summary>
-        [Option(Args.StageIndex, HelpText = Help.StageIndex)]
-        public byte StageIndex { get; set; }
 
         /// <summary>
         ///     

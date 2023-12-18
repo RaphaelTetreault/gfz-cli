@@ -62,9 +62,9 @@ namespace Manifold.GFZCLI
         public byte BgmIndex { get; set; } = 254; // default to invalid state
         public byte BgmFinalLapIndex { get; set; } = 254; // default to invalid state
         public Cup Cup { get; set; } = (Cup)255; // default to invalid state
-        public byte CupStageIndex { get; set; } = 254; // default to invalid state
+        public byte CupCourseIndex { get; set; } = 254; // default to invalid state
         public byte Difficulty { get; set; } = 254; // default to invalid state
-        public byte StageIndex { get; set; } = 254; // default to invalid state
+        public byte CourseIndex { get; set; } = 254; // default to invalid state
         public byte VenueIndex { get; set; } = 254; // default to invalid state
         public string Value { get; set; } = string.Empty;
 
