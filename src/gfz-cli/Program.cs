@@ -94,6 +94,7 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.linerel_set_bgm: ActionsLineREL.PatchSetBgm(options); break;
                 case GfzCliAction.linerel_set_bgmfl: ActionsLineREL.PatchSetBgmFinalLap(options); break;
                 case GfzCliAction.linerel_set_bgm_bgmfl: ActionsLineREL.PatchSetBgmAndBgmFinalLap(options); break;
+                case GfzCliAction.linerel_set_cardata: ActionsLineREL.PatchSetCarData(options); break;
                 case GfzCliAction.linerel_set_course_difficulty: ActionsLineREL.PatchSetCourseDifficulty(options); break;
                 case GfzCliAction.linerel_set_course_name: ActionsLineREL.PatchSetCourseName(options); break;
                 case GfzCliAction.linerel_set_cup_course: ActionsLineREL.PatchSetCupCourse(options); break;

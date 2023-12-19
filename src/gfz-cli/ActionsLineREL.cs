@@ -1,7 +1,9 @@
 ﻿using GameCube.DiskImage;
 using GameCube.GFZ;
+using GameCube.GFZ.CarData;
 using GameCube.GFZ.GeneralGameData;
 using GameCube.GFZ.LineREL;
+using GameCube.GFZ.LZ;
 using Manifold.IO;
 using System;
 using System.IO;
@@ -213,8 +215,8 @@ namespace Manifold.GFZCLI
         }
         private static void PatchBgmBoth(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
         {
-            PatchBgm(options, info, reader, writer);
-            PatchBgmFinalLap(options, info, reader, writer);
+            PatchBgm(options, info, _, writer);
+            PatchBgmFinalLap(options, info, _, writer);
         }
         private static void PatchCourseDifficulty(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
         {
@@ -255,7 +257,7 @@ namespace Manifold.GFZCLI
                 info.CourseNamesEnglish,
                 info.CourseNamesLocalizations,
             };
-            int remainingBytes = ClearStringTable(options,writer, info.StringTableBaseAddress, info.CourseNameOffsets, dataBlocks);
+            int remainingBytes = ClearStringTable(options, writer, info.StringTableBaseAddress, info.CourseNameOffsets, dataBlocks);
 
             Terminal.Write($"Cleared all course names. ");
             Terminal.Write($"Bytes available: {remainingBytes}.");
@@ -366,7 +368,54 @@ namespace Manifold.GFZCLI
             PatchCupCourseGmaTplReference(writer, info, cup, cupCourseIndex, courseIndex);
             PatchCupCourseUnknown(writer, info, cup, cupCourseIndex, courseIndex);
         }
-        
+        private static void PatchCarData(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+        {
+            // Assert file path is good
+            if (string.IsNullOrWhiteSpace(options.UsingFilePath))
+            {
+                string msg = $"Argument --{ILineRelOptions.Args.UsingFilePath} must be set to a file path!";
+                throw new ArgumentException(msg);
+            }
+            FilePath carDataPath = new(options.UsingFilePath);
+            carDataPath.ThrowIfDoesNotExist();
+
+            // Open CarData if possible
+            bool isFileTSV = carDataPath.IsExtension(".tsv");
+            bool isFileLZ = carDataPath.IsExtension(".lz");
+            bool isFileBin = carDataPath.IsExtension("");
+            CarData carData;
+            if (isFileTSV)
+            {
+                carData = new CarData();
+                using var reader = new StreamReader(File.OpenRead(carDataPath));
+                carData.Deserialize(reader);
+            }
+            else if (isFileLZ || isFileBin)
+            {
+                // Decompress LZ if not decompressed yet
+                bool isLzCompressed = carDataPath.IsExtension(".lz");
+                // Open the file if decompressed, decompress file stream otherwise
+                carData = new CarData();
+                using Stream fileStream = isLzCompressed ? LzUtility.DecompressAvLz(carDataPath) : File.OpenRead(carDataPath);
+                using EndianBinaryReader reader = new(fileStream, CarData.endianness);
+                carData.Deserialize(reader);
+            }
+            else
+            {
+                string msg =
+                    $"Argument --{ILineRelOptions.Args.UsingFilePath} file " +
+                    $"cannot be inferred to be a valid cardata file.";
+                throw new ArgumentException(msg);
+            }
+
+            // Patch machines in line__.rel
+            Pointer pointer = info.CarDataMachinesPtr;
+            writer.JumpToAddress(pointer);
+            writer.Write(carData.Machines);
+            Assert.IsTrue(writer.GetPositionAsPointer() == pointer + 0x1CD4);
+        }
+
+
         private static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, Cup cup, byte cupCourseIndex, ushort courseIndex)
         {
             Pointer initialAddress = writer.GetPositionAsPointer();
@@ -534,6 +583,7 @@ namespace Manifold.GFZCLI
         public static void PatchClearUnusedVenueNames(Options options) => Patch(options, PatchClearUnusedVenueNames);
         public static void PatchSetVenueIndex(Options options) => Patch(options, PatchSetVenueIndex);
         public static void PatchSetVenueName(Options options) => Patch(options, PatchSetVenueName);
+        public static void PatchSetCarData(Options options) => Patch(options, PatchCarData);
 
     }
 }

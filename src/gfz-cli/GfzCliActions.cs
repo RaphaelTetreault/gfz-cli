@@ -39,6 +39,7 @@
         linerel_set_bgm,
         linerel_set_bgmfl,
         linerel_set_bgm_bgmfl,
+        linerel_set_cardata,
         linerel_set_course_difficulty,
         linerel_set_course_name,
         linerel_set_cup_course,

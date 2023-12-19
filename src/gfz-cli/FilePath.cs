@@ -227,8 +227,10 @@ namespace Manifold.GFZCLI
         // TODO: SetDirectory(params string[] directories) {} // List<string> ...?
         public bool IsExtension(string extension, bool ignoreCase = true)
         {
-            if (string.IsNullOrEmpty(extension))
+            if (extension == null)
                 return false;
+            if (extension == string.Empty)
+                return true;
 
             bool beginsWithPeriod = extension[0] == '.';
             if (beginsWithPeriod)

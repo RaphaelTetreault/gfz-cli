@@ -67,6 +67,7 @@ namespace Manifold.GFZCLI
         public byte CourseIndex { get; set; } = 254; // default to invalid state
         public byte VenueIndex { get; set; } = 254; // default to invalid state
         public string Value { get; set; } = string.Empty;
+        public string UsingFilePath { get; set; } = string.Empty;
 
 
 

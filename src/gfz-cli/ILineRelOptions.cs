@@ -12,6 +12,7 @@ namespace Manifold.GFZCLI
             public const string CupCourseIndex = "cup-course";
             public const string Difficulty = "difficulty";
             public const string CourseIndex = "course";
+            public const string UsingFilePath = "use-file";
             public const string VenueIndex = "venue";
             public const string Value = "value";
         }
@@ -30,6 +31,8 @@ namespace Manifold.GFZCLI
                 "The stage's star difficulty rating.";
             public const string CourseIndex =
                 "The numeric index of a course.";
+            public const string UsingFilePath =
+                "The file path to additional action information."; // TODO: move this to main?
             public const string VenueIndex =
                 "The stage's venue.";
             public const string Value =
@@ -71,6 +74,12 @@ namespace Manifold.GFZCLI
         /// </summary>
         [Option(Args.Difficulty, HelpText = Help.Difficulty)]
         public byte Difficulty { get; set; }
+
+        /// <summary>
+        ///     
+        /// </summary>
+        [Option(Args.UsingFilePath, HelpText = Help.UsingFilePath)]
+        public string UsingFilePath { get; set; }
 
         /// <summary>
         ///     
