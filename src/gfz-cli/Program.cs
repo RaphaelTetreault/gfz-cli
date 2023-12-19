@@ -98,6 +98,7 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.linerel_set_course_difficulty: ActionsLineREL.PatchSetCourseDifficulty(options); break;
                 case GfzCliAction.linerel_set_course_name: ActionsLineREL.PatchSetCourseName(options); break;
                 case GfzCliAction.linerel_set_cup_course: ActionsLineREL.PatchSetCupCourse(options); break;
+                case GfzCliAction.linerel_set_machine_rating: ActionsLineREL.PatchMachineRating(options); break;
                 case GfzCliAction.linerel_set_venue: ActionsLineREL.PatchSetVenueIndex(options); break;
                 case GfzCliAction.linerel_set_venue_name: ActionsLineREL.PatchSetVenueName(options); break;
                 // TPL

@@ -43,6 +43,7 @@
         linerel_set_course_difficulty,
         linerel_set_course_name,
         linerel_set_cup_course,
+        linerel_set_machine_rating,
         linerel_set_venue,
         linerel_set_venue_name,
 

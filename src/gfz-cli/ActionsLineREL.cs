@@ -414,7 +414,18 @@ namespace Manifold.GFZCLI
             writer.Write(carData.Machines);
             Assert.IsTrue(writer.GetPositionAsPointer() == pointer + 0x1CD4);
         }
+        private static void PatchMachineRating(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+        {
+            AssertValue(options);
 
+            string rating = options.Value;
+            VehicleRating vehicleRating = VehicleRating.FromString(rating);
+
+            int pilotIndex = GameDataMap.GetPilotIndexFromPilotNumber(options.PilotNumber);
+            Pointer address = info.MachineLetterRatingsPtr + VehicleRating.Size * pilotIndex;
+            writer.JumpToAddress(address);
+            writer.Write(vehicleRating);
+        }
 
         private static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, Cup cup, byte cupCourseIndex, ushort courseIndex)
         {
@@ -584,6 +595,7 @@ namespace Manifold.GFZCLI
         public static void PatchSetVenueIndex(Options options) => Patch(options, PatchSetVenueIndex);
         public static void PatchSetVenueName(Options options) => Patch(options, PatchSetVenueName);
         public static void PatchSetCarData(Options options) => Patch(options, PatchCarData);
+        public static void PatchMachineRating(Options options) => Patch(options, PatchMachineRating);
 
     }
 }

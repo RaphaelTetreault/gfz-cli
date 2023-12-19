@@ -10,8 +10,9 @@ namespace Manifold.GFZCLI
             public const string BgmFlIndex = "bgmfl";
             public const string Cup = "cup";
             public const string CupCourseIndex = "cup-course";
-            public const string Difficulty = "difficulty";
             public const string CourseIndex = "course";
+            public const string Difficulty = "difficulty";
+            public const string PilotNumber = "pilot";
             public const string UsingFilePath = "use-file";
             public const string VenueIndex = "venue";
             public const string Value = "value";
@@ -27,10 +28,12 @@ namespace Manifold.GFZCLI
                 "The cup which references a number of stages (typically 5).";
             public const string CupStageIndex =
                 "The cup which references a number of stages (typically 5).";
-            public const string Difficulty =
-                "The stage's star difficulty rating.";
             public const string CourseIndex =
                 "The numeric index of a course.";
+            public const string Difficulty =
+                "The stage's star difficulty rating.";
+            public const string PilotNumber =
+                "The pilot's racing number.";
             public const string UsingFilePath =
                 "The file path to additional action information."; // TODO: move this to main?
             public const string VenueIndex =
@@ -80,6 +83,12 @@ namespace Manifold.GFZCLI
         /// </summary>
         [Option(Args.UsingFilePath, HelpText = Help.UsingFilePath)]
         public string UsingFilePath { get; set; }
+
+        /// <summary>
+        ///     
+        /// </summary>
+        [Option(Args.PilotNumber, HelpText = Help.PilotNumber)]
+        public byte PilotNumber { get; set; }
 
         /// <summary>
         ///     
