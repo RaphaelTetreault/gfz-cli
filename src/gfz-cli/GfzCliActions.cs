@@ -4,15 +4,15 @@
     {
         none,
 
-        arc_decompress,
-        arc_compress,
+        arc_unpack,
+        arc_pack,
 
         auto_rename_gci, // NOT IMPLEMENTED
 
         cardata_from_tsv,
         cardata_to_tsv,
 
-        extract_iso_files,
+        extract_iso,
 
         emblem_gci_from_image,
         emblem_gci_to_image,
@@ -24,8 +24,8 @@
 
         gci_extract_ghost,
 
-        live_camera_stage_bin_to_tsv,
-        live_camera_stage_tsv_to_bin,
+        live_camera_stage_to_tsv,
+        live_camera_stage_from_tsv,
 
         lz_compress,
         lz_decompress,

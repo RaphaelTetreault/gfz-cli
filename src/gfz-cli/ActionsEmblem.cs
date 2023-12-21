@@ -17,7 +17,7 @@ namespace Manifold.GFZCLI
     public static class ActionsEmblem
     {
 
-        public static void EmblemBinToImage(Options options)
+        public static void EmblemsBinToImages(Options options)
         {
             Terminal.WriteLine("Emblem: converting emblems from BIN files.");
             int binCount = DoFileInFileOutTasks(options, EmblemBinToImages);
@@ -129,14 +129,14 @@ namespace Manifold.GFZCLI
         }
 
 
-        public static void ImageToEmblemBIN(Options options)
+        public static void EmblemsBinFromImages(Options options)
         {
             Terminal.WriteLine("Emblem: converting image(s) to emblem.bin.");
             var emblems = ImageToEmblemBin(options);
             Terminal.WriteLine($"Emblem: done converting {emblems.Length} image{(emblems.Length != 1 ? 's' : "")}.");
         }
 
-        public static void ImageToEmblemGCI(Options options)
+        public static void EmblemGciFromImage(Options options)
         {
             // In this case where no search pattern is set, find *fze*.dat.gci (emblem) files.
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);

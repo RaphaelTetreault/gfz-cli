@@ -59,28 +59,28 @@ namespace Manifold.GFZCLI
             switch (options.Action)
             {
                 // ARC
-                case GfzCliAction.arc_compress: ActionsARC.ArcCompress(options); break;
-                case GfzCliAction.arc_decompress: ActionsARC.ArcDecompress(options); break;
-                // GCI Utility
-                //case GfzCliAction.auto_rename_gci: ActionsGCI.RenameGCI(options); break;
+                case GfzCliAction.arc_pack: ActionsARC.ArcPack(options); break;
+                case GfzCliAction.arc_unpack: ActionsARC.ArcUnpack(options); break;
                 // CARDATA
-                case GfzCliAction.cardata_to_tsv: ActionsCarData.CarDataBinToTsv(options); break;
-                case GfzCliAction.cardata_from_tsv: ActionsCarData.CarDataTsvToBin(options); break;
+                case GfzCliAction.cardata_from_tsv: ActionsCarData.CarDataFromTsv(options); break;
+                case GfzCliAction.cardata_to_tsv: ActionsCarData.CarDataToTsv(options); break;
                 // ISO
-                case GfzCliAction.extract_iso_files: ActionsISO.IsoExtractAll(options); break;
+                case GfzCliAction.extract_iso: ActionsISO.IsoExtractAll(options); break;
+                    // TODO: Extract ./files/ only
+                    // TODO: Extract ./sys/ only
                 // EMBLEM
-                case GfzCliAction.emblems_bin_to_images: ActionsEmblem.EmblemBinToImage(options); break;
+                case GfzCliAction.emblems_bin_from_images: ActionsEmblem.EmblemsBinFromImages(options); break;
+                case GfzCliAction.emblems_bin_to_images: ActionsEmblem.EmblemsBinToImages(options); break;
+                case GfzCliAction.emblem_gci_from_image: ActionsEmblem.EmblemGciFromImage(options); break;
                 case GfzCliAction.emblem_gci_to_image: ActionsEmblem.EmblemGciToImage(options); break;
-                case GfzCliAction.emblems_bin_from_images: ActionsEmblem.ImageToEmblemBIN(options); break;
-                case GfzCliAction.emblem_gci_from_image: ActionsEmblem.ImageToEmblemGCI(options); break;
                 // FMI
-                case GfzCliAction.fmi_to_plaintext: ActionsFMI.FmiToPlainText(options); break;
                 case GfzCliAction.fmi_from_plaintext: ActionsFMI.FmiFromPlaintext(options); break;
+                case GfzCliAction.fmi_to_plaintext: ActionsFMI.FmiToPlainText(options); break;
                 // GCI
                 case GfzCliAction.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
                 // LIVE CAMERA STAGE
-                case GfzCliAction.live_camera_stage_bin_to_tsv: ActionsLiveCameraStage.LiveCameraStageBinToTsv(options); break;
-                case GfzCliAction.live_camera_stage_tsv_to_bin: ActionsLiveCameraStage.LiveCameraStageTsvToBin(options); break;
+                case GfzCliAction.live_camera_stage_from_tsv: ActionsLiveCameraStage.LiveCameraStageFromTsv(options); break;
+                case GfzCliAction.live_camera_stage_to_tsv: ActionsLiveCameraStage.LiveCameraStageToTsv(options); break;
                 // LZ
                 case GfzCliAction.lz_compress: ActionsLZ.LzCompress(options); break;
                 case GfzCliAction.lz_decompress: ActionsLZ.LzDecompress(options); break;
@@ -104,9 +104,6 @@ namespace Manifold.GFZCLI
                 // TPL
                 case GfzCliAction.tpl_unpack: ActionsTPL.TplUnpack(options); break;
                 //case GfzCliAction.tpl_pack: TplPack(options); break;
-
-                //
-                //case GfzCliAction.dump_hex: ActionsMisc.DumpHex32(options); break;
 
                 // UNSET
                 case GfzCliAction.none:

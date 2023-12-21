@@ -8,7 +8,7 @@ namespace Manifold.GFZCLI
 {
     public static class ActionsARC
     {
-        public static void ArcCompress(Options options)
+        public static void ArcPack(Options options)
         {
             // ARC requires directory as input path
             bool inputNotADirectory = !Directory.Exists(options.InputPath);
@@ -62,7 +62,7 @@ namespace Manifold.GFZCLI
         }
 
 
-        public static void ArcDecompress(Options options)
+        public static void ArcUnpack(Options options)
         {
             // Force checking for .ARC only IF there is no defined search pattern
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
