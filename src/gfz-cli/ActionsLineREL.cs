@@ -15,7 +15,7 @@ namespace Manifold.GFZCLI
     public static class ActionsLineREL
     {
         private const byte MaxDifficulty = 10;
-        private const byte MaxCourseIndex = 110;
+        private const byte MaxCourseIndex = GameDataConsts.MaxStageIndex;
         private const byte MaxVenueIndex = 22;
         private const byte MaxCupCourseIndex = 6;
         private const byte MinCupCourseIndex = 1;
@@ -46,7 +46,7 @@ namespace Manifold.GFZCLI
             // Open file, set up writer, get action to patch file through writer
             {
                 GameCode gameCode = options.GetGameCode();
-                LineRelInfo info = LineLookup.GetInfo(gameCode);
+                LineRelInfo info = LineRelLookup.GetInfo(gameCode);
 
                 using var file = File.Open(inputFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
                 using var reader = new EndianBinaryReader(file, Line.endianness);
@@ -155,7 +155,7 @@ namespace Manifold.GFZCLI
             var fileWrite = () =>
             {
                 GameCode gameCode = options.GetGameCode();
-                var lookup = LineLookup.GetInfo(gameCode);
+                var lookup = LineRelLookup.GetInfo(gameCode);
                 using var stream = LineUtility.Crypt(inputFile, lookup);
                 using var writer = File.Create(outputFile);
                 writer.Write(stream.ToArray());
