@@ -1,7 +1,7 @@
 ﻿using GameCube.DiskImage;
 using GameCube.GFZ;
 using GameCube.GFZ.CarData;
-using GameCube.GFZ.GeneralGameData;
+using GameCube.GFZ.GameData;
 using GameCube.GFZ.LineREL;
 using GameCube.GFZ.LZ;
 using Manifold.IO;
