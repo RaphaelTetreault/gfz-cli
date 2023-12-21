@@ -64,7 +64,7 @@ namespace Manifold.GFZCLI
         ///     
         /// </summary>
         [Option(Args.Cup, HelpText = Help.Cup)]
-        public GameCube.GFZ.LineREL.Cup Cup { get; set; }
+        public GameCube.GFZ.GameData.Cup Cup { get; set; }
 
         /// <summary>
         ///     

@@ -2,7 +2,7 @@
 using GameCube.AmusementVision;
 using GameCube.DiskImage;
 using GameCube.GFZ;
-using GameCube.GFZ.LineREL;
+using GameCube.GFZ.GameData;
 using GameCube.GFZ.Stage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
