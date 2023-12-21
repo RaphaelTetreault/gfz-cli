@@ -7,20 +7,20 @@
         arc_decompress,
         arc_compress,
 
-        auto_rename_gci,
+        auto_rename_gci, // NOT IMPLEMENTED
 
-        cardata_bin_to_tsv,
-        cardata_tsv_to_bin,
+        cardata_from_tsv,
+        cardata_to_tsv,
 
         extract_iso_files,
 
-        emblem_bin_to_image,
+        emblem_gci_from_image,
         emblem_gci_to_image,
-        image_to_emblem_bin,
-        image_to_emblem_gci,
+        emblems_bin_from_images,
+        emblems_bin_to_images,
 
-        fmi_to_plaintext,
         fmi_from_plaintext,
+        fmi_to_plaintext,
 
         gci_extract_ghost,
 

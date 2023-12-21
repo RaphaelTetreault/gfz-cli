@@ -64,15 +64,15 @@ namespace Manifold.GFZCLI
                 // GCI Utility
                 //case GfzCliAction.auto_rename_gci: ActionsGCI.RenameGCI(options); break;
                 // CARDATA
-                case GfzCliAction.cardata_bin_to_tsv: ActionsCarData.CarDataBinToTsv(options); break;
-                case GfzCliAction.cardata_tsv_to_bin: ActionsCarData.CarDataTsvToBin(options); break;
+                case GfzCliAction.cardata_to_tsv: ActionsCarData.CarDataBinToTsv(options); break;
+                case GfzCliAction.cardata_from_tsv: ActionsCarData.CarDataTsvToBin(options); break;
                 // ISO
                 case GfzCliAction.extract_iso_files: ActionsISO.IsoExtractAll(options); break;
                 // EMBLEM
-                case GfzCliAction.emblem_bin_to_image: ActionsEmblem.EmblemBinToImage(options); break;
+                case GfzCliAction.emblems_bin_to_images: ActionsEmblem.EmblemBinToImage(options); break;
                 case GfzCliAction.emblem_gci_to_image: ActionsEmblem.EmblemGciToImage(options); break;
-                case GfzCliAction.image_to_emblem_bin: ActionsEmblem.ImageToEmblemBIN(options); break;
-                case GfzCliAction.image_to_emblem_gci: ActionsEmblem.ImageToEmblemGCI(options); break;
+                case GfzCliAction.emblems_bin_from_images: ActionsEmblem.ImageToEmblemBIN(options); break;
+                case GfzCliAction.emblem_gci_from_image: ActionsEmblem.ImageToEmblemGCI(options); break;
                 // FMI
                 case GfzCliAction.fmi_to_plaintext: ActionsFMI.FmiToPlainText(options); break;
                 case GfzCliAction.fmi_from_plaintext: ActionsFMI.FmiFromPlaintext(options); break;
