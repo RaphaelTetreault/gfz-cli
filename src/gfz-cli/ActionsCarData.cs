@@ -1,6 +1,7 @@
 ﻿using GameCube.GFZ.CarData;
 using GameCube.GFZ.LZ;
 using Manifold.IO;
+using Manifold.Text.Tables;
 using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 
@@ -38,8 +39,11 @@ namespace Manifold.GFZCLI
             //
             var fileWrite = () =>
             {
-                using (var writer = new StreamWriter(File.Create(outputFile)))
-                    carData.Serialize(writer);
+                TableCollection tables = new TableCollection();
+                carData.AddToTables(tables);
+
+                //using var writer = new StreamWriter(File.Create(outputFile));
+                tables.ToFile(outputFile, TableEncodingTSV.Encoding);
             };
             var info = new FileWriteInfo()
             {

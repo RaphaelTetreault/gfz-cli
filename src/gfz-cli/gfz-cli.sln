@@ -61,6 +61,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.GCI", "..\..\l
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.GameData", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GameData\GameCube.GFZ.GameData.csproj", "{747D935F-DE7D-422B-93B4-A007A2F68DDE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manifold.Text.Tables", "..\..\libs\Manifold.Core\src\Manifold.Text.Tables\Manifold.Text.Tables.csproj", "{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -301,6 +303,14 @@ Global
 		{747D935F-DE7D-422B-93B4-A007A2F68DDE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{747D935F-DE7D-422B-93B4-A007A2F68DDE}.Release|x64.ActiveCfg = Release|Any CPU
 		{747D935F-DE7D-422B-93B4-A007A2F68DDE}.Release|x64.Build.0 = Release|Any CPU
+		{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}.Debug|x64.Build.0 = Debug|Any CPU
+		{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}.Release|x64.ActiveCfg = Release|Any CPU
+		{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
