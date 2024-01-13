@@ -30,7 +30,7 @@
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Cheats\GameCube.GFZ.Cheats.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Emblem\GameCube.GFZ.Emblem.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.FMI\GameCube.GFZ.FMI.csproj" />
-    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GeneralGameData\GameCube.GFZ.GeneralGameData.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GameData\GameCube.GFZ.GameData.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Ghosts\GameCube.GFZ.Ghosts.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GMA\GameCube.GFZ.GMA.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.LZ\GameCube.GFZ.LZ.csproj" />
