@@ -82,7 +82,7 @@ namespace Manifold.GFZCLI
         ///     
         /// </summary>
         [Option(Args.UsingFilePath, HelpText = Help.UsingFilePath)]
-        public string UsingFilePath { get; set; }
+        public string Value { get; set; }
 
         /// <summary>
         ///     
@@ -96,11 +96,5 @@ namespace Manifold.GFZCLI
         [Option(Args.VenueIndex, HelpText = Help.VenueIndex)]
         public byte VenueIndex { get; set; }
         // TODO: use Venue enum
-
-        /// <summary>
-        ///     
-        /// </summary>
-        [Option(Args.Value, HelpText = Help.Value)]
-        public string Value { get; set; }
     }
 }

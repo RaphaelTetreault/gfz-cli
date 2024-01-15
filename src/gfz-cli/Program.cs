@@ -64,6 +64,8 @@ namespace Manifold.GFZCLI
                 // CARDATA
                 case GfzCliAction.cardata_from_tsv: ActionsCarData.CarDataFromTsv(options); break;
                 case GfzCliAction.cardata_to_tsv: ActionsCarData.CarDataToTsv(options); break;
+                // COLICOURSE
+                case GfzCliAction.colicourse_patch_fog: ActionsColiCourse.PatchFog(options); break;
                 // ISO
                 case GfzCliAction.extract_iso: ActionsISO.IsoExtractAll(options); break;
                     // TODO: Extract ./files/ only
@@ -106,22 +108,21 @@ namespace Manifold.GFZCLI
                 //case GfzCliAction.tpl_pack: TplPack(options); break;
 
                 // UNSET
-                case GfzCliAction.none:
-                    {
-                        string msg = $"Could not parse action '{options.ActionStr}'.";
-                        Terminal.WriteLine(msg);
-                        Terminal.WriteLine();
-                        // Force show --help menu
-                        Parser.Default.ParseArguments<Options>(Help).WithParsed(ExecuteAction);
-                    }
-                    break;
+                case GfzCliAction.none: ForceShowHelp(); break;
 
+                // ANYTHING ELSE
                 default:
                     {
                         string msg = $"Unimplemented command {options.Action}.";
                         throw new NotImplementedException(msg);
                     }
             }
+        }
+
+        public static void ForceShowHelp()
+        {
+            // Force show --help menu
+            Parser.Default.ParseArguments<Options>(Help).WithParsed(ExecuteAction);
         }
     }
 }

@@ -4,11 +4,13 @@ using GameCube.DiskImage;
 using GameCube.GFZ;
 using GameCube.GFZ.GameData;
 using GameCube.GFZ.Stage;
+using Manifold.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
+using System.Globalization;
 using System.IO;
 
 namespace Manifold.GFZCLI
@@ -17,6 +19,7 @@ namespace Manifold.GFZCLI
         IGfzCliOptions,
         IImageResizeOptions,
         ILineRelOptions,
+        IStageOptions,
         ITplOptions
     {
         // IGfzCliOptions
@@ -68,8 +71,21 @@ namespace Manifold.GFZCLI
         public byte PilotNumber { get; set; } = 255; // default to invalid state
         public byte VenueIndex { get; set; } = 254; // default to invalid state
         public string Value { get; set; } = string.Empty;
-        public string UsingFilePath { get; set; } = string.Empty;
 
+
+        // IStageOptions
+        public float FogViewRangeNear { get; set; } = -1f; // values below 0 to be ignored
+        public float FogViewRangeFar { get; set; } = -1f; // values below 0 to be ignored
+        public string FogInterpolationModeStr { get; set; } = uint.MaxValue.ToString("X8");
+        public FogType FogInterpolationMode => GetEnum<FogType>(FogInterpolationModeStr);
+        public string ColorRedStr { get; set; } = string.Empty;
+        public string ColorGreenStr { get; set; } = string.Empty;
+        public string ColorBlueStr { get; set; } = string.Empty;
+        public string ColorAlphaStr { get; set; } = string.Empty;
+        public byte ColorRed => GetColorComponent(ColorRedStr);
+        public byte ColorGreen => GetColorComponent(ColorGreenStr);
+        public byte ColorBlue => GetColorComponent(ColorBlueStr);
+        public byte ColorAlpha => GetColorComponent(ColorAlphaStr);
 
 
         /// <summary>
@@ -182,7 +198,7 @@ namespace Manifold.GFZCLI
                 // with bitwise OR if it doens't automatically except hex and numbers
 
                 string componentLabel = data[0];
-                byte componentValue = byte.Parse(data[1]);
+                byte componentValue = byte.Parse(data[1], System.Globalization.NumberStyles.HexNumber);
 
                 switch (componentLabel)
                 {
@@ -218,6 +234,41 @@ namespace Manifold.GFZCLI
         {
             GameCode gameCode = GetGameCode(AvGame, SerializationRegion);
             return gameCode;
+        }
+
+        public byte GetColorComponent(string colorValue)
+        {
+            byte byteValue;
+            float floatValue;
+            bool success;
+
+            // Parse as byte (0-255)
+            success = byte.TryParse(colorValue, out byteValue);
+            if (success)
+                return byteValue;
+
+            // Parse as byte (0-FF)
+            success = byte.TryParse(colorValue, NumberStyles.HexNumber, CultureInfo.DefaultThreadCurrentCulture, out byteValue);
+            if (success)
+                return byteValue;
+
+            // Parse as float
+            success = float.TryParse(colorValue, out floatValue);
+            if (success)
+            {
+                floatValue = Math.Clamp(floatValue, 0, 1);
+                byteValue = (byte)(floatValue * byte.MaxValue);
+                return byteValue;
+            }
+
+            string msg = $"Could not parse color value \"{colorValue}\".";
+            throw new ArgumentException(msg);
+        }
+        public TEnum GetEnum<TEnum>(string value)
+            where TEnum : struct
+        {
+            TEnum @enum = Enum.Parse<TEnum>(value, true);
+            return @enum;
         }
     }
 }

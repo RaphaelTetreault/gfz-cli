@@ -371,12 +371,12 @@ namespace Manifold.GFZCLI
         private static void PatchCarData(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
         {
             // Assert file path is good
-            if (string.IsNullOrWhiteSpace(options.UsingFilePath))
+            if (string.IsNullOrWhiteSpace(options.Value))
             {
                 string msg = $"Argument --{ILineRelOptions.Args.UsingFilePath} must be set to a file path!";
                 throw new ArgumentException(msg);
             }
-            FilePath carDataPath = new(options.UsingFilePath);
+            FilePath carDataPath = new(options.Value);
             carDataPath.ThrowIfDoesNotExist();
 
             // Open CarData if possible

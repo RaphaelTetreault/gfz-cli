@@ -12,6 +12,8 @@
         cardata_from_tsv,
         cardata_to_tsv,
 
+        colicourse_patch_fog,
+
         extract_iso,
 
         emblem_gci_from_image,
