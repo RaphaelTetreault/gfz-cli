@@ -13,6 +13,7 @@
         cardata_to_tsv,
 
         colicourse_patch_fog,
+        colicourse_patch_object_render_flags,
 
         extract_iso,
 

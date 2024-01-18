@@ -36,14 +36,11 @@ namespace Manifold.GFZCLI
             using (var reader = new EndianBinaryReader(fileStream, CarData.endianness))
                 carData.Deserialize(reader);
 
-            //
             var fileWrite = () =>
             {
-                TableCollection tables = new TableCollection();
-                carData.AddToTables(tables);
-
-                //using var writer = new StreamWriter(File.Create(outputFile));
-                tables.ToFile(outputFile, TableEncodingTSV.Encoding);
+                TableCollection tableCollection = new();
+                tableCollection.Add(carData.CreateTables());
+                tableCollection.ToFile(outputFile, TableEncodingTSV.Encoding);
             };
             var info = new FileWriteInfo()
             {

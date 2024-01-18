@@ -66,6 +66,7 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.cardata_to_tsv: ActionsCarData.CarDataToTsv(options); break;
                 // COLICOURSE
                 case GfzCliAction.colicourse_patch_fog: ActionsColiCourse.PatchFog(options); break;
+                case GfzCliAction.colicourse_patch_object_render_flags: ActionsColiCourse.PatchFog(options); break;
                 // ISO
                 case GfzCliAction.extract_iso: ActionsISO.IsoExtractAll(options); break;
                     // TODO: Extract ./files/ only

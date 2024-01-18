@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Manifold.GFZCLI
 {
     public static class GfzCliEnumParser
     {
-        public static TEnum ParseUnderscoreToDash<TEnum>(string value) where TEnum : struct,
-            IComparable, IConvertible, IFormattable
+        public static TEnum ParseUnderscoreToDash<TEnum>(string value)
+            where TEnum : struct, IComparable, IConvertible, IFormattable
         {
             string sanitizedValue = value.Replace('-', '_');
             bool success = Enum.TryParse(sanitizedValue, true, out TEnum enumValue);
@@ -20,8 +16,8 @@ namespace Manifold.GFZCLI
             return enumValue;
         }
 
-        public static TEnum ParseDashRemoved<TEnum>(string value) where TEnum : struct,
-            IComparable, IConvertible, IFormattable
+        public static TEnum ParseDashRemoved<TEnum>(string value)
+            where TEnum : struct, IComparable, IConvertible, IFormattable
         {
             string sanitizedValue = value.Replace("-", "");
             bool success = Enum.TryParse(sanitizedValue, true, out TEnum enumValue);

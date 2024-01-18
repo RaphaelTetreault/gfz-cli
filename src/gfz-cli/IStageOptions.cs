@@ -14,6 +14,8 @@ namespace Manifold.GFZCLI
             public const string ColorGreen = "color-g";
             public const string ColorBlue = "color-b";
             public const string ColorAlpha = "color-a";
+            public const string Name = "name";
+            public const string SetFlagsOn = "set-flags-on";
         }
 
         internal static class Help
@@ -25,6 +27,8 @@ namespace Manifold.GFZCLI
             public const string ColorGreen = "The color's green value.";
             public const string ColorBlue = "The color's blue value.";
             public const string ColorAlpha = "The color's alpha value.";
+            public const string Name = "The name of the target.";
+            public const string SetFlagsOn = "Whether to set flags on or off (true or flase).";
         }
 
 
@@ -75,6 +79,14 @@ namespace Manifold.GFZCLI
         [Option(Args.ColorAlpha, HelpText = Help.ColorAlpha)]
         public string ColorAlphaStr { get; set; }
         public byte ColorAlpha { get; }
+
+
+        [Option(Args.Name, HelpText = Help.Name)]
+        public string Name { get; set; }
+
+
+        [Option(Args.SetFlagsOn, HelpText = Help.SetFlagsOn)]
+        public bool SetFlagsOn { get; set; }
 
     }
 }

@@ -82,6 +82,8 @@ namespace Manifold.GFZCLI
         public string ColorGreenStr { get; set; } = string.Empty;
         public string ColorBlueStr { get; set; } = string.Empty;
         public string ColorAlphaStr { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public bool SetFlagsOn { get; set; } = true;
         public byte ColorRed => GetColorComponent(ColorRedStr);
         public byte ColorGreen => GetColorComponent(ColorGreenStr);
         public byte ColorBlue => GetColorComponent(ColorBlueStr);
@@ -265,7 +267,7 @@ namespace Manifold.GFZCLI
             throw new ArgumentException(msg);
         }
         public TEnum GetEnum<TEnum>(string value)
-            where TEnum : struct
+            where TEnum : struct, IComparable, IConvertible, IFormattable
         {
             TEnum @enum = Enum.Parse<TEnum>(value, true);
             return @enum;
