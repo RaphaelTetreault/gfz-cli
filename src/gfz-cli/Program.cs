@@ -66,7 +66,7 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.cardata_to_tsv: ActionsCarData.CarDataToTsv(options); break;
                 // COLICOURSE
                 case GfzCliAction.colicourse_patch_fog: ActionsColiCourse.PatchFog(options); break;
-                case GfzCliAction.colicourse_patch_object_render_flags: ActionsColiCourse.PatchFog(options); break;
+                case GfzCliAction.colicourse_patch_object_render_flags: ActionsColiCourse.PatchSceneObjectDynamicRenderFlags(options); break;
                 // ISO
                 case GfzCliAction.extract_iso: ActionsISO.IsoExtractAll(options); break;
                     // TODO: Extract ./files/ only
@@ -81,6 +81,8 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.fmi_to_plaintext: ActionsFMI.FmiToPlainText(options); break;
                 // GCI
                 case GfzCliAction.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
+                // GMA
+                case GfzCliAction.gma_patch_submesh_render_flags: ActionsGMA.PatchSubmeshRenderFlags(options); break;
                 // LIVE CAMERA STAGE
                 case GfzCliAction.live_camera_stage_from_tsv: ActionsLiveCameraStage.LiveCameraStageFromTsv(options); break;
                 case GfzCliAction.live_camera_stage_to_tsv: ActionsLiveCameraStage.LiveCameraStageToTsv(options); break;

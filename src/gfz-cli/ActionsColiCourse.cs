@@ -20,15 +20,21 @@ namespace Manifold.GFZCLI
 
             var fileWrite = () =>
             {
+                // Copy input to output if needed
+                CopyInputToOutputIfNotSamePath(inputPath, outputPath);
+                const FileMode fileMode = FileMode.OpenOrCreate;
+                const FileAccess fileAccess = FileAccess.ReadWrite;
+                const FileShare fileShare = FileShare.ReadWrite;
+
                 // Read data
                 Scene scene = new Scene();
                 scene.FileName = inputPath.Name;
-                using EndianBinaryReader reader = new(File.OpenRead(inputPath), Scene.endianness);
+                using EndianBinaryReader reader = new(File.Open(inputPath, fileMode, fileAccess, fileShare), Scene.endianness);
                 scene.Deserialize(reader);
                 reader.Close();
 
                 // Write (patch) to file
-                using EndianBinaryWriter writer = new(File.OpenWrite(inputPath), scene.Endianness);
+                using EndianBinaryWriter writer = new(File.Open(outputPath, fileMode, fileAccess, fileShare), scene.Endianness);
 
                 // Modify existin file (in the future, re-serialize file)
                 PatchFog(options, scene, writer);
@@ -45,13 +51,13 @@ namespace Manifold.GFZCLI
         public static void PatchFog(Options options, Scene scene, EndianBinaryWriter writer)
         {
             // OPTIONAL: Get parameters and defaults
-            FogType fogInterpolationMode = (uint)options.FogInterpolationMode == 0xFFFFFFFF
+            FogType fogInterpolationMode = (uint)options.FogInterpolationMode == uint.MaxValue
                 ? scene.fog.Interpolation
                 : options.FogInterpolationMode;
-            float fogViewRangeNear = options.FogViewRangeNear < 0
+            float fogViewRangeNear = options.FogViewRangeNear == float.MaxValue
                 ? scene.fog.FogRange.near
                 : options.FogViewRangeNear;
-            float fogViewRangeFar = options.FogViewRangeFar < 0
+            float fogViewRangeFar = options.FogViewRangeFar == float.MinValue
                 ? scene.fog.FogRange.far
                 : options.FogViewRangeFar;
             // Get color value
@@ -134,12 +140,15 @@ namespace Manifold.GFZCLI
             string name = options.Name;
             ObjectRenderFlags0x00 renderFlags = options.GetEnum<ObjectRenderFlags0x00>(options.Value);
 
+            bool foundMatch = false;
             foreach (SceneObjectDynamic dynamicSceneObject in scene.dynamicSceneObjects)
             {
                 if (dynamicSceneObject.Name != name)
                     continue;
 
-                if (options.SetFlagsOn)
+                foundMatch = true;
+
+                if (!options.SetFlagsOff)
                     dynamicSceneObject.ObjectRenderFlags0x00 |= renderFlags;
                 else
                     dynamicSceneObject.ObjectRenderFlags0x00 &= ~renderFlags;
@@ -148,6 +157,10 @@ namespace Manifold.GFZCLI
                 writer.JumpToAddress(ptr);
                 writer.Write(dynamicSceneObject);
             }
+
+            // TODO: make a better message, use color. Add occurrence count?
+            if (!foundMatch)
+            Terminal.WriteLine($"Did not find match for {name}");
         }
 
     }

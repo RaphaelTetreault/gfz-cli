@@ -74,16 +74,16 @@ namespace Manifold.GFZCLI
 
 
         // IStageOptions
-        public float FogViewRangeNear { get; set; } = -1f; // values below 0 to be ignored
-        public float FogViewRangeFar { get; set; } = -1f; // values below 0 to be ignored
-        public string FogInterpolationModeStr { get; set; } = uint.MaxValue.ToString("X8");
+        public float FogViewRangeNear { get; set; } = float.MaxValue;
+        public float FogViewRangeFar { get; set; } = float.MinValue;
+        public string FogInterpolationModeStr { get; set; } = uint.MaxValue.ToString();
         public FogType FogInterpolationMode => GetEnum<FogType>(FogInterpolationModeStr);
         public string ColorRedStr { get; set; } = string.Empty;
         public string ColorGreenStr { get; set; } = string.Empty;
         public string ColorBlueStr { get; set; } = string.Empty;
         public string ColorAlphaStr { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public bool SetFlagsOn { get; set; } = true;
+        public bool SetFlagsOff { get; set; }
         public byte ColorRed => GetColorComponent(ColorRedStr);
         public byte ColorGreen => GetColorComponent(ColorGreenStr);
         public byte ColorBlue => GetColorComponent(ColorBlueStr);

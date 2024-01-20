@@ -81,7 +81,7 @@ namespace Manifold.GFZCLI
         /// <summary>
         ///     
         /// </summary>
-        [Option(Args.UsingFilePath, HelpText = Help.UsingFilePath)]
+        [Option(Args.Value, HelpText = Help.Value)]
         public string Value { get; set; }
 
         /// <summary>

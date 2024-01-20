@@ -27,6 +27,8 @@
 
         gci_extract_ghost,
 
+        gma_patch_submesh_render_flags,
+
         live_camera_stage_to_tsv,
         live_camera_stage_from_tsv,
 
