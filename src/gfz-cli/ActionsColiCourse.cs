@@ -66,21 +66,23 @@ namespace Manifold.GFZCLI
             byte b = options.ColorBlue;
 
             // Create new fog
-            Fog fog = new();
-            fog.Interpolation = fogInterpolationMode;
-            fog.FogRange = new ViewRange(fogViewRangeNear, fogViewRangeFar);
-            fog.ColorRGB = new float3(r, g, b) / 255f;
+            Fog fog = new()
+            {
+                Interpolation = fogInterpolationMode,
+                FogRange = new ViewRange(fogViewRangeNear, fogViewRangeFar),
+                ColorRGB = new float3(r, g, b) / 255f,
+            };
             // Create curves from values
             FogCurves fogCurves = fog.ToFogCurves();
 
-            // Patch existing file
+            // Patch existing values
             writer.JumpToAddress(scene.fog.GetPointer());
             writer.Write(fog);
             // Fog curves
             {
                 bool hasFogCurves = scene.fogCurves is not null;
 
-                // Write anim data
+                // Get pointer to data or create new pointer
                 Pointer fogCurvesAnimationsPtr = hasFogCurves
                     ? scene.fogCurves!.animationCurves[0].GetPointer()
                     : writer.BaseStream.Length;
@@ -89,18 +91,18 @@ namespace Manifold.GFZCLI
                 foreach (var animationCurve in fogCurves.animationCurves)
                     writer.Write(animationCurve);
 
-                // 
+                // Get pointer to data or create new pointer
                 Pointer fogCurvesPtr = hasFogCurves
                     ? scene.fogCurves!.GetPointer()
                     : writer.BaseStream.Length;
+                // Write out fog curves (pointers to above animation data)
                 writer.JumpToAddress(fogCurvesPtr);
                 writer.Write(fogCurves);
 
-                // Patch address in header
+                // Patch FogCurves address in header
                 writer.JumpToAddress(0x80);
                 writer.Write(fogCurvesPtr);
             }
-
         }
 
         public static void PatchSceneObjectDynamicRenderFlags(Options options)
