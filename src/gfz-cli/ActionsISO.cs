@@ -30,10 +30,8 @@ namespace Manifold.GFZCLI
             string isoPath = options.InputPath;
             using (var isoFile = File.OpenRead(isoPath))
             {
-                using (var isoReader = new EndianBinaryReader(isoFile, DiskImage.endianness))
-                {
-                    iso.Deserialize(isoReader);
-                }
+                using var isoReader = new EndianBinaryReader(isoFile, DiskImage.endianness);
+                iso.Deserialize(isoReader);
             }
 
             // Run tasks and wait for completion
