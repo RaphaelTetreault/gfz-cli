@@ -10,7 +10,7 @@ namespace Manifold.GFZCLI
         public const ConsoleColor OverwriteFileColor = ConsoleColor.DarkYellow;
         public const ConsoleColor WriteFileColor = ConsoleColor.Green;
         public const ConsoleColor SubTaskColor = ConsoleColor.DarkGray;
-        public static readonly string[] Help = new string[] { "--help" };
+        public static readonly string[] HelpArg = new string[] { "--help" };
 
         /// <summary>
         /// 
@@ -31,7 +31,7 @@ namespace Manifold.GFZCLI
                 Terminal.WriteLine(msg, ConsoleColor.Black, ConsoleColor.Red);
                 Terminal.WriteLine();
                 // Force help page
-                args = Help;
+                args = HelpArg;
             }
 
             // Run program with options
@@ -125,7 +125,7 @@ namespace Manifold.GFZCLI
         public static void ForceShowHelp()
         {
             // Force show --help menu
-            Parser.Default.ParseArguments<Options>(Help).WithParsed(ExecuteAction);
+            Parser.Default.ParseArguments<Options>(HelpArg).WithParsed(ExecuteAction);
         }
     }
 }
