@@ -39,7 +39,6 @@
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Stage\GameCube.GFZ.Stage.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.TPL\GameCube.GFZ.TPL.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ\GameCube.GFZ.csproj" />
-    <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.IO.UnityMath\Manifold.IO.UnityMath.csproj" />
     <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.IO\Manifold.IO.csproj" />
     <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.Text.Tables\Manifold.Text.Tables.csproj" />
     <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold\Manifold.csproj" />
