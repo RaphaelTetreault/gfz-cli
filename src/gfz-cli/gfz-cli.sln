@@ -11,13 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.AmusementVision.AR
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.AmusementVision.LZ", "..\..\libs\GameCube.AmusementVision\src\GameCube.AmusementVision.LZ\GameCube.AmusementVision.LZ.csproj", "{3E543F59-EF12-483E-8286-96E09CB6D867}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.Mathematics", "..\..\libs\Unity.Mathematics\src\Unity.Mathematics\Unity.Mathematics.csproj", "{19810344-7387-4155-935F-BDD5CC61F0BF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manifold", "..\..\libs\Manifold.Core\src\Manifold\Manifold.csproj", "{CBB62548-058F-42ED-A7BA-58A8D6025E9F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manifold.IO", "..\..\libs\Manifold.Core\src\Manifold.IO\Manifold.IO.csproj", "{0C902A09-00B7-4782-9F05-0912139B3E41}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manifold.IO.UnityMath", "..\..\libs\Manifold.Core\src\Manifold.IO.UnityMath\Manifold.IO.UnityMath.csproj", "{19F8B708-E602-4C60-9DFC-5600BEB1019E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.Cheats", "..\..\libs\GameCube.Core\src\GameCube.Cheats\GameCube.Cheats.csproj", "{33E47C6D-BD8C-4171-835C-8AFD96BE2474}"
 EndProject
@@ -103,14 +99,6 @@ Global
 		{3E543F59-EF12-483E-8286-96E09CB6D867}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E543F59-EF12-483E-8286-96E09CB6D867}.Release|x64.ActiveCfg = Release|Any CPU
 		{3E543F59-EF12-483E-8286-96E09CB6D867}.Release|x64.Build.0 = Release|Any CPU
-		{19810344-7387-4155-935F-BDD5CC61F0BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{19810344-7387-4155-935F-BDD5CC61F0BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{19810344-7387-4155-935F-BDD5CC61F0BF}.Debug|x64.ActiveCfg = Debug|x64
-		{19810344-7387-4155-935F-BDD5CC61F0BF}.Debug|x64.Build.0 = Debug|x64
-		{19810344-7387-4155-935F-BDD5CC61F0BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{19810344-7387-4155-935F-BDD5CC61F0BF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{19810344-7387-4155-935F-BDD5CC61F0BF}.Release|x64.ActiveCfg = Release|x64
-		{19810344-7387-4155-935F-BDD5CC61F0BF}.Release|x64.Build.0 = Release|x64
 		{CBB62548-058F-42ED-A7BA-58A8D6025E9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CBB62548-058F-42ED-A7BA-58A8D6025E9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBB62548-058F-42ED-A7BA-58A8D6025E9F}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -127,14 +115,6 @@ Global
 		{0C902A09-00B7-4782-9F05-0912139B3E41}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0C902A09-00B7-4782-9F05-0912139B3E41}.Release|x64.ActiveCfg = Release|Any CPU
 		{0C902A09-00B7-4782-9F05-0912139B3E41}.Release|x64.Build.0 = Release|Any CPU
-		{19F8B708-E602-4C60-9DFC-5600BEB1019E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{19F8B708-E602-4C60-9DFC-5600BEB1019E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{19F8B708-E602-4C60-9DFC-5600BEB1019E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{19F8B708-E602-4C60-9DFC-5600BEB1019E}.Debug|x64.Build.0 = Debug|Any CPU
-		{19F8B708-E602-4C60-9DFC-5600BEB1019E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{19F8B708-E602-4C60-9DFC-5600BEB1019E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{19F8B708-E602-4C60-9DFC-5600BEB1019E}.Release|x64.ActiveCfg = Release|Any CPU
-		{19F8B708-E602-4C60-9DFC-5600BEB1019E}.Release|x64.Build.0 = Release|Any CPU
 		{33E47C6D-BD8C-4171-835C-8AFD96BE2474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{33E47C6D-BD8C-4171-835C-8AFD96BE2474}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33E47C6D-BD8C-4171-835C-8AFD96BE2474}.Debug|x64.ActiveCfg = Debug|Any CPU

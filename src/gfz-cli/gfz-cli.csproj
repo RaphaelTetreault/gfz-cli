@@ -43,7 +43,6 @@
     <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.IO\Manifold.IO.csproj" />
     <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.Text.Tables\Manifold.Text.Tables.csproj" />
     <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold\Manifold.csproj" />
-    <ProjectReference Include="..\..\libs\Unity.Mathematics\src\Unity.Mathematics\Unity.Mathematics.csproj" />
   </ItemGroup>
 
 </Project>
