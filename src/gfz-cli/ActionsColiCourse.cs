@@ -1,7 +1,7 @@
 ﻿using GameCube.GFZ.Stage;
 using Manifold.IO;
 using System.IO;
-using Unity.Mathematics;
+using System.Numerics;
 using static Manifold.GFZCLI.GfzCliUtilities;
 
 namespace Manifold.GFZCLI
@@ -70,7 +70,7 @@ namespace Manifold.GFZCLI
             {
                 Interpolation = fogInterpolationMode,
                 FogRange = new ViewRange(fogViewRangeNear, fogViewRangeFar),
-                ColorRGB = new float3(r, g, b) / 255f,
+                ColorRGB = new Vector3(r, g, b) / 255f,
             };
             // Create curves from values
             FogCurves fogCurves = fog.ToFogCurves();
