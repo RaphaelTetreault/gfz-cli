@@ -83,6 +83,10 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
                 // GMA
                 case GfzCliAction.gma_patch_submesh_render_flags: ActionsGMA.PatchSubmeshRenderFlags(options); break;
+                // IO - IN-OUT TESTS
+                case GfzCliAction.io_gma: ActionsIO.InOutGMA(options); break;
+                case GfzCliAction.io_scene: ActionsIO.InOutScene(options); break;
+                case GfzCliAction.io_tpl: ActionsIO.InOutTPL(options); break;
                 // LIVE CAMERA STAGE
                 case GfzCliAction.live_camera_stage_from_tsv: ActionsLiveCameraStage.LiveCameraStageFromTsv(options); break;
                 case GfzCliAction.live_camera_stage_to_tsv: ActionsLiveCameraStage.LiveCameraStageToTsv(options); break;
