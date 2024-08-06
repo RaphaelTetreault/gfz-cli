@@ -11,18 +11,21 @@ namespace Manifold.GFZCLI
     /// </summary>
     public class FilePath
     {
+        // CONSTANTS
         private const string MatchEverythingBeforePeriod = @"[^.]*";
         private const string MatchEverythingAfterPeriod = @"\..*";
         private const string MatchEverythingAfterLastSlash = @"([^\/]+$)";
 
-        private string _name = string.Empty;
-        private string _directory = string.Empty;
-        //private readonly List<string> _directories = new List<string>();
-        private readonly List<string> _extensionsList = new List<string>();
+        // MEMBERS
+        private string fileName = string.Empty;
+        private string directory = string.Empty;
+        //private readonly List<string> _direcotries = new();
+        private readonly List<string> _extensionsList = new();
 
+        // PROPERTIES
         public string NameAndExtensions => Name + GetExtensions();
-        public string Name { get => _name; }
-        public string Directory { get => _directory; }
+        public string Name { get => fileName; }
+        public string Directory { get => directory; }
         public string Extension { get => GetExtension(); }
         public string[] Extensions => _extensionsList.ToArray();
         public bool Exists => File.Exists(FullPath);
@@ -37,19 +40,23 @@ namespace Manifold.GFZCLI
             }
         }
 
+        // CONSTRUCTORS
         public FilePath() { }
         public FilePath(string filePath)
         {
-            _name = GetFileNameFromPath(filePath);
+            fileName = GetFileNameFromPath(filePath);
             SetExtensions(GetExtensionsFromPath(filePath));
-            _directory = GetDirectoryFromPath(filePath);
+            directory = GetDirectoryFromPath(filePath);
         }
 
+        //OPERATORS
         public static implicit operator string(FilePath file)
         {
             return file.ToString();
         }
 
+
+        // METHODS
         private static string EnforceUnixPath(string path)
         {
             path = path.Replace("\\", "/");
@@ -187,23 +194,23 @@ namespace Manifold.GFZCLI
             directory = CleanRelativeDirectory(directory);
 
             bool doAppendSlash =
-                !string.IsNullOrWhiteSpace(_directory) && // Only append if root dir exists
-                directory.Length > 0 &&                   // Don't check index[0] if length == 0
-                directory[0] != '/';                      // Only append slash if not present
+                !string.IsNullOrWhiteSpace(this.directory) &&   // Only append if root dir exists
+                directory.Length > 0 &&                         // Don't check index[0] if length == 0
+                directory[0] != '/';                            // Only append slash if not present
 
             if (doAppendSlash)
-                _directory += '/';
+                this.directory += '/';
 
-            _directory += directory;
+            this.directory += directory;
         }
         public string PopDirectory()
         {
-            if (string.IsNullOrEmpty(_directory))
+            if (string.IsNullOrEmpty(directory))
                 return string.Empty;
 
-            string topDirectory = Regex.Match(_directory, MatchEverythingAfterLastSlash).ToString();
-            int startIndex = _directory.Length - topDirectory.Length;
-            _directory = _directory.Remove(startIndex - 1);
+            string topDirectory = Regex.Match(directory, MatchEverythingAfterLastSlash).ToString();
+            int startIndex = directory.Length - topDirectory.Length;
+            directory = directory.Remove(startIndex - 1);
 
             return topDirectory;
         }
@@ -216,7 +223,7 @@ namespace Manifold.GFZCLI
                 AppendDirectory(directory);
 
             // Set name
-            _name = GetFileNameFromPath(nameOrRelativePath);
+            fileName = GetFileNameFromPath(nameOrRelativePath);
             // Set extensions
             SetExtensions(GetExtensionsFromPath(nameOrRelativePath));
         }
@@ -227,8 +234,10 @@ namespace Manifold.GFZCLI
         // TODO: SetDirectory(params string[] directories) {} // List<string> ...?
         public bool IsExtension(string extension, bool ignoreCase = true)
         {
-            if (string.IsNullOrEmpty(extension))
+            if (extension == null)
                 return false;
+            if (extension == string.Empty)
+                return true;
 
             bool beginsWithPeriod = extension[0] == '.';
             if (beginsWithPeriod)

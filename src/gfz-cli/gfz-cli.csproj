@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,7 +30,7 @@
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Cheats\GameCube.GFZ.Cheats.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Emblem\GameCube.GFZ.Emblem.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.FMI\GameCube.GFZ.FMI.csproj" />
-    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GeneralGameData\GameCube.GFZ.GeneralGameData.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GameData\GameCube.GFZ.GameData.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Ghosts\GameCube.GFZ.Ghosts.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GMA\GameCube.GFZ.GMA.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.LZ\GameCube.GFZ.LZ.csproj" />
@@ -39,10 +39,9 @@
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Stage\GameCube.GFZ.Stage.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.TPL\GameCube.GFZ.TPL.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ\GameCube.GFZ.csproj" />
-    <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.IO.UnityMath\Manifold.IO.UnityMath.csproj" />
     <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.IO\Manifold.IO.csproj" />
+    <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.Text.Tables\Manifold.Text.Tables.csproj" />
     <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold\Manifold.csproj" />
-    <ProjectReference Include="..\..\libs\Unity.Mathematics\src\Unity.Mathematics\Unity.Mathematics.csproj" />
   </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@ This document provides examples using Windows and calls the `gfz.exe` program. C
 | Operating System | Program Call |
 | ---------------- | ------------ |
 | Windows          | `gfz.exe`    |
-| Linux            | `gfz`        |
+| Linux            | `/gfz`       |
 | macOS            | `gfz`        |
 
 
@@ -24,7 +24,7 @@ If you are unfamiliar with Unix style paths and/or using a command line terminal
 
 ### Wildcards
 
-When using the `--search-pattern` command, you may use the `*` and `?` wildcards.
+When using the `-p`/`--search-pattern` command, you may use the `*` and `?` wildcards.
 
 `*` is the character group wildcard and will match any number of characters.
 
@@ -363,7 +363,7 @@ You must specify the region and serialization formats as they differ between reg
 
 ```shell
 # The default region information and search "*line__.bin"
-gfz.exe linerel-decrypt in/ -search-subdirs --region j
+gfz.exe linerel-decrypt in/ --search-subdirs --region j
 ```
 
 Right now only GX is supported. AX stores the data elsewhere.

@@ -280,5 +280,15 @@ namespace Manifold.GFZCLI
                 return plural;
         }
         public static string Plural(Array array) => Plural(array.Length);
+
+        public static bool CopyInputToOutputIfNotSamePath(string inputPath, string outputPath)
+        {
+            bool isNotSameFile = inputPath != outputPath;
+            if (isNotSameFile)
+            {
+                File.Copy(inputPath, outputPath, true);
+            }
+            return isNotSameFile;
+        }
     }
 }

@@ -4,43 +4,59 @@
     {
         none,
 
-        arc_decompress,
-        arc_compress,
+        arc_unpack,
+        arc_pack,
 
-        auto_rename_gci,
+        auto_rename_gci, // NOT IMPLEMENTED
 
-        cardata_bin_to_tsv,
-        cardata_tsv_to_bin,
+        cardata_from_tsv,
+        cardata_to_tsv,
 
-        extract_iso_files,
+        colicourse_patch_fog,
+        colicourse_patch_object_render_flags,
 
-        emblem_bin_to_image,
+        extract_iso,
+
+        emblem_gci_from_image,
         emblem_gci_to_image,
-        image_to_emblem_bin,
-        image_to_emblem_gci,
+        emblems_bin_from_images,
+        emblems_bin_to_images,
 
-        fmi_to_plaintext,
         fmi_from_plaintext,
+        fmi_to_plaintext,
 
         gci_extract_ghost,
 
-        live_camera_stage_bin_to_tsv,
-        live_camera_stage_tsv_to_bin,
+        gma_patch_submesh_render_flags,
+
+        io_gma,
+        io_scene,
+        io_scene_patch,
+        io_tpl,
+
+        live_camera_stage_to_tsv,
+        live_camera_stage_from_tsv,
 
         lz_compress,
         lz_decompress,
 
-        linerel_bgm,
-        linerel_bgmfl,
-        linerel_bgm_both,
+        linerel_clear_all_course_names,
+        linerel_clear_all_venue_names,
+        linerel_clear_unused_course_names,
+        linerel_clear_unused_venue_names,
         linerel_decrypt,
         linerel_encrypt,
-        linerel_name_stage,
-        linerel_name_venue,
+        linerel_set_bgm,
+        linerel_set_bgmfl,
+        linerel_set_bgm_bgmfl,
+        linerel_set_cardata,
+        linerel_set_course_difficulty,
+        linerel_set_course_name,
+        linerel_set_cup_course,
+        linerel_set_machine_rating,
+        linerel_set_venue,
+        linerel_set_venue_name,
 
         tpl_unpack,
-
-        //
-        dump_hex,
     }
 }

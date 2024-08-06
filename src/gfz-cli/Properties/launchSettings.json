@@ -2,7 +2,8 @@
   "profiles": {
     "gfz-cli": {
       "commandName": "Project",
-      "commandLineArgs": "lz-decompress D:\\gfzj01\\bg\\ D:\\test-gfz\\maybe\\ --search-subdirs --overwrite"
+      "commandLineArgs": "linerel-set-cardata line__.rel --use-file cardata",
+      "workingDirectory": "D:\\github\\gfz-cli\\src\\gfz-cli\\bin\\Debug\\net7.0\\test-cardata"
     },
     "cardata-bin-to-tsv": {
       "commandName": "Project",
@@ -78,7 +79,7 @@
     },
     "rel-patch": {
       "commandName": "Project",
-      "commandLineArgs": "linerel-name-stage D:\\gfzj01\\ -s --stage 1 --value \"Twister Roader\""
+      "commandLineArgs": "linerel-set-difficulty D:\\gfzj01\\ -s --stage 1 --difficulty 10"
     },
     "rel-encrypt": {
       "commandName": "Project",

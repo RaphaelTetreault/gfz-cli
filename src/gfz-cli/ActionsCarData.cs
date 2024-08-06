@@ -1,6 +1,7 @@
 ﻿using GameCube.GFZ.CarData;
 using GameCube.GFZ.LZ;
 using Manifold.IO;
+using Manifold.Text.Tables;
 using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 
@@ -8,7 +9,7 @@ namespace Manifold.GFZCLI
 {
     public static class ActionsCarData
     {
-        public static void CarDataBinToTsv(Options options)
+        public static void CarDataToTsv(Options options)
         {
             // Stop if desired file format is AX
             bool isInvalidFormat = options.SerializeFormat == GameCube.GFZ.Stage.SerializeFormat.AX;
@@ -35,11 +36,11 @@ namespace Manifold.GFZCLI
             using (var reader = new EndianBinaryReader(fileStream, CarData.endianness))
                 carData.Deserialize(reader);
 
-            //
             var fileWrite = () =>
             {
-                using (var writer = new StreamWriter(File.Create(outputFile)))
-                    carData.Serialize(writer);
+                TableCollection tableCollection = new();
+                tableCollection.Add(carData.CreateTables());
+                tableCollection.ToFile(outputFile, TableEncodingTSV.Encoding);
             };
             var info = new FileWriteInfo()
             {
@@ -53,7 +54,7 @@ namespace Manifold.GFZCLI
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
 
-        public static void CarDataTsvToBin(Options options)
+        public static void CarDataFromTsv(Options options)
         {
             // Stop if desired file format is AX
             bool isInvalidFormat = options.SerializeFormat == GameCube.GFZ.Stage.SerializeFormat.AX;

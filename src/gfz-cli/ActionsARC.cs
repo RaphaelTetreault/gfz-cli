@@ -8,7 +8,7 @@ namespace Manifold.GFZCLI
 {
     public static class ActionsARC
     {
-        public static void ArcCompress(Options options)
+        public static void ArcPack(Options options)
         {
             // ARC requires directory as input path
             bool inputNotADirectory = !Directory.Exists(options.InputPath);
@@ -38,7 +38,7 @@ namespace Manifold.GFZCLI
             if (doesNotHaveOutputSpecified)
                 outputFile.PopDirectory();
             outputFile.SetName(fileName);
-            outputFile.AppendExtension(Archive.Extension);
+            outputFile.AppendExtension(ArchiveFile.fileExtension);
 
             Terminal.WriteLine($"ARC: compiling {inputFilePaths.Length} file{Plural(inputFilePaths)} into \"{outputFile}\".");
 
@@ -46,7 +46,7 @@ namespace Manifold.GFZCLI
             arc.FileSystem.AddFiles(inputFilePaths, options.InputPath);
             var fileWrite = () =>
             {
-                using var writer = new EndianBinaryWriter(File.Create(outputFile), Archive.endianness);
+                using var writer = new EndianBinaryWriter(File.Create(outputFile), ArchiveFile.endianness);
                 arc.Serialize(writer);
             };
             var info = new FileWriteInfo()
@@ -62,7 +62,7 @@ namespace Manifold.GFZCLI
         }
 
 
-        public static void ArcDecompress(Options options)
+        public static void ArcUnpack(Options options)
         {
             // Force checking for .ARC only IF there is no defined search pattern
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
@@ -80,12 +80,13 @@ namespace Manifold.GFZCLI
             outputFile.PopExtension();
 
             // Read ARC file
-            var arc = new Archive();
-            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), Archive.endianness))
+            var arcFile = new ArchiveFile();
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), ArchiveFile.endianness))
             {
-                arc.FileName = inputFile;
-                arc.Deserialize(reader);
+                arcFile.FileName = inputFile;
+                arcFile.Deserialize(reader);
             }
+            var arc = arcFile.Value;
 
             // Write ARC contents
             foreach (var file in arc.FileSystem.GetFiles())
@@ -96,11 +97,11 @@ namespace Manifold.GFZCLI
                 fileOutputPath.SetName(file.GetResolvedPath());
                 EnsureDirectoriesExist(fileOutputPath);
 
-                var fileWrite = () =>
+                void FileWrite()
                 {
                     using var writer = File.Create(fileOutputPath);
                     writer.Write(file.Data);
-                };
+                }
                 var info = new FileWriteInfo()
                 {
                     InputFilePath = inputFile,
@@ -108,7 +109,7 @@ namespace Manifold.GFZCLI
                     PrintDesignator = "ARC",
                     PrintActionDescription = "decompressing file",
                 };
-                FileWriteOverwriteHandler(options, fileWrite, info);
+                FileWriteOverwriteHandler(options, FileWrite, info);
             }
         }
 

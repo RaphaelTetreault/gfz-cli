@@ -2,12 +2,15 @@
 using GameCube.AmusementVision;
 using GameCube.DiskImage;
 using GameCube.GFZ;
+using GameCube.GFZ.GameData;
 using GameCube.GFZ.Stage;
+using Manifold.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
+using System.Globalization;
 using System.IO;
 
 namespace Manifold.GFZCLI
@@ -16,6 +19,7 @@ namespace Manifold.GFZCLI
         IGfzCliOptions,
         IImageResizeOptions,
         ILineRelOptions,
+        IStageOptions,
         ITplOptions
     {
         // IGfzCliOptions
@@ -60,9 +64,30 @@ namespace Manifold.GFZCLI
         // LINE REL
         public byte BgmIndex { get; set; } = 254; // default to invalid state
         public byte BgmFinalLapIndex { get; set; } = 254; // default to invalid state
-        public byte StageIndex { get; set; } = 254; // default to invalid state
+        public Cup Cup { get; set; } = (Cup)255; // default to invalid state
+        public byte CupCourseIndex { get; set; } = 254; // default to invalid state
+        public byte Difficulty { get; set; } = 254; // default to invalid state
+        public byte CourseIndex { get; set; } = 254; // default to invalid state
+        public byte PilotNumber { get; set; } = 255; // default to invalid state
+        public byte VenueIndex { get; set; } = 254; // default to invalid state
         public string Value { get; set; } = string.Empty;
 
+
+        // IStageOptions
+        public float FogViewRangeNear { get; set; } = float.MaxValue;
+        public float FogViewRangeFar { get; set; } = float.MinValue;
+        public string FogInterpolationModeStr { get; set; } = uint.MaxValue.ToString();
+        public FogType FogInterpolationMode => GetEnum<FogType>(FogInterpolationModeStr);
+        public string ColorRedStr { get; set; } = string.Empty;
+        public string ColorGreenStr { get; set; } = string.Empty;
+        public string ColorBlueStr { get; set; } = string.Empty;
+        public string ColorAlphaStr { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public bool SetFlagsOff { get; set; }
+        public byte ColorRed => GetColorComponent(ColorRedStr);
+        public byte ColorGreen => GetColorComponent(ColorGreenStr);
+        public byte ColorBlue => GetColorComponent(ColorBlueStr);
+        public byte ColorAlpha => GetColorComponent(ColorAlphaStr);
 
 
         /// <summary>
@@ -175,7 +200,7 @@ namespace Manifold.GFZCLI
                 // with bitwise OR if it doens't automatically except hex and numbers
 
                 string componentLabel = data[0];
-                byte componentValue = byte.Parse(data[1]);
+                byte componentValue = byte.Parse(data[1], System.Globalization.NumberStyles.HexNumber);
 
                 switch (componentLabel)
                 {
@@ -211,6 +236,41 @@ namespace Manifold.GFZCLI
         {
             GameCode gameCode = GetGameCode(AvGame, SerializationRegion);
             return gameCode;
+        }
+
+        public byte GetColorComponent(string colorValue)
+        {
+            byte byteValue;
+            float floatValue;
+            bool success;
+
+            // Parse as byte (0-255)
+            success = byte.TryParse(colorValue, out byteValue);
+            if (success)
+                return byteValue;
+
+            // Parse as byte (0-FF)
+            success = byte.TryParse(colorValue, NumberStyles.HexNumber, CultureInfo.DefaultThreadCurrentCulture, out byteValue);
+            if (success)
+                return byteValue;
+
+            // Parse as float
+            success = float.TryParse(colorValue, out floatValue);
+            if (success)
+            {
+                floatValue = Math.Clamp(floatValue, 0, 1);
+                byteValue = (byte)(floatValue * byte.MaxValue);
+                return byteValue;
+            }
+
+            string msg = $"Could not parse color value \"{colorValue}\".";
+            throw new ArgumentException(msg);
+        }
+        public TEnum GetEnum<TEnum>(string value)
+            where TEnum : struct, IComparable, IConvertible, IFormattable
+        {
+            TEnum @enum = Enum.Parse<TEnum>(value, true);
+            return @enum;
         }
     }
 }

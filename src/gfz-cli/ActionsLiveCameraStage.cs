@@ -8,7 +8,7 @@ namespace Manifold.GFZCLI
     public static class ActionsLiveCameraStage
     {
 
-        public static void LiveCameraStageBinToTsv(Options options)
+        public static void LiveCameraStageToTsv(Options options)
         {
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)
@@ -50,7 +50,7 @@ namespace Manifold.GFZCLI
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
 
-        public static void LiveCameraStageTsvToBin(Options options)
+        public static void LiveCameraStageFromTsv(Options options)
         {
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)

@@ -1,6 +1,3 @@
-[submodule "libs/Unity.Mathematics"]
-	path = libs/Unity.Mathematics
-	url = https://github.com/Unity-Technologies/Unity.Mathematics.git
 [submodule "libs/Manifold.Core"]
 	path = libs/Manifold.Core
 	url = https://github.com/RaphaelTetreault/Manifold.Core.git
