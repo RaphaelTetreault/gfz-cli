@@ -29,6 +29,10 @@
 
         gma_patch_submesh_render_flags,
 
+        io_gma,
+        io_scene,
+        io_tpl,
+
         live_camera_stage_to_tsv,
         live_camera_stage_from_tsv,
 
