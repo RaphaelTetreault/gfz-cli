@@ -14,11 +14,9 @@ namespace Manifold.GFZCLI
         public static void InOutTPL(Options options) => InOutFiles<Tpl>(options, "*.tpl");
         public static void InOutScene(Options options) => InOutFiles<Scene>(options, "COLI_COURSE???");
 
-
         public static void InOutFiles<TFile>(Options options, string searchPattern)
             where TFile : IBinaryFileType, IBinarySerializable, new()
         {
-            // Force checking for .LZ only IF there is no defined search pattern
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)
                 options.SearchPattern = searchPattern;
@@ -56,6 +54,36 @@ namespace Manifold.GFZCLI
                 PrintActionDescription = "re-serializing file",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
+        }
+
+
+        public static void PatchSceneComment(Options options)
+        {
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = "COLI_COURSE???";
+
+            Terminal.WriteLine($"PATCH: patch scene file(s).");
+            int taskCount = DoFileInFileOutTasks(options, PatchSceneComment);
+            Terminal.WriteLine($"PATCH: patch {taskCount} scene file{Plural(taskCount)}.");
+        }
+        public static void PatchSceneComment(Options options, FilePath inputFile, FilePath _)
+        {
+            // Read in file, write out file
+            void filePatch()
+            {
+                using EndianBinaryWriter writer = new(File.OpenWrite(inputFile), Scene.endianness);
+                writer.JumpToAddress(0x130);
+                writer.WritePadding(0xF0, 0x20);
+            }
+            var info = new FileWriteInfo()
+            {
+                InputFilePath = inputFile,
+                OutputFilePath = inputFile,
+                PrintDesignator = "PATCH",
+                PrintActionDescription = "patching scene",
+            };
+            FileWriteOverwriteHandler(options, filePatch, info);
         }
     }
 }

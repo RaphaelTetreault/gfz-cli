@@ -31,6 +31,7 @@
 
         io_gma,
         io_scene,
+        io_scene_patch,
         io_tpl,
 
         live_camera_stage_to_tsv,

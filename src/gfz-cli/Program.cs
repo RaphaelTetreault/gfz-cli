@@ -86,6 +86,7 @@ namespace Manifold.GFZCLI
                 // IO - IN-OUT TESTS
                 case GfzCliAction.io_gma: ActionsIO.InOutGMA(options); break;
                 case GfzCliAction.io_scene: ActionsIO.InOutScene(options); break;
+                case GfzCliAction.io_scene_patch: ActionsIO.PatchSceneComment(options); break;
                 case GfzCliAction.io_tpl: ActionsIO.InOutTPL(options); break;
                 // LIVE CAMERA STAGE
                 case GfzCliAction.live_camera_stage_from_tsv: ActionsLiveCameraStage.LiveCameraStageFromTsv(options); break;
