@@ -59,6 +59,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCube.GFZ.GameData", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manifold.Text.Tables", "..\..\libs\Manifold.Core\src\Manifold.Text.Tables\Manifold.Text.Tables.csproj", "{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manifold.Spline", "..\..\libs\Manifold.Core\src\Manifold.Spline\Manifold.Spline.csproj", "{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -291,6 +293,14 @@ Global
 		{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}.Release|x64.ActiveCfg = Release|Any CPU
 		{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}.Release|x64.Build.0 = Release|Any CPU
+		{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}.Debug|x64.Build.0 = Debug|Any CPU
+		{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}.Release|x64.ActiveCfg = Release|Any CPU
+		{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
