@@ -1,8 +1,11 @@
 # Ignore build.bat files
 [Bb]uild
 [Bb]uilds
-#Local files can be placed here
+# Local files can be placed here
 [Ll]ocal
+# Test files
+[Tt]est
+[Tt]ests
 
 ##############################################################################################
 
