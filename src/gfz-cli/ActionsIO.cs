@@ -12,7 +12,7 @@ namespace Manifold.GFZCLI
     {
         public static void InOutGMA(Options options) => InOutFiles<Gma>(options, "*.gma");
         public static void InOutTPL(Options options) => InOutFiles<Tpl>(options, "*.tpl");
-        public static void InOutScene(Options options) => InOutFiles<Scene>(options, "COLI_COURSE*");
+        public static void InOutScene(Options options) => InOutFiles<Scene>(options, "COLI_COURSE???");
 
 
         public static void InOutFiles<TFile>(Options options, string searchPattern)
@@ -40,6 +40,7 @@ namespace Manifold.GFZCLI
             {
                 // In
                 TFile source = new();
+                source.FileName = inputFile.Name;
                 using EndianBinaryReader reader = new(File.OpenRead(inputFile), source.Endianness);
                 reader.Read(ref source);
 
