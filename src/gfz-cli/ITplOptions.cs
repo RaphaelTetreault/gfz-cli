@@ -25,5 +25,6 @@ namespace Manifold.GFZCLI
 
         [Option(Args.UnpackSaveCorruptedTextures, HelpText = Help.UnpackSaveCorruptedTextures, SetName = Set)]
         public bool TplUnpackSaveCorruptedTextures { get; set; }
+
     }
 }

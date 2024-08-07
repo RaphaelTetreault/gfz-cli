@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using CommandLine.Text;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -19,7 +21,7 @@ namespace Manifold.GFZCLI
         // MEMBERS
         private string fileName = string.Empty;
         private string directory = string.Empty;
-        //private readonly List<string> _direcotries = new();
+        //private readonly List<string> _directories = new();
         private readonly List<string> _extensionsList = new();
 
         // PROPERTIES
@@ -268,5 +270,15 @@ namespace Manifold.GFZCLI
         {
             return FullPath;
         }
+
+        public FilePath Copy()
+        {
+            FilePath copy = new FilePath();
+            copy.fileName = fileName;
+            copy.directory = directory;
+            copy._extensionsList.AddRange(_extensionsList);
+            return copy;
+        }
+
     }
 }

@@ -8,6 +8,10 @@ using System;
 using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 using static Manifold.GFZCLI.GfzCliImageUtilities;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Processors.Transforms;
+using System.Text;
+using SixLabors.ImageSharp.Formats;
 
 namespace Manifold.GFZCLI
 {
@@ -176,6 +180,96 @@ namespace Manifold.GFZCLI
                     Terminal.WriteLine($"Wrote file: {filePath}");
                 }
             }
+        }
+
+
+        public static void TplGenerateMipmaps(Options options)
+        {
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
+                options.SearchPattern = "*.png";
+
+            Terminal.WriteLine("TPL: generating mipmaps.");
+            int taskCount = DoFileInFileOutTasks(options, TplGenerateMipmaps);
+            Terminal.WriteLine($"TPL: done generating mipmaps for {taskCount} file{(taskCount != 1 ? 's' : "")}.");
+        }
+        public static void TplGenerateMipmaps(Options options, FilePath inputFilePath, FilePath outputFilePath)
+        {
+            // Provide this with images of supported type
+            // Warn on types unable to use
+            // Generate max mipmap levels for texture (down to one axis 1px)
+            // Name the file the same as the source but with incrementing levels
+
+            using var sourceImage = File.OpenRead(inputFilePath);
+            try
+            {
+                IImageFormat imageFormat = Image.DetectFormat(sourceImage);
+            }
+            catch (Exception e)
+            {
+                StringBuilder supportedTypes = new StringBuilder();
+                foreach (var type in Enum.GetNames<ImageFormat>())
+                    supportedTypes.Append($" {type}");
+
+                string msg =
+                    $"File {inputFilePath} is invalid {inputFilePath.Extension}. " +
+                    $"Use supported types{supportedTypes}." +
+                    $"\n{e.Message}";
+
+                throw new ArgumentException(msg);
+            }
+
+            //
+            void fileWrite()
+            {
+                using var image = Image.Load(sourceImage);
+                int resizeWidth = image.Width / 2;
+                int resizeHeight = image.Height / 2;
+                IResampler resampler = options.Resampler;
+                ImageEncoder imageEncoder = options.ImageEncoder;
+
+                // File name information
+                int mipmapLevel = 1;
+                StringBuilder builder = new StringBuilder();
+                FilePath outputPath = outputFilePath.Copy();
+                string[] components = outputFilePath.Name.Split('-');
+
+                // Create mipmaps so long as w/h exists
+                while (resizeWidth > 0 && resizeHeight > 0)
+                {
+                    // Create resized clone
+                    var imageCopy = image.Clone(c => c.Resize(resizeWidth, resizeHeight, resampler));
+                    // Construct file name, assumes 2nd component is mipmap level
+                    // There is a better way to do this (create a struct)
+                    components[1] = (++mipmapLevel).ToString();
+                    for (int i = 0; i < components.Length; i++)
+                    {
+                        builder.Append(components[i]);
+                        if (i != components.Length - 1)
+                        {
+                            builder.Append('-');
+                        }
+                    }
+                    outputPath.SetName(builder.ToString());
+                    builder.Clear();
+
+                    // Save out mipmap
+                    using var mipmapFile = File.Create(outputPath);
+                    imageCopy.Save(mipmapFile, imageEncoder);
+
+                    // Compute new w/h for next iteration
+                    resizeWidth /= 2;
+                    resizeHeight /= 2;
+                }
+            }
+            var info = new FileWriteInfo()
+            {
+                InputFilePath = inputFilePath,
+                OutputFilePath = outputFilePath,
+                PrintDesignator = "TPL",
+                PrintActionDescription = $"generating mipmaps",
+            };
+            FileWriteOverwriteHandler(options, fileWrite, info);
         }
     }
 }

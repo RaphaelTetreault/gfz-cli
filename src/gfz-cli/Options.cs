@@ -6,6 +6,7 @@ using GameCube.GFZ.GameData;
 using GameCube.GFZ.Stage;
 using Manifold.IO;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
@@ -17,7 +18,7 @@ namespace Manifold.GFZCLI
 {
     public class Options :
         IGfzCliOptions,
-        IImageResizeOptions,
+        IImageSharpOptions,
         ILineRelOptions,
         IStageOptions,
         ITplOptions
@@ -41,7 +42,8 @@ namespace Manifold.GFZCLI
         public bool TplUnpackMipmaps { get; set; }
         public bool TplUnpackSaveCorruptedTextures { get; set; }
 
-        // IImageResizeOptions
+        // IImageSharpOptions
+        // ResizeOptions
         public bool Resize { get; set; } = false;
         public bool Compand { get; set; } = true;
         public string ResizeModeStr { get; set; } = ResizeMode.Max.ToString();
@@ -53,9 +55,14 @@ namespace Manifold.GFZCLI
         public bool PremultiplyAlpha { get; set; } = true;
         public string ResamplerTypeStr { get; set; } = "Bicubic";
         public ResamplerType ResamplerType => GfzCliEnumParser.ParseDashRemoved<ResamplerType>(PositionStr);
-        public IResampler Resampler => IImageResizeOptions.GetResampler(ResamplerType);
+        public IResampler Resampler => IImageSharpOptions.GetResampler(ResamplerType);
         public int Width { get; set; }
         public int Height { get; set; }
+        // Other
+        public string ImageFormatStr { get; set; } = string.Empty;
+        public ImageFormat ImageFormat => GfzCliEnumParser.ParseDashRemoved<ImageFormat>(ImageFormatStr);
+        public ImageEncoder ImageEncoder => IImageSharpOptions.GetImageEncoder(ImageFormat);
+
 
         // UNSORTED IN INTERFACES
         [Option("emblem-border")]
@@ -88,6 +95,7 @@ namespace Manifold.GFZCLI
         public byte ColorGreen => GetColorComponent(ColorGreenStr);
         public byte ColorBlue => GetColorComponent(ColorBlueStr);
         public byte ColorAlpha => GetColorComponent(ColorAlphaStr);
+
 
 
         /// <summary>

@@ -112,6 +112,7 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.linerel_set_venue: ActionsLineREL.PatchSetVenueIndex(options); break;
                 case GfzCliAction.linerel_set_venue_name: ActionsLineREL.PatchSetVenueName(options); break;
                 // TPL
+                case GfzCliAction.tpl_generate_mipmaps: ActionsTPL.TplGenerateMipmaps(options); break;
                 case GfzCliAction.tpl_pack: ActionsTPL.TplPack(options); break;
                 case GfzCliAction.tpl_unpack: ActionsTPL.TplUnpack(options); break;
 

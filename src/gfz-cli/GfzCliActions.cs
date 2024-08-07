@@ -57,6 +57,7 @@
         linerel_set_venue,
         linerel_set_venue_name,
 
+        tpl_generate_mipmaps,
         tpl_pack,
         tpl_unpack,
     }

@@ -151,7 +151,7 @@ namespace Manifold.GFZCLI
         public static Emblem ImageToEmblemBin(Options options, FilePath inputFile)
         {
             // Make sure some option parameters are appropriate
-            bool isTooLarge = IImageResizeOptions.IsSizeTooLarge(options, Emblem.Width, Emblem.Height);
+            bool isTooLarge = IImageSharpOptions.IsSizeTooLarge(options, Emblem.Width, Emblem.Height);
             if (isTooLarge)
             {
                 string msg =
@@ -267,7 +267,7 @@ namespace Manifold.GFZCLI
         {
             // Resize image to fit inside bounds of image.
             // eg: emblem is 64x64
-            ResizeOptions resizeOptions = IImageResizeOptions.GetResizeOptions(options);
+            ResizeOptions resizeOptions = IImageSharpOptions.GetResizeOptions(options);
 
             // Emblem size is either 62x62 (1px alpha border, as intended) or 64x64 ("hacker" option)
             if (resizeHasAlphaBorder)
@@ -279,7 +279,7 @@ namespace Manifold.GFZCLI
             int defaultX = Math.Min(resizeWidth, imageWidth);
             int defaultY = Math.Min(resizeHeight, imageHeight);
             // Set size override, then resize image
-            resizeOptions.Size = IImageResizeOptions.GetResizeSize(options, defaultX, defaultY);
+            resizeOptions.Size = IImageSharpOptions.GetResizeSize(options, defaultX, defaultY);
 
             return resizeOptions;
         }
