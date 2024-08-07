@@ -112,8 +112,8 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.linerel_set_venue: ActionsLineREL.PatchSetVenueIndex(options); break;
                 case GfzCliAction.linerel_set_venue_name: ActionsLineREL.PatchSetVenueName(options); break;
                 // TPL
+                case GfzCliAction.tpl_pack: ActionsTPL.TplPack(options); break;
                 case GfzCliAction.tpl_unpack: ActionsTPL.TplUnpack(options); break;
-                //case GfzCliAction.tpl_pack: TplPack(options); break;
 
                 // UNSET
                 case GfzCliAction.none: ForceShowHelp(); break;

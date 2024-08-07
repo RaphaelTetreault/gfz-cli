@@ -106,8 +106,6 @@ namespace Manifold.GFZCLI
 
         public static void TplPack(Options options)
         {
-            return;
-
             string path = options.InputPath;
             if (string.IsNullOrEmpty(path))
                 return;
@@ -130,9 +128,13 @@ namespace Manifold.GFZCLI
                 }
             }
 
-            using (var writer = new EndianBinaryWriter(new MemoryStream(), Tpl.endianness))
+            string directory = Path.GetDirectoryName(path);
+            string fileName = $"temp.tpl";
+            string filePath = Path.Combine(directory, fileName);
+            //using (var writer = new EndianBinaryWriter(new MemoryStream(), Tpl.endianness))
+            using (var writer = new EndianBinaryWriter(File.Create(filePath), Tpl.endianness))
             {
-                var encoding = Encoding.EncodingCMPR;
+                var encoding = new EncodingCMPR(BCnEncoder.Encoder.CompressionQuality.BestQuality);
                 //var encoding = Encoding.EncodingRGBA8;
                 //var encoding = Encoding.EncodingRGB565;
                 //var encoding = Encoding.EncodingRGB5A3;
@@ -140,6 +142,7 @@ namespace Manifold.GFZCLI
                 //var encoding = Encoding.EncodingIA4;
                 var blocks = Texture.CreateDirectColorBlocksFromTexture(texture, encoding, out int bch, out int bcv);
                 encoding.WriteTexture(writer, blocks);
+                writer.Flush();
 
                 writer.BaseStream.Position = 0;
                 using (var reader = new EndianBinaryReader(writer.BaseStream, Tpl.endianness))
@@ -162,12 +165,12 @@ namespace Manifold.GFZCLI
                     //var tempStream = new MemoryStream();
                     //var format = PngFormat.Instance;
                     //imageCopy.Save(tempStream, format);
-                    //var imageHash = GetMD5HashName(tempStream);
+                    //var imageHash = GetMD5Hastpl-packhName(tempStream);
 
                     // Find where to save file
-                    string directory = Path.GetDirectoryName(path);
-                    string fileName = $"temp.png";
-                    string filePath = Path.Combine(directory, fileName);
+                    directory = Path.GetDirectoryName(path);
+                    fileName = $"temp.png";
+                    filePath = Path.Combine(directory, fileName);
                     // Save to disk
                     imageCopy.SaveAsPng(filePath);
                     Terminal.WriteLine($"Wrote file: {filePath}");
