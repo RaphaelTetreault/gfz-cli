@@ -5,6 +5,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 using static Manifold.GFZCLI.GfzCliImageUtilities;
@@ -12,6 +13,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System.Text;
 using SixLabors.ImageSharp.Formats;
+using System.Linq;
 
 namespace Manifold.GFZCLI
 {
@@ -62,7 +64,7 @@ namespace Manifold.GFZCLI
                 if (textureSeries is null)
                     continue;
 
-                int mipmapIndex = 0;
+                int mipmapIndex = -1;
                 int entryIndex = -1;
                 foreach (var textureEntry in textureSeries.Entries)
                 {
@@ -193,7 +195,7 @@ namespace Manifold.GFZCLI
             int taskCount = DoFileInFileOutTasks(options, TplGenerateMipmaps);
             Terminal.WriteLine($"TPL: done generating mipmaps for {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void TplGenerateMipmaps(Options options, FilePath inputFilePath, FilePath outputFilePath)
+        public static void TplGenerateMipmapsX(Options options, FilePath inputFilePath, FilePath outputFilePath)
         {
             // Provide this with images of supported type
             // Warn on types unable to use
@@ -271,5 +273,108 @@ namespace Manifold.GFZCLI
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
+
+        public static void TplGenerateMipmaps(Options options, FilePath inputFilePath, FilePath outputFilePath)
+        {
+            // Provide this with images of supported type
+            // Warn on types unable to use
+            // Generate max mipmap levels for texture (down to one axis 1px)
+            // Name the file the same as the source but with incrementing levels
+
+            using var sourceImage = File.OpenRead(inputFilePath);
+            try
+            {
+                IImageFormat imageFormat = Image.DetectFormat(sourceImage);
+            }
+            catch (Exception e)
+            {
+                StringBuilder supportedTypes = new StringBuilder();
+                foreach (var type in Enum.GetNames<ImageFormat>())
+                    supportedTypes.Append($" {type}");
+
+                string msg =
+                    $"File {inputFilePath} is invalid {inputFilePath.Extension}. " +
+                    $"Use supported types{supportedTypes}." +
+                    $"\n{e.Message}";
+
+                throw new ArgumentException(msg);
+            }
+
+            using var image = Image.Load(sourceImage);
+
+            IResampler resampler = options.Resampler;
+            ImageEncoder imageEncoder = options.ImageEncoder;
+            List<FilePath> mipmapNames = [ outputFilePath ];
+            // Part of HACK name generation
+            StringBuilder builder = new();
+            List<string> components = outputFilePath.Name.Split('-').ToList();
+            components.Insert(1, "mipmap");
+
+            // Calculate number of texture levels (1 main tex + mipmap count)
+            int numberOfLevels = 1;
+            int resizeWidth = image.Width / 2;
+            int resizeHeight = image.Height / 2;
+            while (resizeWidth > 0 && resizeHeight > 0)
+            {
+                numberOfLevels++;
+                resizeWidth /= 2;
+                resizeHeight /= 2;
+            }
+
+            // Create mipmaps
+            for (int mipmapLevel = 1; mipmapLevel < numberOfLevels; mipmapLevel++)
+            {
+                // Compute w/h for this iteration
+                resizeWidth = image.Width >> mipmapLevel;
+                resizeHeight = image.Height >> mipmapLevel;
+
+                // TODO: this is a big hack.
+                // Create mipmap name
+                FilePath mipmapFilePath = outputFilePath.Copy();
+                // Construct file name, assumes 3rd component is mipmap level
+                // There is a better way to do this (create a struct)
+                components[2] = mipmapLevel.ToString();
+                // Rebuild name
+                for (int i = 0; i < components.Count; i++)
+                {
+                    builder.Append(components[i]);
+                    if (i != components.Count - 1)
+                    {
+                        builder.Append('-');
+                    }
+                }
+                mipmapFilePath.SetName(builder.ToString());
+                mipmapNames.Add(mipmapFilePath);
+                builder.Clear();
+
+                // Actual code which writes mipmaps
+                void WriteMipmapFile()
+                {
+                    // Copy data local to function/thread
+                    int _mipmapLevel = mipmapLevel;
+                    int _resizeWidth = resizeWidth;
+                    int _resizeHeight = resizeHeight;
+
+                    // Create resized clone
+                    var imageCopy = image.Clone(c => c.Resize(_resizeWidth, _resizeHeight, resampler));
+
+                    // Save out mipmap
+                    string mipmapName = mipmapNames[mipmapLevel];
+                    using var mipmapFile = File.Create(mipmapName);
+                    imageCopy.Save(mipmapFile, imageEncoder);
+                }
+                // Info when writing mipmaps out
+                var info = new FileWriteInfo()
+                {
+                    InputFilePath = inputFilePath,
+                    OutputFilePath = mipmapNames[mipmapLevel],
+                    PrintDesignator = "TPL",
+                    PrintActionDescription = $"generating mipmap level {mipmapLevel} of",
+                };
+                // Code that runs function, writes info, decides if functions runs (eg: allow overwrite)
+                FileWriteOverwriteHandler(options, WriteMipmapFile, info);
+            }
+        }
+
     }
 }
