@@ -17,6 +17,7 @@ using static Manifold.GFZCLI.GfzCliUtilities;
 using static Manifold.GFZCLI.GfzCliImageUtilities;
 using System.Linq;
 using System.Text;
+using System.Net.Http.Headers;
 
 
 namespace Manifold.GFZCLI
@@ -65,21 +66,37 @@ namespace Manifold.GFZCLI
             // Image resampler
             IResampler resampler = options.Resampler;
 
+            FilePath tplOutputPath = outputPath.Copy();
+            FilePath gmaOutputPath = outputPath.Copy();
+            tplOutputPath.AppendDirectory("tex");
+            gmaOutputPath.AppendDirectory("mdl");
+
             // Create TPL alongside GMAs
-            foreach (var gmaFile in gmaFiles)
+            foreach (var assetFile in gmaFiles)
             {
+                // Get path to TPL
+                FilePath tplPath = new(assetFile);
+                tplPath.SetExtensions("tpl");
+                //
+                FilePath gmaPath = tplPath.Copy();
+                gmaPath.SetExtensions("gma");
+
                 // Check: does GMA have a TPL file beside it in the directory?
-                bool hasTpl = tplFiles.Contains(gmaFile);
+                bool hasTpl = tplFiles.Contains(assetFile);
                 if (hasTpl)
                 {
                     // Remove file from future processing
-                    tplFiles.Remove(gmaFile);
-                    // Get path to TPL
-                    FilePath tplFilePath = new(gmaFile);
-                    tplFilePath.SetExtensions("tpl");
+                    tplFiles.Remove(assetFile);
+
                     // Write out textures
-                    TplToGxtexAndPng(options, tplFilePath, outputPath, resampler);
-                    break;
+                    var textureNames = TplToGxtexAndPng(options, tplPath, tplOutputPath, resampler);
+                    // Write out models with texture references :)
+                    WriteModels(options, gmaPath, gmaOutputPath, textureNames);
+                }
+                else
+                {
+                    // GMA uses common TPL, write it out without texture references
+                    WriteModels(options, gmaPath, gmaOutputPath, []);
                 }
             }
 
@@ -90,13 +107,12 @@ namespace Manifold.GFZCLI
                 FilePath tplFilePath = new(tplFile);
                 tplFilePath.SetExtensions("tpl");
                 // Write out textures
-                TplToGxtexAndPng(options, tplFilePath, outputPath, resampler);
-                break;
+                TplToGxtexAndPng(options, tplFilePath, tplOutputPath, resampler);
             }
         }
 
         // Runs an action on all texture bundles
-        private static void TplToGxtexAndPng(Options options, FilePath inputPath, FilePath outputPath, IResampler resampler)
+        private static string[] TplToGxtexAndPng(Options options, FilePath inputPath, FilePath outputPath, IResampler resampler)
         {
             // Load TPL file
             Tpl tpl = BinarySerializableIO.LoadFile<Tpl>(inputPath);
@@ -104,6 +120,8 @@ namespace Manifold.GFZCLI
 
             // Iterate over all texture bundle (each bundle is main texture + optional mipmaps)
             int numTextures = tpl.TextureBundles.Length;
+            string[] textureNames = new string[numTextures];
+
             for (int i = 0; i < numTextures; i++)
             {
                 // Get texture bundle
@@ -119,6 +137,7 @@ namespace Manifold.GFZCLI
                 foreach (var textureEntry in textureBundle.Elements)
                     builder.Append($"{textureEntry.CRC32}-");
                 string name = builder.ToString()[..^1]; // removes last dash
+                textureNames[i] = name;
 
                 // Create final output path
                 FilePath imageOutputPath = outputPath.Copy();
@@ -153,6 +172,8 @@ namespace Manifold.GFZCLI
                     FileWriteOverwriteHandler(options, Task, info);
                 }
             }
+
+            return textureNames;
         }
 
         // Writes single texture bundle as single PNG
@@ -274,5 +295,69 @@ namespace Manifold.GFZCLI
             writer.Write(gxTex);
         }
 
+
+        private static void WriteModels(Options options, FilePath inputPath, FilePath outputPath, string[] gmaTextures)
+        {
+            // Load GMA file
+            Gma gma = BinarySerializableIO.LoadFile<Gma>(inputPath);
+            gma.FileName = inputPath;
+
+            // Iterate over all models in GMA
+            int numModels = gma.Models.Length;
+            for (int i = 0; i < numModels; i++)
+            {
+                // Get model data
+                string name = gma.Models[i].Name;
+                Gcmf gcmf = gma.Models[i].Gcmf;
+
+                // Get this GMA's texture references.
+                // If no textures provided, do not get texture names
+                string[] tevTextureReferences = gmaTextures.Length > 0
+                    ? new string[gcmf.TevLayers.Length]
+                    : Array.Empty<string>();
+                // Iterate and assign references
+                for (int index = 0; index < tevTextureReferences.Length; index++)
+                {
+                    // The index the model wants from the TPL
+                    int tplTextureIndex = gcmf.TevLayers[index].TplTextureIndex;
+
+                    // Apply as normal
+                    if (tplTextureIndex < gmaTextures.Length)
+                        tevTextureReferences[index] = gmaTextures[tplTextureIndex];
+                    // weird stuff with vehicle textures, basically write an error
+                    else
+                        tevTextureReferences[index] = $"dynamic-reference:{tplTextureIndex}";
+                }
+
+                // Create final output path
+                FilePath modelOutputPath = outputPath.Copy();
+                modelOutputPath.SetName($"{name}-{gcmf.CRC32}");
+                modelOutputPath.SetExtensions("gcmf");
+
+                // Create standalone GCMF with reference to textures!
+                {
+                    var info = new FileWriteInfo()
+                    {
+                        InputFilePath = gma.FileName,
+                        OutputFilePath = modelOutputPath,
+                        PrintDesignator = Designator,
+                        PrintActionDescription = $"extracting GCMF model ({i + 1}/{numModels}) from",
+                    };
+                    void FileWriteGcmfAsset()
+                    {
+                        GcmfAsset gcmfAsset = new()
+                        {
+                            Name = name,
+                            TevTextureReferences = tevTextureReferences,
+                            Gcmf = gcmf,
+                        };
+                        EnsureDirectoriesExist(modelOutputPath);
+                        using var writer = new EndianBinaryWriter(File.Create(modelOutputPath), Gma.endianness);
+                        writer.Write(gcmfAsset);
+                    }
+                    FileWriteOverwriteHandler(options, FileWriteGcmfAsset, info);
+                }
+            }
+        }
     }
 }
