@@ -125,7 +125,7 @@ namespace Manifold.GFZCLI
                     builder.Append($"{textureEntry.CRC32}-");
                 string name = builder.ToString()[..^1]; // removes last dash
 
-                // Previous function
+                // Create final output path
                 FilePath fullOutputPath = outputPath.Copy();
                 fullOutputPath.SetName(name);
                 fullOutputPath.SetExtensions("png");
