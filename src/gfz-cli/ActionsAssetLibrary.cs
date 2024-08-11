@@ -24,7 +24,7 @@ namespace Manifold.GFZCLI
 {
     public static class ActionsAssetLibrary
     {
-        private const string Marker = "Asset Library";
+        private const string Designator = "Asset Library";
 
         public static void CreateGmaTplLibrary(Options options)
         {
@@ -36,10 +36,10 @@ namespace Manifold.GFZCLI
                 throw new ArgumentException();
             }
 
-            Terminal.WriteLine($"{Marker}: generating asset library.");
+            Terminal.WriteLine($"{Designator}: generating asset library.");
             CreateGmaTplLibrary(options, new(options.InputPath), new(options.OutputPath + "/"));
             //int taskCount = DoFileInFileOutTasks(options, CreateGmaTplLibrary);
-            Terminal.WriteLine($"{Marker}: done.");
+            Terminal.WriteLine($"{Designator}: done.");
             //Terminal.WriteLine($"Asset Library: done unpacking {taskCount} TPL file{(taskCount != 1 ? 's' : "")}.");
         }
 
@@ -82,7 +82,9 @@ namespace Manifold.GFZCLI
                     //outputTplTextures = new FilePath[tpl.TextureSeries.Length];
 
                     //
-                    WritePackedTextureSeries(options, tpl, outputPath, resampler);
+                    FilePath sourceFilePath = new FilePath(gmaFile);
+                    sourceFilePath.SetExtensions("tpl");
+                    WritePackedTextureSeries(options, tpl, sourceFilePath, outputPath, resampler);
 
                     // TEMP
                     break;
@@ -92,17 +94,22 @@ namespace Manifold.GFZCLI
 
             foreach (var tplFile in tplFiles)
             {
-                Tpl tpl = BinarySerializableIO.LoadFile<Tpl>(tplFile + "tpl");
-                WritePackedTextureSeries(options, tpl, outputPath, resampler);
+                FilePath sourceFilePath = new FilePath(tplFile);
+                sourceFilePath.SetExtensions("tpl");
+                Tpl tpl = BinarySerializableIO.LoadFile<Tpl>(sourceFilePath);
+                WritePackedTextureSeries(options, tpl, sourceFilePath, outputPath, resampler);
+
+                break;
             }
         }
 
         // TODO: merge these 2 functions together... and figure the rest out.
 
-        public static void WritePackedTextureSeries(Options options, Tpl tpl, FilePath outputPath, IResampler resampler)
+        public static void WritePackedTextureSeries(Options options, Tpl tpl, FilePath inputPath, FilePath outputPath, IResampler resampler)
         {
             // Iterate over all texture series
-            for (int i = 0; i < tpl.TextureSeries.Length; i++)
+            int numTextures = tpl.TextureSeries.Length;
+            for (int i = 0; i < numTextures; i++)
             {
                 // Get texture series
                 TextureSeries textureSeries = tpl.TextureSeries[i];
@@ -111,87 +118,81 @@ namespace Manifold.GFZCLI
                     textureSeries.Description.IsGarbageEntry ||
                     textureSeries.Description.IsNull)
                     continue;
-                // Write texture as image (for the humans)
-                WritePackedTextureSeries(options, outputPath, textureSeries, resampler);
-            }
-        }
 
-        public static void WritePackedTextureSeries(Options options, FilePath outputPath, TextureSeries textureSeries, IResampler resampler)
-        {
-            // Output name is the hash of the main texture (for now)
-            StringBuilder builder = new StringBuilder();
-            foreach(var textureEntry in textureSeries.Entries)
-                builder.Append($"{textureEntry.CRC32}-");
-            string name = builder.ToString()[..^1];
+                // Output name is the hash of the main texture (for now)
+                StringBuilder builder = new StringBuilder();
+                foreach (var textureEntry in textureSeries.Entries)
+                    builder.Append($"{textureEntry.CRC32}-");
+                string name = builder.ToString()[..^1];
 
-            FilePath fullOutputPath = outputPath.Copy();
-            fullOutputPath.SetName(name);
-            fullOutputPath.SetExtensions("png");
+                // Previous function
+                FilePath fullOutputPath = outputPath.Copy();
+                fullOutputPath.SetName(name);
+                fullOutputPath.SetExtensions("png");
 
-            void WritePackedTexture()
-            {
-                // Prepare image buffer
-                int width = textureSeries.Length > 1 ? textureSeries.Description.Width * 2 : textureSeries.Description.Width;
-                int height = textureSeries.Description.Height;
-                Image<Rgba32> image = new(width, height, new(0, 0, 0));
-                // Where to draw within the larger texture
-                Point offset = new(0, 0);
-
-                // Always process main texture
-                var mainTexture = TextureToImage(textureSeries.Entries[0].Texture);
-                image.Mutate(c => c.DrawImage(mainTexture, 1f));
-                offset.X = mainTexture.Width;
-
-                // Get or generate mipmaps
-                for (int i = 1; i < textureSeries.Length; i++)
+                void TextureWrite()
                 {
-                    // Get texture data
-                    TextureData textureData = textureSeries[i];
-                    Image<Rgba32> mipmap;
+                    // Prepare image buffer. Twice width to fit mipmaps if they exist.
+                    int width = textureSeries.Length > 1 ? textureSeries.Description.Width * 2 : textureSeries.Description.Width;
+                    int height = textureSeries.Description.Height;
+                    Image<Rgba32> image = new(width, height, new(0, 0, 0));
+                    // Where to draw within the larger texture, changes with each write (so not to overlap)
+                    Point offset = new(0, 0);
 
-                    if (textureData.IsValid)
+                    // Always process main texture
+                    var mainTexture = TextureToImage(textureSeries.Entries[0].Texture);
+                    image.Mutate(c => c.DrawImage(mainTexture, 1f));
+                    offset.X = mainTexture.Width;
+
+                    // Get or generate mipmaps
+                    for (int i = 1; i < textureSeries.Length; i++)
                     {
-                        // If valid, load as-is
-                        mipmap = TextureToImage(textureData.Texture);
-                    }
-                    else // is corrupted
-                    {
-                        // Otherwise is corrupted, generate new mipmap
-                        int resizeWidth = mainTexture.Width >> i;
-                        int resizeHeight = mainTexture.Height >> i;
-                        // If truly corrupted, then break loop
-                        if (resizeWidth == 0 || resizeHeight == 0)
-                            break;
-                        // Resize texture
-                        var generatedMipmap = image.Clone(c => c.Resize(resizeWidth, resizeHeight, resampler));
-                        mipmap = generatedMipmap;
+                        // Get texture data
+                        TextureData textureData = textureSeries[i];
+                        Image<Rgba32> mipmap;
+
+                        if (textureData.IsValid)
+                        {
+                            // If valid, load as-is
+                            mipmap = TextureToImage(textureData.Texture);
+                        }
+                        else // is corrupted
+                        {
+                            // Otherwise is corrupted, generate new mipmap
+                            int resizeWidth = mainTexture.Width >> i;
+                            int resizeHeight = mainTexture.Height >> i;
+                            // If texture does not even have data, break loop
+                            if (resizeWidth == 0 || resizeHeight == 0)
+                                break;
+                            // Resize texture
+                            var generatedMipmap = image.Clone(c => c.Resize(resizeWidth, resizeHeight, resampler));
+                            mipmap = generatedMipmap;
+                        }
+
+                        // Apply mipmap to texture
+                        image.Mutate(c => c.DrawImage(mipmap, offset, 1f));
+                        offset.X += mipmap.Width;
                     }
 
-                    // Apply mipmap to texture
-                    image.Mutate(c => c.DrawImage(mipmap, offset, 1f));
-                    offset.X += mipmap.Width;
+                    //Write out texture
+                    EnsureDirectoriesExist(fullOutputPath);
+                    PngEncoder imageEncoder = new()
+                    {
+                        CompressionLevel = PngCompressionLevel.BestCompression,
+                    };
+                    image.Save(fullOutputPath, imageEncoder);
                 }
 
-                //
-                EnsureDirectoriesExist(fullOutputPath);
-                // Write out texture
-                PngEncoder imageEncoder = new()
+                // Information about this file write
+                var info = new FileWriteInfo()
                 {
-                    CompressionLevel = PngCompressionLevel.BestCompression,
+                    InputFilePath = inputPath, // source tpl
+                    OutputFilePath = fullOutputPath, // image output
+                    PrintDesignator = Designator,
+                    PrintActionDescription = $"extracting texture ({i+1}/{numTextures}) from",
                 };
-                // Write that bad boy
-                image.Save(fullOutputPath, imageEncoder);
+                FileWriteOverwriteHandler(options, TextureWrite, info);
             }
-
-            // Finally, write out texture
-            var info = new FileWriteInfo()
-            {
-                InputFilePath = "fuck",
-                OutputFilePath = fullOutputPath,
-                PrintDesignator = "guh",
-                PrintActionDescription = $"xxx",
-            };
-            FileWriteOverwriteHandler(options, WritePackedTexture, info);
         }
 
     }
