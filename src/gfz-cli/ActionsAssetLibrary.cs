@@ -74,16 +74,11 @@ namespace Manifold.GFZCLI
                 {
                     // Remove file from future processing
                     tplFiles.Remove(gmaFile);
-                    //
                     // Get path to TPL
                     FilePath tplFilePath = new(gmaFile);
                     tplFilePath.SetExtensions("tpl");
-                    // Load TPL file
-                    Tpl tpl = BinarySerializableIO.LoadFile<Tpl>(tplFilePath);
-                    tpl.FileName = tplFilePath;
                     // Write out textures
-                    WriteTplTexturesAsPNG(options, tpl, outputPath, resampler);
-                    WriteTplTexturesAsGxBlock(options, tpl, outputPath, resampler);
+                    TplToGxtexAndPng(options, tplFilePath, outputPath, resampler);
                     break;
                 }
             }
@@ -94,19 +89,19 @@ namespace Manifold.GFZCLI
                 // Get path to TPL
                 FilePath tplFilePath = new(tplFile);
                 tplFilePath.SetExtensions("tpl");
-                // Load TPL file
-                Tpl tpl = BinarySerializableIO.LoadFile<Tpl>(tplFilePath);
-                tpl.FileName = tplFilePath;
                 // Write out textures
-                WriteTplTexturesAsPNG(options, tpl, outputPath, resampler);
-                WriteTplTexturesAsGxBlock(options, tpl, outputPath, resampler);
+                TplToGxtexAndPng(options, tplFilePath, outputPath, resampler);
                 break;
             }
         }
 
         // Runs an action on all texture bundles
-        private static void TplTextureBundleTask(Options options, Tpl tpl, FilePath outputPath, string ext, Action<TextureBundle, string> task)
+        private static void TplToGxtexAndPng(Options options, FilePath inputPath, FilePath outputPath, IResampler resampler)
         {
+            // Load TPL file
+            Tpl tpl = BinarySerializableIO.LoadFile<Tpl>(inputPath);
+            tpl.FileName = inputPath;
+
             // Iterate over all texture bundle (each bundle is main texture + optional mipmaps)
             int numTextures = tpl.TextureBundles.Length;
             for (int i = 0; i < numTextures; i++)
@@ -126,20 +121,37 @@ namespace Manifold.GFZCLI
                 string name = builder.ToString()[..^1]; // removes last dash
 
                 // Create final output path
-                FilePath fullOutputPath = outputPath.Copy();
-                fullOutputPath.SetName(name);
-                fullOutputPath.SetExtensions(ext);
+                FilePath imageOutputPath = outputPath.Copy();
+                imageOutputPath.SetName(name);
+                imageOutputPath.SetExtensions("png");
+                FilePath gxtexOutputPath = imageOutputPath.Copy();
+                gxtexOutputPath.SetExtensions("gxtex");
 
-                // Information about this file write
-                var info = new FileWriteInfo()
+                // PNG
                 {
-                    InputFilePath = tpl.FileName, // I put path in here
-                    OutputFilePath = fullOutputPath,
-                    PrintDesignator = Designator,
-                    PrintActionDescription = $"extracting texture ({i + 1}/{numTextures}) from",
-                };
-                void TextureBundleTask() { task(textureBundle, fullOutputPath); }
-                FileWriteOverwriteHandler(options, TextureBundleTask, info);
+                    var info = new FileWriteInfo()
+                    {
+                        InputFilePath = tpl.FileName,
+                        OutputFilePath = imageOutputPath,
+                        PrintDesignator = Designator,
+                        PrintActionDescription = $"extracting texture ({i + 1}/{numTextures}) from",
+                    };
+                    void Task() => WriteTextureBundleAsPNG(textureBundle, imageOutputPath, resampler);
+                    FileWriteOverwriteHandler(options, Task, info);
+                }
+
+                // GXTEX
+                {
+                    var info = new FileWriteInfo()
+                    {
+                        InputFilePath = tpl.FileName,
+                        OutputFilePath = gxtexOutputPath,
+                        PrintDesignator = Designator,
+                        PrintActionDescription = $"extracting texture ({i + 1}/{numTextures}) from",
+                    };
+                    void Task() => WriteTextureBundleAsGxTexture(textureBundle, gxtexOutputPath, resampler);
+                    FileWriteOverwriteHandler(options, Task, info);
+                }
             }
         }
 
@@ -197,15 +209,7 @@ namespace Manifold.GFZCLI
             image.Save(fullOutputPath, imageEncoder);
         }
 
-        // Writes all textures bundle in TPL to own PNG
-        private static void WriteTplTexturesAsPNG(Options options, Tpl tpl, FilePath outputPath, IResampler resampler)
-        {
-            void Task(TextureBundle textureBundle, string fullOutputPath)
-                => WriteTextureBundleAsPNG(textureBundle, fullOutputPath, resampler);
-
-            TplTextureBundleTask(options, tpl, outputPath, "png", Task);
-        }
-
+        // 
         private static void WriteTextureBundleAsGxTexture(TextureBundle textureBundle, string fullOutputPath, IResampler resampler)
         {
             // Break outy some data
@@ -268,14 +272,6 @@ namespace Manifold.GFZCLI
             EnsureDirectoriesExist(fullOutputPath);
             using var writer = new EndianBinaryWriter(File.Create(fullOutputPath), GxTexture.endianness);
             writer.Write(gxTex);
-        }
-
-        public static void WriteTplTexturesAsGxBlock(Options options, Tpl tpl, FilePath outputPath, IResampler resampler)
-        {
-            void Task(TextureBundle textureBundle, string fullOutputPath)
-                => WriteTextureBundleAsGxTexture(textureBundle, fullOutputPath, resampler);
-
-            TplTextureBundleTask(options, tpl, outputPath, "gxtex", Task);
         }
 
     }
