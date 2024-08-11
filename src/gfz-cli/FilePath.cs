@@ -1,7 +1,9 @@
 ﻿using CommandLine.Text;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -56,7 +58,14 @@ namespace Manifold.GFZCLI
         {
             return file.ToString();
         }
-
+        // Pseudo operator
+        public static FilePath[] ToFilePaths(ICollection<string> strings)
+        {
+            FilePath[] filePaths = new FilePath[strings.Count];
+            for (int i = 0; i < strings.Count; i++)
+                filePaths[i] = new FilePath(strings.ElementAt(i));
+            return filePaths;
+        }
 
         // METHODS
         private static string EnforceUnixPath(string path)
@@ -153,7 +162,10 @@ namespace Manifold.GFZCLI
         {
             // If null/empty string, stop here
             if (string.IsNullOrEmpty(extensions))
+            {
+                _extensionsList.Clear();
                 return;
+            }
 
             // Split extensions block
             string[] entensionsSplit = extensions.Split('.');
@@ -269,6 +281,17 @@ namespace Manifold.GFZCLI
         public override string ToString()
         {
             return FullPath;
+        }
+        public override bool Equals(object? obj)
+        {
+            if (obj is null)
+                return false;
+
+            if (obj is not string || obj is not FilePath)
+                return false;
+
+            bool isEquivilent = obj as string == FullPath;
+            return isEquivilent;
         }
 
         public FilePath Copy()

@@ -79,6 +79,8 @@ namespace Manifold.GFZCLI
                 // FMI
                 case GfzCliAction.fmi_from_plaintext: ActionsFMI.FmiFromPlaintext(options); break;
                 case GfzCliAction.fmi_to_plaintext: ActionsFMI.FmiToPlainText(options); break;
+                // 
+                case GfzCliAction.generate_asset_library: ActionsAssetLibrary.CreateGmaTplLibrary(options); break;
                 // GCI
                 case GfzCliAction.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
                 // GMA

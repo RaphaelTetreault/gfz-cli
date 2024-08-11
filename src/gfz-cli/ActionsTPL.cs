@@ -84,7 +84,7 @@ namespace Manifold.GFZCLI
                     // TODO
                     // Use new FileDescription
                     var texture = textureEntry.Texture;
-                    string textureHash = textureSeries.MD5TextureHashes[entryIndex];
+                    string textureHash = textureSeries[entryIndex].CRC32;
                     FilePath textureOutput = new FilePath(outputFile);
                     textureOutput.SetName($"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}");
 

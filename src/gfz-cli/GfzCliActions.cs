@@ -25,6 +25,8 @@
         fmi_from_plaintext,
         fmi_to_plaintext,
 
+        generate_asset_library,
+
         gci_extract_ghost,
 
         gma_patch_submesh_render_flags,

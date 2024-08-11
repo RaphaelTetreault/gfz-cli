@@ -162,7 +162,7 @@ namespace Manifold.GFZCLI
             }
         }
 
-        public static ImageEncoder GetImageEncoder(ImageFormat imageFormat)
+        public static SixLabors.ImageSharp.Formats.ImageEncoder GetImageEncoder(ImageFormat imageFormat)
         {
             return imageFormat switch
             {
