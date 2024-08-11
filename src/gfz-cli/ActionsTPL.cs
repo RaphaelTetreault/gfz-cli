@@ -56,16 +56,16 @@ namespace Manifold.GFZCLI
 
             // Iterate over texture and mipmaps, save to disk
             int tplIndex = 0;
-            foreach (var textureSeries in tpl.TextureSeries)
+            foreach (var textureBundle in tpl.TextureBundles)
             {
                 tplIndex++;
 
-                if (textureSeries is null)
+                if (textureBundle is null)
                     continue;
 
                 int mipmapIndex = -1;
                 int entryIndex = -1;
-                foreach (var textureEntry in textureSeries.Entries)
+                foreach (var textureEntry in textureBundle.Elements)
                 {
                     entryIndex++;
 
@@ -84,7 +84,7 @@ namespace Manifold.GFZCLI
                     // TODO
                     // Use new FileDescription
                     var texture = textureEntry.Texture;
-                    string textureHash = textureSeries[entryIndex].CRC32;
+                    string textureHash = textureBundle.Elements[entryIndex].CRC32;
                     FilePath textureOutput = new FilePath(outputFile);
                     textureOutput.SetName($"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}");
 
