@@ -276,11 +276,7 @@ namespace Manifold.GFZCLI
 
         public static void TplGenerateMipmaps(Options options, FilePath inputFilePath, FilePath outputFilePath)
         {
-            // Provide this with images of supported type
-            // Warn on types unable to use
-            // Generate max mipmap levels for texture (down to one axis 1px)
-            // Name the file the same as the source but with incrementing levels
-
+            // Check to see if file can be loaded, error if not.
             using var sourceImage = File.OpenRead(inputFilePath);
             try
             {
@@ -300,15 +296,13 @@ namespace Manifold.GFZCLI
                 throw new ArgumentException(msg);
             }
 
+            // Load image
             using var image = Image.Load(sourceImage);
-
+            // Prepare file and encoding information
             IResampler resampler = options.Resampler;
             ImageEncoder imageEncoder = options.ImageEncoder;
-            List<FilePath> mipmapNames = [ outputFilePath ];
-            // Part of HACK name generation
-            StringBuilder builder = new();
-            List<string> components = outputFilePath.Name.Split('-').ToList();
-            components.Insert(1, "mipmap");
+            List<FilePath> mipmapNames = [outputFilePath];
+            TplTextureName baseTextureName = new(outputFilePath.Name);
 
             // Calculate number of texture levels (1 main tex + mipmap count)
             int numberOfLevels = 1;
@@ -317,35 +311,44 @@ namespace Manifold.GFZCLI
             while (resizeWidth > 0 && resizeHeight > 0)
             {
                 numberOfLevels++;
-                resizeWidth /= 2;
-                resizeHeight /= 2;
+                resizeWidth >>= 1; // div by 2
+                resizeHeight >>= 1; // div by 2
             }
 
             // Create mipmaps
             for (int mipmapLevel = 1; mipmapLevel < numberOfLevels; mipmapLevel++)
             {
+                // Check to see if mipmap already exists, skip if so
+                // NOTE: ignores 'name' and file extension
+                TplTextureName searchPattern = new()
+                {
+                    TplIndex = baseTextureName.TplIndex,
+                    TextureLevel = mipmapLevel,
+                    TextureFormat = baseTextureName.TextureFormat,
+                    Name = $"*",
+                };
+                string[] matches = Directory.GetFiles(outputFilePath.Directory, searchPattern);
+                if (matches != null && matches.Length > 0)
+                {
+                    mipmapNames.Add(new());
+                    continue;
+                }
+
                 // Compute w/h for this iteration
                 resizeWidth = image.Width >> mipmapLevel;
                 resizeHeight = image.Height >> mipmapLevel;
 
-                // TODO: this is a big hack.
-                // Create mipmap name
-                FilePath mipmapFilePath = outputFilePath.Copy();
-                // Construct file name, assumes 3rd component is mipmap level
-                // There is a better way to do this (create a struct)
-                components[2] = mipmapLevel.ToString();
-                // Rebuild name
-                for (int i = 0; i < components.Count; i++)
+                // Create name for this mipmap based on main texture
+                TplTextureName mipmapName = new()
                 {
-                    builder.Append(components[i]);
-                    if (i != components.Count - 1)
-                    {
-                        builder.Append('-');
-                    }
-                }
-                mipmapFilePath.SetName(builder.ToString());
-                mipmapNames.Add(mipmapFilePath);
-                builder.Clear();
+                    TplIndex = baseTextureName.TplIndex,
+                    TextureLevel = mipmapLevel,
+                    TextureFormat = baseTextureName.TextureFormat,
+                    Name = "generated",
+                };
+                FilePath mipmapPath = outputFilePath.Copy();
+                mipmapPath.SetName(mipmapName);
+                mipmapNames.Add(mipmapPath);
 
                 // Actual code which writes mipmaps
                 void WriteMipmapFile()
