@@ -107,7 +107,7 @@ namespace Manifold.GFZCLI
 
         public static void WritePackedTextureSeries(Options options, Tpl tpl, FilePath inputPath, FilePath outputPath, IResampler resampler)
         {
-            // Iterate over all texture series
+            // Iterate over all texture in texture series
             int numTextures = tpl.TextureSeries.Length;
             for (int i = 0; i < numTextures; i++)
             {
@@ -119,17 +119,18 @@ namespace Manifold.GFZCLI
                     textureSeries.Description.IsNull)
                     continue;
 
-                // Output name is the hash of the main texture (for now)
-                StringBuilder builder = new StringBuilder();
+                // Output name is the hash of each texture in series
+                StringBuilder builder = new();
                 foreach (var textureEntry in textureSeries.Entries)
                     builder.Append($"{textureEntry.CRC32}-");
-                string name = builder.ToString()[..^1];
+                string name = builder.ToString()[..^1]; // removes last dash
 
                 // Previous function
                 FilePath fullOutputPath = outputPath.Copy();
                 fullOutputPath.SetName(name);
                 fullOutputPath.SetExtensions("png");
 
+                // Function which runs if file is output
                 void TextureWrite()
                 {
                     // Prepare image buffer. Twice width to fit mipmaps if they exist.
@@ -174,7 +175,7 @@ namespace Manifold.GFZCLI
                         offset.X += mipmap.Width;
                     }
 
-                    //Write out texture
+                    // Write out texture
                     EnsureDirectoriesExist(fullOutputPath);
                     PngEncoder imageEncoder = new()
                     {
