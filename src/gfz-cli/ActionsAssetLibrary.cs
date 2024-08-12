@@ -1,9 +1,10 @@
 ﻿using GameCube.GFZ.GMA;
 using GameCube.GFZ.TPL;
 using GameCube.GX.Texture;
+using static Manifold.GFZCLI.GfzCliUtilities;
+using static Manifold.GFZCLI.GfzCliImageUtilities;
 using Manifold.IO;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -11,13 +12,8 @@ using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
 using System.Collections.Generic;
 using System.IO;
-
-
-using static Manifold.GFZCLI.GfzCliUtilities;
-using static Manifold.GFZCLI.GfzCliImageUtilities;
 using System.Linq;
 using System.Text;
-using System.Net.Http.Headers;
 
 
 namespace Manifold.GFZCLI
@@ -49,7 +45,6 @@ namespace Manifold.GFZCLI
             string searchPattern = options.SearchPattern;
             // Get GMA file paths
             options.SearchPattern = "*.gma";
-            //FilePath[] gmaFiles = FilePath.ToFilePaths(GetInputFiles(options));
             string[] gmaFiles = GetInputFiles(options);
             // Get TPL file paths
             options.SearchPattern = "*.tpl";
@@ -295,7 +290,7 @@ namespace Manifold.GFZCLI
             writer.Write(gxTex);
         }
 
-
+        //
         private static void WriteModels(Options options, FilePath inputPath, FilePath outputPath, string[] gmaTextures)
         {
             // Load GMA file
