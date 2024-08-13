@@ -327,7 +327,7 @@ namespace Manifold.GFZCLI
                 // Create final output path
                 OSPath modelOutputPath = outputPath.Copy();
                 modelOutputPath.SetFileName($"{name}-{gcmf.CRC32}");
-                modelOutputPath.SetExtensions("gcmf");
+                modelOutputPath.SetExtensions("gcmfx");
 
                 // Create standalone GCMF with reference to textures!
                 {
