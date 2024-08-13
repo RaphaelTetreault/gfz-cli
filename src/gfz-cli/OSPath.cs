@@ -625,7 +625,9 @@ namespace Manifold.GFZCLI
         }
         public override int GetHashCode()
         {
-            throw new System.NotImplementedException();
+            string value = FullPath;
+            int hash = value.GetHashCode();
+            return hash;
         }
     }
 }
