@@ -268,7 +268,7 @@ namespace Manifold.GFZCLI
         }
         public static string EnforceUnixSeparators(string path)
         {
-            path = path.Replace("\\", "/");
+            path = path.Replace(@"\", "/");
             return path;
         }
 

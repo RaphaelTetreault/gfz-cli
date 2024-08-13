@@ -165,13 +165,14 @@ namespace Manifold.GFZCLI
         /// </returns>
         public string GetDirectories()
         {
-            StringBuilder builder = new();
             foreach (var directory in directoriesList)
             {
                 builder.Append(directory);
                 builder.Append('/');
             }
-            return builder.ToString();
+            string value = builder.ToString();
+            builder.Clear();
+            return value;
         }
         /// <summary>
         ///     Sets all directories for this path.
