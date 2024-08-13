@@ -297,6 +297,9 @@ namespace Manifold.GFZCLI
             Gma gma = BinarySerializableIO.LoadFile<Gma>(inputPath);
             gma.FileName = inputPath;
 
+            //　Record names of generated files for .gmaref
+            List<string> gcmfAssetNames = new();
+
             // Iterate over all models in GMA
             int numModels = gma.Models.Length;
             for (int i = 0; i < numModels; i++)
@@ -328,6 +331,8 @@ namespace Manifold.GFZCLI
                 OSPath modelOutputPath = outputPath.Copy();
                 modelOutputPath.SetFileName($"{name}-{gcmf.CRC32}");
                 modelOutputPath.SetExtensions("gcmfx");
+                //
+                gcmfAssetNames.Add(modelOutputPath.FileNameAndExtensions);
 
                 // Create standalone GCMF with reference to textures!
                 {
@@ -352,6 +357,33 @@ namespace Manifold.GFZCLI
                     }
                     FileWriteOverwriteHandler(options, FileWriteGcmfAsset, info);
                 }
+            }
+
+            // Create GMA ref file (plaintext)
+            {
+                OSPath gmarefOutputPath = outputPath.Copy();
+                string fileName = Path.GetFileNameWithoutExtension(gma.FileName);
+                gmarefOutputPath.SetFileName(fileName);
+                gmarefOutputPath.SetExtensions("gmaref");
+                string directories = Path.GetDirectoryName(inputPath)[options.InputPath.Length..];
+                gmarefOutputPath.PushDirectories(directories);
+
+                var info = new FileWriteInfo()
+                {
+                    InputFilePath = gma.FileName,
+                    OutputFilePath = gmarefOutputPath,
+                    PrintDesignator = Designator,
+                    PrintActionDescription = $"creating GMA References (.gmaref) from",
+                };
+                void FileWriteGmaAsset()
+                {
+                    EnsureDirectoriesExist(gmarefOutputPath);
+                    using var writer = new StreamWriter(File.Create(gmarefOutputPath));
+                    int padWidth = gcmfAssetNames.Count.ToString().Length;
+                    for (int i = 0; i < gcmfAssetNames.Count; i++)
+                        writer.Write($"{i.PadLeft(padWidth)}:\t{gcmfAssetNames[i]}\n");
+                }
+                FileWriteOverwriteHandler(options, FileWriteGmaAsset, info);
             }
         }
     }
