@@ -616,7 +616,7 @@ namespace Manifold.GFZCLI
             if (obj is null)
                 return false;
 
-            if (obj is not string || obj is not OSPath)
+            if (obj is not string && obj is not OSPath)
                 return false;
 
             bool isEquivilent = obj as string == FullPath;
