@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 namespace Manifold.GFZCLI
 {
     /// <summary>
-    ///     Managed represention of file path.
+    ///     Managed represention of OS path, such as file paths and directories.
     /// </summary>
     public class OSPath
     {
@@ -25,7 +25,7 @@ namespace Manifold.GFZCLI
 
         // PROPERTIES
         /// <summary>
-        ///     Returns string with all directories in the format "dir1/dir2/dir3".
+        ///     Returns string with all directories in the format "dir1/dir2/dir3/".
         /// </summary>
         /// <remarks>
         ///     Returns an empty string if no directories are assigned to this path.
@@ -161,7 +161,7 @@ namespace Manifold.GFZCLI
         ///     Return single string with all directories.
         /// </summary>
         /// <returns>
-        ///     Returns a string formatted as "dir1/dir2/dir3".
+        ///     Returns a string formatted as "dir1/dir2/dir3/".
         /// </returns>
         public string GetDirectories()
         {
