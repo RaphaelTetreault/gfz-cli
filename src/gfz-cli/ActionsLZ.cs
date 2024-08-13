@@ -19,7 +19,7 @@ namespace Manifold.GFZCLI
             Terminal.WriteLine($"LZ: done decompressing {taskCount} file{Plural(taskCount)}.");
         }
 
-        public static void LzDecompressFile(Options options, FilePath inputFile, FilePath outputFile)
+        public static void LzDecompressFile(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Remove extension
             outputFile.PopExtension();
@@ -53,9 +53,9 @@ namespace Manifold.GFZCLI
             Terminal.WriteLine($"LZ: done compressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
 
-        public static void LzCompressFile(Options options, FilePath inputFile, FilePath outputFile)
+        public static void LzCompressFile(Options options, OSPath inputFile, OSPath outputFile)
         {
-            outputFile.AppendExtension(".lz");
+            outputFile.PushExtension(".lz");
 
             var fileWrite = () =>
             {

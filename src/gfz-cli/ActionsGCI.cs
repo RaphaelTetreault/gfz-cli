@@ -15,7 +15,7 @@ namespace Manifold.GFZCLI
             Terminal.WriteLine($"GCI: done renaming {fileCount} file{Plural(fileCount)}.");
         }
 
-        public static void RenameGciFile(Options options, FilePath inputFilePath, FilePath outputFilePath)
+        public static void RenameGciFile(Options options, OSPath inputFilePath, OSPath outputFilePath)
         {
             // Can no longer do generic renaming due to changes in structures
             throw new System.NotImplementedException();

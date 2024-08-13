@@ -19,9 +19,9 @@ namespace Manifold.GFZCLI
             int count = DoFileInFileOutTasks(options, PatchSubmeshRenderFlags);
         }
 
-        public static void PatchSubmeshRenderFlags(Options options, FilePath inputPath, FilePath outputPath)
+        public static void PatchSubmeshRenderFlags(Options options, OSPath inputPath, OSPath outputPath)
         {
-            inputPath.ThrowIfDoesNotExist();
+            inputPath.ThrowIfFileDoesNotExist();
 
             var fileWrite = () =>
             {

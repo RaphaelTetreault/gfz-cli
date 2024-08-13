@@ -36,7 +36,7 @@ namespace Manifold.GFZCLI
             Terminal.WriteLine($"Emblem: done converting {gciCount} file{Plural(gciCount)}.");
         }
 
-        private static void EmblemBinToImages(Options options, FilePath inputFile, FilePath outputFile)
+        private static void EmblemBinToImages(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Read BIN Emblem data
             var emblemBIN = new EmblemBIN();
@@ -51,7 +51,7 @@ namespace Manifold.GFZCLI
             {
                 CompressionLevel = PngCompressionLevel.BestCompression
             };
-            outputFile.AppendDirectory(emblemBIN.FileName);
+            outputFile.PushDirectory(emblemBIN.FileName);
             outputFile.SetExtensions(".png");
 
             // Info for file write + console print
@@ -68,7 +68,7 @@ namespace Manifold.GFZCLI
                 var emblem = emblemBIN.Emblems[i];
                 int index = i + 1;
                 string indexStr = index.PadLeft(formatLength, '0');
-                outputFile.SetName($"{inputFile.Name}-{indexStr}");
+                outputFile.SetFileName($"{inputFile.FileName}-{indexStr}");
                 fileWriteInfo.PrintActionDescription = $"converting emblem {indexStr} of";
                 fileWriteInfo.OutputFilePath = outputFile;
                 EnsureDirectoriesExist(outputFile);
@@ -76,7 +76,7 @@ namespace Manifold.GFZCLI
             }
         }
 
-        private static void EmblemGciToImage(Options options, FilePath inputFile, FilePath outputFile)
+        private static void EmblemGciToImage(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Read GCI Emblem data
             var emblemGCI = new EmblemGCI();
@@ -103,8 +103,8 @@ namespace Manifold.GFZCLI
 
             // BANNER
             {
-                FilePath textureOutput = new(outputFile);
-                textureOutput.SetName($"{outputFile.Name}-banner");
+                OSPath textureOutput = new(outputFile);
+                textureOutput.SetFileName($"{outputFile.FileName}-banner");
                 fileWriteInfo.OutputFilePath = textureOutput;
                 fileWriteInfo.PrintActionDescription = "converting emblem banner";
                 WriteImage(options, encoder, emblemGCI.Banner, fileWriteInfo);
@@ -114,8 +114,8 @@ namespace Manifold.GFZCLI
             {
                 var icon = emblemGCI.Icons[i];
                 // Strip original file name, replace with GC game code
-                FilePath textureOutput = new(outputFile);
-                textureOutput.SetName($"{emblemGCI.Header}-icon{i}");
+                OSPath textureOutput = new(outputFile);
+                textureOutput.SetFileName($"{emblemGCI.Header}-icon{i}");
                 fileWriteInfo.OutputFilePath = textureOutput;
                 fileWriteInfo.PrintActionDescription = $"converting emblem icon #{i}";
                 WriteImage(options, encoder, icon, fileWriteInfo);
@@ -148,7 +148,7 @@ namespace Manifold.GFZCLI
             Terminal.WriteLine($"Emblem: done converting {gciCount} image{Plural(gciCount)}.");
         }
 
-        public static Emblem ImageToEmblemBin(Options options, FilePath inputFile)
+        public static Emblem ImageToEmblemBin(Options options, OSPath inputFile)
         {
             // Make sure some option parameters are appropriate
             bool isTooLarge = IImageSharpOptions.IsSizeTooLarge(options, Emblem.Width, Emblem.Height);
@@ -212,7 +212,7 @@ namespace Manifold.GFZCLI
             return emblems;
         }
 
-        public static void ImageToEmblemGci(Options options, FilePath inputFile, FilePath outputFile)
+        public static void ImageToEmblemGci(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Load image
             Image<Rgba32> emblemImage = Image.Load<Rgba32>(inputFile);
@@ -235,8 +235,8 @@ namespace Manifold.GFZCLI
             options.ThrowIfInvalidRegion();
 
             // Get name for output file
-            string gciFileName = EmblemGCI.FormatGciFileName(GfzGciFileType.Emblem, emblemGci.Header, outputFile.Name, out string fileName);
-            outputFile.SetName(gciFileName);
+            string gciFileName = EmblemGCI.FormatGciFileName(GfzGciFileType.Emblem, emblemGci.Header, outputFile.FileName, out string fileName);
+            outputFile.SetFileName(gciFileName);
 
             // Assign data
             emblemGci.Emblem = emblem;

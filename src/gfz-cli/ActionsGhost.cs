@@ -17,7 +17,7 @@ namespace Manifold.GFZCLI
             Terminal.WriteLine($"Ghost: done extracting ghost data from {binCount} file{Plural(binCount)}.");
         }
 
-        private static void ExtractGhostDataFromGci(Options options, FilePath inputFile, FilePath outputFile)
+        private static void ExtractGhostDataFromGci(Options options, OSPath inputFile, OSPath outputFile)
         {
             // 
             var gci = new GhostDataGCI();

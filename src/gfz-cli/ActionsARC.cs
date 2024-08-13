@@ -29,16 +29,16 @@ namespace Manifold.GFZCLI
             }
             // Construct output file name
             // TODO: add / to end if not there, otherwise output of code below is parent dir
-            string fileName = new FilePath(options.InputPath).PopDirectory(); // filename is "[input dir].arc"
+            string fileName = new OSPath(options.InputPath).PopDirectory(); // filename is "[input dir].arc"
             string directory = GetOutputDirectory(options);
-            FilePath outputFile = new();
+            OSPath outputFile = new();
             outputFile.SetDirectory(directory);
             // drop down 1 directory so have have ARC beside folder if no output path specified
             bool doesNotHaveOutputSpecified = string.IsNullOrEmpty(options.OutputPath);
             if (doesNotHaveOutputSpecified)
                 outputFile.PopDirectory();
-            outputFile.SetName(fileName);
-            outputFile.AppendExtension(ArchiveFile.fileExtension);
+            outputFile.SetFileName(fileName);
+            outputFile.PushExtension(ArchiveFile.fileExtension);
 
             Terminal.WriteLine($"ARC: compiling {inputFilePaths.Length} file{Plural(inputFilePaths)} into \"{outputFile}\".");
 
@@ -74,7 +74,7 @@ namespace Manifold.GFZCLI
             Terminal.WriteLine($"ARC: done decompressing {taskCount} file{Plural(taskCount)}.");
         }
 
-        public static void ArcDecompressFile(Options options, FilePath inputFile, FilePath outputFile)
+        public static void ArcDecompressFile(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Turn file path into folder path
             outputFile.PopExtension();
@@ -92,9 +92,9 @@ namespace Manifold.GFZCLI
             foreach (var file in arc.FileSystem.GetFiles())
             {
                 // Create output file path
-                FilePath fileOutputPath = new FilePath();
+                OSPath fileOutputPath = new OSPath();
                 fileOutputPath.SetDirectory(outputFile);
-                fileOutputPath.SetName(file.GetResolvedPath());
+                fileOutputPath.AppendRelativePathToDirectories(file.GetResolvedPath());
                 EnsureDirectoriesExist(fileOutputPath);
 
                 void FileWrite()

@@ -26,11 +26,11 @@ namespace Manifold.GFZCLI
             int taskCount = DoFileInFileOutTasks(options, InOutFile<TFile>);
             Terminal.WriteLine($"IO {typeName}: in-out re-serialization of {taskCount} file{Plural(taskCount)}.");
         }
-        public static void InOutFile<TFile>(Options options, FilePath inputFile, FilePath outputFile)
+        public static void InOutFile<TFile>(Options options, OSPath inputFile, OSPath outputFile)
             where TFile : IBinaryFileType, IBinarySerializable, new()
         {
             // Mutate name
-            outputFile.SetName(outputFile.Name + "_copy");
+            outputFile.SetFileName(outputFile.FileName + "_copy");
             string designator = $"IO {typeof(TFile).Name}";
 
             // Read in file, write out file
@@ -38,7 +38,7 @@ namespace Manifold.GFZCLI
             {
                 // In
                 TFile source = new();
-                source.FileName = inputFile.Name;
+                source.FileName = inputFile.FileName;
                 using EndianBinaryReader reader = new(File.OpenRead(inputFile), source.Endianness);
                 reader.Read(ref source);
 
@@ -67,7 +67,7 @@ namespace Manifold.GFZCLI
             int taskCount = DoFileInFileOutTasks(options, PatchSceneComment);
             Terminal.WriteLine($"PATCH: patch {taskCount} scene file{Plural(taskCount)}.");
         }
-        public static void PatchSceneComment(Options options, FilePath inputFile, FilePath _)
+        public static void PatchSceneComment(Options options, OSPath inputFile, OSPath _)
         {
             // Read in file, write out file
             void filePatch()

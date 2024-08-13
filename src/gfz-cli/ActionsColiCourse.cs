@@ -14,9 +14,9 @@ namespace Manifold.GFZCLI
             int count = DoFileInFileOutTasks(options, PatchFog);
             //Terminal.WriteLine($"FMI: done converting {binCount} file{Plural(binCount)}.");
         }
-        public static void PatchFog(Options options, FilePath inputPath, FilePath outputPath)
+        public static void PatchFog(Options options, OSPath inputPath, OSPath outputPath)
         {
-            inputPath.ThrowIfDoesNotExist();
+            inputPath.ThrowIfFileDoesNotExist();
 
             var fileWrite = () =>
             {
@@ -28,7 +28,7 @@ namespace Manifold.GFZCLI
 
                 // Read data
                 Scene scene = new Scene();
-                scene.FileName = inputPath.Name;
+                scene.FileName = inputPath.FileName;
                 using EndianBinaryReader reader = new(File.Open(inputPath, fileMode, fileAccess, fileShare), Scene.endianness);
                 scene.Deserialize(reader);
                 reader.Close();
@@ -109,15 +109,15 @@ namespace Manifold.GFZCLI
         {
             int count = DoFileInFileOutTasks(options, PatchSceneObjectDynamicRenderFlags);
         }
-        public static void PatchSceneObjectDynamicRenderFlags(Options options, FilePath inputPath, FilePath outputPath)
+        public static void PatchSceneObjectDynamicRenderFlags(Options options, OSPath inputPath, OSPath outputPath)
         {
-            inputPath.ThrowIfDoesNotExist();
+            inputPath.ThrowIfFileDoesNotExist();
 
             var fileWrite = () =>
             {
                 // Read data
                 Scene scene = new Scene();
-                scene.FileName = inputPath.Name;
+                scene.FileName = inputPath.FileName;
                 using EndianBinaryReader reader = new(File.OpenRead(inputPath), Scene.endianness);
                 scene.Deserialize(reader);
                 reader.Close();

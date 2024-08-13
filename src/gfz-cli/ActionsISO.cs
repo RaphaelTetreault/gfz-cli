@@ -14,8 +14,8 @@ namespace Manifold.GFZCLI
         public static void IsoExtractAll(Options options)
         {
             // Manage input
-            var inputFile = new FilePath(options.InputPath);
-            inputFile.ThrowIfDoesNotExist();
+            var inputFile = new OSPath(options.InputPath);
+            inputFile.ThrowIfFileDoesNotExist();
             // Manage output
             if (string.IsNullOrWhiteSpace(options.OutputPath))
             {
@@ -41,7 +41,7 @@ namespace Manifold.GFZCLI
             task1.Wait();
         }
 
-        private static Task IsoExtractFiles(Options options, DiskImage iso, FilePath inputFile)
+        private static Task IsoExtractFiles(Options options, DiskImage iso, OSPath inputFile)
         {
             // Prepare files for writing
             var files = iso.FileSystem.GetFiles();
@@ -50,10 +50,10 @@ namespace Manifold.GFZCLI
             {
                 // Get output path
                 var file = files[i];
-                FilePath outputFile = new FilePath();
+                OSPath outputFile = new OSPath();
                 outputFile.SetDirectory(options.OutputPath);
-                outputFile.AppendDirectory("files");
-                outputFile.SetName(file.GetResolvedPath());
+                outputFile.PushDirectory("files");
+                outputFile.AppendRelativePathToDirectories(file.GetResolvedPath());
 
                 // Function to write file
                 var fileWrite = () =>
@@ -87,7 +87,7 @@ namespace Manifold.GFZCLI
             return tasksFinished;
         }
 
-        private static Task IsoExtractSystem(Options options, DiskImage iso, FilePath inputFile)
+        private static Task IsoExtractSystem(Options options, DiskImage iso, OSPath inputFile)
         {
             // Prepare functions
             var makeBootBin = IsoExtractSystemFile(options, inputFile, "boot", "bin", iso.DiskHeader.BootBinRaw);
@@ -111,13 +111,13 @@ namespace Manifold.GFZCLI
             return tasksFinished;
         }
 
-        private static Action IsoExtractSystemFile(Options options, FilePath inputFile, string outputName, string outputExtension, byte[] data)
+        private static Action IsoExtractSystemFile(Options options, OSPath inputFile, string outputName, string outputExtension, byte[] data)
         {
             // Get output path
-            FilePath outputFile = new FilePath();
+            OSPath outputFile = new OSPath();
             outputFile.SetDirectory(options.OutputPath);
-            outputFile.AppendDirectory("sys");
-            outputFile.SetName(outputName);
+            outputFile.PushDirectory("sys");
+            outputFile.SetFileName(outputName);
             outputFile.SetExtensions(outputExtension);
 
             // Print information

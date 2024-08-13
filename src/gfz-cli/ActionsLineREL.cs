@@ -35,8 +35,8 @@ namespace Manifold.GFZCLI
                 string msg = $"Input arguments found {inputFiles.Length} files, must only be 1 file.";
                 throw new ArgumentException(msg);
             }
-            FilePath inputFilePath = new FilePath(inputFiles[0]);
-            inputFilePath.ThrowIfDoesNotExist();
+            OSPath inputFilePath = new OSPath(inputFiles[0]);
+            inputFilePath.ThrowIfFileDoesNotExist();
 
             //
             Terminal.Write($"LineREL: opening file ");
@@ -145,7 +145,7 @@ namespace Manifold.GFZCLI
 
             DoFileInFileOutTasks(options, EncryptLine);
         }
-        public static void CryptLine(Options options, FilePath inputFile, FilePath outputFile, bool doEncrypt, string extension)
+        public static void CryptLine(Options options, OSPath inputFile, OSPath outputFile, bool doEncrypt, string extension)
         {
             // Remove extension
             outputFile.PopExtension();
@@ -170,28 +170,28 @@ namespace Manifold.GFZCLI
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
-        public static void DecryptLine(Options options, FilePath inputFile, FilePath outputFile)
+        public static void DecryptLine(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Step 1: Decrypt line__.bin into line__.rel.lz
             CryptLine(options, inputFile, outputFile, false, "rel.lz");
 
             // Step 2: Get path to line__.rel.lz
-            FilePath lzInputFile = new FilePath(outputFile);
+            OSPath lzInputFile = new OSPath(outputFile);
             lzInputFile.SetExtensions("rel.lz");
-            FilePath lzOutputFile = new FilePath(lzInputFile);
+            OSPath lzOutputFile = new OSPath(lzInputFile);
 
             // Step 3: Decompress line__.rel.lz into line__.rel
             ActionsLZ.LzDecompressFile(options, lzInputFile, lzOutputFile);
         }
-        public static void EncryptLine(Options options, FilePath inputFile, FilePath outputFile)
+        public static void EncryptLine(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Step 1: Compress line__.rel to line__.rel.lz
             ActionsLZ.LzCompressFile(options, inputFile, outputFile);
 
             // Step 2: Get path to line__.rel.lz
-            FilePath lzInputFile = new FilePath(outputFile);
+            OSPath lzInputFile = new OSPath(outputFile);
             lzInputFile.PushExtension("lz");
-            FilePath lzOutputFile = new FilePath(lzInputFile);
+            OSPath lzOutputFile = new OSPath(lzInputFile);
 
             // Step 3: Encrypt line_rel.lz into line__.bin
             CryptLine(options, lzInputFile, lzOutputFile, true, "bin");
@@ -376,13 +376,13 @@ namespace Manifold.GFZCLI
                 string msg = $"Argument --{ILineRelOptions.Args.UsingFilePath} must be set to a file path!";
                 throw new ArgumentException(msg);
             }
-            FilePath carDataPath = new(options.Value);
-            carDataPath.ThrowIfDoesNotExist();
+            OSPath carDataPath = new(options.Value);
+            carDataPath.ThrowIfFileDoesNotExist();
 
             // Open CarData if possible
-            bool isFileTSV = carDataPath.IsExtension(".tsv");
-            bool isFileLZ = carDataPath.IsExtension(".lz");
-            bool isFileBin = carDataPath.IsExtension("");
+            bool isFileTSV = carDataPath.IsOfExtension(".tsv");
+            bool isFileLZ = carDataPath.IsOfExtension(".lz");
+            bool isFileBin = carDataPath.IsOfExtension("");
             CarData carData;
             if (isFileTSV)
             {
@@ -393,7 +393,7 @@ namespace Manifold.GFZCLI
             else if (isFileLZ || isFileBin)
             {
                 // Decompress LZ if not decompressed yet
-                bool isLzCompressed = carDataPath.IsExtension(".lz");
+                bool isLzCompressed = carDataPath.IsOfExtension(".lz");
                 // Open the file if decompressed, decompress file stream otherwise
                 carData = new CarData();
                 using Stream fileStream = isLzCompressed ? LzUtility.DecompressAvLz(carDataPath) : File.OpenRead(carDataPath);

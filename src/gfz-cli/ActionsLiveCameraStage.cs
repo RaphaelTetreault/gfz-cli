@@ -19,7 +19,7 @@ namespace Manifold.GFZCLI
             Terminal.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
 
-        public static void LiveCameraStageBinToTsvFile(Options options, FilePath inputFile, FilePath outputFile)
+        public static void LiveCameraStageBinToTsvFile(Options options, OSPath inputFile, OSPath outputFile)
         {
             outputFile.SetExtensions(".tsv");
 
@@ -61,7 +61,7 @@ namespace Manifold.GFZCLI
             Terminal.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
 
-        public static void LiveCameraStageTsvToBinFile(Options options, FilePath inputFile, FilePath outputFile)
+        public static void LiveCameraStageTsvToBinFile(Options options, OSPath inputFile, OSPath outputFile)
         {
             outputFile.SetExtensions(".bin");
 

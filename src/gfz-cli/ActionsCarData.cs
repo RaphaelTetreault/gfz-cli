@@ -23,13 +23,13 @@ namespace Manifold.GFZCLI
             DoFileInFileOutTasks(options, CarDataBinToTsvTask);
         }
 
-        public static void CarDataBinToTsvTask(Options options, FilePath inputFile, FilePath outputFile)
+        public static void CarDataBinToTsvTask(Options options, OSPath inputFile, OSPath outputFile)
         {
             outputFile.SetExtensions(".tsv");
 
             // Read file
             // Decompress LZ if not decompressed yet
-            bool isLzCompressed = inputFile.IsExtension(".lz");
+            bool isLzCompressed = inputFile.IsOfExtension(".lz");
             // Open the file if decompressed, decompress file stream otherwise
             var carData = new CarData();
             using (Stream fileStream = isLzCompressed ? LzUtility.DecompressAvLz(inputFile) : File.OpenRead(inputFile))
@@ -68,7 +68,7 @@ namespace Manifold.GFZCLI
             DoFileInFileOutTasks(options, CarDataTsvToBin);
         }
 
-        public static void CarDataTsvToBin(Options options, FilePath inputFile, FilePath outputFilePath)
+        public static void CarDataTsvToBin(Options options, OSPath inputFile, OSPath outputFilePath)
         {
             outputFilePath.SetExtensions(".lz");
 

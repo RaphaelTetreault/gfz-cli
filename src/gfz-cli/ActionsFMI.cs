@@ -30,7 +30,7 @@ namespace Manifold.GFZCLI
             Terminal.WriteLine($"FMI: done converting {binCount} file{Plural(binCount)}.");
         }
 
-        private static void FmiToPlaintext(Options options, FilePath inputFile, FilePath outputFile)
+        private static void FmiToPlaintext(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Set output extensions
             outputFile.SetExtensions(".fmi.txt");
@@ -57,7 +57,7 @@ namespace Manifold.GFZCLI
             FileWriteOverwriteHandler(options, fileWrite, info);
         }
 
-        private static void FmiFromPlaintext(Options options, FilePath inputFile, FilePath outputFile)
+        private static void FmiFromPlaintext(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Set output extension
             outputFile.SetExtensions(".fmi");

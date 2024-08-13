@@ -39,7 +39,7 @@ namespace Manifold.GFZCLI
             //Terminal.WriteLine($"Asset Library: done unpacking {taskCount} TPL file{(taskCount != 1 ? 's' : "")}.");
         }
 
-        public static void CreateGmaTplLibrary(Options options, FilePath inputPath, FilePath outputPath)
+        public static void CreateGmaTplLibrary(Options options, OSPath inputPath, OSPath outputPath)
         {
             // Copy original argument
             string searchPattern = options.SearchPattern;
@@ -61,19 +61,19 @@ namespace Manifold.GFZCLI
             // Image resampler
             IResampler resampler = options.Resampler;
 
-            FilePath tplOutputPath = outputPath.Copy();
-            FilePath gmaOutputPath = outputPath.Copy();
-            tplOutputPath.AppendDirectory("tex");
-            gmaOutputPath.AppendDirectory("mdl");
+            OSPath tplOutputPath = outputPath.Copy();
+            OSPath gmaOutputPath = outputPath.Copy();
+            tplOutputPath.PushDirectory("tex");
+            gmaOutputPath.PushDirectory("mdl");
 
             // Create TPL alongside GMAs
             foreach (var assetFile in gmaFiles)
             {
                 // Get path to TPL
-                FilePath tplPath = new(assetFile);
+                OSPath tplPath = new(assetFile);
                 tplPath.SetExtensions("tpl");
                 //
-                FilePath gmaPath = tplPath.Copy();
+                OSPath gmaPath = tplPath.Copy();
                 gmaPath.SetExtensions("gma");
 
                 // Check: does GMA have a TPL file beside it in the directory?
@@ -99,7 +99,7 @@ namespace Manifold.GFZCLI
             foreach (var tplFile in tplFiles)
             {
                 // Get path to TPL
-                FilePath tplFilePath = new(tplFile);
+                OSPath tplFilePath = new(tplFile);
                 tplFilePath.SetExtensions("tpl");
                 // Write out textures
                 TplToGxtexAndPng(options, tplFilePath, tplOutputPath, resampler);
@@ -107,7 +107,7 @@ namespace Manifold.GFZCLI
         }
 
         // Runs an action on all texture bundles
-        private static string[] TplToGxtexAndPng(Options options, FilePath inputPath, FilePath outputPath, IResampler resampler)
+        private static string[] TplToGxtexAndPng(Options options, OSPath inputPath, OSPath outputPath, IResampler resampler)
         {
             // Load TPL file
             Tpl tpl = BinarySerializableIO.LoadFile<Tpl>(inputPath);
@@ -135,10 +135,10 @@ namespace Manifold.GFZCLI
                 textureNames[i] = name;
 
                 // Create final output path
-                FilePath imageOutputPath = outputPath.Copy();
-                imageOutputPath.SetName(name);
+                OSPath imageOutputPath = outputPath.Copy();
+                imageOutputPath.SetFileName(name);
                 imageOutputPath.SetExtensions("png");
-                FilePath gxtexOutputPath = imageOutputPath.Copy();
+                OSPath gxtexOutputPath = imageOutputPath.Copy();
                 gxtexOutputPath.SetExtensions("gxtex");
 
                 // PNG
@@ -291,7 +291,7 @@ namespace Manifold.GFZCLI
         }
 
         //
-        private static void WriteModels(Options options, FilePath inputPath, FilePath outputPath, string[] gmaTextures)
+        private static void WriteModels(Options options, OSPath inputPath, OSPath outputPath, string[] gmaTextures)
         {
             // Load GMA file
             Gma gma = BinarySerializableIO.LoadFile<Gma>(inputPath);
@@ -325,8 +325,8 @@ namespace Manifold.GFZCLI
                 }
 
                 // Create final output path
-                FilePath modelOutputPath = outputPath.Copy();
-                modelOutputPath.SetName($"{name}-{gcmf.CRC32}");
+                OSPath modelOutputPath = outputPath.Copy();
+                modelOutputPath.SetFileName($"{name}-{gcmf.CRC32}");
                 modelOutputPath.SetExtensions("gcmf");
 
                 // Create standalone GCMF with reference to textures!

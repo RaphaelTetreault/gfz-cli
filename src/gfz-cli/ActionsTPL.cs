@@ -31,7 +31,7 @@ namespace Manifold.GFZCLI
             int taskCount = DoFileInFileOutTasks(options, TplUnpackFile);
             Terminal.WriteLine($"TPL: done unpacking {taskCount} TPL file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void TplUnpackFile(Options options, FilePath inputFile, FilePath outputFile)
+        public static void TplUnpackFile(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Deserialize the TPL
             Tpl tpl = new Tpl();
@@ -52,7 +52,7 @@ namespace Manifold.GFZCLI
                 CompressionLevel = PngCompressionLevel.BestCompression
             };
             outputFile.SetExtensions(".png");
-            outputFile.AppendDirectory(tpl.FileName);
+            outputFile.PushDirectory(tpl.FileName);
 
             // Iterate over texture and mipmaps, save to disk
             int tplIndex = 0;
@@ -85,8 +85,8 @@ namespace Manifold.GFZCLI
                     // Use new FileDescription
                     var texture = textureEntry.Texture;
                     string textureHash = textureBundle.Elements[entryIndex].CRC32;
-                    FilePath textureOutput = new FilePath(outputFile);
-                    textureOutput.SetName($"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}");
+                    OSPath textureOutput = new OSPath(outputFile);
+                    textureOutput.SetFileName($"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}");
 
                     //
                     var fileWrite = () =>
@@ -194,7 +194,7 @@ namespace Manifold.GFZCLI
             int taskCount = DoFileInFileOutTasks(options, TplGenerateMipmaps);
             Terminal.WriteLine($"TPL: done generating mipmaps for {taskCount} file{(taskCount != 1 ? 's' : "")}.");
         }
-        public static void TplGenerateMipmaps(Options options, FilePath inputFilePath, FilePath outputFilePath)
+        public static void TplGenerateMipmaps(Options options, OSPath inputFilePath, OSPath outputFilePath)
         {
             // Check to see if file can be loaded, error if not.
             using var sourceImage = File.OpenRead(inputFilePath);
@@ -221,8 +221,8 @@ namespace Manifold.GFZCLI
             // Prepare file and encoding information
             IResampler resampler = options.Resampler;
             ImageEncoder imageEncoder = options.ImageEncoder;
-            List<FilePath> mipmapNames = [outputFilePath];
-            TplTextureName baseTextureName = new(outputFilePath.Name);
+            List<OSPath> mipmapNames = [outputFilePath];
+            TplTextureName baseTextureName = new(outputFilePath.FileName);
 
             // Calculate number of texture levels (1 main tex + mipmap count)
             int numberOfLevels = 1;
@@ -247,7 +247,7 @@ namespace Manifold.GFZCLI
                     TextureFormat = baseTextureName.TextureFormat,
                     Name = $"*",
                 };
-                string[] matches = Directory.GetFiles(outputFilePath.Directory, searchPattern);
+                string[] matches = Directory.GetFiles(outputFilePath.Directories, searchPattern);
                 if (matches != null && matches.Length > 0)
                 {
                     mipmapNames.Add(new());
@@ -266,8 +266,8 @@ namespace Manifold.GFZCLI
                     TextureFormat = baseTextureName.TextureFormat,
                     Name = "generated",
                 };
-                FilePath mipmapPath = outputFilePath.Copy();
-                mipmapPath.SetName(mipmapName);
+                OSPath mipmapPath = outputFilePath.Copy();
+                mipmapPath.SetFileName(mipmapName);
                 mipmapNames.Add(mipmapPath);
 
                 // Actual code which writes mipmaps

@@ -11,8 +11,8 @@ namespace Manifold.GFZCLI
     /// </summary>
     public static class GfzCliUtilities
     {
-        public delegate void FileInFileOutTask(Options options, FilePath inputFile, FilePath outputFile);
-        public delegate T FileInTypeOutTask<T>(Options options, FilePath inputFile);
+        public delegate void FileInFileOutTask(Options options, OSPath inputFile, OSPath outputFile);
+        public delegate T FileInTypeOutTask<T>(Options options, OSPath inputFile);
 
         public static int DoFileInFileOutTasks(Options options, FileInFileOutTask fileTask)
         {
@@ -24,8 +24,8 @@ namespace Manifold.GFZCLI
             List<Task> tasks = new(inputFilePaths.Length);
             for (int i = 0; i < inputFilePaths.Length; i++)
             {
-                var inputFile = new FilePath(inputFilePaths[i]);
-                var outputFile = new FilePath(outputFilePaths[i]);
+                var inputFile = new OSPath(inputFilePaths[i]);
+                var outputFile = new OSPath(outputFilePaths[i]);
 
                 var action = () => { fileTask(options, inputFile, outputFile); };
                 var task = Task.Factory.StartNew(action);
@@ -51,7 +51,7 @@ namespace Manifold.GFZCLI
             //  Schedule tasks, indicate where to store value
             for (int i = 0; i < tasks.Length; i++)
             {
-                var inputFile = new FilePath(inputFilePaths[i]);
+                var inputFile = new OSPath(inputFilePaths[i]);
                 int index = i;
 
                 var action = () => { results[index] = processFileTask(options, inputFile); };
