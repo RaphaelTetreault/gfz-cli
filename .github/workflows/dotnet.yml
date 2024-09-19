@@ -48,7 +48,7 @@ jobs:
         dotnet publish gfz-cli.csproj  -c Debug  -o cibuild/win-x86   -r win-x86   --self-contained
       working-directory: ./src/gfz-cli/
       
-    # Linux x65
+    # Linux x64
     - name: Upload Linux Artifact
       uses: actions/upload-artifact@v3
       with:
