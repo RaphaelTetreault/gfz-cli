@@ -11,8 +11,7 @@ on:
 
 jobs:
   build:
-    # Windows required to compile Unity.Mathematics' 4.7.2 .NET Framework
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -22,7 +21,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
       
     - name: Restore dependencies
       run: dotnet restore
