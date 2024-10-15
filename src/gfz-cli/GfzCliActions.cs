@@ -4,17 +4,27 @@
     {
         none,
 
+        [Action(ActionIO.FileIn | ActionIO.DirectoryOut)]
         arc_unpack,
+
+        [Action(ActionIO.DirectoryIn | ActionIO.FileOut)]
         arc_pack,
 
         auto_rename_gci, // NOT IMPLEMENTED
 
+        [Action(ActionIO.FileInOut)]
         cardata_from_tsv,
+
+        [Action(ActionIO.FileInOut)]
         cardata_to_tsv,
 
+        [Action(ActionIO.FileInOut)]
         colicourse_patch_fog,
+
+        [Action(ActionIO.FileInOut)]
         colicourse_patch_object_render_flags,
 
+        [Action(ActionIO.FileIn | ActionIO.DirectoryOut)]
         extract_iso,
 
         emblem_gci_from_image,
@@ -25,6 +35,7 @@
         fmi_from_plaintext,
         fmi_to_plaintext,
 
+        [Action(ActionIO.DirectoryIn | ActionIO.DirectoryOut)]
         generate_asset_library,
 
         gci_extract_ghost,

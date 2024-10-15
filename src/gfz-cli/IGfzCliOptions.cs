@@ -29,9 +29,6 @@ namespace Manifold.GFZCLI
             public const string SearchSubdirectories = "search-subdirs";
             public const string SerializationFormat = "format";
             public const string SerializationRegion = "region";
-
-            public const string TplUnpackMipmaps = "tpl-unpack-mipmaps";
-            public const string TplUnpackSaveCorruptedTextures = "tpl-unpack-corrupted-cmpr";
         }
 
         internal static class Help

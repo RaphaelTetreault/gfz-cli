@@ -24,7 +24,7 @@ namespace Manifold.GFZCLI
             bool outputNotDirectory = !Directory.Exists(options.OutputPath);
             if (hasOutputPath && outputNotDirectory)
             {
-                string msg = "ARC archive compress requires a direcory as output path.";
+                string msg = "ARC archive compress requires a directory as output path.";
                 throw new Exception(msg);
             }
             // Construct output file name

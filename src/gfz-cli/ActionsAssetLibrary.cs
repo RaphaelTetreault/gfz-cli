@@ -25,11 +25,13 @@ namespace Manifold.GFZCLI
         public static void CreateGmaTplLibrary(Options options)
         {
             // Assert that destination is a folder.
-            bool isFile = File.Exists(options.OutputPath);
-            if (isFile)
+            bool isInputFile = File.Exists(options.InputPath);
+            bool isOutputFile = File.Exists(options.OutputPath);
+            if (isInputFile || isOutputFile)
             {
-                string msg = $"";
-                throw new ArgumentException();
+                ActionUsageHints.DisplayHint(options);
+                string msg = $"Incorrect command usage.";
+                throw new ArgumentException(msg);
             }
 
             Terminal.WriteLine($"{Designator}: generating asset library.");

@@ -19,6 +19,8 @@ namespace Manifold.GFZCLI
 {
     public interface IImageSharpOptions
     {
+        // TODO: add Set
+
         internal static class Args
         {
             // Resize
