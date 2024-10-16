@@ -5,24 +5,26 @@
         none,
         usage,
 
-        [Action(ActionIO.FileIn | ActionIO.DirectoryOut, ActionOption.OPS)]
+        // Requires directory input, directory outout is optional. ARC compatible between AX/GX, all regions.
+        [Action(ActionIO.DirectoryIn | ActionIO.DirectoryOut, ActionOption.OPS)]
         arc_unpack,
-        [Action(ActionIO.DirectoryIn | ActionIO.FileOut, ActionOption.OPS)]
+
+        //[Action(ActionIO.DirectoryIn | ActionIO.FileOut, ActionOption.OPS)]
         arc_pack,
 
         auto_rename_gci, // NOT IMPLEMENTED
 
-        [Action(ActionIO.FileInOut, ActionOption.FOPS)]
+        //[Action(ActionIO.FileInOut, ActionOption.FOPS)]
         cardata_from_tsv,
-        [Action(ActionIO.FileInOut, ActionOption.FOPS)]
+        //[Action(ActionIO.FileInOut, ActionOption.FOPS)]
         cardata_to_tsv,
 
-        [Action(ActionIO.FileInOut, ActionOption.FOPS)]
+        //[Action(ActionIO.FileInOut, ActionOption.FOPS)]
         colicourse_patch_fog,
-        [Action(ActionIO.FileInOut, ActionOption.FOPS)]
+        //[Action(ActionIO.FileInOut, ActionOption.FOPS)]
         colicourse_patch_object_render_flags,
 
-        [Action(ActionIO.FileIn | ActionIO.DirectoryOut, ActionOption.OPS)]
+        //[Action(ActionIO.FileIn | ActionIO.DirectoryOut, ActionOption.OPS)]
         extract_iso,
 
         emblem_gci_from_image,
@@ -33,7 +35,7 @@
         fmi_from_plaintext,
         fmi_to_plaintext,
 
-        [Action(ActionIO.DirectoryIn | ActionIO.DirectoryOut)]
+        //[Action(ActionIO.DirectoryIn | ActionIO.DirectoryOut)]
         generate_asset_library,
 
         gci_extract_ghost,

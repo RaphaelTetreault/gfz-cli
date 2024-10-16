@@ -66,7 +66,7 @@ namespace Manifold.GFZCLI
             return results;
         }
 
-        public static void FileWriteOverwriteHandler(Options options, Action fileWrite, FileWriteInfo info)
+        public static bool FileWriteOverwriteHandler(Options options, Action fileWrite, FileWriteInfo info)
         {
             bool outputFileExists = File.Exists(info.OutputFilePath);
             bool doWriteFile = !outputFileExists || options.OverwriteFiles;
@@ -105,6 +105,7 @@ namespace Manifold.GFZCLI
             {
                 fileWrite.Invoke();
             }
+            return doWriteFile;
         }
 
         private static string[] GetFilesInInputDirectory(Options options)

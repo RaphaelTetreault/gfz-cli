@@ -17,38 +17,35 @@ namespace Manifold.GFZCLI
                 string msg = "ARC archive compress requires a direcory as input path.";
                 throw new Exception(msg);
             }
+
+            // For search pattern if not set
+            if (string.IsNullOrEmpty(options.SearchPattern))
+                options.SearchPattern = "*";
+            // Get files in directory with search pattern
             string[] inputFilePaths = GetInputFiles(options);
 
-            // ARC requires a directory as output path
-            bool hasOutputPath = !string.IsNullOrEmpty(options.OutputPath);
-            bool outputNotDirectory = !Directory.Exists(options.OutputPath);
-            if (hasOutputPath && outputNotDirectory)
-            {
-                string msg = "ARC archive compress requires a directory as output path.";
-                throw new Exception(msg);
-            }
             // Construct output file name
-            // TODO: add / to end if not there, otherwise output of code below is parent dir
-            string fileName = new OSPath(options.InputPath).PopDirectory(); // filename is "[input dir].arc"
+            string fileName = OSPath.FromDirectory(options.InputPath).PopDirectory(); // File name is directory name
             string directory = GetOutputDirectory(options);
+            Directory.CreateDirectory(directory);
             OSPath outputFile = new();
             outputFile.SetDirectory(directory);
+            outputFile.SetFileName(fileName);
+            outputFile.PushExtension(ArchiveFile.fileExtension);
             // drop down 1 directory so have have ARC beside folder if no output path specified
             bool doesNotHaveOutputSpecified = string.IsNullOrEmpty(options.OutputPath);
             if (doesNotHaveOutputSpecified)
                 outputFile.PopDirectory();
-            outputFile.SetFileName(fileName);
-            outputFile.PushExtension(ArchiveFile.fileExtension);
 
-            Terminal.WriteLine($"ARC: compiling {inputFilePaths.Length} file{Plural(inputFilePaths)} into \"{outputFile}\".");
 
+            // Run process
             var arc = new Archive();
             arc.FileSystem.AddFiles(inputFilePaths, options.InputPath);
-            var fileWrite = () =>
+            void FileWrite()
             {
                 using var writer = new EndianBinaryWriter(File.Create(outputFile), ArchiveFile.endianness);
                 arc.Serialize(writer);
-            };
+            }
             var info = new FileWriteInfo()
             {
                 InputFilePath = options.InputPath,
@@ -56,9 +53,20 @@ namespace Manifold.GFZCLI
                 PrintDesignator = "ARC",
                 PrintActionDescription = "creating archive from files in",
             };
-            FileWriteOverwriteHandler(options, fileWrite, info);
 
-            Terminal.WriteLine($"ARC: done archiving {inputFilePaths.Length} file{(Plural(inputFilePaths))} in {outputFile}.");
+            // Display info
+            Terminal.WriteLine($"ARC: compiling {inputFilePaths.Length} file{Plural(inputFilePaths)} into \"{outputFile}\".");
+            bool writeSuccess = FileWriteOverwriteHandler(options, FileWrite, info);
+            if (writeSuccess)
+            {
+                int digitsCount = inputFilePaths.Length.ToString().Length;
+                for (int i = 0; i < inputFilePaths.Length; i++)
+                {
+                    var inputFilePath = inputFilePaths[i];
+                    Terminal.WriteLine($"ARC:\tFile {(i + 1).PadLeft(digitsCount)}/{inputFilePaths.Length} {inputFilePath}");
+                }
+            }
+            Terminal.WriteLine($"ARC: done archiving {inputFilePaths.Length} file{Plural(inputFilePaths)} in {outputFile}.");
         }
 
 

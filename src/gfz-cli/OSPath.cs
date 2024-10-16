@@ -629,5 +629,12 @@ namespace Manifold.GFZCLI
             int hash = value.GetHashCode();
             return hash;
         }
+
+        public static OSPath FromDirectory(string path)
+        {
+            // Hack, but forces path to be treated as dir
+            var osPath = new OSPath(path + "/");
+            return osPath;
+        }
     }
 }
