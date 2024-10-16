@@ -5,27 +5,24 @@
         none,
         usage,
 
-        [Action(ActionIO.FileIn | ActionIO.DirectoryOut)]
+        [Action(ActionIO.FileIn | ActionIO.DirectoryOut, ActionOption.OPS)]
         arc_unpack,
-
-        [Action(ActionIO.DirectoryIn | ActionIO.FileOut)]
+        [Action(ActionIO.DirectoryIn | ActionIO.FileOut, ActionOption.OPS)]
         arc_pack,
 
         auto_rename_gci, // NOT IMPLEMENTED
 
-        [Action(ActionIO.FileInOut)]
+        [Action(ActionIO.FileInOut, ActionOption.FOPS)]
         cardata_from_tsv,
-
-        [Action(ActionIO.FileInOut)]
+        [Action(ActionIO.FileInOut, ActionOption.FOPS)]
         cardata_to_tsv,
 
-        [Action(ActionIO.FileInOut)]
+        [Action(ActionIO.FileInOut, ActionOption.FOPS)]
         colicourse_patch_fog,
-
-        [Action(ActionIO.FileInOut)]
+        [Action(ActionIO.FileInOut, ActionOption.FOPS)]
         colicourse_patch_object_render_flags,
 
-        [Action(ActionIO.FileIn | ActionIO.DirectoryOut)]
+        [Action(ActionIO.FileIn | ActionIO.DirectoryOut, ActionOption.OPS)]
         extract_iso,
 
         emblem_gci_from_image,

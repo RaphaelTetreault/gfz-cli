@@ -1,5 +1,7 @@
 ﻿using CommandLine;
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Manifold.GFZCLI
 {
@@ -208,17 +210,46 @@ namespace Manifold.GFZCLI
                 _ => string.Empty,
             };
 
-            string GeneralOptions = " [-f|-o|-p|-r|-s]";
-                //$" [-f|--{IGfzCliOptions.Args.SerializationFormat}]" +
-                //$" [-o|--{IGfzCliOptions.Args.OverwriteFiles}]" +
-                //$" [-p|--{IGfzCliOptions.Args.SearchPattern}]" +
-                //$" [-r|--{IGfzCliOptions.Args.SerializationRegion}]" +
-                //$" [-s|--{IGfzCliOptions.Args.SearchSubdirectories}]";
-
             // Construct hint and print
+            string generalOptions = GetGeneralOptions(actionAttribute.Options);
             string specialOptions = actionAttribute.SpecialOptions;
-            string hint = $"{actionStr}{input}{output}{GeneralOptions} {specialOptions}";
+            string hint = $"{actionStr}{input}{output}{generalOptions} {specialOptions}";
             Terminal.WriteLine(hint, color);
+        }
+
+        public static string GetGeneralOptions(ActionOption actionOptions)
+        {
+            // Prepare string
+            StringBuilder builder = new StringBuilder(66);
+            builder.Append(" [");
+
+            // Iterate over all possible values
+            for (int i = 0; i < 32; i++)
+            {
+                ActionOption option = (ActionOption)((uint)actionOptions & (1 << i));
+                if (option == ActionOption.None)
+                    continue;
+
+                // Add pipe if not at start of string
+                if (builder[^1] != '[')
+                    builder.Append('|');
+                // Add parameter dash
+                builder.Append('-');
+
+                // Add action char
+                switch (option)
+                {
+                    case ActionOption.OverwriteFiles: builder.Append(IGfzCliOptions.ArgsShort.OverwriteFiles); break;
+                    case ActionOption.SearchPattern: builder.Append(IGfzCliOptions.ArgsShort.SearchPattern); break;
+                    case ActionOption.SearchSubdirectories: builder.Append(IGfzCliOptions.ArgsShort.SearchSubdirectories); break;
+                    case ActionOption.SerializationFormat: builder.Append(IGfzCliOptions.ArgsShort.SerializationFormat); break;
+                    case ActionOption.SerializationRegion: builder.Append(IGfzCliOptions.ArgsShort.SerializationRegion); break;
+                    default: throw new NotImplementedException(option.ToString());
+                }
+            }
+            // Close options and finish
+            builder.Append(']');
+            return builder.ToString();
         }
     }
 }
