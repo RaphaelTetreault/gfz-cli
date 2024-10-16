@@ -126,10 +126,8 @@ namespace Manifold.GFZCLI
 
                 // ANYTHING ELSE
                 default:
-                    {
-                        string msg = $"Unimplemented command {options.Action}.";
-                        throw new NotImplementedException(msg);
-                    }
+                    string msg = $"Unimplemented command {options.Action}.";
+                    throw new NotImplementedException(msg);
             }
         }
 
