@@ -74,7 +74,7 @@ namespace Manifold.GFZCLI
             var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
             var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
 
-            lock (lock_ConsoleWrite)
+            lock (LockConsoleWrite)
             {
                 Terminal.Write($"{info.PrintDesignator}: ");
                 if (doWriteFile)

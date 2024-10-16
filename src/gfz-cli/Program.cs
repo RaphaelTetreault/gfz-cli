@@ -7,12 +7,12 @@ namespace Manifold.GFZCLI
 {
     public static class Program
     {
-        public static object lock_ConsoleWrite { get; } = new();
+        public static object LockConsoleWrite { get; } = new();
         public const ConsoleColor FileNameColor = ConsoleColor.Cyan;
         public const ConsoleColor OverwriteFileColor = ConsoleColor.DarkYellow;
         public const ConsoleColor WriteFileColor = ConsoleColor.Green;
         public const ConsoleColor SubTaskColor = ConsoleColor.DarkGray;
-        public static readonly string[] HelpArg = new string[] { "--help" };
+        public static readonly string[] HelpArg = ["--help"];
 
         /// <summary>
         /// 
@@ -122,7 +122,7 @@ namespace Manifold.GFZCLI
 
                 // PROGRAM-SPECIFIC
                 case GfzCliAction.usage: PrintActionUsage(options); break;
-                case GfzCliAction.none: ForceShowHelp(); break;
+                case GfzCliAction.none: PrintHelp(); break;
 
                 // ANYTHING ELSE
                 default:
@@ -133,7 +133,7 @@ namespace Manifold.GFZCLI
             }
         }
 
-        public static void ForceShowHelp()
+        public static void PrintHelp()
         {
             // Force show --help menu
             Parser.Default.ParseArguments<Options>(HelpArg).WithParsed(ExecuteAction);
@@ -211,13 +211,13 @@ namespace Manifold.GFZCLI
             };
 
             // Construct hint and print
-            string generalOptions = GetGeneralOptions(actionAttribute.Options);
+            string generalOptions = GetActionOptionsMessage(actionAttribute.Options);
             string specialOptions = actionAttribute.SpecialOptions;
             string hint = $"{actionStr}{input}{output}{generalOptions} {specialOptions}";
             Terminal.WriteLine(hint, color);
         }
 
-        public static string GetGeneralOptions(ActionOption actionOptions)
+        public static string GetActionOptionsMessage(ActionOption actionOptions)
         {
             // Prepare string
             StringBuilder builder = new StringBuilder(66);

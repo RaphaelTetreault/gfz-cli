@@ -171,7 +171,7 @@ namespace Manifold.GFZCLI
             };
 
             // Write some useful information to the terminal
-            lock (lock_ConsoleWrite)
+            lock (LockConsoleWrite)
             {
                 Terminal.Write($"Emblem: ");
                 Terminal.Write($"processing image ");

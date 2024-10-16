@@ -49,6 +49,6 @@ public enum ActionOption
     ///     All options on.
     ///     -f -o -p -r -s
     /// </summary>
-    All = SerializationFormat | OverwriteFiles | SerializationRegion | SearchPattern | SearchSubdirectories,
-    FORPS = All,
+    All = SerializationFormat | OverwriteFiles | SearchPattern | SerializationRegion | SearchSubdirectories,
+    FOPRS = All,
 }
