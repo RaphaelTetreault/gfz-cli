@@ -3,6 +3,7 @@
     public enum GfzCliAction
     {
         none,
+        usage,
 
         [Action(ActionIO.FileIn | ActionIO.DirectoryOut)]
         arc_unpack,

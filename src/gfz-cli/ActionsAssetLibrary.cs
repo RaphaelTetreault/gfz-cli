@@ -29,7 +29,6 @@ namespace Manifold.GFZCLI
             bool isOutputFile = File.Exists(options.OutputPath);
             if (isInputFile || isOutputFile)
             {
-                ActionUsageHints.DisplayHint(options);
                 string msg = $"Incorrect command usage.";
                 throw new ArgumentException(msg);
             }

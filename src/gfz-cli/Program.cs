@@ -69,8 +69,8 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.colicourse_patch_object_render_flags: ActionsColiCourse.PatchSceneObjectDynamicRenderFlags(options); break;
                 // ISO
                 case GfzCliAction.extract_iso: ActionsISO.IsoExtractAll(options); break;
-                    // TODO: Extract ./files/ only
-                    // TODO: Extract ./sys/ only
+                // TODO: Extract ./files/ only
+                // TODO: Extract ./sys/ only
                 // EMBLEM
                 case GfzCliAction.emblems_bin_from_images: ActionsEmblem.EmblemsBinFromImages(options); break;
                 case GfzCliAction.emblems_bin_to_images: ActionsEmblem.EmblemsBinToImages(options); break;
@@ -118,7 +118,8 @@ namespace Manifold.GFZCLI
                 case GfzCliAction.tpl_pack: ActionsTPL.TplPack(options); break;
                 case GfzCliAction.tpl_unpack: ActionsTPL.TplUnpack(options); break;
 
-                // UNSET
+                // PROGRAM-SPECIFIC
+                case GfzCliAction.usage: PrintActionUsage(options); break;
                 case GfzCliAction.none: ForceShowHelp(); break;
 
                 // ANYTHING ELSE
@@ -134,6 +135,90 @@ namespace Manifold.GFZCLI
         {
             // Force show --help menu
             Parser.Default.ParseArguments<Options>(HelpArg).WithParsed(ExecuteAction);
+        }
+
+        public static void PrintActionUsage(Options options)
+        {
+            // For 'usage' command, enum is passed in as input path
+            GfzCliAction action = GfzCliEnumParser.ParseUnderscoreToDash<GfzCliAction>(options.InputPath);
+
+            // If invalid, show possible actions
+            if (action == GfzCliAction.none)
+            {
+                Terminal.WriteLine("Invalid action specified. Here are all possible actions.");
+                foreach (GfzCliAction value in Enum.GetValues<GfzCliAction>())
+                {
+                    // Skip meta values
+                    if (value == GfzCliAction.none || value == GfzCliAction.usage)
+                        continue;
+
+                    // Print out actions
+                    //string valueStr = value.ToString().Replace("_", "-");
+                    //Terminal.WriteLine($"\t{valueStr}");
+                    Terminal.Write($"\t");
+                    PrintActionUsageComplete(value);
+                }
+            }
+            else // print specific usage
+            {
+                PrintActionUsageComplete(action);
+            }
+        }
+
+        public static void PrintActionUsageComplete(GfzCliAction action, ConsoleColor color = ConsoleColor.Cyan)
+        {
+            // Printable string of value
+            string actionStr = action.ToString().Replace("_", "-");
+
+            // If valid, get info about the action
+            var actionAttribute = AttributeHelper.GetAttribute<ActionAttribute, GfzCliAction>(action);
+            if (actionAttribute == null)
+            {
+                Terminal.WriteLine($"{actionStr} [usage not yet defined]", ConsoleColor.Red);
+                return;
+            }
+
+            // Input specifier
+            string input = actionAttribute.IOMode switch
+            {
+                ActionIO.FileIn or
+                ActionIO.FileInOut => " <input-file>",
+
+                ActionIO.DirectoryIn or
+                ActionIO.DirectoryInOut => " <input-directory>",
+
+                ActionIO.PathIn or
+                ActionIO.PathInOut => " <input-path>",
+
+                _ => string.Empty,
+            };
+
+            // Output specifier
+            string output = actionAttribute.IOMode switch
+            {
+                ActionIO.FileOut or
+                ActionIO.FileInOut => " <output-file>",
+
+                ActionIO.DirectoryOut or
+                ActionIO.DirectoryInOut => " <output-directory>",
+
+                ActionIO.PathOut or
+                ActionIO.PathInOut => " <output-path>",
+
+                _ => string.Empty,
+            };
+
+            string GeneralOptions = " [-f|-o|-p|-r|-s]";
+                //$" [-f|--{IGfzCliOptions.Args.SerializationFormat}]" +
+                //$" [-o|--{IGfzCliOptions.Args.OverwriteFiles}]" +
+                //$" [-p|--{IGfzCliOptions.Args.SearchPattern}]" +
+                //$" [-r|--{IGfzCliOptions.Args.SerializationRegion}]" +
+                //$" [-s|--{IGfzCliOptions.Args.SearchSubdirectories}]";
+
+            // Construct hint and print
+            string specialOptions = actionAttribute.SpecialOptions;
+            string hint = $"{actionStr}{input}{output}{GeneralOptions} {specialOptions}";
+            Terminal.WriteLine(hint, color);
         }
     }
 }
