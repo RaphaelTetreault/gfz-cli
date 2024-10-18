@@ -44,7 +44,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = "LiveCam Stage",
+                PrintPrefix = "LiveCam Stage",
                 PrintActionDescription = "creating livecam_stage TSV from file",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
@@ -85,7 +85,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = "LiveCam Stage",
+                PrintPrefix = "LiveCam Stage",
                 PrintActionDescription = "creating livecam_stage TSV from file",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);

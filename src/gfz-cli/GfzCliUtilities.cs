@@ -76,7 +76,7 @@ namespace Manifold.GFZCLI
 
             lock (LockConsoleWrite)
             {
-                Terminal.Write($"{info.PrintDesignator}: ");
+                Terminal.Write($"{info.PrintPrefix}: ");
                 if (doWriteFile)
                 {
                     Terminal.Write(info.PrintActionDescription);

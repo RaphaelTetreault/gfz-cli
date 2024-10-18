@@ -101,7 +101,7 @@ namespace Manifold.GFZCLI
                     {
                         InputFilePath = inputFile,
                         OutputFilePath = textureOutput,
-                        PrintDesignator = "TPL",
+                        PrintPrefix = "TPL",
                         PrintActionDescription = $"unpacking texture {tplIndex} mipmap {mipmapIndex} of file",
                     };
                     FileWriteOverwriteHandler(options, fileWrite, info);
@@ -291,7 +291,7 @@ namespace Manifold.GFZCLI
                 {
                     InputFilePath = inputFilePath,
                     OutputFilePath = mipmapNames[mipmapLevel],
-                    PrintDesignator = "TPL",
+                    PrintPrefix = "TPL",
                     PrintActionDescription = $"generating mipmap level {mipmapLevel} of",
                 };
                 // Code that runs function, writes info, decides if functions runs (eg: allow overwrite)

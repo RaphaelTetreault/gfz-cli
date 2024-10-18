@@ -58,7 +58,7 @@ namespace Manifold.GFZCLI
             var fileWriteInfo = new FileWriteInfo()
             {
                 InputFilePath = inputFile,
-                PrintDesignator = "Emblem",
+                PrintPrefix = "Emblem",
             };
 
             // Write out each emblem in file
@@ -98,7 +98,7 @@ namespace Manifold.GFZCLI
             var fileWriteInfo = new FileWriteInfo()
             {
                 InputFilePath = inputFile,
-                PrintDesignator = "Emblem",
+                PrintPrefix = "Emblem",
             };
 
             // BANNER
@@ -194,7 +194,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = options.InputPath,
                 OutputFilePath = outputFilePath,
-                PrintDesignator = "Emblem",
+                PrintPrefix = "Emblem",
                 PrintActionDescription = "packaging path",
             };
 
@@ -256,7 +256,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = "Emblem",
+                PrintPrefix = "Emblem",
                 PrintActionDescription = "creating emblem",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);

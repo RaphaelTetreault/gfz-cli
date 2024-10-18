@@ -40,7 +40,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = "GHOST",
+                PrintPrefix = "GHOST",
                 PrintActionDescription = "writing file",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);

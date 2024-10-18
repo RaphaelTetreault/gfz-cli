@@ -45,7 +45,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputPath,
                 OutputFilePath = outputPath,
-                PrintDesignator = "COLICOURSE",
+                PrintPrefix = "COLICOURSE",
                 PrintActionDescription = $"patch scene fog in",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);

@@ -165,7 +165,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = "LineREL",
+                PrintPrefix = "LineREL",
                 PrintActionDescription = $"{verb} file with region {options.SerializationRegion}",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);

@@ -40,7 +40,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = "LZ",
+                PrintPrefix = "LZ",
                 PrintActionDescription = "decompressing file",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
@@ -72,7 +72,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = "LZ",
+                PrintPrefix = "LZ",
                 PrintActionDescription = "compressing input file",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);

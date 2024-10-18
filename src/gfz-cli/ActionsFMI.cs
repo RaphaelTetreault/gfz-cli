@@ -51,7 +51,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = "FMI",
+                PrintPrefix = "FMI",
                 PrintActionDescription = $"converting FMI binary to plain text using",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
@@ -78,7 +78,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = "FMI",
+                PrintPrefix = "FMI",
                 PrintActionDescription = $"converting FMI plain text to binary using",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);

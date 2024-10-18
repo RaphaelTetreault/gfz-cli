@@ -148,7 +148,7 @@ namespace Manifold.GFZCLI
                     {
                         InputFilePath = tpl.FileName,
                         OutputFilePath = imageOutputPath,
-                        PrintDesignator = Designator,
+                        PrintPrefix = Designator,
                         PrintActionDescription = $"extracting texture ({i + 1}/{numTextures}) from",
                     };
                     void Task() => WriteTextureBundleAsPNG(textureBundle, imageOutputPath, resampler);
@@ -161,7 +161,7 @@ namespace Manifold.GFZCLI
                     {
                         InputFilePath = tpl.FileName,
                         OutputFilePath = gxtexOutputPath,
-                        PrintDesignator = Designator,
+                        PrintPrefix = Designator,
                         PrintActionDescription = $"extracting texture ({i + 1}/{numTextures}) from",
                     };
                     void Task() => WriteTextureBundleAsGxTexture(textureBundle, gxtexOutputPath, resampler);
@@ -341,7 +341,7 @@ namespace Manifold.GFZCLI
                     {
                         InputFilePath = gma.FileName,
                         OutputFilePath = modelOutputPath,
-                        PrintDesignator = Designator,
+                        PrintPrefix = Designator,
                         PrintActionDescription = $"extracting GCMF model ({i + 1}/{numModels}) from",
                     };
                     void FileWriteGcmfAsset()
@@ -373,7 +373,7 @@ namespace Manifold.GFZCLI
                 {
                     InputFilePath = gma.FileName,
                     OutputFilePath = gmarefOutputPath,
-                    PrintDesignator = Designator,
+                    PrintPrefix = Designator,
                     PrintActionDescription = $"creating GMA References (.gmaref) from",
                 };
                 void FileWriteGmaAsset()

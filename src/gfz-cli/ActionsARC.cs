@@ -58,7 +58,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = options.InputPath,
                 OutputFilePath = outputFile,
-                PrintDesignator = options.ActionStr,
+                PrintPrefix = options.ActionStr,
                 PrintActionDescription = "creating archive from files in",
             };
 
@@ -123,7 +123,7 @@ namespace Manifold.GFZCLI
                 {
                     InputFilePath = inputFile,
                     OutputFilePath = fileOutputPath,
-                    PrintDesignator = options.ActionStr,
+                    PrintPrefix = options.ActionStr,
                     PrintActionDescription = "decompressing file",
                 };
                 FileWriteOverwriteHandler(options, FileWrite, info);

@@ -46,7 +46,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = "CarData",
+                PrintPrefix = "CarData",
                 PrintActionDescription = "creating cardata TSV from file",
                 PrintMoreInfoOnSkip =
                     $"Use --{IGfzCliOptions.Args.OverwriteFiles} if you would like to overwrite files automatically.",
@@ -95,7 +95,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFilePath,
-                PrintDesignator = "CarData",
+                PrintPrefix = "CarData",
                 PrintActionDescription = "creating cardata BIN from file",
                 PrintMoreInfoOnSkip =
                     $"Use --{IGfzCliOptions.Args.OverwriteFiles} if you would like to overwrite files automatically.",

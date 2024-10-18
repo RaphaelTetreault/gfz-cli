@@ -70,7 +70,7 @@ namespace Manifold.GFZCLI
                 {
                     InputFilePath = inputFile,
                     OutputFilePath = outputFile,
-                    PrintDesignator = "ISO",
+                    PrintPrefix = "ISO",
                     PrintActionDescription = "extracting file from",
                 };
 
@@ -125,7 +125,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = "ISO",
+                PrintPrefix = "ISO",
                 PrintActionDescription = "extracting system file from",
             };
 

@@ -50,7 +50,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = outputFile,
-                PrintDesignator = designator,
+                PrintPrefix = designator,
                 PrintActionDescription = "re-serializing file",
             };
             FileWriteOverwriteHandler(options, fileWrite, info);
@@ -80,7 +80,7 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = inputFile,
                 OutputFilePath = inputFile,
-                PrintDesignator = "PATCH",
+                PrintPrefix = "PATCH",
                 PrintActionDescription = "patching scene",
             };
             FileWriteOverwriteHandler(options, filePatch, info);
