@@ -17,7 +17,7 @@ namespace Manifold.GFZCLI;
 
 public interface IImageSharpOptions
 {
-    // TODO: add Set
+    //internal const string Set = "image-sharp";
 
     internal static class Args
     {
@@ -35,54 +35,54 @@ public interface IImageSharpOptions
         public const string ImageFormat = "image-format";
     }
 
-    internal static class Help
-    {
-        // Resize options
-        public const string Resize = "Whether to resize image.";
-        public const string Compand = "Whether to compress or expand individual pixel colors when scaling image.";
-        public const string ResizeMode = "How the image should be resized";
-        public const string PadColor = "The padding color when scaling image.";
-        public const string Position = "Anchor positions to apply to resize image.";
-        public const string PremultiplyAlpha = "Whether to use premultiplied alpha when scaling image.";
-        public const string Resampler = "The resampler to use when scaling image.";
-        public const string Width = "The desired image width. May not be result width depending on 'resize-mode' option.";
-        public const string Height = "The desired image height. May not be result height depending on 'resize-mode' option.";
-        // Other
-        public const string ImageFormat = "The image format to output.";
-    }
+    //internal static class Help
+    //{
+    //    // Resize options
+    //    public const string Resize = "Whether to resize image.";
+    //    public const string Compand = "Whether to compress or expand individual pixel colors when scaling image.";
+    //    public const string ResizeMode = "How the image should be resized";
+    //    public const string PadColor = "The padding color when scaling image.";
+    //    public const string Position = "Anchor positions to apply to resize image.";
+    //    public const string PremultiplyAlpha = "Whether to use premultiplied alpha when scaling image.";
+    //    public const string Resampler = "The resampler to use when scaling image.";
+    //    public const string Width = "The desired image width. May not be result width depending on 'resize-mode' option.";
+    //    public const string Height = "The desired image height. May not be result height depending on 'resize-mode' option.";
+    //    // Other
+    //    public const string ImageFormat = "The image format to output.";
+    //}
 
-    [Option(Args.Resize, HelpText = Help.Resize)]
+    [Option(Args.Resize, Hidden = true)]
     public bool Resize { get; set; }
 
-    [Option(Args.Compand, HelpText = Help.Compand)]
+    [Option(Args.Compand, Hidden = true)]
     public bool Compand { get; set; }
 
-    [Option(Args.ResizeMode, HelpText = Help.ResizeMode)]
+    [Option(Args.ResizeMode, Hidden = true)]
     public string ResizeModeStr { get; set; }
     public ResizeMode ResizeMode { get; }
 
-    [Option(Args.PadColor, HelpText = Help.PadColor)]
+    [Option(Args.PadColor, Hidden = true)]
     public string PadColorStr { get; set; }
     public Color PadColor { get; }
 
-    [Option(Args.Position, HelpText = Help.Position)]
+    [Option(Args.Position, Hidden = true)]
     public string PositionStr { get; set; }
     public AnchorPositionMode Position { get; }
 
-    [Option(Args.PremultiplyAlpha, HelpText = Help.PremultiplyAlpha)]
+    [Option(Args.PremultiplyAlpha, Hidden = true)]
     public bool PremultiplyAlpha { get; set; }
 
-    [Option(Args.Resampler, HelpText = Help.Resampler)]
+    [Option(Args.Resampler, Hidden = true)]
     public string ResamplerTypeStr { get; set; }
     public IResampler Resampler { get; }
 
-    [Option(Args.Width, HelpText = Help.Width)]
+    [Option(Args.Width, Hidden = true)]
     public int Width { get; set; }
 
-    [Option(Args.Height, HelpText = Help.Height)]
+    [Option(Args.Height, Hidden = true)]
     public int Height { get; set; }
 
-    [Option(Args.ImageFormat, HelpText = Help.ImageFormat)]
+    [Option(Args.ImageFormat, Hidden = true)]
     public string ImageFormatStr { get; set; }
     public ImageFormat ImageFormat { get; }
 
@@ -118,7 +118,7 @@ public interface IImageSharpOptions
     {
         int x = imageResizeOptions.Width > 0 ? imageResizeOptions.Width : defaultX;
         int y = imageResizeOptions.Height > 0 ? imageResizeOptions.Height : defaultY;
-        Size size = new Size(x, y);
+        var size = new Size(x, y);
         return size;
     }
     public static bool IsSizeTooLarge(IImageSharpOptions imageResizeOptions, int maxX, int maxY)

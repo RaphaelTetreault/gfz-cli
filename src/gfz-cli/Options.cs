@@ -23,6 +23,7 @@ public class Options :
     ITplOptions
 {
     // IGfzCliOptions
+    //public bool DisplayUsageGuide { get; set; }
     public string ActionStr { get; set; } = string.Empty;
     public GfzCliAction Action => GfzCliEnumParser.ParseUnderscoreToDash<GfzCliAction>(ActionStr);
     public string InputPath { get; set; } = string.Empty;
@@ -64,7 +65,7 @@ public class Options :
 
 
     // UNSORTED IN INTERFACES
-    [Option("emblem-border")]
+    [Option("emblem-border", Hidden = true)]
     public bool EmblemHasAlphaBorder { get; set; } = true;
 
     // LINE REL

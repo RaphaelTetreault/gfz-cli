@@ -5,6 +5,8 @@ namespace Manifold.GFZCLI;
 
 public interface IStageOptions
 {
+    //internal const string Set = "stage";
+
     internal static class Args
     {
         public const string FogViewRangeNear = "fog-view-range-near";
@@ -18,36 +20,36 @@ public interface IStageOptions
         public const string SetFlagsOff = "set-flags-off";
     }
 
-    internal static class Help
-    {
-        public const string FogViewRangeNear = "The fog's view range near plane.";
-        public const string FogViewRangeFar = "The fog's view range far plane.";
-        public const string FogInterpolationMode = "The GX fog interpolation mode.";
-        public const string ColorRed = "The color's red value.";
-        public const string ColorGreen = "The color's green value.";
-        public const string ColorBlue = "The color's blue value.";
-        public const string ColorAlpha = "The color's alpha value.";
-        public const string Name = "The name of the target.";
-        public const string SetFlagsOff = "Whether to set flags on or off (true or flase).";
-    }
+    //internal static class Help
+    //{
+    //    public const string FogViewRangeNear = "The fog's view range near plane.";
+    //    public const string FogViewRangeFar = "The fog's view range far plane.";
+    //    public const string FogInterpolationMode = "The GX fog interpolation mode.";
+    //    public const string ColorRed = "The color's red value.";
+    //    public const string ColorGreen = "The color's green value.";
+    //    public const string ColorBlue = "The color's blue value.";
+    //    public const string ColorAlpha = "The color's alpha value.";
+    //    public const string Name = "The name of the target.";
+    //    public const string SetFlagsOff = "Whether to set flags on or off (true or flase).";
+    //}
 
 
     /// <summary>
     ///     
     /// </summary>
-    [Option(Args.FogViewRangeNear, HelpText = Help.FogViewRangeNear)]
+    [Option(Args.FogViewRangeNear, Hidden = true)]
     public float FogViewRangeNear { get; set; }
 
     /// <summary>
     ///     
     /// </summary>
-    [Option(Args.FogViewRangeFar, HelpText = Help.FogViewRangeFar)]
+    [Option(Args.FogViewRangeFar, Hidden = true)]
     public float FogViewRangeFar { get; set; }
 
     /// <summary>
     ///     
     /// </summary>
-    [Option(Args.FogInterpolationMode, HelpText = Help.FogInterpolationMode)]
+    [Option(Args.FogInterpolationMode, Hidden = true)]
     public string FogInterpolationModeStr { get; set; }
     public FogType FogInterpolationMode { get; }
 
@@ -55,37 +57,41 @@ public interface IStageOptions
     /// <summary>
     ///     
     /// </summary>
-    [Option(Args.ColorRed, HelpText = Help.ColorRed)]
+    [Option(Args.ColorRed, Hidden = true)]
     public string ColorRedStr { get; set; }
     public byte ColorRed { get; }
 
     /// <summary>
     ///     
     /// </summary>
-    [Option( Args.ColorGreen, HelpText = Help.ColorGreen)]
+    [Option(Args.ColorGreen, Hidden = true)]
     public string ColorGreenStr { get; set; }
     public byte ColorGreen { get; }
 
     /// <summary>
     ///     
     /// </summary>
-    [Option(Args.ColorBlue, HelpText = Help.ColorBlue)]
+    [Option(Args.ColorBlue, Hidden = true)]
     public string ColorBlueStr { get; set; }
     public byte ColorBlue { get; }
 
     /// <summary>
     ///     
     /// </summary>
-    [Option(Args.ColorAlpha, HelpText = Help.ColorAlpha)]
+    [Option(Args.ColorAlpha, Hidden = true)]
     public string ColorAlphaStr { get; set; }
     public byte ColorAlpha { get; }
 
 
-    [Option(Args.Name, HelpText = Help.Name)]
+    /// <summary>
+    ///     TODO: more generic usage...
+    ///     See ILineRel.Value
+    /// </summary>
+    [Option(Args.Name, Hidden = true)]
     public string Name { get; set; }
 
 
-    [Option(Args.SetFlagsOff, HelpText = Help.SetFlagsOff)]
+    [Option(Args.SetFlagsOff, Hidden = true)]
     public bool SetFlagsOff { get; set; }
 
 }

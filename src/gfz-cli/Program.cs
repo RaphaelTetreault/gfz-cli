@@ -22,8 +22,8 @@ public static class Program
     public static void Main(string[] args)
     {
         // Initialize text capabilities
-        var encodingProvider = System.Text.CodePagesEncodingProvider.Instance;
-        System.Text.Encoding.RegisterProvider(encodingProvider);
+        var encodingProvider = CodePagesEncodingProvider.Instance;
+        Encoding.RegisterProvider(encodingProvider);
 
         // If user did not pass any arguments, tell them how to use application.
         // This will happen when users double-click application.
