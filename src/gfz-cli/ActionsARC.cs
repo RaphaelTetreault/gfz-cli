@@ -8,21 +8,27 @@ namespace Manifold.GFZCLI
 {
     public static class ActionsARC
     {
+        // Only for single input directory
         public static void ArcPack(Options options)
         {
             // ARC requires directory as input path
             bool inputNotADirectory = !Directory.Exists(options.InputPath);
             if (inputNotADirectory)
             {
-                string msg = "ARC archive compression requires a directory as input path.";
-                Program.PrintActionWarning(options, msg);
+                string msg = $"{options.ActionStr} requires a directory as input path.";
+                Program.ActionWarning(options, msg);
                 return;
             }
 
             // Force checking for any file if there is no defined search pattern
             bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
             if (hasNoSearchPattern)
+            {
                 options.SearchPattern = "*";
+                string message = $"{options.ActionStr}: set {nameof(options.SearchPattern)} to \"{options.SearchPattern}\".";
+                Program.ActionNotification(message);
+            }
+
             // Get files in directory with search pattern
             string[] inputFilePaths = GetInputFiles(options);
 
@@ -52,12 +58,12 @@ namespace Manifold.GFZCLI
             {
                 InputFilePath = options.InputPath,
                 OutputFilePath = outputFile,
-                PrintDesignator = "ARC",
+                PrintDesignator = options.ActionStr,
                 PrintActionDescription = "creating archive from files in",
             };
 
             // Display info
-            Terminal.WriteLine($"ARC: compiling {inputFilePaths.Length} file{Plural(inputFilePaths)} into \"{outputFile}\".");
+            Terminal.WriteLine($"{options.ActionStr}: compiling {inputFilePaths.Length} file{Plural(inputFilePaths)} into \"{outputFile}\".");
             bool writeSuccess = FileWriteOverwriteHandler(options, FileWrite, info);
             if (writeSuccess)
             {
@@ -65,13 +71,14 @@ namespace Manifold.GFZCLI
                 for (int i = 0; i < inputFilePaths.Length; i++)
                 {
                     var inputFilePath = inputFilePaths[i];
-                    Terminal.WriteLine($"ARC:\tFile {(i + 1).PadLeft(digitsCount)}/{inputFilePaths.Length} {inputFilePath}");
+                    string msg = $"ARC:\tFile {(i + 1).PadLeft(digitsCount)}/{inputFilePaths.Length} {inputFilePath}";
+                    Terminal.WriteLine(msg, Program.SubTaskColor);
                 }
             }
-            Terminal.WriteLine($"ARC: done archiving {inputFilePaths.Length} file{Plural(inputFilePaths)} in {outputFile}.");
+            Terminal.WriteLine($"{options.ActionStr}: done archiving {inputFilePaths.Length} file{Plural(inputFilePaths)} in {outputFile}.");
         }
 
-
+        // Entry
         public static void ArcUnpack(Options options)
         {
             // Force checking for .ARC only IF there is no defined search pattern
@@ -79,11 +86,11 @@ namespace Manifold.GFZCLI
             if (hasNoSearchPattern)
                 options.SearchPattern = $"*.arc";
 
-            Terminal.WriteLine($"ARC: decompressing file(s).");
+            Terminal.WriteLine($"{options.ActionStr}: decompressing file(s).");
             int taskCount = DoFileInFileOutTasks(options, ArcUnpack);
-            Terminal.WriteLine($"ARC: done decompressing {taskCount} file{Plural(taskCount)}.");
+            Terminal.WriteLine($"{options.ActionStr}: done decompressing {taskCount} file{Plural(taskCount)}.");
         }
-
+        // Per-item
         public static void ArcUnpack(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Turn file path into folder path
@@ -116,7 +123,7 @@ namespace Manifold.GFZCLI
                 {
                     InputFilePath = inputFile,
                     OutputFilePath = fileOutputPath,
-                    PrintDesignator = "ARC",
+                    PrintDesignator = options.ActionStr,
                     PrintActionDescription = "decompressing file",
                 };
                 FileWriteOverwriteHandler(options, FileWrite, info);

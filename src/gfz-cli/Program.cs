@@ -13,6 +13,7 @@ namespace Manifold.GFZCLI
         public const ConsoleColor WriteFileColor = ConsoleColor.Green;
         public const ConsoleColor SubTaskColor = ConsoleColor.DarkGray;
         public const ConsoleColor WarningColor = ConsoleColor.Red;
+        public const ConsoleColor NotificationColor = ConsoleColor.DarkYellow;
         public static readonly string[] HelpArg = ["--help"];
 
         /// <summary>
@@ -237,10 +238,14 @@ namespace Manifold.GFZCLI
             return builder.ToString();
         }
 
-        public static void PrintActionWarning(Options options, string message)
+        public static void ActionWarning(Options options, string message)
         {
             Terminal.WriteLine(message, WarningColor);
             PrintActionUsageComplete(options.Action, WarningColor);
+        }
+        public static void ActionNotification(string message)
+        {
+            Terminal.WriteLine(message, NotificationColor);
         }
     }
 }
