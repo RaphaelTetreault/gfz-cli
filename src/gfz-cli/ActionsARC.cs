@@ -14,12 +14,14 @@ namespace Manifold.GFZCLI
             bool inputNotADirectory = !Directory.Exists(options.InputPath);
             if (inputNotADirectory)
             {
-                string msg = "ARC archive compress requires a direcory as input path.";
-                throw new Exception(msg);
+                string msg = "ARC archive compression requires a directory as input path.";
+                Program.PrintActionWarning(options, msg);
+                return;
             }
 
-            // For search pattern if not set
-            if (string.IsNullOrEmpty(options.SearchPattern))
+            // Force checking for any file if there is no defined search pattern
+            bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+            if (hasNoSearchPattern)
                 options.SearchPattern = "*";
             // Get files in directory with search pattern
             string[] inputFilePaths = GetInputFiles(options);
@@ -78,11 +80,11 @@ namespace Manifold.GFZCLI
                 options.SearchPattern = $"*.arc";
 
             Terminal.WriteLine($"ARC: decompressing file(s).");
-            int taskCount = DoFileInFileOutTasks(options, ArcDecompressFile);
+            int taskCount = DoFileInFileOutTasks(options, ArcUnpack);
             Terminal.WriteLine($"ARC: done decompressing {taskCount} file{Plural(taskCount)}.");
         }
 
-        public static void ArcDecompressFile(Options options, OSPath inputFile, OSPath outputFile)
+        public static void ArcUnpack(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Turn file path into folder path
             outputFile.PopExtension();
@@ -100,7 +102,7 @@ namespace Manifold.GFZCLI
             foreach (var file in arc.FileSystem.GetFiles())
             {
                 // Create output file path
-                OSPath fileOutputPath = new OSPath();
+                OSPath fileOutputPath = new();
                 fileOutputPath.SetDirectory(outputFile);
                 fileOutputPath.AppendRelativePathToDirectories(file.GetResolvedPath());
                 EnsureDirectoriesExist(fileOutputPath);

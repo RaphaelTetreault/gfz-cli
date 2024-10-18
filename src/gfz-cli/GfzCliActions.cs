@@ -6,10 +6,10 @@
         usage,
 
         // Requires directory input, directory outout is optional. ARC compatible between AX/GX, all regions.
-        [Action(ActionIO.DirectoryIn | ActionIO.DirectoryOut, ActionOption.OPS)]
+        [Action(ActionIO.Path, ActionIO.Directory, ActionOption.OPS)]
         arc_unpack,
 
-        //[Action(ActionIO.DirectoryIn | ActionIO.FileOut, ActionOption.OPS)]
+        [Action(ActionIO.Directory, ActionIO.Directory, ActionOption.OPS)]
         arc_pack,
 
         auto_rename_gci, // NOT IMPLEMENTED

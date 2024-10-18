@@ -12,6 +12,7 @@ namespace Manifold.GFZCLI
         public const ConsoleColor OverwriteFileColor = ConsoleColor.DarkYellow;
         public const ConsoleColor WriteFileColor = ConsoleColor.Green;
         public const ConsoleColor SubTaskColor = ConsoleColor.DarkGray;
+        public const ConsoleColor WarningColor = ConsoleColor.Red;
         public static readonly string[] HelpArg = ["--help"];
 
         /// <summary>
@@ -178,33 +179,19 @@ namespace Manifold.GFZCLI
                 return;
             }
 
-            // Input specifier
-            string input = actionAttribute.IOMode switch
+            string input = actionAttribute.Input switch
             {
-                ActionIO.FileIn or
-                ActionIO.FileInOut => " <input-file>",
-
-                ActionIO.DirectoryIn or
-                ActionIO.DirectoryInOut => " <input-directory>",
-
-                ActionIO.PathIn or
-                ActionIO.PathInOut => " <input-path>",
-
+                ActionIO.Directory => " <input-directory>",
+                ActionIO.File => " <input-file>",
+                ActionIO.Path => " <input-path>",
                 _ => string.Empty,
             };
-
-            // Output specifier
-            string output = actionAttribute.IOMode switch
+            string optional = actionAttribute.IsOutputOptional ? "optional-" : string.Empty;
+            string output = actionAttribute.Output switch
             {
-                ActionIO.FileOut or
-                ActionIO.FileInOut => " <output-file>",
-
-                ActionIO.DirectoryOut or
-                ActionIO.DirectoryInOut => " <output-directory>",
-
-                ActionIO.PathOut or
-                ActionIO.PathInOut => " <output-path>",
-
+                ActionIO.Directory => $" <{optional}output-directory>",
+                ActionIO.File => $" <{optional}output-file>",
+                ActionIO.Path => $" <{optional}output-path>",
                 _ => string.Empty,
             };
 
@@ -248,6 +235,12 @@ namespace Manifold.GFZCLI
             // Close options and finish
             builder.Append(']');
             return builder.ToString();
+        }
+
+        public static void PrintActionWarning(Options options, string message)
+        {
+            Terminal.WriteLine(message, WarningColor);
+            PrintActionUsageComplete(options.Action, WarningColor);
         }
     }
 }

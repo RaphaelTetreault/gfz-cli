@@ -7,9 +7,10 @@ namespace Manifold.GFZCLI
     /// </summary>
     public static class Terminal
     {
-        // TODO: this might be a good idea to implement
-        //public static readonly object WriteLock = new();
-
+        /// <summary>
+        ///     Shared lock for Terminal usage.
+        /// </summary>
+        public static readonly object Lock = new();
 
         private static void Write(Action consoleWrite, ConsoleColor foregroundColor)
         {

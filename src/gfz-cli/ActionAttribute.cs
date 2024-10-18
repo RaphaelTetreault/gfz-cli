@@ -1,30 +1,29 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace Manifold.GFZCLI;
 
-[Description]
 [AttributeUsage(AttributeTargets.Field)]
 internal sealed class ActionAttribute : Attribute
 {
-    public ActionAttribute(ActionIO ioMode)
-        : this(ioMode, ActionOption.All, string.Empty, string.Empty) { }
-
-    public ActionAttribute(ActionIO ioMode, ActionOption options)
-        : this(ioMode, options, string.Empty, string.Empty) { }
-
-    public ActionAttribute(ActionIO ioMode, ActionOption options, string specialOptions)
-        : this(ioMode, options, specialOptions, string.Empty) { }
-
-    public ActionAttribute(ActionIO ioMode, ActionOption options, string specialOptions, string footnote)
+    public ActionAttribute(
+        ActionIO input,
+        ActionIO output,
+        ActionOption options = ActionOption.All,
+        bool outputOptional = true,
+        string specialOptions = "",
+        string notes = "")
     {
-        IOMode = ioMode;
+        Input = input;
+        Output = output;
+        IsOutputOptional = outputOptional;
         Options = options;
         SpecialOptions = specialOptions;
-        Footnote = footnote;
+        Footnote = notes;
     }
 
-    public ActionIO IOMode { get; }
+    public ActionIO Input { get; }
+    public ActionIO Output { get; }
+    public bool IsOutputOptional { get; }
     public ActionOption Options { get; }
     public string SpecialOptions { get; }
     public string Footnote { get; }
