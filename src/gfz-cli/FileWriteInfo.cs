@@ -1,11 +1,13 @@
-﻿namespace Manifold.GFZCLI
+﻿namespace Manifold.GFZCLI;
+
+/// <summary>
+///     Simple record for file write information display.
+/// </summary>
+public readonly record struct FileWriteInfo
 {
-    public class FileWriteInfo
-    {
-        public string InputFilePath { get; set; } = "INPUT";
-        public string OutputFilePath { get; set; } = "OUTPUT";
-        public string PrintPrefix { get; set; } = "DESIGNATOR";
-        public string PrintActionDescription { get; set; } = "ACTION";
-        public string PrintMoreInfoOnSkip { get; set; } = "";
-    }
+    public string InputFilePath { get; init; } 
+    public string OutputFilePath { get; init; } 
+    public string PrintPrefix { get; init; } 
+    public string PrintActionDescription { get; init; } 
+    public string PrintMoreInfoOnSkip { get; init; }
 }

@@ -54,13 +54,6 @@ namespace Manifold.GFZCLI
             outputFile.PushDirectory(emblemBIN.FileName);
             outputFile.SetExtensions(".png");
 
-            // Info for file write + console print
-            var fileWriteInfo = new FileWriteInfo()
-            {
-                InputFilePath = inputFile,
-                PrintPrefix = "Emblem",
-            };
-
             // Write out each emblem in file
             int formatLength = emblemBIN.Emblems.LengthToFormat();
             for (int i = 0; i < emblemBIN.Emblems.Length; i++)
@@ -69,8 +62,14 @@ namespace Manifold.GFZCLI
                 int index = i + 1;
                 string indexStr = index.PadLeft(formatLength, '0');
                 outputFile.SetFileName($"{inputFile.FileName}-{indexStr}");
-                fileWriteInfo.PrintActionDescription = $"converting emblem {indexStr} of";
-                fileWriteInfo.OutputFilePath = outputFile;
+                // Info for file write + console print
+                var fileWriteInfo = new FileWriteInfo()
+                {
+                    InputFilePath = inputFile,
+                    OutputFilePath = outputFile,
+                    PrintPrefix = "Emblem",
+                    PrintActionDescription = $"converting emblem {indexStr} of",
+                };
                 EnsureDirectoriesExist(outputFile);
                 WriteImage(options, encoder, emblem.Texture, fileWriteInfo);
             }
@@ -95,18 +94,19 @@ namespace Manifold.GFZCLI
             outputFile.SetExtensions("png");
 
             // Info for file write + console print
-            var fileWriteInfo = new FileWriteInfo()
-            {
-                InputFilePath = inputFile,
-                PrintPrefix = "Emblem",
-            };
+
 
             // BANNER
             {
                 OSPath textureOutput = new(outputFile);
                 textureOutput.SetFileName($"{outputFile.FileName}-banner");
-                fileWriteInfo.OutputFilePath = textureOutput;
-                fileWriteInfo.PrintActionDescription = "converting emblem banner";
+                var fileWriteInfo = new FileWriteInfo()
+                {
+                    InputFilePath = inputFile,
+                    OutputFilePath = textureOutput,
+                    PrintPrefix = "Emblem",
+                    PrintActionDescription = "converting emblem banner",
+                };
                 WriteImage(options, encoder, emblemGCI.Banner, fileWriteInfo);
             }
             // ICON
@@ -116,14 +116,24 @@ namespace Manifold.GFZCLI
                 // Strip original file name, replace with GC game code
                 OSPath textureOutput = new(outputFile);
                 textureOutput.SetFileName($"{emblemGCI.Header}-icon{i}");
-                fileWriteInfo.OutputFilePath = textureOutput;
-                fileWriteInfo.PrintActionDescription = $"converting emblem icon #{i}";
+                var fileWriteInfo = new FileWriteInfo()
+                {
+                    InputFilePath = inputFile,
+                    OutputFilePath = textureOutput,
+                    PrintPrefix = "Emblem",
+                    PrintActionDescription = $"converting emblem icon #{i}",
+                };
                 WriteImage(options, encoder, icon, fileWriteInfo);
             }
             // EMBLEM
             {
-                fileWriteInfo.OutputFilePath = outputFile;
-                fileWriteInfo.PrintActionDescription = "converting emblem";
+                var fileWriteInfo = new FileWriteInfo()
+                {
+                    InputFilePath = inputFile,
+                    OutputFilePath = outputFile,
+                    PrintPrefix = "Emblem",
+                    PrintActionDescription = "converting emblem",
+                };
                 WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
             }
         }

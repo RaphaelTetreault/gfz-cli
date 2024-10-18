@@ -2,6 +2,9 @@
 
 namespace Manifold.GFZCLI;
 
+/// <summary>
+///     Attribute which adds metadata that descibes how <see cref="GfzCliAction"/> values work.
+/// </summary>
 [AttributeUsage(AttributeTargets.Field)]
 internal sealed class ActionAttribute : Attribute
 {

@@ -90,6 +90,7 @@ namespace Manifold.GFZCLI
             int taskCount = DoFileInFileOutTasks(options, ArcUnpack);
             Terminal.WriteLine($"{options.ActionStr}: done decompressing {taskCount} file{Plural(taskCount)}.");
         }
+
         // Per-item
         public static void ArcUnpack(Options options, OSPath inputFile, OSPath outputFile)
         {
