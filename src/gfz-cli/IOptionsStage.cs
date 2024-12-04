@@ -3,7 +3,7 @@ using GameCube.GFZ.Stage;
 
 namespace Manifold.GFZCLI;
 
-public interface IStageOptions
+public interface IOptionsStage
 {
     //internal const string Set = "stage";
 

@@ -62,68 +62,68 @@ public static class Program
         switch (options.Action)
         {
             // ARC
-            case GfzCliAction.arc_pack: ActionsARC.ArcPack(options); break;
-            case GfzCliAction.arc_unpack: ActionsARC.ArcUnpack(options); break;
+            case Actions.arc_pack: ActionsARC.ArcPack(options); break;
+            case Actions.arc_unpack: ActionsARC.ArcUnpack(options); break;
             // CARDATA
-            case GfzCliAction.cardata_from_tsv: ActionsCarData.CarDataFromTsv(options); break;
-            case GfzCliAction.cardata_to_tsv: ActionsCarData.CarDataToTsv(options); break;
+            case Actions.cardata_from_tsv: ActionsCarData.CarDataFromTsv(options); break;
+            case Actions.cardata_to_tsv: ActionsCarData.CarDataToTsv(options); break;
             // COLICOURSE
-            case GfzCliAction.colicourse_patch_fog: ActionsColiCourse.PatchFog(options); break;
-            case GfzCliAction.colicourse_patch_object_render_flags: ActionsColiCourse.PatchSceneObjectDynamicRenderFlags(options); break;
+            case Actions.colicourse_patch_fog: ActionsColiCourse.PatchFog(options); break;
+            case Actions.colicourse_patch_object_render_flags: ActionsColiCourse.PatchSceneObjectDynamicRenderFlags(options); break;
             // ISO
-            case GfzCliAction.extract_iso: ActionsISO.IsoExtractAll(options); break;
+            case Actions.extract_iso: ActionsISO.IsoExtractAll(options); break;
             // TODO: Extract ./files/ only
             // TODO: Extract ./sys/ only
             // EMBLEM
-            case GfzCliAction.emblems_bin_from_images: ActionsEmblem.EmblemsBinFromImages(options); break;
-            case GfzCliAction.emblems_bin_to_images: ActionsEmblem.EmblemsBinToImages(options); break;
-            case GfzCliAction.emblem_gci_from_image: ActionsEmblem.EmblemGciFromImage(options); break;
-            case GfzCliAction.emblem_gci_to_image: ActionsEmblem.EmblemGciToImage(options); break;
+            case Actions.emblems_bin_from_images: ActionsEmblem.EmblemsBinFromImages(options); break;
+            case Actions.emblems_bin_to_images: ActionsEmblem.EmblemsBinToImages(options); break;
+            case Actions.emblem_gci_from_image: ActionsEmblem.EmblemGciFromImage(options); break;
+            case Actions.emblem_gci_to_image: ActionsEmblem.EmblemGciToImage(options); break;
             // FMI
-            case GfzCliAction.fmi_from_plaintext: ActionsFMI.FmiFromPlaintext(options); break;
-            case GfzCliAction.fmi_to_plaintext: ActionsFMI.FmiToPlainText(options); break;
+            case Actions.fmi_from_plaintext: ActionsFMI.FmiFromPlaintext(options); break;
+            case Actions.fmi_to_plaintext: ActionsFMI.FmiToPlainText(options); break;
             // 
-            case GfzCliAction.generate_asset_library: ActionsAssetLibrary.CreateGmaTplLibrary(options); break;
+            case Actions.generate_asset_library: ActionsAssetLibrary.CreateGmaTplLibrary(options); break;
             // GCI
-            case GfzCliAction.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
+            case Actions.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
             // GMA
-            case GfzCliAction.gma_patch_submesh_render_flags: ActionsGMA.PatchSubmeshRenderFlags(options); break;
+            case Actions.gma_patch_submesh_render_flags: ActionsGMA.PatchSubmeshRenderFlags(options); break;
             // IO - IN-OUT TESTS
-            case GfzCliAction.io_gma: ActionsIO.InOutGMA(options); break;
-            case GfzCliAction.io_scene: ActionsIO.InOutScene(options); break;
-            case GfzCliAction.io_scene_patch: ActionsIO.PatchSceneComment(options); break;
-            case GfzCliAction.io_tpl: ActionsIO.InOutTPL(options); break;
+            case Actions.io_gma: ActionsIO.InOutGMA(options); break;
+            case Actions.io_scene: ActionsIO.InOutScene(options); break;
+            case Actions.io_scene_patch: ActionsIO.PatchSceneComment(options); break;
+            case Actions.io_tpl: ActionsIO.InOutTPL(options); break;
             // LIVE CAMERA STAGE
-            case GfzCliAction.live_camera_stage_from_tsv: ActionsLiveCameraStage.LiveCameraStageFromTsv(options); break;
-            case GfzCliAction.live_camera_stage_to_tsv: ActionsLiveCameraStage.LiveCameraStageToTsv(options); break;
+            case Actions.live_camera_stage_from_tsv: ActionsLiveCameraStage.LiveCameraStageFromTsv(options); break;
+            case Actions.live_camera_stage_to_tsv: ActionsLiveCameraStage.LiveCameraStageToTsv(options); break;
             // LZ
-            case GfzCliAction.lz_compress: ActionsLZ.LzCompress(options); break;
-            case GfzCliAction.lz_decompress: ActionsLZ.LzDecompress(options); break;
+            case Actions.lz_compress: ActionsLZ.LzCompress(options); break;
+            case Actions.lz_decompress: ActionsLZ.LzDecompress(options); break;
             // line__.rel
-            case GfzCliAction.linerel_clear_all_course_names: ActionsLineREL.PatchClearAllCourseNames(options); break;
-            case GfzCliAction.linerel_clear_all_venue_names: ActionsLineREL.PatchClearAllVenueNames(options); break;
-            case GfzCliAction.linerel_clear_unused_course_names: ActionsLineREL.PatchClearUnusedCourseNames(options); break;
-            case GfzCliAction.linerel_clear_unused_venue_names: ActionsLineREL.PatchClearUnusedVenueNames(options); break;
-            case GfzCliAction.linerel_decrypt: ActionsLineREL.DecryptLineRel(options); break;
-            case GfzCliAction.linerel_encrypt: ActionsLineREL.EncryptLineRel(options); break;
-            case GfzCliAction.linerel_set_bgm: ActionsLineREL.PatchSetBgm(options); break;
-            case GfzCliAction.linerel_set_bgmfl: ActionsLineREL.PatchSetBgmFinalLap(options); break;
-            case GfzCliAction.linerel_set_bgm_bgmfl: ActionsLineREL.PatchSetBgmAndBgmFinalLap(options); break;
-            case GfzCliAction.linerel_set_cardata: ActionsLineREL.PatchSetCarData(options); break;
-            case GfzCliAction.linerel_set_course_difficulty: ActionsLineREL.PatchSetCourseDifficulty(options); break;
-            case GfzCliAction.linerel_set_course_name: ActionsLineREL.PatchSetCourseName(options); break;
-            case GfzCliAction.linerel_set_cup_course: ActionsLineREL.PatchSetCupCourse(options); break;
-            case GfzCliAction.linerel_set_machine_rating: ActionsLineREL.PatchMachineRating(options); break;
-            case GfzCliAction.linerel_set_venue: ActionsLineREL.PatchSetVenueIndex(options); break;
-            case GfzCliAction.linerel_set_venue_name: ActionsLineREL.PatchSetVenueName(options); break;
+            case Actions.linerel_clear_all_course_names: ActionsLineREL.PatchClearAllCourseNames(options); break;
+            case Actions.linerel_clear_all_venue_names: ActionsLineREL.PatchClearAllVenueNames(options); break;
+            case Actions.linerel_clear_unused_course_names: ActionsLineREL.PatchClearUnusedCourseNames(options); break;
+            case Actions.linerel_clear_unused_venue_names: ActionsLineREL.PatchClearUnusedVenueNames(options); break;
+            case Actions.linerel_decrypt: ActionsLineREL.DecryptLineRel(options); break;
+            case Actions.linerel_encrypt: ActionsLineREL.EncryptLineRel(options); break;
+            case Actions.linerel_set_bgm: ActionsLineREL.PatchSetBgm(options); break;
+            case Actions.linerel_set_bgmfl: ActionsLineREL.PatchSetBgmFinalLap(options); break;
+            case Actions.linerel_set_bgm_bgmfl: ActionsLineREL.PatchSetBgmAndBgmFinalLap(options); break;
+            case Actions.linerel_set_cardata: ActionsLineREL.PatchSetCarData(options); break;
+            case Actions.linerel_set_course_difficulty: ActionsLineREL.PatchSetCourseDifficulty(options); break;
+            case Actions.linerel_set_course_name: ActionsLineREL.PatchSetCourseName(options); break;
+            case Actions.linerel_set_cup_course: ActionsLineREL.PatchSetCupCourse(options); break;
+            case Actions.linerel_set_machine_rating: ActionsLineREL.PatchMachineRating(options); break;
+            case Actions.linerel_set_venue: ActionsLineREL.PatchSetVenueIndex(options); break;
+            case Actions.linerel_set_venue_name: ActionsLineREL.PatchSetVenueName(options); break;
             // TPL
-            case GfzCliAction.tpl_generate_mipmaps: ActionsTPL.TplGenerateMipmaps(options); break;
-            case GfzCliAction.tpl_pack: ActionsTPL.TplPack(options); break;
-            case GfzCliAction.tpl_unpack: ActionsTPL.TplUnpack(options); break;
+            case Actions.tpl_generate_mipmaps: ActionsTPL.TplGenerateMipmaps(options); break;
+            case Actions.tpl_pack: ActionsTPL.TplPack(options); break;
+            case Actions.tpl_unpack: ActionsTPL.TplUnpack(options); break;
 
             // PROGRAM-SPECIFIC
-            case GfzCliAction.usage: PrintActionUsage(options); break;
-            case GfzCliAction.none: PrintHelp(); break;
+            case Actions.usage: PrintActionUsage(options); break;
+            case Actions.none: PrintHelp(); break;
 
             // ANYTHING ELSE
             default:
@@ -144,11 +144,11 @@ public static class Program
         string actionStr = options.InputPath;
 
         // For 'usage' command, enum is passed in as input path
-        GfzCliAction action = string.IsNullOrWhiteSpace(actionStr)
-            ? GfzCliAction.none
-            : GfzCliEnumParser.ParseUnderscoreToDash<GfzCliAction>(actionStr);
+        Actions action = string.IsNullOrWhiteSpace(actionStr)
+            ? Actions.none
+            : GfzCliEnumParser.ParseUnderscoreToDash<Actions>(actionStr);
 
-        if (action == GfzCliAction.none)
+        if (action == Actions.none)
         {
             string msg = $"\"{actionStr}\" is an invalid action. Actions and general usage:";
             Terminal.WriteLine(msg);
@@ -160,13 +160,13 @@ public static class Program
         }
     }
 
-    public static void PrintActionUsageComplete(GfzCliAction action, ConsoleColor color = ConsoleColor.Cyan)
+    public static void PrintActionUsageComplete(Actions action, ConsoleColor color = ConsoleColor.Cyan)
     {
         // Printable string of value
         string actionStr = action.ToString().Replace("_", "-");
 
         // If valid, get info about the action
-        var actionAttribute = AttributeHelper.GetAttribute<ActionAttribute, GfzCliAction>(action);
+        var actionAttribute = AttributeHelper.GetAttribute<ActionAttribute, Actions>(action);
         if (actionAttribute == null)
         {
             Terminal.WriteLine($"{actionStr} [usage not yet defined]", ConsoleColor.Red);
@@ -198,10 +198,10 @@ public static class Program
 
     public static void PrintActionUsageList()
     {
-        foreach (GfzCliAction value in Enum.GetValues<GfzCliAction>())
+        foreach (Actions value in Enum.GetValues<Actions>())
         {
             // Skip meta values
-            if (value == GfzCliAction.none || value == GfzCliAction.usage)
+            if (value == Actions.none || value == Actions.usage)
                 continue;
 
             // Print out actions
@@ -232,11 +232,11 @@ public static class Program
             // Add action char
             switch (option)
             {
-                case ActionOption.OverwriteFiles: builder.Append(IGfzCliOptions.ArgsShort.OverwriteFiles); break;
-                case ActionOption.SearchPattern: builder.Append(IGfzCliOptions.ArgsShort.SearchPattern); break;
-                case ActionOption.SearchSubdirectories: builder.Append(IGfzCliOptions.ArgsShort.SearchSubdirectories); break;
-                case ActionOption.SerializationFormat: builder.Append(IGfzCliOptions.ArgsShort.SerializationFormat); break;
-                case ActionOption.SerializationRegion: builder.Append(IGfzCliOptions.ArgsShort.SerializationRegion); break;
+                case ActionOption.OverwriteFiles: builder.Append(IOptionsGfzCli.ArgsShort.OverwriteFiles); break;
+                case ActionOption.SearchPattern: builder.Append(IOptionsGfzCli.ArgsShort.SearchPattern); break;
+                case ActionOption.SearchSubdirectories: builder.Append(IOptionsGfzCli.ArgsShort.SearchSubdirectories); break;
+                case ActionOption.SerializationFormat: builder.Append(IOptionsGfzCli.ArgsShort.SerializationFormat); break;
+                case ActionOption.SerializationRegion: builder.Append(IOptionsGfzCli.ArgsShort.SerializationRegion); break;
                 default: throw new NotImplementedException(option.ToString());
             }
         }

@@ -3,7 +3,7 @@
 /// <summary>
 ///     List of all possible actions in this CLI program.
 /// </summary>
-public enum GfzCliAction
+public enum Actions
 {
     none,
     usage,

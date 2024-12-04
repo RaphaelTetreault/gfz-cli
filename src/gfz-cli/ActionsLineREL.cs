@@ -64,7 +64,7 @@ public static class ActionsLineREL
         if (!Enum.IsDefined(options.Cup))
         {
             string msg =
-                $"Argument --{ILineRelOptions.Args.Cup} " +
+                $"Argument --{IOptionsLineRel.Args.Cup} " +
                 $"must be a valid cup value.";
             throw new ArgumentException(msg);
         }
@@ -75,7 +75,7 @@ public static class ActionsLineREL
         if (options.CupCourseIndex < MinCupCourseIndex || options.CupCourseIndex > MaxCupCourseIndex)
         {
             string msg =
-                $"Argument --{nameof(ILineRelOptions.Args.CupCourseIndex)} " +
+                $"Argument --{nameof(IOptionsLineRel.Args.CupCourseIndex)} " +
                 $"must be a value in the range 1-{MaxCupCourseIndex}.";
             throw new ArgumentException(msg);
         }
@@ -85,7 +85,7 @@ public static class ActionsLineREL
         // Validate index
         if (options.CourseIndex > MaxCourseIndex)
         {
-            string msg = $"Argument --{ILineRelOptions.Args.CourseIndex} must be a value in the range 0-{MaxCourseIndex}.";
+            string msg = $"Argument --{IOptionsLineRel.Args.CourseIndex} must be a value in the range 0-{MaxCourseIndex}.";
             throw new ArgumentException(msg);
         }
     }
@@ -98,7 +98,7 @@ public static class ActionsLineREL
         if (isInvalid)
         {
             string msg =
-                $"Argument --{ILineRelOptions.Args.CourseIndex} " +
+                $"Argument --{IOptionsLineRel.Args.CourseIndex} " +
                 $"must be a value in the range 0-{MaxCourseIndex} or exactly {0xFF}.";
             throw new ArgumentException(msg);
         }
@@ -108,7 +108,7 @@ public static class ActionsLineREL
         // Validate index
         if (options.VenueIndex > MaxVenueIndex)
         {
-            string msg = $"Argument --{ILineRelOptions.Args.VenueIndex} must be a value in the range 0-{MaxVenueIndex}.";
+            string msg = $"Argument --{IOptionsLineRel.Args.VenueIndex} must be a value in the range 0-{MaxVenueIndex}.";
             throw new ArgumentException(msg);
         }
     }
@@ -116,7 +116,7 @@ public static class ActionsLineREL
     {
         if (options.Difficulty > MaxDifficulty)
         {
-            string msg = $"Argument --{ILineRelOptions.Args.Difficulty} must a value in the range 0-{MaxDifficulty}.";
+            string msg = $"Argument --{IOptionsLineRel.Args.Difficulty} must a value in the range 0-{MaxDifficulty}.";
             throw new ArgumentException(msg);
         }
     }
@@ -124,7 +124,7 @@ public static class ActionsLineREL
     {
         if (string.IsNullOrEmpty(options.Value))
         {
-            string msg = $"Argument --{ILineRelOptions.Args.Value} must be set.";
+            string msg = $"Argument --{IOptionsLineRel.Args.Value} must be set.";
             throw new ArgumentException(msg);
         }
     }
@@ -373,7 +373,7 @@ public static class ActionsLineREL
         // Assert file path is good
         if (string.IsNullOrWhiteSpace(options.Value))
         {
-            string msg = $"Argument --{ILineRelOptions.Args.UsingFilePath} must be set to a file path!";
+            string msg = $"Argument --{IOptionsLineRel.Args.UsingFilePath} must be set to a file path!";
             throw new ArgumentException(msg);
         }
         OSPath carDataPath = new(options.Value);
@@ -403,7 +403,7 @@ public static class ActionsLineREL
         else
         {
             string msg =
-                $"Argument --{ILineRelOptions.Args.UsingFilePath} file " +
+                $"Argument --{IOptionsLineRel.Args.UsingFilePath} file " +
                 $"cannot be inferred to be a valid cardata file.";
             throw new ArgumentException(msg);
         }
@@ -451,7 +451,7 @@ public static class ActionsLineREL
     {
         if (string.IsNullOrEmpty(options.Value))
         {
-            string msg = $"Argument --{ILineRelOptions.Args.Value} must be set.";
+            string msg = $"Argument --{IOptionsLineRel.Args.Value} must be set.";
             throw new ArgumentException(msg);
         }
 

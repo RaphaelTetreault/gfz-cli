@@ -16,16 +16,16 @@ using System.IO;
 namespace Manifold.GFZCLI;
 
 public class Options :
-    IGfzCliOptions,
-    IImageSharpOptions,
-    ILineRelOptions,
-    IStageOptions,
-    ITplOptions
+    IOptionsGfzCli,
+    IOptionsImageSharp,
+    IOptionsLineRel,
+    IOptionsStage,
+    IOptionsTpl
 {
     // IGfzCliOptions
     //public bool DisplayUsageGuide { get; set; }
     public string ActionStr { get; set; } = string.Empty;
-    public GfzCliAction Action => GfzCliEnumParser.ParseUnderscoreToDash<GfzCliAction>(ActionStr);
+    public Actions Action => GfzCliEnumParser.ParseUnderscoreToDash<Actions>(ActionStr);
     public string InputPath { get; set; } = string.Empty;
     public string OutputPath { get; set; } = string.Empty;
     public bool OverwriteFiles { get; set; } = false;
@@ -55,13 +55,13 @@ public class Options :
     public bool PremultiplyAlpha { get; set; } = true;
     public string ResamplerTypeStr { get; set; } = "Bicubic";
     public ResamplerType ResamplerType => GfzCliEnumParser.ParseDashRemoved<ResamplerType>(PositionStr);
-    public IResampler Resampler => IImageSharpOptions.GetResampler(ResamplerType);
+    public IResampler Resampler => IOptionsImageSharp.GetResampler(ResamplerType);
     public int Width { get; set; }
     public int Height { get; set; }
     // Other
     public string ImageFormatStr { get; set; } = string.Empty;
     public ImageFormat ImageFormat => GfzCliEnumParser.ParseDashRemoved<ImageFormat>(ImageFormatStr);
-    public ImageEncoder ImageEncoder => IImageSharpOptions.GetImageEncoder(ImageFormat);
+    public ImageEncoder ImageEncoder => IOptionsImageSharp.GetImageEncoder(ImageFormat);
 
 
     // UNSORTED IN INTERFACES

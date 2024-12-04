@@ -111,7 +111,7 @@ public static class ActionsISO
         return tasksFinished;
     }
 
-    private static Action IsoExtractSystemFile(Options options, OSPath inputFile, string outputName, string outputExtension, byte[] data)
+    private static System.Action IsoExtractSystemFile(Options options, OSPath inputFile, string outputName, string outputExtension, byte[] data)
     {
         // Get output path
         OSPath outputFile = new OSPath();

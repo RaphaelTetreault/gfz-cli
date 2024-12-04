@@ -1,7 +1,7 @@
 ﻿namespace Manifold.GFZCLI;
 
 /// <summary>
-///     Describes the input and outputs for <see cref="GfzCliAction"/> via <see cref="ActionAttribute"/>.
+///     Describes the input and outputs for <see cref="Actions"/> via <see cref="ActionAttribute"/>.
 /// </summary>
 [System.Flags]
 public enum ActionIO

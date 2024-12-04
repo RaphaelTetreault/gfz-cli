@@ -2,7 +2,7 @@
 
 namespace Manifold.GFZCLI;
 
-public interface ILineRelOptions
+public interface IOptionsLineRel
 {
     //internal const string Set = "linerel";
 

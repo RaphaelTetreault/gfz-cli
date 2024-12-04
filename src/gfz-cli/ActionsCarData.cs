@@ -49,7 +49,7 @@ public static class ActionsCarData
             PrintPrefix = "CarData",
             PrintActionDescription = "creating cardata TSV from file",
             PrintMoreInfoOnSkip =
-                $"Use --{IGfzCliOptions.Args.OverwriteFiles} if you would like to overwrite files automatically.",
+                $"Use --{IOptionsGfzCli.Args.OverwriteFiles} if you would like to overwrite files automatically.",
         };
         FileWriteOverwriteHandler(options, fileWrite, info);
     }
@@ -98,7 +98,7 @@ public static class ActionsCarData
             PrintPrefix = "CarData",
             PrintActionDescription = "creating cardata BIN from file",
             PrintMoreInfoOnSkip =
-                $"Use --{IGfzCliOptions.Args.OverwriteFiles} if you would like to overwrite files automatically.",
+                $"Use --{IOptionsGfzCli.Args.OverwriteFiles} if you would like to overwrite files automatically.",
         };
         FileWriteOverwriteHandler(options, fileWrite, info);
     }

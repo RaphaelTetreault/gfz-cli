@@ -66,7 +66,7 @@ public static class GfzCliUtilities
         return results;
     }
 
-    public static bool FileWriteOverwriteHandler(Options options, Action fileWrite, FileWriteInfo info)
+    public static bool FileWriteOverwriteHandler(Options options, System.Action fileWrite, FileWriteInfo info)
     {
         bool outputFileExists = File.Exists(info.OutputFilePath);
         bool doWriteFile = !outputFileExists || options.OverwriteFiles;
@@ -120,7 +120,7 @@ public static class GfzCliUtilities
             {
                 string msg =
                     $"Invalid '{nameof(options.SearchPattern)}' provided for a directory input argument. " +
-                    $"Make sure to use --{IGfzCliOptions.Args.SearchPattern} when providing directory paths.";
+                    $"Make sure to use --{IOptionsGfzCli.Args.SearchPattern} when providing directory paths.";
                 throw new ArgumentException(msg);
             }
             files = Directory.GetFiles(options.InputPath, options.SearchPattern, options.SearchOption);

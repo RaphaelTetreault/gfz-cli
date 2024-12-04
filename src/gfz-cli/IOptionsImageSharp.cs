@@ -15,7 +15,7 @@ using System;
 
 namespace Manifold.GFZCLI;
 
-public interface IImageSharpOptions
+public interface IOptionsImageSharp
 {
     //internal const string Set = "image-sharp";
 
@@ -99,7 +99,7 @@ public interface IImageSharpOptions
     private static readonly WebpEncoder WebpEncoder = new();
 
 
-    public static ResizeOptions GetResizeOptions(IImageSharpOptions imageResizeOptions)
+    public static ResizeOptions GetResizeOptions(IOptionsImageSharp imageResizeOptions)
     {
         return new ResizeOptions()
         {
@@ -112,23 +112,23 @@ public interface IImageSharpOptions
             // Size
         };
     }
-    public static Size GetResizeSize(IImageSharpOptions imageResizeOptions, Image image)
+    public static Size GetResizeSize(IOptionsImageSharp imageResizeOptions, Image image)
         => GetResizeSize(imageResizeOptions, image.Width, image.Height);
-    public static Size GetResizeSize(IImageSharpOptions imageResizeOptions, int defaultX, int defaultY)
+    public static Size GetResizeSize(IOptionsImageSharp imageResizeOptions, int defaultX, int defaultY)
     {
         int x = imageResizeOptions.Width > 0 ? imageResizeOptions.Width : defaultX;
         int y = imageResizeOptions.Height > 0 ? imageResizeOptions.Height : defaultY;
         var size = new Size(x, y);
         return size;
     }
-    public static bool IsSizeTooLarge(IImageSharpOptions imageResizeOptions, int maxX, int maxY)
+    public static bool IsSizeTooLarge(IOptionsImageSharp imageResizeOptions, int maxX, int maxY)
     {
         bool isTooWide = imageResizeOptions.Width > maxX;
         bool isTooTall = imageResizeOptions.Height > maxY;
         bool isTooLarge = isTooWide || isTooTall;
         return isTooLarge;
     }
-    public static bool IsSizeTooSmall(IImageSharpOptions imageResizeOptions, int minX, int minY)
+    public static bool IsSizeTooSmall(IOptionsImageSharp imageResizeOptions, int minX, int minY)
     {
         bool isTooShort = imageResizeOptions.Width < minX;
         bool isTooSkinny = imageResizeOptions.Height < minY;

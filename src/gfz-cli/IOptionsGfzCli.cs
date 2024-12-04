@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Manifold.GFZCLI;
 
-public interface IGfzCliOptions
+public interface IOptionsGfzCli
 {
     internal static class ArgsShort
     {
@@ -74,7 +74,7 @@ public interface IGfzCliOptions
     /// <summary>
     ///     
     /// </summary>
-    public GfzCliAction Action { get; }
+    public Actions Action { get; }
 
     /// <summary>
     ///     

@@ -2,7 +2,7 @@
 
 namespace Manifold.GFZCLI;
 
-public interface ITplOptions
+public interface IOptionsTpl
 {
     internal const string Set = "tpl";
 

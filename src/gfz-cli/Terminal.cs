@@ -12,14 +12,14 @@ public static class Terminal
     /// </summary>
     public static readonly object Lock = new();
 
-    private static void Write(Action consoleWrite, ConsoleColor foregroundColor)
+    private static void Write(System.Action consoleWrite, ConsoleColor foregroundColor)
     {
         var fgColor = Console.ForegroundColor;
         Console.ForegroundColor = foregroundColor;
         consoleWrite.Invoke();
         Console.ForegroundColor = fgColor;
     }
-    private static void Write(Action consoleWrite, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
+    private static void Write(System.Action consoleWrite, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
     {
         var fgColor = Console.ForegroundColor;
         var bgColor = Console.BackgroundColor;
