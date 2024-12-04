@@ -79,7 +79,7 @@ public interface IGfzCliOptions
     /// <summary>
     ///     
     /// </summary>
-    [Value(1, MetaName = Args.InputPath, HelpText = Help.InputPath, Required = true)]
+    [Value(1, MetaName = Args.InputPath, HelpText = Help.InputPath, Required = false)]
     public string InputPath { get; set; }
 
     /// <summary>

@@ -8,12 +8,18 @@ public enum GfzCliAction
     none,
     usage,
 
-    // Requires directory input, directory outout is optional. ARC compatible between AX/GX, all regions.
+    /// <summary>
+    ///     Requires path input, directory output is optional. ARC compatible between AX/GX, all regions.
+    /// </summary>
     [Action(ActionIO.Path, ActionIO.Directory, ActionOption.OPS)]
     arc_unpack,
 
+    /// <summary>
+    ///     Requires directory input, directory output is optional. ARC compatible between AX/GX, all regions.
+    /// </summary>
     [Action(ActionIO.Directory, ActionIO.Directory, ActionOption.OPS)]
     arc_pack,
+
 
     auto_rename_gci, // NOT IMPLEMENTED
 

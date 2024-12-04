@@ -140,25 +140,19 @@ public static class Program
 
     public static void PrintActionUsage(Options options)
     {
-        // For 'usage' command, enum is passed in as input path
-        GfzCliAction action = GfzCliEnumParser.ParseUnderscoreToDash<GfzCliAction>(options.InputPath);
+        // Shenangians. Use input path as variable for this hack
+        string actionStr = options.InputPath;
 
-        // If invalid, show possible actions
+        // For 'usage' command, enum is passed in as input path
+        GfzCliAction action = string.IsNullOrWhiteSpace(actionStr)
+            ? GfzCliAction.none
+            : GfzCliEnumParser.ParseUnderscoreToDash<GfzCliAction>(actionStr);
+
         if (action == GfzCliAction.none)
         {
-            Terminal.WriteLine("Invalid action specified. Here are all possible actions.");
-            foreach (GfzCliAction value in Enum.GetValues<GfzCliAction>())
-            {
-                // Skip meta values
-                if (value == GfzCliAction.none || value == GfzCliAction.usage)
-                    continue;
-
-                // Print out actions
-                //string valueStr = value.ToString().Replace("_", "-");
-                //Terminal.WriteLine($"\t{valueStr}");
-                Terminal.Write($"\t");
-                PrintActionUsageComplete(value);
-            }
+            string msg = $"\"{actionStr}\" is an invalid action. Actions and general usage:";
+            Terminal.WriteLine(msg);
+            PrintActionUsageList();
         }
         else // print specific usage
         {
@@ -202,6 +196,20 @@ public static class Program
         Terminal.WriteLine(hint, color);
     }
 
+    public static void PrintActionUsageList()
+    {
+        foreach (GfzCliAction value in Enum.GetValues<GfzCliAction>())
+        {
+            // Skip meta values
+            if (value == GfzCliAction.none || value == GfzCliAction.usage)
+                continue;
+
+            // Print out actions
+            Terminal.Write($"\t");
+            PrintActionUsageComplete(value);
+        }
+    }
+
     public static string GetActionOptionsMessage(ActionOption actionOptions)
     {
         // Prepare string
@@ -242,6 +250,7 @@ public static class Program
         Terminal.WriteLine(message, WarningColor);
         PrintActionUsageComplete(options.Action, WarningColor);
     }
+
     public static void ActionNotification(string message)
     {
         Terminal.WriteLine(message, NotificationColor);
