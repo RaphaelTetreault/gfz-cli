@@ -58,10 +58,9 @@ public static class ActionsARC
             }
 
             // Actually write the file
-            var arc = new Archive();
-            arc.FileSystem.AddFiles(inputFilePaths, options.InputPath);
-            using var writer = new EndianBinaryWriter(File.Create(outputFile), ArchiveFile.endianness);
-            arc.Serialize(writer);
+            ArchiveFile arcFile = new();
+            arcFile.Value.FileSystem.AddFiles(inputFilePaths, options.InputPath);
+            arcFile.WriteFile(outputFile);
 
             // Display end of process
             Terminal.WriteLine($"{options.ActionStr}: done archiving {inputFilePaths.Length} file{Plural(inputFilePaths)} in {outputFile}.");
