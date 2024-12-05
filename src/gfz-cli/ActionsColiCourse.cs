@@ -11,7 +11,7 @@ public static class ActionsColiCourse
     public static void PatchFog(Options options)
     {
         //Terminal.WriteLine("FMI: converting FMI from plain text files.");
-        int count = DoFileInFileOutTasks(options, PatchFog);
+        int count = ParallelizeFileInFileOutTasks(options, PatchFog);
         //Terminal.WriteLine($"FMI: done converting {binCount} file{Plural(binCount)}.");
     }
     public static void PatchFog(Options options, OSPath inputPath, OSPath outputPath)
@@ -107,7 +107,7 @@ public static class ActionsColiCourse
 
     public static void PatchSceneObjectDynamicRenderFlags(Options options)
     {
-        int count = DoFileInFileOutTasks(options, PatchSceneObjectDynamicRenderFlags);
+        int count = ParallelizeFileInFileOutTasks(options, PatchSceneObjectDynamicRenderFlags);
     }
     public static void PatchSceneObjectDynamicRenderFlags(Options options, OSPath inputPath, OSPath outputPath)
     {

@@ -20,7 +20,7 @@ public static class ActionsEmblem
     public static void EmblemsBinToImages(Options options)
     {
         Terminal.WriteLine("Emblem: converting emblems from BIN files.");
-        int binCount = DoFileInFileOutTasks(options, EmblemBinToImages);
+        int binCount = ParallelizeFileInFileOutTasks(options, EmblemBinToImages);
         Terminal.WriteLine($"Emblem: done converting {binCount} file{Plural(binCount)}.");
     }
 
@@ -32,7 +32,7 @@ public static class ActionsEmblem
             options.SearchPattern = "*fze*.dat.gci";
 
         Terminal.WriteLine("Emblem: converting emblems from GCI files.");
-        int gciCount = DoFileInFileOutTasks(options, EmblemGciToImage);
+        int gciCount = ParallelizeFileInFileOutTasks(options, EmblemGciToImage);
         Terminal.WriteLine($"Emblem: done converting {gciCount} file{Plural(gciCount)}.");
     }
 
@@ -154,7 +154,7 @@ public static class ActionsEmblem
             options.SearchPattern = "*fze*.dat.gci";
 
         Terminal.WriteLine("Emblem: converting image(s) to emblem.dat.gci.");
-        int gciCount = DoFileInFileOutTasks(options, ImageToEmblemGci);
+        int gciCount = ParallelizeFileInFileOutTasks(options, ImageToEmblemGci);
         Terminal.WriteLine($"Emblem: done converting {gciCount} image{Plural(gciCount)}.");
     }
 
@@ -195,7 +195,7 @@ public static class ActionsEmblem
 
     public static Emblem[] ImageToEmblemBin(Options options)
     {
-        var emblems = DoFileInTypeOutTasks(options, ImageToEmblemBin);
+        var emblems = ParallelizeFileInTypeOutTasks(options, ImageToEmblemBin);
 
         string outputFilePath = EnforceUnixSeparators(options.OutputPath);
 

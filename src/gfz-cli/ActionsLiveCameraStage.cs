@@ -15,7 +15,7 @@ public static class ActionsLiveCameraStage
             options.SearchPattern = "*livecam_stage_*.bin";
 
         Terminal.WriteLine("Live Camera Stage: converting file(s) to TSV.");
-        int taskCount = DoFileInFileOutTasks(options, LiveCameraStageBinToTsvFile);
+        int taskCount = ParallelizeFileInFileOutTasks(options, LiveCameraStageBinToTsvFile);
         Terminal.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
     }
 
@@ -57,7 +57,7 @@ public static class ActionsLiveCameraStage
             options.SearchPattern = "*livecam_stage_*.tsv";
 
         Terminal.WriteLine("Live Camera Stage: converting TSV file(s) to binaries.");
-        int taskCount = DoFileInFileOutTasks(options, LiveCameraStageTsvToBinFile);
+        int taskCount = ParallelizeFileInFileOutTasks(options, LiveCameraStageTsvToBinFile);
         Terminal.WriteLine($"Live Camera Stage: done converting {taskCount} file{(taskCount != 1 ? 's' : "")}.");
     }
 

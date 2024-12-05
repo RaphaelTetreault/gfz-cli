@@ -135,7 +135,7 @@ public static class ActionsLineREL
         if (hasNoSearchPattern)
             options.SearchPattern = $"*line__.bin";
 
-        DoFileInFileOutTasks(options, DecryptLine);
+        ParallelizeFileInFileOutTasks(options, DecryptLine);
     }
     public static void EncryptLineRel(Options options)
     {
@@ -143,7 +143,7 @@ public static class ActionsLineREL
         if (hasNoSearchPattern)
             options.SearchPattern = $"*line__.rel";
 
-        DoFileInFileOutTasks(options, EncryptLine);
+        ParallelizeFileInFileOutTasks(options, EncryptLine);
     }
     public static void CryptLine(Options options, OSPath inputFile, OSPath outputFile, bool doEncrypt, string extension)
     {

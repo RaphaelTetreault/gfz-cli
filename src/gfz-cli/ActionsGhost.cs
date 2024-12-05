@@ -11,7 +11,7 @@ public class ActionsGhost
     {
         //string[] files = GetInputFiles(options);
         Terminal.WriteLine("Ghost: extracting ghost data.");
-        int binCount = DoFileInFileOutTasks(options, ExtractGhostDataFromGci);
+        int binCount = ParallelizeFileInFileOutTasks(options, ExtractGhostDataFromGci);
         Terminal.WriteLine($"Ghost: done extracting ghost data from {binCount} file{Plural(binCount)}.");
     }
 

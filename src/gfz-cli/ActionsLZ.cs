@@ -15,7 +15,7 @@ public static class ActionsLZ
             options.SearchPattern = $"*.lz";
 
         Terminal.WriteLine($"LZ: decompressing file(s).");
-        int taskCount = DoFileInFileOutTasks(options, LzDecompressFile);
+        int taskCount = ParallelizeFileInFileOutTasks(options, LzDecompressFile);
         Terminal.WriteLine($"LZ: done decompressing {taskCount} file{Plural(taskCount)}.");
     }
 
@@ -49,7 +49,7 @@ public static class ActionsLZ
     public static void LzCompress(Options options)
     {
         Terminal.WriteLine("LZ: Compressing file(s).");
-        int taskCount = DoFileInFileOutTasks(options, LzCompressFile);
+        int taskCount = ParallelizeFileInFileOutTasks(options, LzCompressFile);
         Terminal.WriteLine($"LZ: done compressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
     }
 

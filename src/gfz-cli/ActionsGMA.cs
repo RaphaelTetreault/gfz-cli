@@ -10,7 +10,7 @@ public static class ActionsGMA
     public static void PatchSubmeshRenderFlags(Options options)
     {
         // Maybe what you need is a function just to get IO paths...?
-        int count = DoFileInFileOutTasks(options, PatchSubmeshRenderFlags);
+        int count = ParallelizeFileInFileOutTasks(options, PatchSubmeshRenderFlags);
     }
 
     public static void PatchSubmeshRenderFlags(Options options, OSPath inputPath, OSPath outputPath)

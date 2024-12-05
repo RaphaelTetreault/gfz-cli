@@ -9,7 +9,7 @@ public class ActionsGCI
     public static void RenameGCI(Options options)
     {
         Terminal.WriteLine("GCI: converting emblems from BIN files.");
-        int fileCount = DoFileInFileOutTasks(options, RenameGciFile);
+        int fileCount = ParallelizeFileInFileOutTasks(options, RenameGciFile);
         Terminal.WriteLine($"GCI: done renaming {fileCount} file{Plural(fileCount)}.");
     }
 

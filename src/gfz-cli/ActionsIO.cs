@@ -25,7 +25,7 @@ public static class ActionsIO
 
         string typeName = typeof(TFile).Name;
         Terminal.WriteLine($"IO {typeName}: in-out re-serialization of file(s).");
-        int taskCount = DoFileInFileOutTasks(options, InOutFile<TFile>);
+        int taskCount = ParallelizeFileInFileOutTasks(options, InOutFile<TFile>);
         Terminal.WriteLine($"IO {typeName}: in-out re-serialization of {taskCount} file{Plural(taskCount)}.");
     }
     public static void InOutFile<TFile>(Options options, OSPath inputFile, OSPath outputFile)
@@ -66,7 +66,7 @@ public static class ActionsIO
             options.SearchPattern = "COLI_COURSE???";
 
         Terminal.WriteLine($"PATCH: patch scene file(s).");
-        int taskCount = DoFileInFileOutTasks(options, PatchSceneComment);
+        int taskCount = ParallelizeFileInFileOutTasks(options, PatchSceneComment);
         Terminal.WriteLine($"PATCH: patch {taskCount} scene file{Plural(taskCount)}.");
     }
     public static void PatchSceneComment(Options options, OSPath inputFile, OSPath _)

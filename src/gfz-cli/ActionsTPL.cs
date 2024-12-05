@@ -27,7 +27,7 @@ public static class ActionsTPL
             options.SearchPattern = "*.tpl";
 
         Terminal.WriteLine("TPL: unpacking file(s).");
-        int taskCount = DoFileInFileOutTasks(options, TplUnpackFile);
+        int taskCount = ParallelizeFileInFileOutTasks(options, TplUnpackFile);
         Terminal.WriteLine($"TPL: done unpacking {taskCount} TPL file{(taskCount != 1 ? 's' : "")}.");
     }
     public static void TplUnpackFile(Options options, OSPath inputFile, OSPath outputFile)
@@ -190,7 +190,7 @@ public static class ActionsTPL
             options.SearchPattern = "*.png";
 
         Terminal.WriteLine("TPL: generating mipmaps.");
-        int taskCount = DoFileInFileOutTasks(options, TplGenerateMipmaps);
+        int taskCount = ParallelizeFileInFileOutTasks(options, TplGenerateMipmaps);
         Terminal.WriteLine($"TPL: done generating mipmaps for {taskCount} file{(taskCount != 1 ? 's' : "")}.");
     }
     public static void TplGenerateMipmaps(Options options, OSPath inputFilePath, OSPath outputFilePath)

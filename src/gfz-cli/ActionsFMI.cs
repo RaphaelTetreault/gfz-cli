@@ -15,7 +15,7 @@ public static class ActionsFMI
             options.SearchPattern = $"*.fmi";
 
         Terminal.WriteLine("FMI: converting FMI to plain text files.");
-        int binCount = DoFileInFileOutTasks(options, FmiToPlaintext);
+        int binCount = ParallelizeFileInFileOutTasks(options, FmiToPlaintext);
         Terminal.WriteLine($"FMI: done converting {binCount} file{Plural(binCount)}.");
     }
     public static void FmiFromPlaintext(Options options)
@@ -26,7 +26,7 @@ public static class ActionsFMI
             options.SearchPattern = $"*.fmi.txt";
 
         Terminal.WriteLine("FMI: converting FMI from plain text files.");
-        int binCount = DoFileInFileOutTasks(options, FmiFromPlaintext);
+        int binCount = ParallelizeFileInFileOutTasks(options, FmiFromPlaintext);
         Terminal.WriteLine($"FMI: done converting {binCount} file{Plural(binCount)}.");
     }
 

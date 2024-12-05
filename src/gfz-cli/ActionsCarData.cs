@@ -20,7 +20,7 @@ public static class ActionsCarData
         }
 
         // Perform the action
-        DoFileInFileOutTasks(options, CarDataBinToTsvTask);
+        ParallelizeFileInFileOutTasks(options, CarDataBinToTsvTask);
     }
 
     public static void CarDataBinToTsvTask(Options options, OSPath inputFile, OSPath outputFile)
@@ -65,7 +65,7 @@ public static class ActionsCarData
         }
 
         // Perform the action
-        DoFileInFileOutTasks(options, CarDataTsvToBin);
+        ParallelizeFileInFileOutTasks(options, CarDataTsvToBin);
     }
 
     public static void CarDataTsvToBin(Options options, OSPath inputFile, OSPath outputFilePath)

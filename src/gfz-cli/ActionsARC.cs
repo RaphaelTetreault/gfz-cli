@@ -44,28 +44,11 @@ public static class ActionsARC
         if (doesNotHaveOutputSpecified)
             outputFile.PopDirectory();
 
-
-        // Run process
-        var arc = new Archive();
-        arc.FileSystem.AddFiles(inputFilePaths, options.InputPath);
-        void FileWrite()
+        bool canWrite = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+        if (canWrite)
         {
-            using var writer = new EndianBinaryWriter(File.Create(outputFile), ArchiveFile.endianness);
-            arc.Serialize(writer);
-        }
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = options.InputPath,
-            OutputFilePath = outputFile,
-            PrintPrefix = options.ActionStr,
-            PrintActionDescription = "creating archive from files in",
-        };
-
-        // Display info
-        Terminal.WriteLine($"{options.ActionStr}: compiling {inputFilePaths.Length} file{Plural(inputFilePaths)} into \"{outputFile}\".");
-        bool writeSuccess = FileWriteOverwriteHandler(options, FileWrite, info);
-        if (writeSuccess)
-        {
+            // Display files being compilled into ARC
+            Terminal.WriteLine($"{options.ActionStr}: compiling {inputFilePaths.Length} file{Plural(inputFilePaths)} into \"{outputFile}\".");
             int digitsCount = inputFilePaths.Length.ToString().Length;
             for (int i = 0; i < inputFilePaths.Length; i++)
             {
@@ -73,8 +56,16 @@ public static class ActionsARC
                 string msg = $"ARC:\tFile {(i + 1).PadLeft(digitsCount)}/{inputFilePaths.Length} {inputFilePath}";
                 Terminal.WriteLine(msg, Program.SubTaskColor);
             }
+
+            // Actually write the file
+            var arc = new Archive();
+            arc.FileSystem.AddFiles(inputFilePaths, options.InputPath);
+            using var writer = new EndianBinaryWriter(File.Create(outputFile), ArchiveFile.endianness);
+            arc.Serialize(writer);
+
+            // Display end of process
+            Terminal.WriteLine($"{options.ActionStr}: done archiving {inputFilePaths.Length} file{Plural(inputFilePaths)} in {outputFile}.");
         }
-        Terminal.WriteLine($"{options.ActionStr}: done archiving {inputFilePaths.Length} file{Plural(inputFilePaths)} in {outputFile}.");
     }
 
     // Entry
@@ -86,24 +77,18 @@ public static class ActionsARC
             options.SearchPattern = $"*.arc";
 
         Terminal.WriteLine($"{options.ActionStr}: decompressing file(s).");
-        int taskCount = DoFileInFileOutTasks(options, ArcUnpack);
+        int taskCount = ParallelizeFileInFileOutTasks(options, ArcUnpack);
         Terminal.WriteLine($"{options.ActionStr}: done decompressing {taskCount} file{Plural(taskCount)}.");
     }
 
     // Per-item
-    public static void ArcUnpack(Options options, OSPath inputFile, OSPath outputFile)
+    private static void ArcUnpack(Options options, OSPath inputFile, OSPath outputFile)
     {
         // Turn file path into folder path
         outputFile.PopExtension();
 
         // Read ARC file
-        var arcFile = new ArchiveFile();
-        using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), ArchiveFile.endianness))
-        {
-            arcFile.FileName = inputFile;
-            arcFile.Deserialize(reader);
-        }
-        var arc = arcFile.Value;
+        Archive arc = new ArchiveFile(inputFile);
 
         // Write ARC contents
         foreach (var file in arc.FileSystem.GetFiles())
@@ -112,21 +97,16 @@ public static class ActionsARC
             OSPath fileOutputPath = new();
             fileOutputPath.SetDirectory(outputFile);
             fileOutputPath.AppendRelativePathToDirectories(file.GetResolvedPath());
-            EnsureDirectoriesExist(fileOutputPath);
 
-            void FileWrite()
+            // Write ARC file contents
+            bool canWriteFile = CheckWillFileWrite(options, fileOutputPath, out ActionTaskResult result);
+            PrintFileWriteResult(result, fileOutputPath, options.ActionStr);
+            if (canWriteFile)
             {
+                EnsureDirectoriesExist(fileOutputPath);
                 using var writer = File.Create(fileOutputPath);
                 writer.Write(file.Data);
             }
-            var info = new FileWriteInfo()
-            {
-                InputFilePath = inputFile,
-                OutputFilePath = fileOutputPath,
-                PrintPrefix = options.ActionStr,
-                PrintActionDescription = "decompressing file",
-            };
-            FileWriteOverwriteHandler(options, FileWrite, info);
         }
     }
 

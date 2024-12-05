@@ -8,8 +8,9 @@ public static class Program
 {
     public static object LockConsoleWrite { get; } = new();
     public const ConsoleColor FileNameColor = ConsoleColor.Cyan;
-    public const ConsoleColor OverwriteFileColor = ConsoleColor.DarkYellow;
-    public const ConsoleColor WriteFileColor = ConsoleColor.Green;
+    public const ConsoleColor FileWriteColor = ConsoleColor.Green;
+    public const ConsoleColor FileOverwriteColor = ConsoleColor.DarkYellow;
+    public const ConsoleColor FileOverwriteSkipColor = ConsoleColor.Red;
     public const ConsoleColor SubTaskColor = ConsoleColor.DarkGray;
     public const ConsoleColor WarningColor = ConsoleColor.Red;
     public const ConsoleColor NotificationColor = ConsoleColor.DarkYellow;

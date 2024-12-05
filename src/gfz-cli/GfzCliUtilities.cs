@@ -14,7 +14,7 @@ public static class GfzCliUtilities
     public delegate void FileInFileOutTask(Options options, OSPath inputFile, OSPath outputFile);
     public delegate T FileInTypeOutTask<T>(Options options, OSPath inputFile);
 
-    public static int DoFileInFileOutTasks(Options options, FileInFileOutTask fileTask)
+    public static int ParallelizeFileInFileOutTasks(Options options, FileInFileOutTask fileTask)
     {
         // Get the file or all files at 'path'
         string[] outputFilePaths = GetOutputFiles(options, out string[] inputFilePaths);
@@ -38,7 +38,7 @@ public static class GfzCliUtilities
 
         return tasks.Count;
     }
-    public static T[] DoFileInTypeOutTasks<T>(Options options, FileInTypeOutTask<T> processFileTask)
+    public static T[] ParallelizeFileInTypeOutTasks<T>(Options options, FileInTypeOutTask<T> processFileTask)
     {
         // Get all files specified by user
         string[] inputFilePaths = GetInputFiles(options);
@@ -66,12 +66,84 @@ public static class GfzCliUtilities
         return results;
     }
 
+    // NEW STUFF 2024/12/04
+    public static bool CheckWillFileWrite(Options options, OSPath outputFilePath, out ActionTaskResult result)
+    {
+        // Check: does output file exist?
+        bool outputFileExists = File.Exists(outputFilePath);
+        if (outputFileExists)
+        {
+            bool willOverwriteFile = options.OverwriteFiles;
+            result = willOverwriteFile
+                ? ActionTaskResult.FileOverwriteSuccess
+                : ActionTaskResult.FileOverwriteSkip;
+
+            return willOverwriteFile;
+        }
+        else // file does not exist
+        {
+            result = ActionTaskResult.FileWriteSuccess;
+            return true;
+        }
+    }
+    public static void PrintFileWriteResult(ActionTaskResult result, OSPath filePath, string prefix = "")
+    {
+        // Format prefix if it exists
+        prefix = string.IsNullOrWhiteSpace(prefix) ? "" : $"{prefix}: ";
+
+        switch (result)
+        {
+            case ActionTaskResult.FileWriteSuccess:
+                lock (Terminal.Lock)
+                {
+                    Terminal.Write(prefix);
+                    Terminal.Write("write file ");
+                    Terminal.Write(filePath, Program.FileWriteColor);
+                    Terminal.WriteLine();
+                }
+                break;
+            case ActionTaskResult.FileOverwriteSkip:
+                lock (Terminal.Lock)
+                {
+                    Terminal.Write(prefix);
+                    Terminal.Write("skip file ");
+                    Terminal.Write(filePath, Program.FileOverwriteSkipColor);
+                    Terminal.WriteLine();
+                }
+                break;
+            case ActionTaskResult.FileOverwriteSuccess:
+                lock (Terminal.Lock)
+                {
+                    Terminal.Write(prefix);
+                    Terminal.Write("overwrite file ");
+                    Terminal.Write(filePath, Program.FileOverwriteColor);
+                    Terminal.WriteLine();
+                }
+                break;
+            case ActionTaskResult.FilePatchSuccess:
+                lock (Terminal.Lock)
+                {
+                    Terminal.Write(prefix);
+                    Terminal.Write("patch file ");
+                    Terminal.Write(filePath, Program.FileOverwriteColor);
+                    Terminal.WriteLine();
+                }
+                break;
+
+            default:
+                throw new ArgumentException($"Unsupported result: {result}");
+        }
+    }
+
+
+    // NEW STUFF ENDS
+
     public static bool FileWriteOverwriteHandler(Options options, System.Action fileWrite, FileWriteInfo info)
     {
         bool outputFileExists = File.Exists(info.OutputFilePath);
         bool doWriteFile = !outputFileExists || options.OverwriteFiles;
         bool isOverwritingFile = outputFileExists && doWriteFile;
-        var writeColor = isOverwritingFile ? OverwriteFileColor : WriteFileColor;
+        var writeColor = isOverwritingFile ? FileOverwriteColor : FileWriteColor;
         var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
 
         lock (LockConsoleWrite)
