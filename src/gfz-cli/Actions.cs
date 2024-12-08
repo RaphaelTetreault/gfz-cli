@@ -29,11 +29,18 @@ public enum Actions
 
     auto_rename_gci, // NOT IMPLEMENTED
 
+
     cardata_from_tsv,
+
+
     cardata_to_tsv,
 
+
     colicourse_patch_fog,
+
+
     colicourse_patch_object_render_flags,
+
 
     extract_iso,
 
@@ -55,18 +62,53 @@ public enum Actions
     [Action(ActionIO.None, ActionIO.None, ActionOption.None, specialOptions: $"--{IOptionsLineRel.Args.Value} <string>")]
     encode_windows_to_shift_jis,
 
+
     emblem_gci_from_image,
+
+
     emblem_gci_to_image,
+
+
     emblems_bin_from_images,
+
+
     emblems_bin_to_images,
 
+
     fmi_from_plaintext,
+
+
     fmi_to_plaintext,
 
-    //[Action(ActionIO.DirectoryIn | ActionIO.DirectoryOut)]
+    /// <summary>
+    ///     Create an asset library for extracted game ISO.
+    /// </summary>
+    /// <remarks>
+    ///     Output not optional. Input is directory, ideally root of ISO directory.
+    /// <list type="bullet">
+    ///     <item>
+    ///         <term>TPL</term>
+    ///         <description>
+    ///             Creates .PNG and .GXTEX files for each image in TPLs. Duplicates are
+    ///             not written using CRC32 hashes of the image data.
+    ///         </description>
+    ///     </item>
+    ///     <item>
+    ///         <term>GMA</term>
+    ///         <description>
+    ///             Creates .GMAREF files which map GMA to individual GCMF files. Creates 
+    ///             .GCMFX files for each GCMF in models. Duplicates are not written using
+    ///             CRC32 hashes of the model data.
+    ///         </description>
+    ///     </item>
+    /// </list>
+    /// </remarks>
+    [Action(ActionIO.Directory, ActionIO.Directory, ActionOption.OverwriteFiles | ActionOption.SearchSubdirectories, outputOptional: false)]
     generate_asset_library,
 
+
     gci_extract_ghost,
+
 
     gma_patch_submesh_render_flags,
 

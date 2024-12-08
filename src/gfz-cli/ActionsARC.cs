@@ -1,10 +1,12 @@
 ﻿using GameCube.AmusementVision.ARC;
-using Manifold.IO;
 using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 
 namespace Manifold.GFZCLI;
 
+/// <summary>
+///     Actions for packing and unpoacking <see cref="Archive"/> .arc archive files.
+/// </summary>
 public static class ActionsARC
 {
     /// <summary>
