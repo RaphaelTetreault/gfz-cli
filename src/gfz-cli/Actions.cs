@@ -36,9 +36,17 @@ public enum Actions
     //[Action(ActionIO.FileIn | ActionIO.DirectoryOut, ActionOption.OPS)]
     extract_iso,
 
+    /// <summary>
+    ///     Takes in argument via <see cref="Options.Value"/>.
+    /// </summary>
+    [Action(ActionIO.None, ActionIO.None, ActionOption.None, specialOptions: $"--{IOptionsLineRel.Args.Value} <hex-string>")]
     encode_bytes_to_shift_jis,
+
+    /// <summary>
+    ///     Takes in argument via <see cref="Options.Value"/>.
+    /// </summary>
+    [Action(ActionIO.None, ActionIO.None, ActionOption.None, specialOptions: $"--{IOptionsLineRel.Args.Value} <string>")]
     encode_windows_to_shift_jis,
-    encode_shift_jis_to_unicode,
 
     emblem_gci_from_image,
     emblem_gci_to_image,
@@ -84,7 +92,11 @@ public enum Actions
     /// <summary>
     ///     Requires directory file (to patch), directory output is optional. ARC compatible between AX/GX, all regions.
     /// </summary>
-    [Action(ActionIO.File, ActionIO.None, ActionOption.OPRS)]
+    /// <remarks>
+    ///     The game' max speed is 9990 km/h. Calling this action with by default set it to +infinity if no arguments
+    ///     are specified.
+    /// </remarks>
+    [Action(ActionIO.None, ActionIO.None, ActionOption.SerializationRegion, specialOptions: $"[--{IOptionsLineRel.Args.Value} <max-speed>]")]
     linerel_set_max_speed,
 
     linerel_set_venue,

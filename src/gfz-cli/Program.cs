@@ -79,7 +79,6 @@ public static class Program
             // ENCODE TEXT
             case Actions.encode_windows_to_shift_jis: ActionsEncodeText.PrintAsciiToShiftJis(options); break;
             case Actions.encode_bytes_to_shift_jis: ActionsEncodeText.PrintBytesToShiftJis(options); break;
-            case Actions.encode_shift_jis_to_unicode: ActionsEncodeText.PrintShiftJisToUnicode(options); break;
             // EMBLEM
             case Actions.emblems_bin_from_images: ActionsEmblem.EmblemsBinFromImages(options); break;
             case Actions.emblems_bin_to_images: ActionsEmblem.EmblemsBinToImages(options); break;
@@ -185,7 +184,8 @@ public static class Program
             ActionIO.Directory => " <input-directory>",
             ActionIO.File => " <input-file>",
             ActionIO.Path => " <input-path>",
-            _ => string.Empty,
+            ActionIO.None => string.Empty,
+            _ => throw new NotImplementedException(),
         };
         string optional = actionAttribute.IsOutputOptional ? "optional-" : string.Empty;
         string output = actionAttribute.Output switch
@@ -193,7 +193,8 @@ public static class Program
             ActionIO.Directory => $" <{optional}output-directory>",
             ActionIO.File => $" <{optional}output-file>",
             ActionIO.Path => $" <{optional}output-path>",
-            _ => string.Empty,
+            ActionIO.None => string.Empty,
+            _ => throw new NotImplementedException(),
         };
 
         // Construct hint and print
@@ -219,6 +220,9 @@ public static class Program
 
     public static string GetActionOptionsMessage(ActionOption actionOptions)
     {
+        if (actionOptions == ActionOption.None)
+            return string.Empty;
+
         // Prepare string
         StringBuilder builder = new StringBuilder(66);
         builder.Append(" [");
