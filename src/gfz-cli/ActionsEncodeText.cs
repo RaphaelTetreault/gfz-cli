@@ -1,14 +1,11 @@
-﻿using System;
+﻿using GameCube.GFZ;
+using System;
 using System.Text;
 
 namespace Manifold.GFZCLI;
 
 public class ActionsEncodeText
 {
-    public static readonly Encoding Windows1252 = Encoding.GetEncoding(1252);
-    public static readonly Encoding ShiftJIS = Encoding.GetEncoding(932);
-
-
     // Generic and usable in any context
     public static void AssertOnlyHexCharacters(string value)
     {
@@ -96,14 +93,14 @@ public class ActionsEncodeText
     /// </summary>
     /// <param name="options">The options to parse.</param>
     public static string ConvertBytesToShiftJis(Options options)
-        => ConvertValueBytesToEncoding(options, ShiftJIS);
+        => ConvertValueBytesToEncoding(options, TextEncoding.ShiftJIS);
 
     /// <summary>
     ///     Takes in an ASCII string of character and converts to Shift-JIS encoded  string then finally to Unicode.
     /// </summary>
     /// <param name="options">The options to parse.</param>
     public static string ConvertWindows1252ToShiftJis(Options options)
-        => ConvertValueEncodingToEncoding(options, Windows1252, ShiftJIS);
+        => ConvertValueEncodingToEncoding(options, TextEncoding.Windows1252, TextEncoding.ShiftJIS);
 
 
     /// <summary>
