@@ -175,7 +175,7 @@ public static class Program
         var actionAttribute = AttributeHelper.GetAttribute<ActionAttribute, Actions>(action);
         if (actionAttribute == null)
         {
-            Terminal.WriteLine($"{actionStr} [usage not yet defined]", ConsoleColor.Red);
+            Terminal.WriteLine($"{actionStr} (usage not yet defined)", ConsoleColor.Red);
             return;
         }
 
