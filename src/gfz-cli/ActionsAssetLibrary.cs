@@ -15,13 +15,21 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-
 namespace Manifold.GFZCLI;
 
+/// <summary>
+///     Actions for creating a litghtly-managed GFZ asset library.
+/// </summary>
 public static class ActionsAssetLibrary
 {
     private const string Designator = "Asset Library";
 
+    /// <summary>
+    ///     Create library of individual textures and models from TPLs and GMAs, respectively.
+    ///     Library includes files which correlate textures to each model using named references.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <exception cref="ArgumentException">Thrown if input or output are files.</exception>
     public static void CreateGmaTplLibrary(Options options)
     {
         // Assert that destination is a folder.
@@ -35,12 +43,17 @@ public static class ActionsAssetLibrary
 
         Terminal.WriteLine($"{Designator}: generating asset library.");
         CreateGmaTplLibrary(options, new(options.InputPath), new(options.OutputPath + "/"));
-        //int taskCount = DoFileInFileOutTasks(options, CreateGmaTplLibrary);
         Terminal.WriteLine($"{Designator}: done.");
-        //Terminal.WriteLine($"Asset Library: done unpacking {taskCount} TPL file{(taskCount != 1 ? 's' : "")}.");
     }
 
-    public static void CreateGmaTplLibrary(Options options, OSPath inputPath, OSPath outputPath)
+    /// <summary>
+    ///     Create library of individual textures and models from TPLs and GMAs, respectively.
+    ///     Library includes files which correlate textures to each model using named references.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="_">Input path (unused).</param>
+    /// <param name="outputPath"></param>
+    public static void CreateGmaTplLibrary(Options options, OSPath _, OSPath outputPath)
     {
         // Copy original argument
         string searchPattern = options.SearchPattern;
@@ -59,21 +72,23 @@ public static class ActionsAssetLibrary
         for (int i = 0; i < tplFiles.Count; i++)
             tplFiles[i] = Path.ChangeExtension(tplFiles[i], string.Empty);
 
-        // Image resampler
+        // Get image resampler
         IResampler resampler = options.Resampler;
 
+        // Create copies of paths
         OSPath tplOutputPath = outputPath.Copy();
         OSPath gmaOutputPath = outputPath.Copy();
+        // Mutate copies (add subdirectory to path)
         tplOutputPath.PushDirectory("tex");
         gmaOutputPath.PushDirectory("mdl");
 
-        // Create TPL alongside GMAs
+        // Create TPL textures alongside GMA models
         foreach (var assetFile in gmaFiles)
         {
             // Get path to TPL
             OSPath tplPath = new(assetFile);
             tplPath.SetExtensions("tpl");
-            //
+            // GMA path is same as TPL, just with GMA extension
             OSPath gmaPath = tplPath.Copy();
             gmaPath.SetExtensions("gma");
 
@@ -91,6 +106,7 @@ public static class ActionsAssetLibrary
             }
             else
             {
+                // TODO
                 // GMA uses common TPL, write it out without texture references
                 WriteModels(options, gmaPath, gmaOutputPath, []);
             }
@@ -107,7 +123,16 @@ public static class ActionsAssetLibrary
         }
     }
 
-    // Runs an action on all texture bundles
+    /// <summary>
+    ///     
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputPath"></param>
+    /// <param name="outputPath"></param>
+    /// <param name="resampler">Pre-cached image resampler.</param>
+    /// <returns>
+    ///     Runs an action on all texture bundles (TPLs).
+    /// </returns>
     private static string[] TplToGxtexAndPng(Options options, OSPath inputPath, OSPath outputPath, IResampler resampler)
     {
         // Load TPL file
@@ -144,35 +169,35 @@ public static class ActionsAssetLibrary
 
             // PNG
             {
-                var info = new FileWriteInfo()
+                bool doWriteWrite = CheckWillFileWrite(options, imageOutputPath, out ActionTaskResult result);
+                PrintFileWriteResult(result, imageOutputPath, options.ActionStr);
+                if (doWriteWrite)
                 {
-                    InputFilePath = tpl.FileName,
-                    OutputFilePath = imageOutputPath,
-                    PrintPrefix = Designator,
-                    PrintActionDescription = $"extracting texture ({i + 1}/{numTextures}) from",
-                };
-                void Task() => WriteTextureBundleAsPNG(textureBundle, imageOutputPath, resampler);
-                FileWriteOverwriteHandler(options, Task, info);
+                    WriteTextureBundleAsPNG(textureBundle, imageOutputPath, resampler);
+                }
             }
 
             // GXTEX
             {
-                var info = new FileWriteInfo()
+                bool doWriteWrite = CheckWillFileWrite(options, gxtexOutputPath, out ActionTaskResult result);
+                PrintFileWriteResult(result, gxtexOutputPath, options.ActionStr);
+                if (doWriteWrite)
                 {
-                    InputFilePath = tpl.FileName,
-                    OutputFilePath = gxtexOutputPath,
-                    PrintPrefix = Designator,
-                    PrintActionDescription = $"extracting texture ({i + 1}/{numTextures}) from",
-                };
-                void Task() => WriteTextureBundleAsGxTexture(textureBundle, gxtexOutputPath, resampler);
-                FileWriteOverwriteHandler(options, Task, info);
+                    WriteTextureBundleAsGxTexture(textureBundle, gxtexOutputPath, resampler);
+                }
             }
         }
 
+        // To be used to map GMA texture indexes to specific image files.
         return textureNames;
     }
 
-    // Writes single texture bundle as single PNG
+    /// <summary>
+    ///     Writes single texture bundle (texture with mipmaps) as single PNG.
+    /// </summary>
+    /// <param name="textureBundle"></param>
+    /// <param name="fullOutputPath"></param>
+    /// <param name="resampler"></param>
     private static void WriteTextureBundleAsPNG(TextureBundle textureBundle, string fullOutputPath, IResampler resampler)
     {
         // Prepare image buffer. Twice width to fit mipmaps if they exist.
@@ -226,7 +251,12 @@ public static class ActionsAssetLibrary
         image.Save(fullOutputPath, imageEncoder);
     }
 
-    // 
+    /// <summary>
+    ///     Writes single texture bundle (texture with mipmaps) as single <see cref="GxTexture"/>.
+    /// </summary>
+    /// <param name="textureBundle"></param>
+    /// <param name="fullOutputPath"></param>
+    /// <param name="resampler"></param>
     private static void WriteTextureBundleAsGxTexture(TextureBundle textureBundle, string fullOutputPath, IResampler resampler)
     {
         // Break outy some data
@@ -241,14 +271,14 @@ public static class ActionsAssetLibrary
 
         // Load up texture data or create it if needed
         byte actualTextureCount = 0;
-        var data = new List<byte>(textureBundle.AddressRange.Size);
+        var textureBundleData = new List<byte>(textureBundle.AddressRange.Size);
+        // Iterate over each texture/mipmap in bundle
         for (int i = 0; i < textureBundle.Length; i++)
         {
-            TextureBundleElement textureData = textureBundle.Elements[i];
-
-            if (textureData.IsValid)
+            TextureBundleElement textureBundleElement = textureBundle.Elements[i];
+            if (textureBundleElement.IsValid)
             {
-                data.AddRange(textureData.RawTextureData);
+                textureBundleData.AddRange(textureBundleElement.RawTextureData);
             }
             else // is corrupted
             {
@@ -259,8 +289,8 @@ public static class ActionsAssetLibrary
                 if (resizeWidth == 0 || resizeHeight == 0)
                     break;
                 // Resize texture
-                var generatedMipmap = mainTexture.Clone(c => c.Resize(resizeWidth, resizeHeight, resampler));
-                var mipmapTexture = ImageToTexture(generatedMipmap);
+                Image<Rgba32> mipmapImage = mainTexture.Clone(c => c.Resize(resizeWidth, resizeHeight, resampler));
+                Texture mipmapTexture = ImageToTexture(mipmapImage);
                 // Write texture data to memory
                 using var memory = new MemoryStream();
                 using var memoryWriter = new EndianBinaryWriter(memory, Tpl.endianness);
@@ -268,7 +298,7 @@ public static class ActionsAssetLibrary
                 memoryWriter.Flush();
                 // Add data to array
                 byte[] mipmapData = memory.ToArray();
-                data.AddRange(mipmapData);
+                textureBundleData.AddRange(mipmapData);
             }
 
             // If we get this far, we know we have a real texture encoded
@@ -282,8 +312,8 @@ public static class ActionsAssetLibrary
             Height = description.Height,
             Format = description.TextureFormat,
             Count = actualTextureCount,
-            DataLength = data.Count,
-            Data = data.ToArray(),
+            DataLength = textureBundleData.Count,
+            Data = textureBundleData.ToArray(),
         };
         // Write out texture
         EnsureDirectoriesExist(fullOutputPath);
@@ -291,7 +321,13 @@ public static class ActionsAssetLibrary
         writer.Write(gxTex);
     }
 
-    //
+    /// <summary>
+    ///     Writes all models of a single GMA file as <see cref="GcmfAsset"/> binary and .gmaref text file.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputPath">The input GMA file.</param>
+    /// <param name="outputPath">The output directory.</param>
+    /// <param name="gmaTextures">This GMA's TPL texture names.</param>
     private static void WriteModels(Options options, OSPath inputPath, OSPath outputPath, string[] gmaTextures)
     {
         // Load GMA file
@@ -335,16 +371,12 @@ public static class ActionsAssetLibrary
             //
             gcmfAssetNames.Add(modelOutputPath.FileNameAndExtensions);
 
+            // GCMFX
             // Create standalone GCMF with reference to textures!
             {
-                var info = new FileWriteInfo()
-                {
-                    InputFilePath = gma.FileName,
-                    OutputFilePath = modelOutputPath,
-                    PrintPrefix = Designator,
-                    PrintActionDescription = $"extracting GCMF model ({i + 1}/{numModels}) from",
-                };
-                void FileWriteGcmfAsset()
+                bool doWriteWrite = CheckWillFileWrite(options, modelOutputPath, out ActionTaskResult result);
+                PrintFileWriteResult(result, modelOutputPath, options.ActionStr);
+                if (doWriteWrite)
                 {
                     GcmfAsset gcmfAsset = new()
                     {
@@ -356,35 +388,31 @@ public static class ActionsAssetLibrary
                     using var writer = new EndianBinaryWriter(File.Create(modelOutputPath), Gma.endianness);
                     writer.Write(gcmfAsset);
                 }
-                FileWriteOverwriteHandler(options, FileWriteGcmfAsset, info);
             }
         }
 
+        // GMAREF
         // Create GMA ref file (plaintext)
         {
             OSPath gmarefOutputPath = outputPath.Copy();
             string fileName = Path.GetFileNameWithoutExtension(gma.FileName);
             gmarefOutputPath.SetFileName(fileName);
             gmarefOutputPath.SetExtensions("gmaref");
-            string directories = Path.GetDirectoryName(inputPath)[options.InputPath.Length..];
+            string directories = Path.GetDirectoryName(inputPath)![options.InputPath.Length..];
             gmarefOutputPath.PushDirectories(directories);
 
-            var info = new FileWriteInfo()
+            bool doWriteWrite = CheckWillFileWrite(options, gmarefOutputPath, out ActionTaskResult result);
+            PrintFileWriteResult(result, gmarefOutputPath, options.ActionStr);
+            if (doWriteWrite)
             {
-                InputFilePath = gma.FileName,
-                OutputFilePath = gmarefOutputPath,
-                PrintPrefix = Designator,
-                PrintActionDescription = $"creating GMA References (.gmaref) from",
-            };
-            void FileWriteGmaAsset()
-            {
+                // Create .GMAREF file
                 EnsureDirectoriesExist(gmarefOutputPath);
                 using var writer = new StreamWriter(File.Create(gmarefOutputPath));
+                // Write a reference to each GCMF for this GMA file as a .GMAREF
                 int padWidth = gcmfAssetNames.Count.ToString().Length;
                 for (int i = 0; i < gcmfAssetNames.Count; i++)
                     writer.Write($"{i.PadLeft(padWidth)}:\t{gcmfAssetNames[i]}\n");
             }
-            FileWriteOverwriteHandler(options, FileWriteGmaAsset, info);
         }
     }
 }

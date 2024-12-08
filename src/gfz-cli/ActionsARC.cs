@@ -7,7 +7,10 @@ namespace Manifold.GFZCLI;
 
 public static class ActionsARC
 {
-    // Only for single input directory
+    /// <summary>
+    ///     Archive a directory intop a .arc file.
+    /// </summary>
+    /// <param name="options"></param>
     public static void ArcPack(Options options)
     {
         // ARC requires directory as input path
@@ -67,7 +70,10 @@ public static class ActionsARC
         }
     }
 
-    // Entry
+    /// <summary>
+    ///     Unpack one or more .arc achives into directories of their contents.
+    /// </summary>
+    /// <param name="options"></param>
     public static void ArcUnpack(Options options)
     {
         // Force checking for .ARC only IF there is no defined search pattern
@@ -80,7 +86,12 @@ public static class ActionsARC
         Terminal.WriteLine($"{options.ActionStr}: done decompressing {taskCount} file{Plural(taskCount)}.");
     }
 
-    // Per-item
+    /// <summary>
+    ///     Unpack a .arc achive into a directory of its contents.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputFile"></param>
+    /// <param name="outputFile"></param>
     private static void ArcUnpack(Options options, OSPath inputFile, OSPath outputFile)
     {
         // Turn file path into folder path
@@ -98,9 +109,9 @@ public static class ActionsARC
             fileOutputPath.AppendRelativePathToDirectories(file.GetResolvedPath());
 
             // Write ARC file contents
-            bool canWriteFile = CheckWillFileWrite(options, fileOutputPath, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, fileOutputPath, out ActionTaskResult result);
             PrintFileWriteResult(result, fileOutputPath, options.ActionStr);
-            if (canWriteFile)
+            if (doWriteFile)
             {
                 EnsureDirectoriesExist(fileOutputPath);
                 using var writer = File.Create(fileOutputPath);
