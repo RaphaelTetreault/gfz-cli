@@ -20,4 +20,9 @@ public enum ActionIO
     ///     IO only supports file paths.
     /// </summary>
     File,
+
+    /// <summary>
+    ///     IO is irrelevant for this action (input or output).
+    /// </summary>
+    None,
 }

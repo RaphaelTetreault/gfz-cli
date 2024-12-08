@@ -76,6 +76,13 @@ public enum Actions
     linerel_set_course_name,
     linerel_set_cup_course,
     linerel_set_machine_rating,
+
+    /// <summary>
+    ///     Requires directory file (to patch), directory output is optional. ARC compatible between AX/GX, all regions.
+    /// </summary>
+    [Action(ActionIO.File, ActionIO.None, ActionOption.OPRS)]
+    linerel_set_max_speed,
+
     linerel_set_venue,
     linerel_set_venue_name,
 

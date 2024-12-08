@@ -115,6 +115,7 @@ public static class Program
             case Actions.linerel_set_course_name: ActionsLineREL.PatchSetCourseName(options); break;
             case Actions.linerel_set_cup_course: ActionsLineREL.PatchSetCupCourse(options); break;
             case Actions.linerel_set_machine_rating: ActionsLineREL.PatchMachineRating(options); break;
+            case Actions.linerel_set_max_speed: ActionsLineREL.PatchMaxSpeed(options); break;
             case Actions.linerel_set_venue: ActionsLineREL.PatchSetVenueIndex(options); break;
             case Actions.linerel_set_venue_name: ActionsLineREL.PatchSetVenueName(options); break;
             // TPL

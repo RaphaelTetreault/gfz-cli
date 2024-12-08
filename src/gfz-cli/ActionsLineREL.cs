@@ -426,6 +426,18 @@ public static class ActionsLineREL
         writer.JumpToAddress(address);
         writer.Write(vehicleRating);
     }
+    private static void PatchMaxSpeed(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+    {
+        AssertValue(options);
+
+        double maxSpeed = string.IsNullOrEmpty(options.Value)
+            ? double.PositiveInfinity      // default maxlue
+            : double.Parse(options.Value); // user defined value
+
+        Pointer address = info.VehicleMaxSpeedCap9990KmhPtr;
+        writer.JumpToAddress(address);
+        writer.Write(maxSpeed);
+    }
 
     private static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, Cup cup, byte cupCourseIndex, ushort courseIndex)
     {
@@ -449,11 +461,7 @@ public static class ActionsLineREL
 
     private static int ClearStringTable(Options options, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)
     {
-        if (string.IsNullOrEmpty(options.Value))
-        {
-            string msg = $"Argument --{IOptionsLineRel.Args.Value} must be set.";
-            throw new ArgumentException(msg);
-        }
+        AssertValue(options);
 
         // Set all strings to same value
         int stringCount = strArrPtr.length;
@@ -528,8 +536,8 @@ public static class ActionsLineREL
         // Merge string references
         CString.MergeReferences(ref strings);
         // Mark strings as unwritten
-        foreach (var courseName in strings)
-            courseName.AddressRange = new();
+        foreach (var str in strings)
+            str.AddressRange = new();
         // Write strings back into pool
         foreach (ShiftJisCString courseName in strings)
         {
@@ -596,5 +604,6 @@ public static class ActionsLineREL
     public static void PatchSetVenueName(Options options) => Patch(options, PatchSetVenueName);
     public static void PatchSetCarData(Options options) => Patch(options, PatchCarData);
     public static void PatchMachineRating(Options options) => Patch(options, PatchMachineRating);
+    public static void PatchMaxSpeed(Options options) => Patch(options, PatchMaxSpeed);
 
 }

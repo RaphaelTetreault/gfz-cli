@@ -44,6 +44,12 @@ public enum ActionOption
     OPS = OverwriteFiles | SearchPattern | SearchSubdirectories,
 
     /// <summary>
+    ///     Overwrite, Search Pattern, Search Subdirectories.
+    ///     -o -p -s
+    /// </summary>
+    OPRS = OverwriteFiles | SearchPattern | SerializationRegion | SearchSubdirectories,
+
+    /// <summary>
     ///     Format, Overwrite, Search Pattern, Search Subdirectories.
     ///     -f -o -p -s
     /// </summary>
