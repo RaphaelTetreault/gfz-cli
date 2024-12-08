@@ -9,42 +9,49 @@ public enum Actions
     usage,
 
     /// <summary>
-    ///     Requires path input, directory output is optional. ARC compatible between AX/GX, all regions.
+    ///     Pack directory to .arc file.
     /// </summary>
+    /// <remarks>
+    ///     Requires path input, directory output is optional. ARC compatible between AX/GX, all regions.
+    /// </remarks>
     [Action(ActionIO.Path, ActionIO.Directory, ActionOption.OPS)]
     arc_unpack,
 
     /// <summary>
-    ///     Requires directory input, directory output is optional. ARC compatible between AX/GX, all regions.
+    ///     Unpack .arc file into directory of contents.
     /// </summary>
+    /// <remarks>
+    ///     Requires directory input, directory output is optional. ARC compatible between AX/GX, all regions.
+    /// </remarks>
     [Action(ActionIO.Directory, ActionIO.Directory, ActionOption.OPS)]
     arc_pack,
 
 
     auto_rename_gci, // NOT IMPLEMENTED
 
-    //[Action(ActionIO.FileInOut, ActionOption.FOPS)]
     cardata_from_tsv,
-    //[Action(ActionIO.FileInOut, ActionOption.FOPS)]
     cardata_to_tsv,
 
-    //[Action(ActionIO.FileInOut, ActionOption.FOPS)]
     colicourse_patch_fog,
-    //[Action(ActionIO.FileInOut, ActionOption.FOPS)]
     colicourse_patch_object_render_flags,
 
-    //[Action(ActionIO.FileIn | ActionIO.DirectoryOut, ActionOption.OPS)]
     extract_iso,
 
     /// <summary>
-    ///     Takes in argument via <see cref="Options.Value"/>.
+    ///     Encode a byte array into a Shift-JIS string.
     /// </summary>
+    /// <remarks>
+    ///     Takes in argument via <see cref="Options.Value"/>.
+    /// </remarks>
     [Action(ActionIO.None, ActionIO.None, ActionOption.None, specialOptions: $"--{IOptionsLineRel.Args.Value} <hex-string>")]
     encode_bytes_to_shift_jis,
 
     /// <summary>
-    ///     Takes in argument via <see cref="Options.Value"/>.
+    ///     Encode a Windows 1252 string into a Shift-JIS string.
     /// </summary>
+    /// <remarks>
+    ///     Takes in argument via <see cref="Options.Value"/>.
+    /// </remarks>
     [Action(ActionIO.None, ActionIO.None, ActionOption.None, specialOptions: $"--{IOptionsLineRel.Args.Value} <string>")]
     encode_windows_to_shift_jis,
 
@@ -89,12 +96,13 @@ public enum Actions
     linerel_set_cup_course,
     linerel_set_machine_rating,
 
+    
     /// <summary>
-    ///     Requires directory file (to patch), directory output is optional. ARC compatible between AX/GX, all regions.
+    ///     Override the game's internal max speed cap.
     /// </summary>
     /// <remarks>
-    ///     The game' max speed is 9990 km/h. Calling this action with by default set it to +infinity if no arguments
-    ///     are specified.
+    ///     The game' max speed is 9990 km/h. Calling this action without an
+    ///     argument will set the max speed cap to positive infinity.
     /// </remarks>
     [Action(ActionIO.None, ActionIO.None, ActionOption.SerializationRegion, specialOptions: $"[--{IOptionsLineRel.Args.Value} <max-speed>]")]
     linerel_set_max_speed,
