@@ -188,15 +188,16 @@ public static class Program
             _ => throw new NotImplementedException(),
         };
         string optional = actionAttribute.IsOutputOptional ? "optional-" : string.Empty;
+        string charL = actionAttribute.IsOutputOptional ? "[" : "<";
+        string charR = actionAttribute.IsOutputOptional ? "]" : ">";
         string output = actionAttribute.Output switch
         {
-            ActionIO.Directory => $" <{optional}output-directory>",
-            ActionIO.File => $" <{optional}output-file>",
-            ActionIO.Path => $" <{optional}output-path>",
+            ActionIO.Directory => $" {charL}{optional}output-directory{charR}",
+            ActionIO.File => $" {charL}{optional}output-file{charR}",
+            ActionIO.Path => $" {charL}{optional}output-path{charR}",
             ActionIO.None => string.Empty,
             _ => throw new NotImplementedException(),
         };
-
         // Construct hint and print
         string generalOptions = GetActionOptionsMessage(actionAttribute.Options);
         string specialOptions = actionAttribute.SpecialOptions;

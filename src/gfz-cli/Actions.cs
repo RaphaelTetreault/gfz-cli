@@ -29,10 +29,16 @@ public enum Actions
 
     auto_rename_gci, // NOT IMPLEMENTED
 
-
+    /// <summary>
+    ///     Create cardata.lz from input cardata TSV.
+    /// </summary>
+    [Action(ActionIO.Path, ActionIO.Path, ActionOption.FOPS)]
     cardata_from_tsv,
 
-
+    /// <summary>
+    ///     Create cardata TSV from input cardata.lz.
+    /// </summary>
+    [Action(ActionIO.Path, ActionIO.Path, ActionOption.FOPS)]
     cardata_to_tsv,
 
 

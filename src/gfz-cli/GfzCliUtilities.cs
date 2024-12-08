@@ -14,6 +14,7 @@ public static class GfzCliUtilities
     public delegate void FileInFileOutTask(Options options, OSPath inputFile, OSPath outputFile);
     public delegate T FileInTypeOutTask<T>(Options options, OSPath inputFile);
 
+    // TODO: make version of function but for single file (map input -> output)
     public static int ParallelizeFileInFileOutTasks(Options options, FileInFileOutTask fileTask)
     {
         // Get the file or all files at 'path'

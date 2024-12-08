@@ -2,13 +2,26 @@
 using GameCube.GFZ.LZ;
 using Manifold.IO;
 using Manifold.Text.Tables;
+using System;
 using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 
 namespace Manifold.GFZCLI;
 
+/// <summary>
+///     Actions for managing GFZ file ./game/cardata.
+/// </summary>
+/// <remarks>
+///     CarData standalone file exists only for F-Zero GX. See <see cref="ActionsLineREL.PatchSetCarData"/>
+///     for applying CarData stats to the Machine Select screen.
+/// </remarks>
 public static class ActionsCarData
 {
+    /// <summary>
+    ///     Create a TSV from CarData binary (compressed or uncompressed).
+    /// </summary>
+    /// <param name="options"></param>
+    /// <exception cref="ArgumentException">Thrown if serialization format is AX.</exception>
     public static void CarDataToTsv(Options options)
     {
         // Stop if desired file format is AX
@@ -16,17 +29,21 @@ public static class ActionsCarData
         if (isInvalidFormat)
         {
             string msg = $"Cannot convert F-Zero AX cardata file '{options.InputPath}'";
-            throw new System.ArgumentException(msg);
+            throw new ArgumentException(msg);
         }
 
         // Perform the action
-        ParallelizeFileInFileOutTasks(options, CarDataBinToTsvTask);
+        ParallelizeFileInFileOutTasks(options, CarDataBinToTsv);
     }
 
-    public static void CarDataBinToTsvTask(Options options, OSPath inputFile, OSPath outputFile)
+    /// <summary>
+    ///     Create a TSV from CarData binary (compressed or uncompressed).
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputFile"></param>
+    /// <param name="outputFile"></param>
+    public static void CarDataBinToTsv(Options options, OSPath inputFile, OSPath outputFile)
     {
-        outputFile.SetExtensions(".tsv");
-
         // Read file
         // Decompress LZ if not decompressed yet
         bool isLzCompressed = inputFile.IsOfExtension(".lz");
@@ -36,24 +53,23 @@ public static class ActionsCarData
         using (var reader = new EndianBinaryReader(fileStream, CarData.endianness))
             carData.Deserialize(reader);
 
-        var fileWrite = () =>
+        // Write TSV file
+        outputFile.SetExtensions(".tsv");
+        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputFile, options.ActionStr);
+        if (doWriteFile)
         {
             TableCollection tableCollection = new();
             tableCollection.Add(carData.CreateTables());
             tableCollection.ToFile(outputFile, TableEncodingTSV.Encoding);
-        };
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputFile,
-            OutputFilePath = outputFile,
-            PrintPrefix = "CarData",
-            PrintActionDescription = "creating cardata TSV from file",
-            PrintMoreInfoOnSkip =
-                $"Use --{IOptionsGfzCli.Args.OverwriteFiles} if you would like to overwrite files automatically.",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
+        }
     }
 
+    /// <summary>
+    ///     Create a CarData.lz file from CarData TSV spreadsheet.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <exception cref="ArgumentException">Thrown if serialization format is AX.</exception>
     public static void CarDataFromTsv(Options options)
     {
         // Stop if desired file format is AX
@@ -61,23 +77,31 @@ public static class ActionsCarData
         if (isInvalidFormat)
         {
             string msg = $"Cannot convert '{options.InputPath}' for use in F-Zero AX.";
-            throw new System.ArgumentException(msg);
+            throw new ArgumentException(msg);
         }
 
         // Perform the action
         ParallelizeFileInFileOutTasks(options, CarDataTsvToBin);
     }
 
-    public static void CarDataTsvToBin(Options options, OSPath inputFile, OSPath outputFilePath)
+    /// <summary>
+    ///     Create a CarData.lz file from CarData TSV spreadsheet.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputFile"></param>
+    /// <param name="outputFile"></param>
+    public static void CarDataTsvToBin(Options options, OSPath inputFile, OSPath outputFile)
     {
-        outputFilePath.SetExtensions(".lz");
-
-        // Get CarData
+        // Get CarData TSV
         var carData = new CarData();
         using (var reader = new StreamReader(File.OpenRead(inputFile)))
             carData.Deserialize(reader);
 
-        var fileWrite = () =>
+        // Write CarData.lz file
+        outputFile.SetExtensions(".lz");
+        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputFile, options.ActionStr);
+        if (doWriteFile)
         {
             // UNCOMPRESSED
             // Save out file (this file is not yet compressed)
@@ -87,19 +111,9 @@ public static class ActionsCarData
 
             // COMPRESSED
             // Create new file (actual output file)
-            using var outputFile = File.Create(outputFilePath);
+            using var cardataFile = File.Create(outputFile);
             // Compress memory stream into file stream
-            GameCube.AmusementVision.LZ.Lz.Pack(writer.BaseStream, outputFile, options.AvGame);
-        };
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputFile,
-            OutputFilePath = outputFilePath,
-            PrintPrefix = "CarData",
-            PrintActionDescription = "creating cardata BIN from file",
-            PrintMoreInfoOnSkip =
-                $"Use --{IOptionsGfzCli.Args.OverwriteFiles} if you would like to overwrite files automatically.",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
+            GameCube.AmusementVision.LZ.Lz.Pack(writer.BaseStream, cardataFile, options.AvGame);
+        }
     }
 }
