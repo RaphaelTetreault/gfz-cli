@@ -25,6 +25,7 @@ public static class Program
         // Initialize text capabilities
         var encodingProvider = CodePagesEncodingProvider.Instance;
         Encoding.RegisterProvider(encodingProvider);
+        Console.OutputEncoding = Encoding.Unicode;
 
         // If user did not pass any arguments, tell them how to use application.
         // This will happen when users double-click application.
@@ -75,6 +76,10 @@ public static class Program
             case Actions.extract_iso: ActionsISO.IsoExtractAll(options); break;
             // TODO: Extract ./files/ only
             // TODO: Extract ./sys/ only
+            // ENCODE TEXT
+            case Actions.encode_windows_to_shift_jis: ActionsEncodeText.PrintAsciiToShiftJis(options); break;
+            case Actions.encode_bytes_to_shift_jis: ActionsEncodeText.PrintBytesToShiftJis(options); break;
+            case Actions.encode_shift_jis_to_unicode: ActionsEncodeText.PrintShiftJisToUnicode(options); break;
             // EMBLEM
             case Actions.emblems_bin_from_images: ActionsEmblem.EmblemsBinFromImages(options); break;
             case Actions.emblems_bin_to_images: ActionsEmblem.EmblemsBinToImages(options); break;

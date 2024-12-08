@@ -36,6 +36,10 @@ public enum Actions
     //[Action(ActionIO.FileIn | ActionIO.DirectoryOut, ActionOption.OPS)]
     extract_iso,
 
+    encode_bytes_to_shift_jis,
+    encode_windows_to_shift_jis,
+    encode_shift_jis_to_unicode,
+
     emblem_gci_from_image,
     emblem_gci_to_image,
     emblems_bin_from_images,

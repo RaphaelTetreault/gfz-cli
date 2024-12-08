@@ -120,7 +120,7 @@ public static class ActionsLineREL
             throw new ArgumentException(msg);
         }
     }
-    private static void AssertValue(Options options)
+    internal static void AssertValue(Options options)
     {
         if (string.IsNullOrEmpty(options.Value))
         {
