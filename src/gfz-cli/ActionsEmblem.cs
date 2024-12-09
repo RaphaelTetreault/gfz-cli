@@ -14,9 +14,15 @@ using static Manifold.GFZCLI.Program;
 
 namespace Manifold.GFZCLI;
 
+/// <summary>
+///     Actions for managing emblem images.
+/// </summary>
 public static class ActionsEmblem
 {
-
+    /// <summary>
+    ///     Extract images from emblem binary archives.
+    /// </summary>
+    /// <param name="options"></param>
     public static void EmblemsBinToImages(Options options)
     {
         Terminal.WriteLine("Emblem: converting emblems from BIN files.");
@@ -24,6 +30,10 @@ public static class ActionsEmblem
         Terminal.WriteLine($"Emblem: done converting {binCount} file{Plural(binCount)}.");
     }
 
+    /// <summary>
+    ///     Extract images from GCI emblem save files.
+    /// </summary>
+    /// <param name="options"></param>
     public static void EmblemGciToImage(Options options)
     {
         // In this case where no search pattern is set, find *FZE*.GCI (emblem) files.
@@ -36,6 +46,12 @@ public static class ActionsEmblem
         Terminal.WriteLine($"Emblem: done converting {gciCount} file{Plural(gciCount)}.");
     }
 
+    /// <summary>
+    ///     Extract images from emblem binary archives.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputFile"></param>
+    /// <param name="outputFile"></param>
     private static void EmblemBinToImages(Options options, OSPath inputFile, OSPath outputFile)
     {
         // Read BIN Emblem data
@@ -75,6 +91,12 @@ public static class ActionsEmblem
         }
     }
 
+    /// <summary>
+    ///     Extract image from GCI emblem save file.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputFile"></param>
+    /// <param name="outputFile"></param>
     private static void EmblemGciToImage(Options options, OSPath inputFile, OSPath outputFile)
     {
         // Read GCI Emblem data
@@ -94,7 +116,6 @@ public static class ActionsEmblem
         outputFile.SetExtensions("png");
 
         // Info for file write + console print
-
 
         // BANNER
         {
@@ -139,6 +160,10 @@ public static class ActionsEmblem
     }
 
 
+    /// <summary>
+    ///     Compile an emblem binary archive from multiple images.
+    /// </summary>
+    /// <param name="options"></param>
     public static void EmblemsBinFromImages(Options options)
     {
         Terminal.WriteLine("Emblem: converting image(s) to emblem.bin.");
@@ -146,6 +171,10 @@ public static class ActionsEmblem
         Terminal.WriteLine($"Emblem: done converting {emblems.Length} image{(emblems.Length != 1 ? 's' : "")}.");
     }
 
+    /// <summary>
+    ///     Create a GCI emblem save file from one image.
+    /// </summary>
+    /// <param name="options"></param>
     public static void EmblemGciFromImage(Options options)
     {
         // In this case where no search pattern is set, find *fze*.dat.gci (emblem) files.
@@ -158,6 +187,13 @@ public static class ActionsEmblem
         Terminal.WriteLine($"Emblem: done converting {gciCount} image{Plural(gciCount)}.");
     }
 
+    /// <summary>
+    ///     Convert single image to emblem.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputFile"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">Thrown if resize is greater than max emblem size.</exception>
     public static Emblem ImageToEmblemBin(Options options, OSPath inputFile)
     {
         // Make sure some option parameters are appropriate
@@ -193,6 +229,11 @@ public static class ActionsEmblem
         return emblem;
     }
 
+    /// <summary>
+    ///     Convert multiple images to emblems.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <returns></returns>
     public static Emblem[] ImageToEmblemBin(Options options)
     {
         var emblems = ParallelizeFileInTypeOutTasks(options, ImageToEmblemBin);
@@ -222,6 +263,12 @@ public static class ActionsEmblem
         return emblems;
     }
 
+    /// <summary>
+    ///     Create a GCI emblem save file from one image.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputFile"></param>
+    /// <param name="outputFile"></param>
     public static void ImageToEmblemGci(Options options, OSPath inputFile, OSPath outputFile)
     {
         // Load image
@@ -273,6 +320,16 @@ public static class ActionsEmblem
     }
 
 
+    /// <summary>
+    ///     Create <see cref="ResizeOptions"/> from data within <paramref name="options"/>.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="imageWidth"></param>
+    /// <param name="imageHeight"></param>
+    /// <param name="resizeWidth"></param>
+    /// <param name="resizeHeight"></param>
+    /// <param name="resizeHasAlphaBorder"></param>
+    /// <returns></returns>
     private static ResizeOptions GetEmblemResizeOptions(Options options, int imageWidth, int imageHeight, int resizeWidth, int resizeHeight, bool resizeHasAlphaBorder)
     {
         // Resize image to fit inside bounds of image.
@@ -293,6 +350,16 @@ public static class ActionsEmblem
 
         return resizeOptions;
     }
+
+    /// <summary>
+    ///     Move <paramref name="image"/> texture to be centered inside
+    ///     <paramref name="boundsX"/> and <paramref name="boundsY"/>.
+    /// </summary>
+    /// <param name="image"></param>
+    /// <param name="boundsX"></param>
+    /// <param name="boundsY"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">Thrown if image size is greater than bounds.</exception>
     private static Texture ImageAsCenteredTexture(Image<Rgba32> image, int boundsX, int boundsY)
     {
         bool isInvalidSize = image.Width > boundsX || image.Height > boundsY;

@@ -1,4 +1,6 @@
-﻿namespace Manifold.GFZCLI;
+﻿using System.Reflection.Metadata;
+
+namespace Manifold.GFZCLI;
 
 /// <summary>
 ///     List of all possible actions in this CLI program.
@@ -62,16 +64,28 @@ public enum Actions
     [Action(ActionIO.None, ActionIO.None, ActionOption.None, specialOptions: ActionExOptions.encode_windows_to_shift_jis)]
     encode_windows_to_shift_jis,
 
-
+    /// <summary>
+    ///     Extract images from GCI emblem save files.
+    /// </summary>
+    [Action(ActionIO.Path, ActionIO.Path, ActionOption.OPS, specialOptions: ActionExOptions.emblems_bin_from_images)]
     emblem_gci_from_image,
 
-
+    /// <summary>
+    ///     Create GCI emblem save files from images.
+    /// </summary>
+    [Action(ActionIO.Path, ActionIO.Path, ActionOption.OPS)]
     emblem_gci_to_image,
 
-
+    /// <summary>
+    ///     Compile an emblem binary archive from multiple images
+    /// </summary>
+    [Action(ActionIO.Path, ActionIO.File, ActionOption.OPS, outputOptional: false, specialOptions: ActionExOptions.emblems_bin_from_images)]
     emblems_bin_from_images,
 
-
+    /// <summary>
+    ///     Extract images from emblem binary archives.
+    /// </summary>
+    [Action(ActionIO.Path, ActionIO.Path, ActionOption.OPS)]
     emblems_bin_to_images,
 
 
@@ -177,6 +191,12 @@ internal static class ActionExOptions
         $"[--{IOptionsLineRel.Args.Backup} <bool@default:true>] " +
         $"[--{IOptionsStage.Args.SetFlagsOff} <bool@default:false>]";
 
+    public const string emblem_gci_from_image =
+        $"{ResizeOptions}";
+
+    public const string emblems_bin_from_images =
+        $"{ResizeOptions}";
+
     public const string encode_bytes_to_shift_jis =
         $"--{IOptionsLineRel.Args.Value} <hex-string>";
 
@@ -185,4 +205,7 @@ internal static class ActionExOptions
 
     public const string linerel_set_max_speed =
         $"[--{IOptionsLineRel.Args.Value} <max-speed@default:+infinity>]";
+
+    private const string ResizeOptions =
+         $"[resize-options]";
 }

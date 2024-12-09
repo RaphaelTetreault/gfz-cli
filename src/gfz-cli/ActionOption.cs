@@ -1,6 +1,4 @@
-﻿using GameCube.DiskImage;
-
-namespace Manifold.GFZCLI;
+﻿namespace Manifold.GFZCLI;
 
 /// <summary>
 ///     Describes the general options for <see cref="Actions"/> via <see cref="ActionAttribute"/>.
