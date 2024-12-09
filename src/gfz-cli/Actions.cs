@@ -12,7 +12,7 @@ public enum Actions
     ///     Pack directory to .arc file.
     /// </summary>
     /// <remarks>
-    ///     Requires path input, directory output is optional. ARC compatible between AX/GX, all regions.
+    ///     ARC compatible between AX/GX, all regions.
     /// </remarks>
     [Action(ActionIO.Path, ActionIO.Directory, ActionOption.OPS)]
     arc_unpack,
@@ -21,7 +21,7 @@ public enum Actions
     ///     Unpack .arc file into directory of contents.
     /// </summary>
     /// <remarks>
-    ///     Requires directory input, directory output is optional. ARC compatible between AX/GX, all regions.
+    ///     ARC compatible between AX/GX, all regions.
     /// </remarks>
     [Action(ActionIO.Directory, ActionIO.Directory, ActionOption.OPS)]
     arc_pack,
@@ -41,10 +41,10 @@ public enum Actions
     [Action(ActionIO.Path, ActionIO.Path, ActionOption.FOPS)]
     cardata_to_tsv,
 
-
+    [Action(ActionIO.Path, ActionIO.Path, ActionOption.FPRS, specialOptions: ActionExOptions.coli_course_patch_fog)]
     colicourse_patch_fog,
 
-
+    [Action(ActionIO.Path, ActionIO.Path, ActionOption.FPRS, specialOptions: ActionExOptions.colicourse_patch_object_render_flags)]
     colicourse_patch_object_render_flags,
 
 
@@ -53,19 +53,13 @@ public enum Actions
     /// <summary>
     ///     Encode a byte array into a Shift-JIS string.
     /// </summary>
-    /// <remarks>
-    ///     Takes in argument via <see cref="Options.Value"/>.
-    /// </remarks>
-    [Action(ActionIO.None, ActionIO.None, ActionOption.None, specialOptions: $"--{IOptionsLineRel.Args.Value} <hex-string>")]
+    [Action(ActionIO.None, ActionIO.None, ActionOption.None, specialOptions: ActionExOptions.encode_bytes_to_shift_jis)]
     encode_bytes_to_shift_jis,
 
     /// <summary>
     ///     Encode a Windows 1252 string into a Shift-JIS string.
     /// </summary>
-    /// <remarks>
-    ///     Takes in argument via <see cref="Options.Value"/>.
-    /// </remarks>
-    [Action(ActionIO.None, ActionIO.None, ActionOption.None, specialOptions: $"--{IOptionsLineRel.Args.Value} <string>")]
+    [Action(ActionIO.None, ActionIO.None, ActionOption.None, specialOptions: ActionExOptions.encode_windows_to_shift_jis)]
     encode_windows_to_shift_jis,
 
 
@@ -109,7 +103,7 @@ public enum Actions
     ///     </item>
     /// </list>
     /// </remarks>
-    [Action(ActionIO.Directory, ActionIO.Directory, ActionOption.OverwriteFiles | ActionOption.SearchSubdirectories, outputOptional: false)]
+    [Action(ActionIO.Directory, ActionIO.Directory, ActionOption.O | ActionOption.S, outputOptional: false)]
     generate_asset_library,
 
 
@@ -152,7 +146,7 @@ public enum Actions
     ///     The game' max speed is 9990 km/h. Calling this action without an
     ///     argument will set the max speed cap to positive infinity.
     /// </remarks>
-    [Action(ActionIO.None, ActionIO.None, ActionOption.SerializationRegion, specialOptions: $"[--{IOptionsLineRel.Args.Value} <max-speed>]")]
+    [Action(ActionIO.None, ActionIO.None, ActionOption.R_SerializationRegion, specialOptions: ActionExOptions.linerel_set_max_speed)]
     linerel_set_max_speed,
 
     linerel_set_venue,
@@ -161,4 +155,34 @@ public enum Actions
     tpl_generate_mipmaps,
     tpl_pack,
     tpl_unpack,
+}
+
+/// <summary>
+///     Metadata for <see cref="ActionAttribute"/> in <see cref="Actions"/>.
+/// </summary>
+internal static class ActionExOptions
+{
+    public const string coli_course_patch_fog =
+        $"--{IOptionsStage.Args.ColorRed} <byte|hex|float> " +
+        $"--{IOptionsStage.Args.ColorGreen} <byte|hex|float> " +
+        $"--{IOptionsStage.Args.ColorBlue} <byte|hex|float> " +
+        $"[--{IOptionsLineRel.Args.Backup} <bool@default:true>] " +
+        $"[--{IOptionsStage.Args.FogInterpolationMode} <interpolation-mode>] " +
+        $"[--{IOptionsStage.Args.FogViewRangeNear} <float>] " +
+        $"[--{IOptionsStage.Args.FogViewRangeFar} <float>]";
+
+    public const string colicourse_patch_object_render_flags =
+        $"--{IOptionsStage.Args.Name} <scene-object-name> " +
+        $"--{IOptionsLineRel.Args.Value} <uint32> " +
+        $"[--{IOptionsLineRel.Args.Backup} <bool@default:true>] " +
+        $"[--{IOptionsStage.Args.SetFlagsOff} <bool@default:false>]";
+
+    public const string encode_bytes_to_shift_jis =
+        $"--{IOptionsLineRel.Args.Value} <hex-string>";
+
+    public const string encode_windows_to_shift_jis =
+        $"--{IOptionsLineRel.Args.Value} <string>";
+
+    public const string linerel_set_max_speed =
+        $"[--{IOptionsLineRel.Args.Value} <max-speed@default:+infinity>]";
 }

@@ -6,48 +6,63 @@ using static Manifold.GFZCLI.GfzCliUtilities;
 
 namespace Manifold.GFZCLI;
 
+/// <summary>
+///     Actions for modifying COLI_COURSE files (stage/scene).
+/// </summary>
 public static class ActionsColiCourse
 {
+    /// <summary>
+    ///     Patch the fog parameters of scenes.
+    /// </summary>
+    /// <param name="options"></param>
     public static void PatchFog(Options options)
     {
-        //Terminal.WriteLine("FMI: converting FMI from plain text files.");
         int count = ParallelizeFileInFileOutTasks(options, PatchFog);
-        //Terminal.WriteLine($"FMI: done converting {binCount} file{Plural(binCount)}.");
     }
-    public static void PatchFog(Options options, OSPath inputPath, OSPath outputPath)
+
+    /// <summary>
+    ///     Patch the fog parameters of a scene.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputPath"></param>
+    /// <param name="_">Output path (unused).</param>
+    public static void PatchFog(Options options, OSPath inputPath, OSPath _)
     {
         inputPath.ThrowIfFileDoesNotExist();
 
-        var fileWrite = () =>
+        // Patch COLI_COURSE file
+        bool doWriteFile = CheckWillFileWrite(options, inputPath, out ActionTaskResult result);
+        PrintFileWriteResult(result, inputPath, options.ActionStr);
+        if (doWriteFile)
         {
             // Copy input to output if needed
-            CopyInputToOutputIfNotSamePath(inputPath, outputPath);
+            CreateBackupFileIfAble(options, inputPath);
             const FileMode fileMode = FileMode.OpenOrCreate;
             const FileAccess fileAccess = FileAccess.ReadWrite;
             const FileShare fileShare = FileShare.ReadWrite;
+            using var colicourseFile = File.Open(inputPath, fileMode, fileAccess, fileShare);
 
             // Read data
             Scene scene = new Scene();
             scene.FileName = inputPath.FileName;
-            using EndianBinaryReader reader = new(File.Open(inputPath, fileMode, fileAccess, fileShare), Scene.endianness);
+            using EndianBinaryReader reader = new(colicourseFile, Scene.endianness);
             scene.Deserialize(reader);
             reader.Close();
 
-            // Write (patch) to file
-            using EndianBinaryWriter writer = new(File.Open(outputPath, fileMode, fileAccess, fileShare), scene.Endianness);
-
+            // Reset file stream position
+            colicourseFile.Position = 0;
             // Modify existin file (in the future, re-serialize file)
+            using EndianBinaryWriter writer = new(colicourseFile, scene.Endianness);
             PatchFog(options, scene, writer);
-        };
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputPath,
-            OutputFilePath = outputPath,
-            PrintPrefix = "COLICOURSE",
-            PrintActionDescription = $"patch scene fog in",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
+        }
     }
+
+    /// <summary>
+    ///     Patch the fog parameters of a <paramref name="scene"/>.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="scene"></param>
+    /// <param name="writer"></param>
     public static void PatchFog(Options options, Scene scene, EndianBinaryWriter writer)
     {
         // OPTIONAL: Get parameters and defaults
@@ -85,7 +100,7 @@ public static class ActionsColiCourse
             // Get pointer to data or create new pointer
             Pointer fogCurvesAnimationsPtr = hasFogCurves
                 ? scene.fogCurves!.animationCurves[0].GetPointer()
-                : writer.BaseStream.Length;
+                : (Pointer)writer.BaseStream.Length; // append to end of existing file
             writer.JumpToAddress(fogCurvesAnimationsPtr);
             // Write out each animation curve
             foreach (var animationCurve in fogCurves.animationCurves)
@@ -94,7 +109,7 @@ public static class ActionsColiCourse
             // Get pointer to data or create new pointer
             Pointer fogCurvesPtr = hasFogCurves
                 ? scene.fogCurves!.GetPointer()
-                : writer.BaseStream.Length;
+                : (Pointer)writer.BaseStream.Length;
             // Write out fog curves (pointers to above animation data)
             writer.JumpToAddress(fogCurvesPtr);
             writer.Write(fogCurves);
@@ -105,38 +120,60 @@ public static class ActionsColiCourse
         }
     }
 
+    /// <summary>
+    ///     Patch an object named <see cref="Options.Name"/> scene objects'
+    ///     <see cref="SceneObjectDynamic.ObjectRenderFlags0x00"/>.
+    /// </summary>
+    /// <param name="options"></param>
     public static void PatchSceneObjectDynamicRenderFlags(Options options)
     {
         int count = ParallelizeFileInFileOutTasks(options, PatchSceneObjectDynamicRenderFlags);
     }
+
+    /// <summary>
+    ///     Patch the <see cref="SceneObjectDynamic.ObjectRenderFlags0x00"/> of a an object named
+    ///     <see cref="Options.Name"/> in a scene.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputPath"></param>
+    /// <param name="outputPath"></param>
     public static void PatchSceneObjectDynamicRenderFlags(Options options, OSPath inputPath, OSPath outputPath)
     {
         inputPath.ThrowIfFileDoesNotExist();
 
-        var fileWrite = () =>
+        // Patch COLI_COURSE file
+        bool doWriteFile = CheckWillFileWrite(options, inputPath, out ActionTaskResult result);
+        PrintFileWriteResult(result, inputPath, options.ActionStr);
+        if (doWriteFile)
         {
-            // Read data
+            // Make backup if desired, then open file
+            CreateBackupFileIfAble(options, inputPath);
+            const FileMode fileMode = FileMode.OpenOrCreate;
+            const FileAccess fileAccess = FileAccess.ReadWrite;
+            const FileShare fileShare = FileShare.ReadWrite;
+            using var colicourseFile = File.Open(inputPath, fileMode, fileAccess, fileShare);
+
             Scene scene = new Scene();
             scene.FileName = inputPath.FileName;
-            using EndianBinaryReader reader = new(File.OpenRead(inputPath), Scene.endianness);
+            using EndianBinaryReader reader = new(colicourseFile, Scene.endianness);
             scene.Deserialize(reader);
             reader.Close();
 
-            // Write (patch) to file
-            using EndianBinaryWriter writer = new(File.OpenWrite(inputPath), scene.Endianness);
-
-            // Modify existin file (in the future, re-serialize file)
+            // Reset file stream position
+            colicourseFile.Position = 0;
+            // Modify existing file (in the future, re-serialize file)
+            using EndianBinaryWriter writer = new(colicourseFile, Scene.endianness);
             PatchSceneObjectDynamicRenderFlags(options, scene, writer);
-        };
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputPath,
-            OutputFilePath = outputPath,
-            PrintPrefix = "COLICOURSE",
-            PrintActionDescription = $"patch dynamic scene object render flags",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
+        }
     }
+
+    /// <summary>
+    ///     Patch the <see cref="SceneObjectDynamic.ObjectRenderFlags0x00"/> of a an object named
+    ///     <see cref="Options.Name"/> in a <paramref name="scene"/>.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="scene"></param>
+    /// <param name="writer"></param>
     public static void PatchSceneObjectDynamicRenderFlags(Options options, Scene scene, EndianBinaryWriter writer)
     {
         string name = options.Name;
@@ -150,10 +187,10 @@ public static class ActionsColiCourse
 
             foundMatch = true;
 
-            if (!options.SetFlagsOff)
-                dynamicSceneObject.ObjectRenderFlags0x00 |= renderFlags;
-            else
+            if (options.SetFlagsOff)
                 dynamicSceneObject.ObjectRenderFlags0x00 &= ~renderFlags;
+            else // set flags on
+                dynamicSceneObject.ObjectRenderFlags0x00 |= renderFlags;
 
             Pointer ptr = dynamicSceneObject.GetPointer();
             writer.JumpToAddress(ptr);
@@ -162,7 +199,8 @@ public static class ActionsColiCourse
 
         // TODO: make a better message, use color. Add occurrence count?
         if (!foundMatch)
-        Terminal.WriteLine($"Did not find match for {name}");
+        {
+            Terminal.WriteLine($"Did not find match for \"{name}\"", Program.WarningColor);
+        }
     }
-
 }

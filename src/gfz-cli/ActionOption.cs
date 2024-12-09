@@ -1,4 +1,6 @@
-﻿namespace Manifold.GFZCLI;
+﻿using GameCube.DiskImage;
+
+namespace Manifold.GFZCLI;
 
 /// <summary>
 ///     Describes the general options for <see cref="Actions"/> via <see cref="ActionAttribute"/>.
@@ -13,52 +15,85 @@ public enum ActionOption
     None,
 
     /// <summary>
-    ///     AX/GX format
+    ///     AX/GX format.
     /// </summary>
-    SerializationFormat = 1 << 0,
+    F_SerializationFormat = 1 << 0,
 
     /// <summary>
-    ///     Overwrite files in output
+    ///     Overwrite files in output.
     /// </summary>
-    OverwriteFiles = 1 << 1,
+    O_OverwriteFiles = 1 << 1,
 
     /// <summary>
-    ///     Game region J/E/P or JP/NA/EU
+    ///     Game region J/E/P or JP/NA/EU.
     /// </summary>
-    SerializationRegion = 1 << 2,
+    R_SerializationRegion = 1 << 2,
 
     /// <summary>
-    ///     File search pattern (for directories)
+    ///     File search pattern (for directories).
     /// </summary>
-    SearchPattern = 1 << 3,
+    P_SearchPattern = 1 << 3,
 
     /// <summary>
     ///     Do search subdirectories?
     /// </summary>
-    SearchSubdirectories = 1 << 4,
-
-    /// <summary>
-    ///     Overwrite, Search Pattern, Search Subdirectories.
-    ///     -o -p -s
-    /// </summary>
-    OPS = OverwriteFiles | SearchPattern | SearchSubdirectories,
-
-    /// <summary>
-    ///     Overwrite, Search Pattern, Search Subdirectories.
-    ///     -o -p -s
-    /// </summary>
-    OPRS = OverwriteFiles | SearchPattern | SerializationRegion | SearchSubdirectories,
-
-    /// <summary>
-    ///     Format, Overwrite, Search Pattern, Search Subdirectories.
-    ///     -f -o -p -s
-    /// </summary>
-    FOPS = SerializationFormat | OverwriteFiles | SearchPattern | SearchSubdirectories,
+    S_SearchSubdirectories = 1 << 4,
 
     /// <summary>
     ///     All options on.
+    /// </summary>
+    All = F_SerializationFormat | O_OverwriteFiles | P_SearchPattern | R_SerializationRegion | S_SearchSubdirectories,
+
+
+    /// <summary>
+    ///     AX/GX format.
+    /// </summary>
+    F = F_SerializationFormat,
+
+    /// <summary>
+    ///     Overwrite files in output.
+    /// </summary>
+    O = O_OverwriteFiles,
+
+    /// <summary>
+    ///     Game region J/E/P or JP/NA/EU.
+    /// </summary>
+    R = R_SerializationRegion,
+
+
+    /// <summary>
+    ///     File search pattern (for directories).
+    /// </summary>
+    P = P_SearchPattern,
+
+    /// <summary>
+    ///     Do search subdirectories?
+    /// </summary>
+    S = S_SearchSubdirectories,
+
+
+    /// <summary>
+    ///     -o -p -s
+    /// </summary>
+    OPS = O_OverwriteFiles | P_SearchPattern | S_SearchSubdirectories,
+
+    /// <summary>
+    ///     -o -p -s
+    /// </summary>
+    OPRS = O_OverwriteFiles | P_SearchPattern | R_SerializationRegion | S_SearchSubdirectories,
+
+    /// <summary>
+    ///     -f -o -p -s
+    /// </summary>
+    FOPS = F_SerializationFormat | O_OverwriteFiles | P_SearchPattern | S_SearchSubdirectories,
+
+    /// <summary>
+    ///     -f -p -r -s
+    /// </summary>
+    FPRS = F_SerializationFormat  | P_SearchPattern | R_SerializationRegion | S_SearchSubdirectories,
+
+    /// <summary>
     ///     -f -o -p -r -s
     /// </summary>
-    All = SerializationFormat | OverwriteFiles | SearchPattern | SerializationRegion | SearchSubdirectories,
     FOPRS = All,
 }

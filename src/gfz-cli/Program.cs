@@ -244,11 +244,11 @@ public static class Program
             // Add action char
             switch (option)
             {
-                case ActionOption.OverwriteFiles: builder.Append(IOptionsGfzCli.ArgsShort.OverwriteFiles); break;
-                case ActionOption.SearchPattern: builder.Append(IOptionsGfzCli.ArgsShort.SearchPattern); break;
-                case ActionOption.SearchSubdirectories: builder.Append(IOptionsGfzCli.ArgsShort.SearchSubdirectories); break;
-                case ActionOption.SerializationFormat: builder.Append(IOptionsGfzCli.ArgsShort.SerializationFormat); break;
-                case ActionOption.SerializationRegion: builder.Append(IOptionsGfzCli.ArgsShort.SerializationRegion); break;
+                case ActionOption.O_OverwriteFiles: builder.Append(IOptionsGfzCli.ArgsShort.OverwriteFiles); break;
+                case ActionOption.P_SearchPattern: builder.Append(IOptionsGfzCli.ArgsShort.SearchPattern); break;
+                case ActionOption.S_SearchSubdirectories: builder.Append(IOptionsGfzCli.ArgsShort.SearchSubdirectories); break;
+                case ActionOption.F_SerializationFormat: builder.Append(IOptionsGfzCli.ArgsShort.SerializationFormat); break;
+                case ActionOption.R_SerializationRegion: builder.Append(IOptionsGfzCli.ArgsShort.SerializationRegion); break;
                 default: throw new NotImplementedException(option.ToString());
             }
         }

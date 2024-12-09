@@ -14,7 +14,8 @@ public static class GfzCliUtilities
     public delegate void FileInFileOutTask(Options options, OSPath inputFile, OSPath outputFile);
     public delegate T FileInTypeOutTask<T>(Options options, OSPath inputFile);
 
-    // TODO: make version of function but for single file (map input -> output)
+    // TODO: CONSIDER: make version of function but for single file (map input -> output)
+    // TODO: make versions of this but without input, without output for cases that discard...?
     public static int ParallelizeFileInFileOutTasks(Options options, FileInFileOutTask fileTask)
     {
         // Get the file or all files at 'path'
@@ -355,6 +356,7 @@ public static class GfzCliUtilities
     }
     public static string Plural(Array array) => Plural(array.Length);
 
+    [Obsolete]
     public static bool CopyInputToOutputIfNotSamePath(string inputPath, string outputPath)
     {
         bool isNotSameFile = inputPath != outputPath;
@@ -363,5 +365,38 @@ public static class GfzCliUtilities
             File.Copy(inputPath, outputPath, true);
         }
         return isNotSameFile;
+    }
+
+    /// <summary>
+    ///     Create a backup of file at <paramref name="filePath"/>.
+    /// </summary>
+    /// <param name="filePath">The file path of the file to make a backup of.</param>
+    /// <returns>
+    ///     File name of backup file.
+    /// </returns>
+    public static string CreateBackupFile(OSPath filePath)
+    {
+        OSPath backupPath = filePath.Copy();
+        string dateMarker = DateTime.Now.ToShortDateString();
+        backupPath.SetFileName($"{filePath.FileName}-{dateMarker}");
+        File.Copy(filePath, backupPath, false);
+        return backupPath;
+    }
+
+    /// <summary>
+    ///     Create a backup of file at <paramref name="filePath"/> if 
+    ///     <see cref="Options.BackupPatchFile"/> is set to true.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="filePath">The file path of the file to make a backup of.</param>
+    /// <returns>
+    ///     File name of backup file.
+    /// </returns>
+    public static string CreateBackupFileIfAble(Options options, OSPath filePath)
+    {
+        if (options.BackupPatchFile)
+            return CreateBackupFile(filePath);
+        else
+            return string.Empty;
     }
 }

@@ -88,7 +88,7 @@ public interface IOptionsStage
     ///     See ILineRel.Value
     /// </summary>
     [Option(Args.Name, Hidden = true)]
-    public string Name { get; set; }
+    public string Name { get; set; } // TODO: bring this and ILineRel.Value to general interface?
 
 
     [Option(Args.SetFlagsOff, Hidden = true)]

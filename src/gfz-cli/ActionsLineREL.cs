@@ -373,7 +373,7 @@ public static class ActionsLineREL
         // Assert file path is good
         if (string.IsNullOrWhiteSpace(options.Value))
         {
-            string msg = $"Argument --{IOptionsLineRel.Args.UsingFilePath} must be set to a file path!";
+            string msg = $"Argument --{IOptionsLineRel.Args.Value} must be set to a file path!";
             throw new ArgumentException(msg);
         }
         OSPath carDataPath = new(options.Value);
@@ -403,7 +403,7 @@ public static class ActionsLineREL
         else
         {
             string msg =
-                $"Argument --{IOptionsLineRel.Args.UsingFilePath} file " +
+                $"Argument --{IOptionsLineRel.Args.Value} file " +
                 $"cannot be inferred to be a valid cardata file.";
             throw new ArgumentException(msg);
         }

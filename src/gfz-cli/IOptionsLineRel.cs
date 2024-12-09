@@ -8,6 +8,7 @@ public interface IOptionsLineRel
 
     internal static class Args
     {
+        public const string Backup = "backup";
         public const string BgmIndex = "bgm";
         public const string BgmFlIndex = "bgmfl";
         public const string Cup = "cup";
@@ -15,87 +16,67 @@ public interface IOptionsLineRel
         public const string CourseIndex = "course";
         public const string Difficulty = "difficulty";
         public const string PilotNumber = "pilot";
-        public const string UsingFilePath = "use-file";
         public const string VenueIndex = "venue";
         public const string Value = "value";
     }
 
-    //internal static class Help
-    //{
-    //    public const string BgmIndex =
-    //        "The numeric index of a background music (BGM) song, used for stage bgm.";
-    //    public const string BgmFlIndex =
-    //        "The numeric index of a background music (BGM) song, used for stage final lap bgm.";
-    //    public const string Cup =
-    //        "The cup which references a number of stages (typically 5).";
-    //    public const string CupStageIndex =
-    //        "The cup which references a number of stages (typically 5).";
-    //    public const string CourseIndex =
-    //        "The numeric index of a course.";
-    //    public const string Difficulty =
-    //        "The stage's star difficulty rating.";
-    //    public const string PilotNumber =
-    //        "The pilot's racing number.";
-    //    public const string UsingFilePath =
-    //        "The file path to additional action information."; // TODO: move this to main?
-    //    public const string VenueIndex =
-    //        "The stage's venue.";
-    //    public const string Value =
-    //        "The value of the parameter.";
-    //}
+    /// <summary>
+    ///     Create backup of patched
+    /// </summary>
+    [Option(Args.Backup, Hidden = true)]
+    public bool BackupPatchFile { get; set; }
 
     /// <summary>
-    ///     
+    ///     The numeric index of a background music (BGM) song, used for stage bgm.
     /// </summary>
     [Option(Args.BgmIndex, Hidden = true)]
     public byte BgmIndex { get; set; }
 
     /// <summary>
-    ///     
+    ///     The numeric index of a background music (BGM) song, used for stage final lap bgm.
     /// </summary>
     [Option(Args.BgmFlIndex, Hidden = true)]
     public byte BgmFinalLapIndex { get; set; }
 
     /// <summary>
-    ///     
+    ///     The numeric index of a stage.
     /// </summary>
     [Option(Args.CourseIndex, Hidden = true)]
     public byte CourseIndex { get; set; }
 
     /// <summary>
-    ///     
+    ///     The cup which references a number of stages (typically 5).
     /// </summary>
     [Option(Args.Cup, Hidden = true)]
     public GameCube.GFZ.GameData.Cup Cup { get; set; }
 
     /// <summary>
-    ///     
+    ///     The cup which references a number of stages (typically 5).
     /// </summary>
     [Option(Args.CupCourseIndex, Hidden = true)]
     public byte CupCourseIndex { get; set; }
 
     /// <summary>
-    ///     
+    ///     The stage's star difficulty rating.
     /// </summary>
     [Option(Args.Difficulty, Hidden = true)]
     public byte Difficulty { get; set; }
 
     /// <summary>
-    ///     TODO: compare with IStageOptions.Name
+    ///     A generic value as parameter.
     /// </summary>
     [Option(Args.Value, Hidden = true)]
-    public string Value { get; set; }
+    public string Value { get; set; } // TODO: move to general gfz-cli options interface? TODO: compare with IStageOptions.Name
 
     /// <summary>
-    ///     
+    ///     A pilot's racing number.
     /// </summary>
     [Option(Args.PilotNumber, Hidden = true)]
-    public byte PilotNumber { get; set; }
+    public byte PilotNumber { get; set; } // TODO: use enum?
 
     /// <summary>
-    ///     
+    ///     A stage's venue index.
     /// </summary>
     [Option(Args.VenueIndex, Hidden = true)]
-    public byte VenueIndex { get; set; }
-    // TODO: use Venue enum
+    public byte VenueIndex { get; set; } // TODO: use Venue enum
 }

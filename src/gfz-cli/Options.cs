@@ -69,6 +69,7 @@ public class Options :
     public bool EmblemHasAlphaBorder { get; set; } = true;
 
     // LINE REL
+    public bool BackupPatchFile { get; set; } = true;
     public byte BgmIndex { get; set; } = 254; // default to invalid state
     public byte BgmFinalLapIndex { get; set; } = 254; // default to invalid state
     public Cup Cup { get; set; } = (Cup)255; // default to invalid state
