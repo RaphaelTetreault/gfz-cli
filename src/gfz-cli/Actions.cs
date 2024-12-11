@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata;
-
-namespace Manifold.GFZCLI;
+﻿namespace Manifold.GFZCLI;
 
 /// <summary>
 ///     List of all possible actions in this CLI program.
@@ -117,7 +115,7 @@ public enum Actions
     ///     </item>
     /// </list>
     /// </remarks>
-    [Action(ActionIO.Directory, ActionIO.Directory, ActionOption.O | ActionOption.S, outputOptional: false)]
+    [Action(ActionIO.Directory, ActionIO.Directory, ActionOption.O, outputOptional: false)]
     generate_asset_library,
 
 
@@ -176,11 +174,14 @@ public enum Actions
 /// </summary>
 internal static class ActionExOptions
 {
+    public const string OptionalsSeparator = "\n\t\t";
+
     public const string coli_course_patch_fog =
         $"--{IOptionsStage.Args.ColorRed} <byte|hex|float> " +
         $"--{IOptionsStage.Args.ColorGreen} <byte|hex|float> " +
         $"--{IOptionsStage.Args.ColorBlue} <byte|hex|float> " +
-        $"[--{IOptionsLineRel.Args.Backup} <bool@default:true>] " +
+        OptionalsSeparator +
+        $"[--{IOptionsLineRel.Args.Backup} <bool=true>] " +
         $"[--{IOptionsStage.Args.FogInterpolationMode} <interpolation-mode>] " +
         $"[--{IOptionsStage.Args.FogViewRangeNear} <float>] " +
         $"[--{IOptionsStage.Args.FogViewRangeFar} <float>]";
@@ -188,14 +189,23 @@ internal static class ActionExOptions
     public const string colicourse_patch_object_render_flags =
         $"--{IOptionsStage.Args.Name} <scene-object-name> " +
         $"--{IOptionsLineRel.Args.Value} <uint32> " +
-        $"[--{IOptionsLineRel.Args.Backup} <bool@default:true>] " +
-        $"[--{IOptionsStage.Args.SetFlagsOff} <bool@default:false>]";
+        OptionalsSeparator +
+        $"[--{IOptionsLineRel.Args.Backup} <bool=true>] " +
+        $"[--{IOptionsStage.Args.SetFlagsOff} <bool=false>]";
 
     public const string emblem_gci_from_image =
-        $"{ResizeOptions}";
-
+        ResizeOptionsRequired +
+        OptionalsSeparator +
+        $"[{IOptionsImageSharp.Action.Width}] " +
+        $"[{IOptionsImageSharp.Action.Height}] " +
+        ResizeOptionsOptional;
+        
     public const string emblems_bin_from_images =
-        $"{ResizeOptions}";
+        ResizeOptionsRequired +
+        OptionalsSeparator +
+        $"[{IOptionsImageSharp.Action.Width}] " +
+        $"[{IOptionsImageSharp.Action.Height}] " +
+        ResizeOptionsOptional;
 
     public const string encode_bytes_to_shift_jis =
         $"--{IOptionsLineRel.Args.Value} <hex-string>";
@@ -204,8 +214,15 @@ internal static class ActionExOptions
         $"--{IOptionsLineRel.Args.Value} <string>";
 
     public const string linerel_set_max_speed =
-        $"[--{IOptionsLineRel.Args.Value} <max-speed@default:+infinity>]";
+        OptionalsSeparator +
+        $"[--{IOptionsLineRel.Args.Value} <max-speed=+infinity>]";
 
-    private const string ResizeOptions =
-         $"[resize-options]";
+    private const string ResizeOptionsRequired =
+        $"{IOptionsImageSharp.Action.Resampler}";
+    private const string ResizeOptionsOptional =
+        $"[{IOptionsImageSharp.Action.Compand}] " +
+        $"[{IOptionsImageSharp.Action.ResizeMode}] " +
+        $"[{IOptionsImageSharp.Action.PadColor}] " +
+        $"[{IOptionsImageSharp.Action.Position}] " +
+        $"[{IOptionsImageSharp.Action.PremultiplyAlpha}]";
 }

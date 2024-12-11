@@ -22,7 +22,6 @@ public interface IOptionsImageSharp
     internal static class Args
     {
         // Resize
-        public const string Resize = "resize";
         public const string Compand = "compand";
         public const string ResizeMode = "resize-mode";
         public const string PadColor = "pad-color";
@@ -35,53 +34,95 @@ public interface IOptionsImageSharp
         public const string ImageFormat = "image-format";
     }
 
-    //internal static class Help
-    //{
-    //    // Resize options
-    //    public const string Resize = "Whether to resize image.";
-    //    public const string Compand = "Whether to compress or expand individual pixel colors when scaling image.";
-    //    public const string ResizeMode = "How the image should be resized";
-    //    public const string PadColor = "The padding color when scaling image.";
-    //    public const string Position = "Anchor positions to apply to resize image.";
-    //    public const string PremultiplyAlpha = "Whether to use premultiplied alpha when scaling image.";
-    //    public const string Resampler = "The resampler to use when scaling image.";
-    //    public const string Width = "The desired image width. May not be result width depending on 'resize-mode' option.";
-    //    public const string Height = "The desired image height. May not be result height depending on 'resize-mode' option.";
-    //    // Other
-    //    public const string ImageFormat = "The image format to output.";
-    //}
+    internal static class Action
+    {
+        public const string Compand =
+            $"--{Args.Compand} <bool=false>";
 
-    [Option(Args.Resize, Hidden = true)]
-    public bool Resize { get; set; }
+        public const string ResizeMode =
+            $"--{Args.ResizeMode} <resize-mode=crop>";
 
+        public const string PadColor =
+            $"--{Args.PadColor} <color=blank>";
+
+        public const string Position =
+            $"--{Args.Position} <anchor-position-mode=center>";
+
+        public const string PremultiplyAlpha =
+            $"--{Args.PremultiplyAlpha} <bool=false>";
+
+        public const string Resampler =
+            $"--{Args.Resampler} <resampler>";
+
+        public const string Width =
+            $"--{Args.Width} <int>"; // defaults to image width if not specified
+
+        public const string Height =
+            $"--{Args.Height} <int>"; // defaults to image height if not specified
+
+        public const string ImageFormat =
+            $"--{Args.ImageFormat} <image-format=bmp>";
+    }
+
+    // Whether to resize image.
+    //[Option(Args.Resize, Hidden = true)]
+    //public bool Resize { get; set; }
+
+    /// <summary>
+    ///     Whether to compress or expand individual pixel colors when scaling image.
+    /// </summary>
     [Option(Args.Compand, Hidden = true)]
     public bool Compand { get; set; }
 
+    /// <summary>
+    ///     How the image should be resized.
+    /// </summary>
     [Option(Args.ResizeMode, Hidden = true)]
     public string ResizeModeStr { get; set; }
     public ResizeMode ResizeMode { get; }
 
+    /// <summary>
+    ///     The padding color when scaling image.
+    /// </summary>
     [Option(Args.PadColor, Hidden = true)]
     public string PadColorStr { get; set; }
     public Color PadColor { get; }
 
+    /// <summary>
+    ///     Anchor positions to apply to resize image.
+    /// </summary>
     [Option(Args.Position, Hidden = true)]
     public string PositionStr { get; set; }
     public AnchorPositionMode Position { get; }
 
+    /// <summary>
+    ///     Whether to use premultiplied alpha when scaling image.
+    /// </summary>
     [Option(Args.PremultiplyAlpha, Hidden = true)]
     public bool PremultiplyAlpha { get; set; }
 
+    /// <summary>
+    ///     The resampler to use when scaling image.
+    /// </summary>
     [Option(Args.Resampler, Hidden = true)]
     public string ResamplerTypeStr { get; set; }
     public IResampler Resampler { get; }
 
+    /// <summary>
+    ///     The desired image width. May not be result width depending on 'resize-mode' option.
+    /// </summary>
     [Option(Args.Width, Hidden = true)]
     public int Width { get; set; }
 
+    /// <summary>
+    ///     The desired image height. May not be result height depending on 'resize-mode' option.
+    /// </summary>
     [Option(Args.Height, Hidden = true)]
     public int Height { get; set; }
 
+    /// <summary>
+    ///     
+    /// </summary>
     [Option(Args.ImageFormat, Hidden = true)]
     public string ImageFormatStr { get; set; }
     public ImageFormat ImageFormat { get; }
@@ -109,7 +150,7 @@ public interface IOptionsImageSharp
             Position = imageResizeOptions.Position,
             PremultiplyAlpha = imageResizeOptions.PremultiplyAlpha,
             Sampler = imageResizeOptions.Resampler,
-            // Size
+            //Size
         };
     }
     public static Size GetResizeSize(IOptionsImageSharp imageResizeOptions, Image image)

@@ -44,7 +44,7 @@ public class Options :
 
     // IImageSharpOptions
     // ResizeOptions
-    public bool Resize { get; set; } = false;
+    //public bool Resize { get; set; } = false;
     public bool Compand { get; set; } = true;
     public string ResizeModeStr { get; set; } = ResizeMode.Max.ToString();
     public ResizeMode ResizeMode => GfzCliEnumParser.ParseDashRemoved<ResizeMode>(ResizeModeStr);

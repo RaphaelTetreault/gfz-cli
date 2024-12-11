@@ -19,6 +19,8 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsEmblem
 {
+    #region BIN
+
     /// <summary>
     ///     Extract images from emblem binary archives.
     /// </summary>
@@ -28,22 +30,6 @@ public static class ActionsEmblem
         Terminal.WriteLine("Emblem: converting emblems from BIN files.");
         int binCount = ParallelizeFileInFileOutTasks(options, EmblemBinToImages);
         Terminal.WriteLine($"Emblem: done converting {binCount} file{Plural(binCount)}.");
-    }
-
-    /// <summary>
-    ///     Extract images from GCI emblem save files.
-    /// </summary>
-    /// <param name="options"></param>
-    public static void EmblemGciToImage(Options options)
-    {
-        // In this case where no search pattern is set, find *FZE*.GCI (emblem) files.
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-            options.SearchPattern = "*fze*.dat.gci";
-
-        Terminal.WriteLine("Emblem: converting emblems from GCI files.");
-        int gciCount = ParallelizeFileInFileOutTasks(options, EmblemGciToImage);
-        Terminal.WriteLine($"Emblem: done converting {gciCount} file{Plural(gciCount)}.");
     }
 
     /// <summary>
@@ -92,75 +78,6 @@ public static class ActionsEmblem
     }
 
     /// <summary>
-    ///     Extract image from GCI emblem save file.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="inputFile"></param>
-    /// <param name="outputFile"></param>
-    private static void EmblemGciToImage(Options options, OSPath inputFile, OSPath outputFile)
-    {
-        // Read GCI Emblem data
-        var emblemGCI = new EmblemGCI();
-        using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemGCI.endianness))
-        {
-            emblemGCI.Deserialize(reader);
-            emblemGCI.FileName = Path.GetFileNameWithoutExtension(inputFile);
-        }
-
-        // Prepare image encoder
-        var encoder = new PngEncoder
-        {
-            CompressionLevel = PngCompressionLevel.BestCompression
-        };
-        // Strip .dat.gci extensions
-        outputFile.SetExtensions("png");
-
-        // Info for file write + console print
-
-        // BANNER
-        {
-            OSPath textureOutput = new(outputFile);
-            textureOutput.SetFileName($"{outputFile.FileName}-banner");
-            var fileWriteInfo = new FileWriteInfo()
-            {
-                InputFilePath = inputFile,
-                OutputFilePath = textureOutput,
-                PrintPrefix = "Emblem",
-                PrintActionDescription = "converting emblem banner",
-            };
-            WriteImage(options, encoder, emblemGCI.Banner, fileWriteInfo);
-        }
-        // ICON
-        for (int i = 0; i < emblemGCI.Icons.Length; i++)
-        {
-            var icon = emblemGCI.Icons[i];
-            // Strip original file name, replace with GC game code
-            OSPath textureOutput = new(outputFile);
-            textureOutput.SetFileName($"{emblemGCI.Header}-icon{i}");
-            var fileWriteInfo = new FileWriteInfo()
-            {
-                InputFilePath = inputFile,
-                OutputFilePath = textureOutput,
-                PrintPrefix = "Emblem",
-                PrintActionDescription = $"converting emblem icon #{i}",
-            };
-            WriteImage(options, encoder, icon, fileWriteInfo);
-        }
-        // EMBLEM
-        {
-            var fileWriteInfo = new FileWriteInfo()
-            {
-                InputFilePath = inputFile,
-                OutputFilePath = outputFile,
-                PrintPrefix = "Emblem",
-                PrintActionDescription = "converting emblem",
-            };
-            WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
-        }
-    }
-
-
-    /// <summary>
     ///     Compile an emblem binary archive from multiple images.
     /// </summary>
     /// <param name="options"></param>
@@ -169,22 +86,6 @@ public static class ActionsEmblem
         Terminal.WriteLine("Emblem: converting image(s) to emblem.bin.");
         var emblems = ImageToEmblemBin(options);
         Terminal.WriteLine($"Emblem: done converting {emblems.Length} image{(emblems.Length != 1 ? 's' : "")}.");
-    }
-
-    /// <summary>
-    ///     Create a GCI emblem save file from one image.
-    /// </summary>
-    /// <param name="options"></param>
-    public static void EmblemGciFromImage(Options options)
-    {
-        // In this case where no search pattern is set, find *fze*.dat.gci (emblem) files.
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-            options.SearchPattern = "*fze*.dat.gci";
-
-        Terminal.WriteLine("Emblem: converting image(s) to emblem.dat.gci.");
-        int gciCount = ParallelizeFileInFileOutTasks(options, ImageToEmblemGci);
-        Terminal.WriteLine($"Emblem: done converting {gciCount} image{Plural(gciCount)}.");
     }
 
     /// <summary>
@@ -263,6 +164,110 @@ public static class ActionsEmblem
         return emblems;
     }
 
+    #endregion
+
+    #region GCI
+
+    /// <summary>
+    ///     Extract images from GCI emblem save files.
+    /// </summary>
+    /// <param name="options"></param>
+    public static void EmblemGciToImage(Options options)
+    {
+        // In this case where no search pattern is set, find *FZE*.GCI (emblem) files.
+        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+        if (hasNoSearchPattern)
+            options.SearchPattern = "*fze*.dat.gci";
+
+        Terminal.WriteLine("Emblem: converting emblems from GCI files.");
+        int gciCount = ParallelizeFileInFileOutTasks(options, EmblemGciToImage);
+        Terminal.WriteLine($"Emblem: done converting {gciCount} file{Plural(gciCount)}.");
+    }
+
+    /// <summary>
+    ///     Extract image from GCI emblem save file.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputFile"></param>
+    /// <param name="outputFile"></param>
+    private static void EmblemGciToImage(Options options, OSPath inputFile, OSPath outputFile)
+    {
+        // Read GCI Emblem data
+        var emblemGCI = new EmblemGCI();
+        using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemGCI.endianness))
+        {
+            emblemGCI.Deserialize(reader);
+            emblemGCI.FileName = Path.GetFileNameWithoutExtension(inputFile);
+        }
+
+        // Prepare image encoder
+        var encoder = new PngEncoder
+        {
+            CompressionLevel = PngCompressionLevel.BestCompression
+        };
+        // Strip .dat.gci extensions
+        outputFile.SetExtensions("png");
+
+        // Info for file write + console print
+
+        // BANNER
+        {
+            OSPath textureOutput = new(outputFile);
+            textureOutput.SetFileName($"{outputFile.FileName}-banner");
+            var fileWriteInfo = new FileWriteInfo()
+            {
+                InputFilePath = inputFile,
+                OutputFilePath = textureOutput,
+                PrintPrefix = "Emblem",
+                PrintActionDescription = "converting emblem banner",
+            };
+            WriteImage(options, encoder, emblemGCI.Banner, fileWriteInfo);
+        }
+        // ICON
+        for (int i = 0; i < emblemGCI.Icons.Length; i++)
+        {
+            var icon = emblemGCI.Icons[i];
+            // Strip original file name, replace with GC game code
+            OSPath textureOutput = new(outputFile);
+            textureOutput.SetFileName($"{emblemGCI.Header}-icon{i}");
+            var fileWriteInfo = new FileWriteInfo()
+            {
+                InputFilePath = inputFile,
+                OutputFilePath = textureOutput,
+                PrintPrefix = "Emblem",
+                PrintActionDescription = $"converting emblem icon #{i}",
+            };
+            WriteImage(options, encoder, icon, fileWriteInfo);
+        }
+        // EMBLEM
+        {
+            var fileWriteInfo = new FileWriteInfo()
+            {
+                InputFilePath = inputFile,
+                OutputFilePath = outputFile,
+                PrintPrefix = "Emblem",
+                PrintActionDescription = "converting emblem",
+            };
+            WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
+        }
+    }
+
+    /// <summary>
+    ///     Create a GCI emblem save file from one image.
+    /// </summary>
+    /// <param name="options"></param>
+    public static void EmblemGciFromImage(Options options)
+    {
+        // In this case where no search pattern is set, find *fze*.dat.gci (emblem) files.
+        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+        if (hasNoSearchPattern)
+            options.SearchPattern = "*fze*.dat.gci";
+
+        Terminal.WriteLine("Emblem: converting image(s) to emblem.dat.gci.");
+        int gciCount = ParallelizeFileInFileOutTasks(options, ImageToEmblemGci);
+        Terminal.WriteLine($"Emblem: done converting {gciCount} image{Plural(gciCount)}.");
+    }
+
     /// <summary>
     ///     Create a GCI emblem save file from one image.
     /// </summary>
@@ -319,6 +324,7 @@ public static class ActionsEmblem
         FileWriteOverwriteHandler(options, fileWrite, info);
     }
 
+    #endregion
 
     /// <summary>
     ///     Create <see cref="ResizeOptions"/> from data within <paramref name="options"/>.
