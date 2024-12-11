@@ -19,6 +19,25 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsEmblem
 {
+    internal static UsageInfo UsageEmblemBinToImage = new()
+    {
+        Action = Actions.emblems_bin_to_images,
+        InputIO = ActionIO.Path,
+        OutputIO = ActionIO.Path,
+        ActionOptions = ActionOption.OPS,
+        IsOutputOptional = false,
+        RequiredArguments = [
+            IOptionsImageSharp.Arguments.Resampler,
+            ],
+        OptionalArguments = [
+            IOptionsImageSharp.Arguments.Compand,
+            IOptionsImageSharp.Arguments.ResizeMode,
+            IOptionsImageSharp.Arguments.PadColor,
+            IOptionsImageSharp.Arguments.Position,
+            IOptionsImageSharp.Arguments.PremultiplyAlpha,
+            ],
+    };
+
     #region BIN
 
     /// <summary>

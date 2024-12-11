@@ -1,4 +1,6 @@
-﻿namespace Manifold.GFZCLI;
+﻿using System;
+
+namespace Manifold.GFZCLI;
 
 /// <summary>
 ///     List of all possible actions in this CLI program.
@@ -220,9 +222,9 @@ internal static class ActionExOptions
     private const string ResizeOptionsRequired =
         $"{IOptionsImageSharp.Action.Resampler}";
     private const string ResizeOptionsOptional =
-        $"[{IOptionsImageSharp.Action.Compand}] " +
-        $"[{IOptionsImageSharp.Action.ResizeMode}] " +
-        $"[{IOptionsImageSharp.Action.PadColor}] " +
-        $"[{IOptionsImageSharp.Action.Position}] " +
-        $"[{IOptionsImageSharp.Action.PremultiplyAlpha}]";
+        $"[{IOptionsImageSharp.Action.Compand}] {IOptionsImageSharp.Help.Compand}\n" +
+        $"[{IOptionsImageSharp.Action.ResizeMode}] {IOptionsImageSharp.Help.ResizeMode}\n" +
+        $"[{IOptionsImageSharp.Action.PadColor}] {IOptionsImageSharp.Help.PadColor}\n" +
+        $"[{IOptionsImageSharp.Action.Position}] {IOptionsImageSharp.Help.Position}\n" +
+        $"[{IOptionsImageSharp.Action.PremultiplyAlpha}] {IOptionsImageSharp.Help.PremultiplyAlpha}";
 }

@@ -19,6 +19,81 @@ public interface IOptionsImageSharp
 {
     //internal const string Set = "image-sharp";
 
+    public static class Arguments
+    {
+        internal static ArgumentInfo Compand = new()
+        {
+            ArgumentName = "compand",
+            ArgumentType = typeof(bool),
+            ArgumentDefault = false,
+            Help = "Whether to compress or expand individual pixel colors when scaling image.",
+        };
+
+        internal static ArgumentInfo ResizeMode = new()
+        {
+            ArgumentName = "resize-mode",
+            ArgumentType = typeof(ResizeMode),
+            ArgumentDefault = (ResizeMode)0,
+            Help = "How the image should be resized.",
+        };
+
+        internal static ArgumentInfo PadColor = new()
+        {
+            ArgumentName = "pad-color",
+            ArgumentType = typeof(Color),
+            ArgumentDefault = new Color(),
+            Help = "The padding color when scaling image.",
+        };
+
+        internal static ArgumentInfo Position = new()
+        {
+            ArgumentName = "position",
+            ArgumentType = typeof(AnchorPositionMode),
+            ArgumentDefault = (AnchorPositionMode)0,
+            Help = "Anchor positions to apply to resize image.",
+        };
+
+        internal static ArgumentInfo PremultiplyAlpha = new()
+        {
+            ArgumentName = "premultiply-alpha",
+            ArgumentType = typeof(bool),
+            ArgumentDefault = false,
+            Help = "Whether to use premultiplied alpha when scaling image.",
+        };
+
+        internal static ArgumentInfo Resampler = new()
+        {
+            ArgumentName = "resampler",
+            ArgumentType = typeof(ResamplerType),
+            ArgumentDefault = null,// (ResamplerType)0,
+            Help = "The resampler to use when scaling image.",
+        };
+
+        internal static ArgumentInfo Width = new()
+        {
+            ArgumentName = "width",
+            ArgumentType = typeof(int),
+            ArgumentDefault = null,
+            Help = "The desired image width. May not be result width depending on 'resize-mode' option.",
+        };
+
+        internal static ArgumentInfo Height = new()
+        {
+            ArgumentName = "height",
+            ArgumentType = typeof(int),
+            ArgumentDefault = null,
+            Help = "The desired image height. May not be result height depending on 'resize-mode' option.",
+        };
+
+        internal static ArgumentInfo ImageFormat = new()
+        {
+            ArgumentName = "image-format",
+            ArgumentType = typeof(ImageFormat),
+            ArgumentDefault = null,
+            Help = "Image format, such as PNG, JPG, TGA, etc.",
+        };
+    }
+
     internal static class Args
     {
         // Resize
@@ -62,6 +137,21 @@ public interface IOptionsImageSharp
 
         public const string ImageFormat =
             $"--{Args.ImageFormat} <image-format=bmp>";
+    }
+
+    internal static class Help
+    {
+        // Resize
+        public const string Compand = "Whether to compress or expand individual pixel colors when scaling image.";
+        public const string ResizeMode = "How the image should be resized.";
+        public const string PadColor = "The padding color when scaling image.";
+        public const string Position = "Anchor positions to apply to resize image.";
+        public const string PremultiplyAlpha = "Whether to use premultiplied alpha when scaling image.";
+        public const string Resampler = "The resampler to use when scaling image.";
+        public const string Width = "The desired image width. May not be result width depending on 'resize-mode' option.";
+        public const string Height = "The desired image height. May not be result height depending on 'resize-mode' option.";
+        // Other
+        public const string ImageFormat = "Image format, such as PNG, JPG, TGA, etc.";
     }
 
     // Whether to resize image.
@@ -121,7 +211,7 @@ public interface IOptionsImageSharp
     public int Height { get; set; }
 
     /// <summary>
-    ///     
+    ///     Image format, such as PNG, JPG, TGA, etc.
     /// </summary>
     [Option(Args.ImageFormat, Hidden = true)]
     public string ImageFormatStr { get; set; }
