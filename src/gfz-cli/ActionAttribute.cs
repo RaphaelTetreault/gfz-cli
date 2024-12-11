@@ -3,15 +3,15 @@
 namespace Manifold.GFZCLI;
 
 /// <summary>
-///     Attribute which adds metadata that descibes how <see cref="Actions"/> values work.
+///     Attribute which adds metadata that descibes how <see cref="CliActionID"/> values work.
 /// </summary>
 [AttributeUsage(AttributeTargets.Field)]
 internal sealed class ActionAttribute : Attribute
 {
     public ActionAttribute(
-        ActionIO input,
-        ActionIO output,
-        ActionOption options = ActionOption.All,
+        CliActionIO input,
+        CliActionIO output,
+        CliActionOption options = CliActionOption.All,
         bool outputOptional = true,
         string specialOptions = "",
         string notes = "")
@@ -24,10 +24,10 @@ internal sealed class ActionAttribute : Attribute
         Footnote = notes;
     }
 
-    public ActionIO Input { get; }
-    public ActionIO Output { get; }
+    public CliActionIO Input { get; }
+    public CliActionIO Output { get; }
     public bool IsOutputOptional { get; }
-    public ActionOption Options { get; }
+    public CliActionOption Options { get; }
     public string SpecialOptions { get; }
     public string Footnote { get; }
 }

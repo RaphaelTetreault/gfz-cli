@@ -23,7 +23,7 @@ public static class AttributeHelper
         where TAttribute : Attribute
         where TEnum : Enum
     {
-        var memberInfos = typeof(Actions).GetMember(value.ToString());
+        var memberInfos = typeof(CliActionID).GetMember(value.ToString());
 
         // Return empty collection
         if (memberInfos is null || memberInfos.Length == 0)

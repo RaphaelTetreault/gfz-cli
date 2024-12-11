@@ -5,7 +5,7 @@ namespace Manifold.GFZCLI;
 /// <summary>
 ///     List of all possible actions in this CLI program.
 /// </summary>
-public enum Actions
+public enum CliActionID
 {
     none,
     usage,
@@ -16,7 +16,7 @@ public enum Actions
     /// <remarks>
     ///     ARC compatible between AX/GX, all regions.
     /// </remarks>
-    [Action(ActionIO.Path, ActionIO.Directory, ActionOption.OPS)]
+    [Action(CliActionIO.Path, CliActionIO.Directory, CliActionOption.OPS)]
     arc_unpack,
 
     /// <summary>
@@ -25,7 +25,7 @@ public enum Actions
     /// <remarks>
     ///     ARC compatible between AX/GX, all regions.
     /// </remarks>
-    [Action(ActionIO.Directory, ActionIO.Directory, ActionOption.OPS)]
+    [Action(CliActionIO.Directory, CliActionIO.Directory, CliActionOption.OPS)]
     arc_pack,
 
 
@@ -34,19 +34,19 @@ public enum Actions
     /// <summary>
     ///     Create cardata.lz from input cardata TSV.
     /// </summary>
-    [Action(ActionIO.Path, ActionIO.Path, ActionOption.FOPS)]
+    [Action(CliActionIO.Path, CliActionIO.Path, CliActionOption.FOPS)]
     cardata_from_tsv,
 
     /// <summary>
     ///     Create cardata TSV from input cardata.lz.
     /// </summary>
-    [Action(ActionIO.Path, ActionIO.Path, ActionOption.FOPS)]
+    [Action(CliActionIO.Path, CliActionIO.Path, CliActionOption.FOPS)]
     cardata_to_tsv,
 
-    [Action(ActionIO.Path, ActionIO.Path, ActionOption.FPRS, specialOptions: ActionExOptions.coli_course_patch_fog)]
+    [Action(CliActionIO.Path, CliActionIO.Path, CliActionOption.FPRS, specialOptions: ActionExOptions.coli_course_patch_fog)]
     colicourse_patch_fog,
 
-    [Action(ActionIO.Path, ActionIO.Path, ActionOption.FPRS, specialOptions: ActionExOptions.colicourse_patch_object_render_flags)]
+    [Action(CliActionIO.Path, CliActionIO.Path, CliActionOption.FPRS, specialOptions: ActionExOptions.colicourse_patch_object_render_flags)]
     colicourse_patch_object_render_flags,
 
 
@@ -55,13 +55,13 @@ public enum Actions
     /// <summary>
     ///     Encode a byte array into a Shift-JIS string.
     /// </summary>
-    [Action(ActionIO.None, ActionIO.None, ActionOption.None, specialOptions: ActionExOptions.encode_bytes_to_shift_jis)]
+    [Action(CliActionIO.None, CliActionIO.None, CliActionOption.None, specialOptions: ActionExOptions.encode_bytes_to_shift_jis)]
     encode_bytes_to_shift_jis,
 
     /// <summary>
     ///     Encode a Windows 1252 string into a Shift-JIS string.
     /// </summary>
-    [Action(ActionIO.None, ActionIO.None, ActionOption.None, specialOptions: ActionExOptions.encode_windows_to_shift_jis)]
+    [Action(CliActionIO.None, CliActionIO.None, CliActionOption.None, specialOptions: ActionExOptions.encode_windows_to_shift_jis)]
     encode_windows_to_shift_jis,
 
     /// <summary>
@@ -113,7 +113,7 @@ public enum Actions
     ///     </item>
     /// </list>
     /// </remarks>
-    [Action(ActionIO.Directory, ActionIO.Directory, ActionOption.O, outputOptional: false)]
+    [Action(CliActionIO.Directory, CliActionIO.Directory, CliActionOption.O, outputOptional: false)]
     generate_asset_library,
 
 
@@ -156,7 +156,7 @@ public enum Actions
     ///     The game' max speed is 9990 km/h. Calling this action without an
     ///     argument will set the max speed cap to positive infinity.
     /// </remarks>
-    [Action(ActionIO.None, ActionIO.None, ActionOption.R_SerializationRegion, specialOptions: ActionExOptions.linerel_set_max_speed)]
+    [Action(CliActionIO.None, CliActionIO.None, CliActionOption.R_SerializationRegion, specialOptions: ActionExOptions.linerel_set_max_speed)]
     linerel_set_max_speed,
 
     linerel_set_venue,
@@ -168,7 +168,7 @@ public enum Actions
 }
 
 /// <summary>
-///     Metadata for <see cref="ActionAttribute"/> in <see cref="Actions"/>.
+///     Metadata for <see cref="ActionAttribute"/> in <see cref="CliActionID"/>.
 /// </summary>
 internal static class ActionExOptions
 {

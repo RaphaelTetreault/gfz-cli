@@ -25,7 +25,7 @@ public class Options :
     // IGfzCliOptions
     //public bool DisplayUsageGuide { get; set; }
     public string ActionStr { get; set; } = string.Empty;
-    public Actions Action => GfzCliEnumParser.ParseUnderscoreToDash<Actions>(ActionStr);
+    public CliActionID Action => GfzCliEnumParser.ParseUnderscoreToDash<CliActionID>(ActionStr);
     public string InputPath { get; set; } = string.Empty;
     public string OutputPath { get; set; } = string.Empty;
     public bool OverwriteFiles { get; set; } = false;

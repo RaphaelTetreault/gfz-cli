@@ -21,7 +21,7 @@ public interface IOptionsImageSharp
 
     public static class Arguments
     {
-        internal static ArgumentInfo Compand = new()
+        internal static GfzCliArgument Compand = new()
         {
             ArgumentName = "compand",
             ArgumentType = typeof(bool),
@@ -29,7 +29,7 @@ public interface IOptionsImageSharp
             Help = "Whether to compress or expand individual pixel colors when scaling image.",
         };
 
-        internal static ArgumentInfo ResizeMode = new()
+        internal static GfzCliArgument ResizeMode = new()
         {
             ArgumentName = "resize-mode",
             ArgumentType = typeof(ResizeMode),
@@ -37,7 +37,7 @@ public interface IOptionsImageSharp
             Help = "How the image should be resized.",
         };
 
-        internal static ArgumentInfo PadColor = new()
+        internal static GfzCliArgument PadColor = new()
         {
             ArgumentName = "pad-color",
             ArgumentType = typeof(Color),
@@ -45,7 +45,7 @@ public interface IOptionsImageSharp
             Help = "The padding color when scaling image.",
         };
 
-        internal static ArgumentInfo Position = new()
+        internal static GfzCliArgument Position = new()
         {
             ArgumentName = "position",
             ArgumentType = typeof(AnchorPositionMode),
@@ -53,7 +53,7 @@ public interface IOptionsImageSharp
             Help = "Anchor positions to apply to resize image.",
         };
 
-        internal static ArgumentInfo PremultiplyAlpha = new()
+        internal static GfzCliArgument PremultiplyAlpha = new()
         {
             ArgumentName = "premultiply-alpha",
             ArgumentType = typeof(bool),
@@ -61,7 +61,7 @@ public interface IOptionsImageSharp
             Help = "Whether to use premultiplied alpha when scaling image.",
         };
 
-        internal static ArgumentInfo Resampler = new()
+        internal static GfzCliArgument Resampler = new()
         {
             ArgumentName = "resampler",
             ArgumentType = typeof(ResamplerType),
@@ -69,7 +69,7 @@ public interface IOptionsImageSharp
             Help = "The resampler to use when scaling image.",
         };
 
-        internal static ArgumentInfo Width = new()
+        internal static GfzCliArgument Width = new()
         {
             ArgumentName = "width",
             ArgumentType = typeof(int),
@@ -77,7 +77,7 @@ public interface IOptionsImageSharp
             Help = "The desired image width. May not be result width depending on 'resize-mode' option.",
         };
 
-        internal static ArgumentInfo Height = new()
+        internal static GfzCliArgument Height = new()
         {
             ArgumentName = "height",
             ArgumentType = typeof(int),
@@ -85,7 +85,7 @@ public interface IOptionsImageSharp
             Help = "The desired image height. May not be result height depending on 'resize-mode' option.",
         };
 
-        internal static ArgumentInfo ImageFormat = new()
+        internal static GfzCliArgument ImageFormat = new()
         {
             ArgumentName = "image-format",
             ArgumentType = typeof(ImageFormat),

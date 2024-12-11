@@ -1,11 +1,11 @@
 ﻿namespace Manifold.GFZCLI;
 
 /// <summary>
-///     Describes the general options for <see cref="Actions"/> via <see cref="ActionAttribute"/>.
+///     Describes the general options for <see cref="CliActionID"/> via <see cref="ActionAttribute"/>.
 ///     Refers specifically to options in <see cref="IOptionsGfzCli"/>.
 /// </summary>
 [System.Flags]
-public enum ActionOption
+public enum CliActionOption
 {
     /// <summary>
     ///     No generic parameters

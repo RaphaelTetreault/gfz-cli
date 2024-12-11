@@ -3,26 +3,34 @@
 namespace Manifold.GFZCLI;
 
 /// <summary>
-///     Defines the usage of some <see cref="Actions"/> command.
+///     Defines the usage of some <see cref="CliActionID"/> command.
 /// </summary>
-public readonly record struct UsageInfo()
+public readonly record struct GfzCliAction()
 {
-    public required Actions Action { get; init; }
-    public readonly ActionIO InputIO { get; init; }
-    public readonly ActionIO OutputIO { get; init; }
-    public readonly ActionOption ActionOptions { get; init; }
-    public readonly bool IsOutputOptional { get; init; }
-    public required ArgumentInfo[] RequiredArguments { get; init; }
-    public required ArgumentInfo[] OptionalArguments { get; init; }
+    /// <summary>
+    ///     Represents a GFZ CLI Action (function call with <paramref name="options"/>).
+    /// </summary>
+    /// <param name="options">The options to provide the function.</param>
+    public delegate void GfzCliActionDelegate(Options options);
+
+    // TODO: maybe don't require everything...
+    public required CliActionID ActionID { get; init; }
+    public required CliActionIO InputIO { get; init; }
+    public required CliActionIO OutputIO { get; init; }
+    public required CliActionOption ActionOptions { get; init; }
+    public required bool IsOutputOptional { get; init; } = true;
+    public required GfzCliArgument[] RequiredArguments { get; init; }
+    public required GfzCliArgument[] OptionalArguments { get; init; }
+    public required GfzCliActionDelegate Action { get; init; }
+
 
     public const ConsoleColor ActionColor = ConsoleColor.White;
     public const ConsoleColor RequiredColor = ConsoleColor.Cyan;
     public const ConsoleColor OptionalColor = ConsoleColor.DarkCyan;
 
-
     public void PrintGeneralRequirements()
     {
-        string actionStr = Action.ToString().Replace("_", "-");
+        string actionStr = ActionID.ToString().Replace("_", "-");
         string input = GetInputString();
         string output = GetOutputString();
         string genericOptions = GetActionOptionsMessage();
@@ -56,7 +64,7 @@ public readonly record struct UsageInfo()
         }
     }
 
-    private static void PrintArgument(ArgumentInfo argumentInfo, bool isRequired)
+    private static void PrintArgument(GfzCliArgument argumentInfo, bool isRequired)
     {
         string argName = argumentInfo.ArgumentName;
         string argType = argumentInfo.ArgumentType.Name;
@@ -84,7 +92,7 @@ public readonly record struct UsageInfo()
 
     private string GetActionOptionsMessage()
     {
-        if (ActionOptions == ActionOption.None)
+        if (ActionOptions == CliActionOption.None)
             return string.Empty;
 
         // Prepare string
@@ -94,8 +102,8 @@ public readonly record struct UsageInfo()
         // Iterate over all possible values
         for (int i = 0; i < 32; i++)
         {
-            ActionOption option = (ActionOption)((uint)ActionOptions & (1 << i));
-            if (option == ActionOption.None)
+            CliActionOption option = (CliActionOption)((uint)ActionOptions & (1 << i));
+            if (option == CliActionOption.None)
                 continue;
 
             // Add pipe if not at start of string
@@ -107,11 +115,11 @@ public readonly record struct UsageInfo()
             // Add action char
             switch (option)
             {
-                case ActionOption.O: builder.Append(IOptionsGfzCli.ArgsShort.OverwriteFiles); break;
-                case ActionOption.P: builder.Append(IOptionsGfzCli.ArgsShort.SearchPattern); break;
-                case ActionOption.S: builder.Append(IOptionsGfzCli.ArgsShort.SearchSubdirectories); break;
-                case ActionOption.F: builder.Append(IOptionsGfzCli.ArgsShort.SerializationFormat); break;
-                case ActionOption.R: builder.Append(IOptionsGfzCli.ArgsShort.SerializationRegion); break;
+                case CliActionOption.O: builder.Append(IOptionsGfzCli.ArgsShort.OverwriteFiles); break;
+                case CliActionOption.P: builder.Append(IOptionsGfzCli.ArgsShort.SearchPattern); break;
+                case CliActionOption.S: builder.Append(IOptionsGfzCli.ArgsShort.SearchSubdirectories); break;
+                case CliActionOption.F: builder.Append(IOptionsGfzCli.ArgsShort.SerializationFormat); break;
+                case CliActionOption.R: builder.Append(IOptionsGfzCli.ArgsShort.SerializationRegion); break;
                 default: throw new NotImplementedException(option.ToString());
             }
         }
@@ -124,10 +132,10 @@ public readonly record struct UsageInfo()
     {
         string input = InputIO switch
         {
-            ActionIO.Directory => " <input-directory>",
-            ActionIO.File => " <input-file>",
-            ActionIO.Path => " <input-path>",
-            ActionIO.None => string.Empty,
+            CliActionIO.Directory => " <input-directory>",
+            CliActionIO.File => " <input-file>",
+            CliActionIO.Path => " <input-path>",
+            CliActionIO.None => string.Empty,
             _ => throw new NotImplementedException(),
         };
         return input;
@@ -140,10 +148,10 @@ public readonly record struct UsageInfo()
         string charR = IsOutputOptional ? "]" : ">";
         string output = OutputIO switch
         {
-            ActionIO.Directory => $" {charL}{optional}output-directory{charR}",
-            ActionIO.File => $" {charL}{optional}output-file{charR}",
-            ActionIO.Path => $" {charL}{optional}output-path{charR}",
-            ActionIO.None => string.Empty,
+            CliActionIO.Directory => $" {charL}{optional}output-directory{charR}",
+            CliActionIO.File => $" {charL}{optional}output-file{charR}",
+            CliActionIO.Path => $" {charL}{optional}output-path{charR}",
+            CliActionIO.None => string.Empty,
             _ => throw new NotImplementedException(),
         };
         return output;

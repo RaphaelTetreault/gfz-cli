@@ -1,10 +1,10 @@
 ﻿namespace Manifold.GFZCLI;
 
 /// <summary>
-///     Describes the input and outputs for <see cref="Actions"/> via <see cref="ActionAttribute"/>.
+///     Describes the input and outputs for <see cref="CliActionID"/> via <see cref="ActionAttribute"/>.
 /// </summary>
 [System.Flags]
-public enum ActionIO
+public enum CliActionIO
 {
     /// <summary>
     ///     IO supports either a file path or a directory path.

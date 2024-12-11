@@ -19,28 +19,28 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsEmblem
 {
-    internal static UsageInfo UsageEmblemBinToImage = new()
+    internal static GfzCliAction UsageEmblemsBinToImages = new()
     {
-        Action = Actions.emblems_bin_to_images,
-        InputIO = ActionIO.Path,
-        OutputIO = ActionIO.Path,
+        Action = EmblemsBinToImages,
+        ActionID = CliActionID.emblems_bin_to_images,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = ActionOption.OPS,
-        RequiredArguments = [
-            // 
-            ],
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
         OptionalArguments = [
             // TODO: image format
             ],
     };
 
-    internal static UsageInfo UsageEmblemBinFromImage = new()
+    internal static GfzCliAction UsageEmblemsBinFromImages = new()
     {
-        Action = Actions.emblems_bin_from_images,
-        InputIO = ActionIO.Path,
-        OutputIO = ActionIO.File,
+        Action = EmblemsBinFromImages,
+        ActionID = CliActionID.emblems_bin_from_images,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.File,
         IsOutputOptional = false,
-        ActionOptions = ActionOption.OPS,
+        ActionOptions = CliActionOption.OPS,
         RequiredArguments = [
             IOptionsImageSharp.Arguments.Resampler,
             ],
@@ -53,31 +53,29 @@ public static class ActionsEmblem
             ],
     };
 
-    internal static UsageInfo UsageEmblemGciToImage = new()
+    internal static GfzCliAction UsageEmblemGciToImage = new()
     {
-        Action = Actions.emblem_gci_to_image,
-        InputIO = ActionIO.Path,
-        OutputIO = ActionIO.Path,
+        Action = EmblemGciToImage,
+        ActionID = CliActionID.emblem_gci_to_image,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = ActionOption.OPS,
-        RequiredArguments = [
-        // 
-        ],
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
         OptionalArguments = [
-        // TODO: image format
-        ],
+            // TODO: image format
+            ],
     };
 
-    internal static UsageInfo UsageEmblemGciFromImage = new()
+    internal static GfzCliAction UsageEmblemGciFromImage = new()
     {
-        Action = Actions.emblem_gci_from_image,
-        InputIO = ActionIO.Path,
-        OutputIO = ActionIO.Path,
+        Action = EmblemGciFromImage,
+        ActionID = CliActionID.emblem_gci_from_image,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = ActionOption.OPS,
-        RequiredArguments = [
-            //
-            ],
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [ ],
         OptionalArguments = [
             // TODO: image format
             ],

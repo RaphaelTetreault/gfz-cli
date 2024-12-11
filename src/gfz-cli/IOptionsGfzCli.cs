@@ -74,7 +74,7 @@ public interface IOptionsGfzCli
     /// <summary>
     ///     
     /// </summary>
-    public Actions Action { get; }
+    public CliActionID Action { get; }
 
     /// <summary>
     ///     
