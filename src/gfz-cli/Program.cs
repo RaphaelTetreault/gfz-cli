@@ -18,9 +18,24 @@ public static class Program
     public static readonly string[] HelpArg = ["--help"];
 
 
-    public static Dictionary<Actions, UsageInfo> UsageInfo = new Dictionary<Actions, UsageInfo>([
-            new(ActionsEmblem.UsageEmblemBinToImage.Action, ActionsEmblem.UsageEmblemBinToImage)
-        ]);
+    public static readonly Dictionary<Actions, UsageInfo> UsageInfo = [];
+    public static readonly UsageInfo[] Usage =
+    [
+        // EMBLEM
+        ActionsEmblem.UsageEmblemBinFromImage,
+        ActionsEmblem.UsageEmblemBinToImage,
+        ActionsEmblem.UsageEmblemGciFromImage,
+        ActionsEmblem.UsageEmblemGciToImage,
+    ];
+
+    private static void InitUsageDictionary()
+    {
+        foreach (UsageInfo value in Usage)
+        {
+            Actions key = value.Action;
+            UsageInfo.Add(key, value);
+        }
+    }
 
 
     /// <summary>
@@ -34,11 +49,7 @@ public static class Program
         Encoding.RegisterProvider(encodingProvider);
         Console.OutputEncoding = Encoding.Unicode;
 
-        foreach (var kvp in UsageInfo)
-        {
-            kvp.Value.PrintAllArguments();
-        }
-        return;
+        InitUsageDictionary();
 
         // If user did not pass any arguments, tell them how to use application.
         // This will happen when users double-click application.
@@ -141,7 +152,7 @@ public static class Program
             case Actions.tpl_unpack: ActionsTPL.TplUnpack(options); break;
 
             // PROGRAM-SPECIFIC
-            case Actions.usage: ActionsUsage.PrintActionUsage(options); break;
+            case Actions.usage: PrintActionUsage(options); break;
             case Actions.none: PrintHelp(); break;
 
             // ANYTHING ELSE
@@ -155,5 +166,30 @@ public static class Program
     {
         // Force show --help menu
         Parser.Default.ParseArguments<Options>(HelpArg).WithParsed(ExecuteAction);
+    }
+
+
+    //    // TODO: use these instead of throwing errors! (When possible? Does this make sense? Maybe do custom error?)
+
+    [Obsolete]
+    public static void ActionWarning(Options options, string message)
+    {
+        throw new NotImplementedException();
+    }
+
+    [Obsolete]
+    public static void ActionNotification(string message)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static void PrintActionUsage(Options options)
+    {
+        // TODO: distinguish 'usage' from 'usage action'
+
+        foreach (var kvp in UsageInfo)
+        {
+            kvp.Value.PrintAllArguments();
+        }
     }
 }

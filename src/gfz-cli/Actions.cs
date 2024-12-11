@@ -67,25 +67,21 @@ public enum Actions
     /// <summary>
     ///     Extract images from GCI emblem save files.
     /// </summary>
-    [Action(ActionIO.Path, ActionIO.Path, ActionOption.OPS, specialOptions: ActionExOptions.emblems_bin_from_images)]
     emblem_gci_from_image,
 
     /// <summary>
     ///     Create GCI emblem save files from images.
     /// </summary>
-    [Action(ActionIO.Path, ActionIO.Path, ActionOption.OPS)]
     emblem_gci_to_image,
 
     /// <summary>
     ///     Compile an emblem binary archive from multiple images
     /// </summary>
-    [Action(ActionIO.Path, ActionIO.File, ActionOption.OPS, outputOptional: false, specialOptions: ActionExOptions.emblems_bin_from_images)]
     emblems_bin_from_images,
 
     /// <summary>
     ///     Extract images from emblem binary archives.
     /// </summary>
-    [Action(ActionIO.Path, ActionIO.Path, ActionOption.OPS)]
     emblems_bin_to_images,
 
 
@@ -195,20 +191,6 @@ internal static class ActionExOptions
         $"[--{IOptionsLineRel.Args.Backup} <bool=true>] " +
         $"[--{IOptionsStage.Args.SetFlagsOff} <bool=false>]";
 
-    public const string emblem_gci_from_image =
-        ResizeOptionsRequired +
-        OptionalsSeparator +
-        $"[{IOptionsImageSharp.Action.Width}] " +
-        $"[{IOptionsImageSharp.Action.Height}] " +
-        ResizeOptionsOptional;
-        
-    public const string emblems_bin_from_images =
-        ResizeOptionsRequired +
-        OptionalsSeparator +
-        $"[{IOptionsImageSharp.Action.Width}] " +
-        $"[{IOptionsImageSharp.Action.Height}] " +
-        ResizeOptionsOptional;
-
     public const string encode_bytes_to_shift_jis =
         $"--{IOptionsLineRel.Args.Value} <hex-string>";
 
@@ -219,12 +201,4 @@ internal static class ActionExOptions
         OptionalsSeparator +
         $"[--{IOptionsLineRel.Args.Value} <max-speed=+infinity>]";
 
-    private const string ResizeOptionsRequired =
-        $"{IOptionsImageSharp.Action.Resampler}";
-    private const string ResizeOptionsOptional =
-        $"[{IOptionsImageSharp.Action.Compand}] {IOptionsImageSharp.Help.Compand}\n" +
-        $"[{IOptionsImageSharp.Action.ResizeMode}] {IOptionsImageSharp.Help.ResizeMode}\n" +
-        $"[{IOptionsImageSharp.Action.PadColor}] {IOptionsImageSharp.Help.PadColor}\n" +
-        $"[{IOptionsImageSharp.Action.Position}] {IOptionsImageSharp.Help.Position}\n" +
-        $"[{IOptionsImageSharp.Action.PremultiplyAlpha}] {IOptionsImageSharp.Help.PremultiplyAlpha}";
 }

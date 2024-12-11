@@ -109,51 +109,6 @@ public interface IOptionsImageSharp
         public const string ImageFormat = "image-format";
     }
 
-    internal static class Action
-    {
-        public const string Compand =
-            $"--{Args.Compand} <bool=false>";
-
-        public const string ResizeMode =
-            $"--{Args.ResizeMode} <resize-mode=crop>";
-
-        public const string PadColor =
-            $"--{Args.PadColor} <color=blank>";
-
-        public const string Position =
-            $"--{Args.Position} <anchor-position-mode=center>";
-
-        public const string PremultiplyAlpha =
-            $"--{Args.PremultiplyAlpha} <bool=false>";
-
-        public const string Resampler =
-            $"--{Args.Resampler} <resampler>";
-
-        public const string Width =
-            $"--{Args.Width} <int>"; // defaults to image width if not specified
-
-        public const string Height =
-            $"--{Args.Height} <int>"; // defaults to image height if not specified
-
-        public const string ImageFormat =
-            $"--{Args.ImageFormat} <image-format=bmp>";
-    }
-
-    internal static class Help
-    {
-        // Resize
-        public const string Compand = "Whether to compress or expand individual pixel colors when scaling image.";
-        public const string ResizeMode = "How the image should be resized.";
-        public const string PadColor = "The padding color when scaling image.";
-        public const string Position = "Anchor positions to apply to resize image.";
-        public const string PremultiplyAlpha = "Whether to use premultiplied alpha when scaling image.";
-        public const string Resampler = "The resampler to use when scaling image.";
-        public const string Width = "The desired image width. May not be result width depending on 'resize-mode' option.";
-        public const string Height = "The desired image height. May not be result height depending on 'resize-mode' option.";
-        // Other
-        public const string ImageFormat = "Image format, such as PNG, JPG, TGA, etc.";
-    }
-
     // Whether to resize image.
     //[Option(Args.Resize, Hidden = true)]
     //public bool Resize { get; set; }

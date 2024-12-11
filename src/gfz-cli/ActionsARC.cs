@@ -9,6 +9,9 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsARC
 {
+
+
+
     /// <summary>
     ///     Archive a directory intop a .arc file.
     /// </summary>
@@ -20,7 +23,7 @@ public static class ActionsARC
         if (inputNotADirectory)
         {
             string msg = $"{options.ActionStr} requires a directory as input path.";
-            ActionsUsage.ActionWarning(options, msg);
+            Program.ActionWarning(options, msg);
             return;
         }
 
@@ -30,7 +33,7 @@ public static class ActionsARC
         {
             options.SearchPattern = "*";
             string message = $"{options.ActionStr}: set {nameof(options.SearchPattern)} to \"{options.SearchPattern}\".";
-            ActionsUsage.ActionNotification(message);
+            Program.ActionNotification(message);
         }
 
         // Get files in directory with search pattern

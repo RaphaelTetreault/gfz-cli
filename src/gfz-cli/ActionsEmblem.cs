@@ -24,8 +24,23 @@ public static class ActionsEmblem
         Action = Actions.emblems_bin_to_images,
         InputIO = ActionIO.Path,
         OutputIO = ActionIO.Path,
+        IsOutputOptional = true,
         ActionOptions = ActionOption.OPS,
+        RequiredArguments = [
+            // 
+            ],
+        OptionalArguments = [
+            // TODO: image format
+            ],
+    };
+
+    internal static UsageInfo UsageEmblemBinFromImage = new()
+    {
+        Action = Actions.emblems_bin_from_images,
+        InputIO = ActionIO.Path,
+        OutputIO = ActionIO.File,
         IsOutputOptional = false,
+        ActionOptions = ActionOption.OPS,
         RequiredArguments = [
             IOptionsImageSharp.Arguments.Resampler,
             ],
@@ -35,6 +50,36 @@ public static class ActionsEmblem
             IOptionsImageSharp.Arguments.PadColor,
             IOptionsImageSharp.Arguments.Position,
             IOptionsImageSharp.Arguments.PremultiplyAlpha,
+            ],
+    };
+
+    internal static UsageInfo UsageEmblemGciToImage = new()
+    {
+        Action = Actions.emblem_gci_to_image,
+        InputIO = ActionIO.Path,
+        OutputIO = ActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = ActionOption.OPS,
+        RequiredArguments = [
+        // 
+        ],
+        OptionalArguments = [
+        // TODO: image format
+        ],
+    };
+
+    internal static UsageInfo UsageEmblemGciFromImage = new()
+    {
+        Action = Actions.emblem_gci_from_image,
+        InputIO = ActionIO.Path,
+        OutputIO = ActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = ActionOption.OPS,
+        RequiredArguments = [
+            //
+            ],
+        OptionalArguments = [
+            // TODO: image format
             ],
     };
 
