@@ -71,8 +71,8 @@ public static class Program
         ActionsCarData.ActionCarDataToTSV,
         ActionsCarData.ActionCardDataFromTSV,
         // COLICOURSE
-        //case CliActionID.colicourse_patch_fog: ActionsColiCourse.PatchFog(options); break;
-        //case CliActionID.colicourse_patch_object_render_flags: ActionsColiCourse.PatchSceneObjectDynamicRenderFlags(options); break;
+        ActionsColiCourse.ActionPatchFog,
+        ActionsColiCourse.ActionPatchObjectRenderFlags,
         // ISO
         //case CliActionID.extract_iso: ActionsISO.IsoExtractAll(options); break;
         // TODO: Extract ./files/ only

@@ -69,7 +69,7 @@ public class Options :
     public bool EmblemHasAlphaBorder { get; set; } = true;
 
     // LINE REL
-    public bool BackupPatchFile { get; set; } = true;
+    public bool BackupPatchFile { get; set; } = IOptionsLineRel.Arguments.Backup.Default<bool>();
     public byte BgmIndex { get; set; } = 254; // default to invalid state
     public byte BgmFinalLapIndex { get; set; } = 254; // default to invalid state
     public Cup Cup { get; set; } = (Cup)255; // default to invalid state
@@ -82,8 +82,8 @@ public class Options :
 
 
     // IStageOptions
-    public float FogViewRangeNear { get; set; } = float.MaxValue;
-    public float FogViewRangeFar { get; set; } = float.MinValue;
+    public float FogViewRangeNear { get; set; } = float.MaxValue; // consider nullable?
+    public float FogViewRangeFar { get; set; } = float.MinValue; // consider nulalble?
     public string FogInterpolationModeStr { get; set; } = uint.MaxValue.ToString();
     public FogType FogInterpolationMode => GetEnum<FogType>(FogInterpolationModeStr);
     public string ColorRedStr { get; set; } = string.Empty;

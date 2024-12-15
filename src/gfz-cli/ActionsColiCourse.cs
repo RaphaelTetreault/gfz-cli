@@ -11,6 +11,47 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsColiCourse
 {
+    public static readonly GfzCliAction ActionPatchFog = new()
+    {
+        Description = "Patch the fog parameters of scenes.",
+        Action = PatchFog,
+        ActionID = CliActionID.colicourse_patch_fog,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.FPRS,
+        RequiredArguments = [
+            IOptionsStage.Arguments.ColorRed,
+            IOptionsStage.Arguments.ColorGreen,
+            IOptionsStage.Arguments.ColorBlue,
+            ],
+        OptionalArguments = [
+            IOptionsLineRel.Arguments.Backup,
+            IOptionsStage.Arguments.FogInterpolationMode,
+            IOptionsStage.Arguments.FogViewRangeNear,
+            IOptionsStage.Arguments.FogViewRangeFar,
+            ],
+    };
+
+    public static readonly GfzCliAction ActionPatchObjectRenderFlags = new()
+    {
+        Description = "Patch an scene object's render flags by name.",
+        Action = PatchSceneObjectDynamicRenderFlags,
+        ActionID = CliActionID.colicourse_patch_object_render_flags,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.FPRS,
+        RequiredArguments = [
+            IOptionsStage.Arguments.Name,
+            IOptionsLineRel.Arguments.Value,
+            ],
+        OptionalArguments = [
+            IOptionsLineRel.Arguments.Backup,
+            IOptionsStage.Arguments.SetFlagsOff,
+            ],
+    };
+
     /// <summary>
     ///     Patch the fog parameters of scenes.
     /// </summary>

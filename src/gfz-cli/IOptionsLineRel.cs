@@ -6,6 +6,24 @@ public interface IOptionsLineRel
 {
     //internal const string Set = "linerel";
 
+    public static class Arguments
+    {
+        internal static GfzCliArgument Backup = new()
+        {
+            ArgumentName = Args.Backup,
+            ArgumentType = typeof(bool).Name,
+            ArgumentDefault = true,
+            Help = "Create backup of patched file.",
+        };
+        internal static GfzCliArgument Value = new()
+        {
+            ArgumentName = Args.Value,
+            ArgumentType = "variable",
+            ArgumentDefault = null,
+            Help = "A generic value as parameter.",
+        };
+    }
+
     internal static class Args
     {
         public const string Backup = "backup";
@@ -21,7 +39,7 @@ public interface IOptionsLineRel
     }
 
     /// <summary>
-    ///     Create backup of patched
+    ///     Create backup of patched file.
     /// </summary>
     [Option(Args.Backup, Hidden = true)]
     public bool BackupPatchFile { get; set; }

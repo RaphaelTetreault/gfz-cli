@@ -7,18 +7,32 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public readonly record struct GfzCliArgument()
 {
+    /// <summary>
+    ///     
+    /// </summary>
     public required string ArgumentName { get; init; }
-    public required Type ArgumentType { get; init; }
+
+    /// <summary>
+    ///     
+    /// </summary>
+    public required string ArgumentType { get; init; }
+
+    /// <summary>
+    ///     
+    /// </summary>
     public required object? ArgumentDefault { get; init; }
+
+    /// <summary>
+    ///     
+    /// </summary>
     public required string Help { get; init; }
 
-    //public string GetArgument()
-    //{
-    //    string @default = ArgumentDefault != null ? $"={ArgumentDefault}" : string.Empty;
-    //    string value = $"--{ArgumentName} <{ArgumentType}{@default}>";
-    //    return value;
-    //}
-
+    /// <summary>
+    ///     
+    /// </summary>
+    /// <returns>
+    ///     
+    /// </returns>
     public string GetDefaultValueFormatted()
     {
         string @default = ArgumentDefault != null
@@ -27,4 +41,31 @@ public readonly record struct GfzCliArgument()
 
         return @default;
     }
+
+    /// <summary>
+    ///     
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public T Default<T>()
+    {
+        if (ArgumentDefault is null)
+        {
+            string msg = $"Cannot get default as default is null.";
+            throw new Exception(msg);
+        }
+        else
+        {
+            Type argType = ArgumentDefault.GetType();
+            Type desiredType = typeof(T);
+            if (argType != desiredType)
+            {
+                string msg = $"Cannot convert default from type {desiredType.Name} to {argType.Name}.";
+                throw new Exception(msg);
+            }
+        }
+
+        return (T)ArgumentDefault!;
+    } 
 }

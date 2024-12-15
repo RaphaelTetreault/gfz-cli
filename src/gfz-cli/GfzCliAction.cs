@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Manifold.GFZCLI;
 
@@ -24,10 +25,45 @@ public readonly record struct GfzCliAction()
     public required GfzCliArgument[] RequiredArguments { get; init; }
     public required GfzCliArgument[] OptionalArguments { get; init; }
 
-
+    // Description of action
+    public const ConsoleColor ActionDescriptionColor = ConsoleColor.Green;
+    public const ConsoleColor ActionNoDescriptionColor = ConsoleColor.Red;
+    // Action itself, eg. arc-pack
     public const ConsoleColor ActionColor = ConsoleColor.White;
-    public const ConsoleColor RequiredColor = ConsoleColor.Cyan;
-    public const ConsoleColor OptionalColor = ConsoleColor.DarkCyan;
+    // Arguments for action
+    public const ConsoleColor RequiredArgColor = ConsoleColor.Cyan;
+    public const ConsoleColor OptionalArgColor = ConsoleColor.DarkCyan;
+    // Description of arguments
+    public const ConsoleColor RequiredArgDescriptionColor = ConsoleColor.White;
+    public const ConsoleColor OptionalArgDescriptionColor = ConsoleColor.DarkGray;
+
+    private ConsoleColor GetArgumentColor(bool isRequired)
+    {
+        ConsoleColor color = isRequired
+            ? RequiredArgColor
+            : OptionalArgColor;
+        return color;
+    }
+    private ConsoleColor GetArgDescriptionColor(bool isRequired)
+    {
+        ConsoleColor color = isRequired
+            ? RequiredArgDescriptionColor
+            : OptionalArgDescriptionColor;
+        return color;
+    }
+
+    private void PrintDescription()
+    {
+        var desciption = string.IsNullOrEmpty(Description)
+            ? "NO DESCRIPTION"
+            : Description;
+
+        var color = string.IsNullOrEmpty(Description)
+            ? ActionNoDescriptionColor
+            : ActionDescriptionColor;
+
+        Terminal.WriteLine(desciption, color);
+    }
 
     public void PrintGeneralRequirements()
     {
@@ -40,54 +76,52 @@ public readonly record struct GfzCliAction()
         Terminal.Write(actionStr, ActionColor);
         // Input path, if any
         if (!string.IsNullOrWhiteSpace(input))
-            Terminal.Write(input, RequiredColor);
+            Terminal.Write(input, RequiredArgColor);
         // Output path, if any
         if (!string.IsNullOrWhiteSpace(output))
-            Terminal.Write(output, IsOutputOptional ? OptionalColor : RequiredColor);
+            Terminal.Write(output, IsOutputOptional ? OptionalArgColor : RequiredArgColor);
         // Generic FOPRS options
         if (!string.IsNullOrWhiteSpace(genericOptions))
-            Terminal.Write(genericOptions, OptionalColor);
+            Terminal.Write(genericOptions, OptionalArgColor);
         // New line
         Terminal.WriteLine();
     }
 
     public void PrintAllArguments()
     {
+        PrintDescription();
         PrintGeneralRequirements();
-
         foreach (var requiredArgument in RequiredArguments)
-        {
             PrintArgument(requiredArgument, true);
-        }
         foreach (var optionalArgument in OptionalArguments)
-        {
             PrintArgument(optionalArgument, false);
-        }
+        Terminal.WriteLine();
     }
 
-    private static void PrintArgument(GfzCliArgument argumentInfo, bool isRequired)
+    private void PrintArgument(GfzCliArgument argumentInfo, bool isRequired)
     {
         string argName = argumentInfo.ArgumentName;
-        string argType = argumentInfo.ArgumentType.Name;
-        string @default = argumentInfo.GetDefaultValueFormatted();
+        string argType = argumentInfo.ArgumentType;
+        string argDefault = argumentInfo.GetDefaultValueFormatted();
         string helpHint = argumentInfo.Help;
-        ConsoleColor color = isRequired ? RequiredColor : OptionalColor;
-        ConsoleColor argsColor = string.IsNullOrEmpty(@default) ? color : OptionalColor;
+
+        ConsoleColor descColor = GetArgDescriptionColor(isRequired);
+        ConsoleColor argColor = GetArgumentColor(isRequired);
+        // required action, but optional arg
+        //ConsoleColor argParamColor = string.IsNullOrEmpty(argDefault) ? argColor : OptionalArgColor;
 
         // Tab inset
         Terminal.Write($"\t");
-        if (!isRequired)
-            Terminal.Write("[", color);
-        Terminal.Write($"--{argName}", color);
+        Terminal.Write($"--{argName}", argColor);
         Terminal.Write($" ");
-        Terminal.Write($"<{argType}{@default}>", argsColor);
-        if (!isRequired)
-            Terminal.Write("]", color);
+        Terminal.Write($"<{argType}{argDefault}>");//, argParamColor);
         Terminal.Write($" ");
         // TEMP: move cursor / line up
         Console.SetCursorPosition(50, Console.CursorTop);
-        Terminal.Write(helpHint);
 
+        if (!isRequired)
+            Terminal.Write("Optional: ", descColor);
+        Terminal.Write(helpHint);
         Terminal.WriteLine();
     }
 

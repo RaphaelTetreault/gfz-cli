@@ -42,10 +42,8 @@ public enum CliActionID
     /// </summary>
     cardata_to_tsv,
 
-    [Action(CliActionIO.Path, CliActionIO.Path, CliActionOption.FPRS, specialOptions: ActionExOptions.coli_course_patch_fog)]
     colicourse_patch_fog,
 
-    [Action(CliActionIO.Path, CliActionIO.Path, CliActionOption.FPRS, specialOptions: ActionExOptions.colicourse_patch_object_render_flags)]
     colicourse_patch_object_render_flags,
 
 
@@ -172,23 +170,6 @@ public enum CliActionID
 internal static class ActionExOptions
 {
     public const string OptionalsSeparator = "\n\t\t";
-
-    public const string coli_course_patch_fog =
-        $"--{IOptionsStage.Args.ColorRed} <byte|hex|float> " +
-        $"--{IOptionsStage.Args.ColorGreen} <byte|hex|float> " +
-        $"--{IOptionsStage.Args.ColorBlue} <byte|hex|float> " +
-        OptionalsSeparator +
-        $"[--{IOptionsLineRel.Args.Backup} <bool=true>] " +
-        $"[--{IOptionsStage.Args.FogInterpolationMode} <interpolation-mode>] " +
-        $"[--{IOptionsStage.Args.FogViewRangeNear} <float>] " +
-        $"[--{IOptionsStage.Args.FogViewRangeFar} <float>]";
-
-    public const string colicourse_patch_object_render_flags =
-        $"--{IOptionsStage.Args.Name} <scene-object-name> " +
-        $"--{IOptionsLineRel.Args.Value} <uint32> " +
-        OptionalsSeparator +
-        $"[--{IOptionsLineRel.Args.Backup} <bool=true>] " +
-        $"[--{IOptionsStage.Args.SetFlagsOff} <bool=false>]";
 
     public const string encode_bytes_to_shift_jis =
         $"--{IOptionsLineRel.Args.Value} <hex-string>";
