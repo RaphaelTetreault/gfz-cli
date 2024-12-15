@@ -32,6 +32,19 @@ public static class Program
         OptionalArguments = [],
     };
 
+    private static readonly GfzCliAction ActionList = new()
+    {
+        Description = "List all possible actions with description.",
+        Action = PrintActionList,
+        ActionID = CliActionID.list,
+        InputIO = CliActionIO.None,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.None,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
     private static readonly GfzCliAction ActionNone = new()
     {
         Description = "No action selected.",
@@ -63,6 +76,7 @@ public static class Program
     [
         // PROGRAM-SPECIFIC: note same class actions need to be initialzed before this code runs...
         ActionNone,
+        ActionList,
         ActionUsage,
         // ARC
         ActionsARC.ActionArcPack,
@@ -317,10 +331,25 @@ public static class Program
         {
             // Skip these helpers
             if (kvp.Key == CliActionID.none ||
+                kvp.Key == CliActionID.list || 
                 kvp.Key == CliActionID.usage)
                 continue;
 
             kvp.Value.PrintAllArguments();
+        }
+    }
+
+    public static void PrintActionList(Options _)
+    {
+        foreach (var kvp in GfzCliActionsLibrary)
+        {
+            // Skip these helpers
+            if (kvp.Key == CliActionID.none ||
+                kvp.Key == CliActionID.list ||
+                kvp.Key == CliActionID.usage)
+                continue;
+
+            kvp.Value.PrintActionAndDescription();
         }
     }
 }

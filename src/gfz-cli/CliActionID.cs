@@ -13,6 +13,11 @@ public enum CliActionID
     none,
 
     /// <summary>
+    ///     List out all actions in brief.
+    /// </summary>
+    list,
+
+    /// <summary>
     ///     Prints out action usage.
     /// </summary>
     usage,

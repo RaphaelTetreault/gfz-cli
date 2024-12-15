@@ -51,18 +51,19 @@ public readonly record struct GfzCliAction()
             : OptionalArgDescriptionColor;
         return color;
     }
-
-    private void PrintDescription()
+    private ConsoleColor GetDescriptionColor()
     {
-        var desciption = string.IsNullOrEmpty(Description)
-            ? "NO DESCRIPTION"
-            : Description;
-
-        var color = string.IsNullOrEmpty(Description)
+        ConsoleColor color = string.IsNullOrEmpty(Description)
             ? ActionNoDescriptionColor
             : ActionDescriptionColor;
-
-        Terminal.WriteLine(desciption, color);
+        return color;
+    }
+    private string GetDescriptionText()
+    {
+        string desciption = string.IsNullOrEmpty(Description)
+            ? "NO DESCRIPTION"
+            : Description;
+        return desciption;
     }
 
     public void PrintGeneralRequirements()
@@ -89,12 +90,27 @@ public readonly record struct GfzCliAction()
 
     public void PrintAllArguments()
     {
-        PrintDescription();
+        string description = GetDescriptionText();
+        ConsoleColor descColor = GetDescriptionColor();
+        Terminal.WriteLine(description, descColor);
+
         PrintGeneralRequirements();
         foreach (var requiredArgument in RequiredArguments)
             PrintArgument(requiredArgument, true);
         foreach (var optionalArgument in OptionalArguments)
             PrintArgument(optionalArgument, false);
+        Terminal.WriteLine();
+    }
+
+    public void PrintActionAndDescription()
+    {
+        string actionStr = ActionID.ToString().Replace("_", "-");
+        string description = GetDescriptionText();
+        ConsoleColor descColor = GetDescriptionColor();
+
+        Terminal.Write(actionStr);
+        Terminal.Write(" ");
+        Terminal.Write(description, descColor);
         Terminal.WriteLine();
     }
 
@@ -191,4 +207,5 @@ public readonly record struct GfzCliAction()
         };
         return output;
     }
+
 }
