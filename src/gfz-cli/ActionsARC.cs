@@ -9,11 +9,35 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsARC
 {
+    public static readonly GfzCliAction ActionArcPack = new()
+    {
+        Description = "Archive a directory into a .arc file.",
+        Action = ArcPack,
+        ActionID = CliActionID.arc_pack,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Directory,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
 
+    public static readonly GfzCliAction ActionArcUnpack = new()
+    {
+        Description = "Unpack one or more .arc achives into directories of their contents.",
+        Action = ArcUnpack,
+        ActionID = CliActionID.arc_unpack,
+        InputIO = CliActionIO.Directory,
+        OutputIO = CliActionIO.Directory,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
 
 
     /// <summary>
-    ///     Archive a directory intop a .arc file.
+    ///     Archive a directory into a .arc file.
     /// </summary>
     /// <param name="options"></param>
     public static void ArcPack(Options options)

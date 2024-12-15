@@ -21,6 +21,7 @@ public static class Program
 
     private static readonly GfzCliAction ActionUsage = new()
     {
+        Description = "Call to print out actions available and how to use them.",
         Action = PrintActionUsage,
         ActionID = CliActionID.usage,
         InputIO = CliActionIO.None,
@@ -33,6 +34,7 @@ public static class Program
 
     private static readonly GfzCliAction ActionNone = new()
     {
+        Description = "No action selected.",
         Action = PrintActionUsage,
         ActionID = CliActionID.none,
         InputIO = CliActionIO.None,
@@ -51,8 +53,8 @@ public static class Program
         Program.ActionUsage,
 
         // ARC
-        //case CliActionID.arc_pack: ActionsARC.ArcPack(options); break;
-        //case CliActionID.arc_unpack: ActionsARC.ArcUnpack(options); break;
+        ActionsARC.ActionArcPack,
+        ActionsARC.ActionArcUnpack,
         // CARDATA
         //case CliActionID.cardata_from_tsv: ActionsCarData.CarDataFromTsv(options); break;
         //case CliActionID.cardata_to_tsv: ActionsCarData.CarDataToTsv(options); break;
@@ -295,7 +297,7 @@ public static class Program
         throw new NotImplementedException();
     }
 
-    public static void PrintActionUsage(Options options)
+    public static void PrintActionUsage(Options _)
     {
         // TODO: distinguish 'usage' from 'usage action'
 

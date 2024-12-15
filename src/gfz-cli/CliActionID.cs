@@ -7,27 +7,25 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public enum CliActionID
 {
+    /// <summary>
+    ///     No action selected.
+    /// </summary>
     none,
+
+    /// <summary>
+    ///     Prints out action usage.
+    /// </summary>
     usage,
 
     /// <summary>
     ///     Pack directory to .arc file.
     /// </summary>
-    /// <remarks>
-    ///     ARC compatible between AX/GX, all regions.
-    /// </remarks>
-    [Action(CliActionIO.Path, CliActionIO.Directory, CliActionOption.OPS)]
     arc_unpack,
 
     /// <summary>
     ///     Unpack .arc file into directory of contents.
     /// </summary>
-    /// <remarks>
-    ///     ARC compatible between AX/GX, all regions.
-    /// </remarks>
-    [Action(CliActionIO.Directory, CliActionIO.Directory, CliActionOption.OPS)]
     arc_pack,
-
 
     auto_rename_gci, // NOT IMPLEMENTED
 

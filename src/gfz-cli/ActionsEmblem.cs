@@ -21,6 +21,7 @@ public static class ActionsEmblem
 {
     internal static GfzCliAction UsageEmblemsBinToImages = new()
     {
+        Description = "",
         Action = EmblemsBinToImages,
         ActionID = CliActionID.emblems_bin_to_images,
         InputIO = CliActionIO.Path,
@@ -35,6 +36,7 @@ public static class ActionsEmblem
 
     internal static GfzCliAction UsageEmblemsBinFromImages = new()
     {
+        Description = "",
         Action = EmblemsBinFromImages,
         ActionID = CliActionID.emblems_bin_from_images,
         InputIO = CliActionIO.Path,
@@ -55,6 +57,7 @@ public static class ActionsEmblem
 
     internal static GfzCliAction UsageEmblemGciToImage = new()
     {
+        Description = "",
         Action = EmblemGciToImage,
         ActionID = CliActionID.emblem_gci_to_image,
         InputIO = CliActionIO.Path,
@@ -69,6 +72,7 @@ public static class ActionsEmblem
 
     internal static GfzCliAction UsageEmblemGciFromImage = new()
     {
+        Description = "",
         Action = EmblemGciFromImage,
         ActionID = CliActionID.emblem_gci_from_image,
         InputIO = CliActionIO.Path,

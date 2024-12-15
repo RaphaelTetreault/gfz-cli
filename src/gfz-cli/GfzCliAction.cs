@@ -14,6 +14,8 @@ public readonly record struct GfzCliAction()
     public delegate void GfzCliActionDelegate(Options options);
 
     // TODO: maybe don't require everything...
+    public required GfzCliActionDelegate Action { get; init; }
+    public required string Description { get; init; }
     public required CliActionID ActionID { get; init; }
     public required CliActionIO InputIO { get; init; }
     public required CliActionIO OutputIO { get; init; }
@@ -21,7 +23,6 @@ public readonly record struct GfzCliAction()
     public required bool IsOutputOptional { get; init; } = true;
     public required GfzCliArgument[] RequiredArguments { get; init; }
     public required GfzCliArgument[] OptionalArguments { get; init; }
-    public required GfzCliActionDelegate Action { get; init; }
 
 
     public const ConsoleColor ActionColor = ConsoleColor.White;
