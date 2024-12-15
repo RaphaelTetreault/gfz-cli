@@ -17,6 +17,33 @@ namespace Manifold.GFZCLI;
 /// </remarks>
 public static class ActionsCarData
 {
+    public static readonly GfzCliAction ActionCarDataToTSV = new()
+    {
+        Description = "Create a TSV from CarData binary (compressed or uncompressed).",
+        Action = CarDataToTsv,
+        ActionID = CliActionID.cardata_to_tsv,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.FOPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionCardDataFromTSV = new()
+    {
+        Description = "Create a CarData.lz file from CarData TSV spreadsheet.",
+        Action = CarDataFromTsv,
+        ActionID = CliActionID.cardata_from_tsv,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.FOPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+
     /// <summary>
     ///     Create a TSV from CarData binary (compressed or uncompressed).
     /// </summary>

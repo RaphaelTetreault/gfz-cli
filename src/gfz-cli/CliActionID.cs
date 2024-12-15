@@ -27,18 +27,19 @@ public enum CliActionID
     /// </summary>
     arc_pack,
 
-    auto_rename_gci, // NOT IMPLEMENTED
+    /// <summary>
+    ///     NOT IMPLEMENTED
+    /// </summary>
+    auto_rename_gci,
 
     /// <summary>
     ///     Create cardata.lz from input cardata TSV.
     /// </summary>
-    [Action(CliActionIO.Path, CliActionIO.Path, CliActionOption.FOPS)]
     cardata_from_tsv,
 
     /// <summary>
     ///     Create cardata TSV from input cardata.lz.
     /// </summary>
-    [Action(CliActionIO.Path, CliActionIO.Path, CliActionOption.FOPS)]
     cardata_to_tsv,
 
     [Action(CliActionIO.Path, CliActionIO.Path, CliActionOption.FPRS, specialOptions: ActionExOptions.coli_course_patch_fog)]

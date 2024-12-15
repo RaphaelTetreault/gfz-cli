@@ -45,19 +45,31 @@ public static class Program
         OptionalArguments = [],
     };
 
+    //public static readonly GfzCliAction Action = new()
+    //{
+    //    Description = "",
+    //    Action = ,
+    //    ActionID = CliActionID,
+    //    InputIO = CliActionIO,
+    //    OutputIO = CliActionIO,
+    //    IsOutputOptional = true,
+    //    ActionOptions = CliActionOption,
+    //    RequiredArguments = [],
+    //    OptionalArguments = [],
+    //};
+
     public static readonly Dictionary<CliActionID, GfzCliAction> GfzCliActionsLibrary = [];
     public static readonly GfzCliAction[] GfzCliActions =
     [
         // PROGRAM-SPECIFIC: note same class actions need to be initialzed before this code runs...
-        Program.ActionNone,
-        Program.ActionUsage,
-
+        ActionNone,
+        ActionUsage,
         // ARC
         ActionsARC.ActionArcPack,
         ActionsARC.ActionArcUnpack,
         // CARDATA
-        //case CliActionID.cardata_from_tsv: ActionsCarData.CarDataFromTsv(options); break;
-        //case CliActionID.cardata_to_tsv: ActionsCarData.CarDataToTsv(options); break;
+        ActionsCarData.ActionCarDataToTSV,
+        ActionsCarData.ActionCardDataFromTSV,
         // COLICOURSE
         //case CliActionID.colicourse_patch_fog: ActionsColiCourse.PatchFog(options); break;
         //case CliActionID.colicourse_patch_object_render_flags: ActionsColiCourse.PatchSceneObjectDynamicRenderFlags(options); break;
