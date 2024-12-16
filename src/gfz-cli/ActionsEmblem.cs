@@ -11,6 +11,7 @@ using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 using static Manifold.GFZCLI.GfzCliImageUtilities;
 using static Manifold.GFZCLI.Program;
+using SixLabors.ImageSharp.Formats;
 
 namespace Manifold.GFZCLI;
 
@@ -21,7 +22,7 @@ public static class ActionsEmblem
 {
     internal static GfzCliAction UsageEmblemsBinToImages = new()
     {
-        Description = "",
+        Description = "Extract images from emblem binary archives.",
         Action = EmblemsBinToImages,
         ActionID = CliActionID.emblems_bin_to_images,
         InputIO = CliActionIO.Path,
@@ -30,13 +31,13 @@ public static class ActionsEmblem
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            // TODO: image format
+            IOptionsImageSharp.Arguments.ImageFormat,
             ],
     };
 
     internal static GfzCliAction UsageEmblemsBinFromImages = new()
     {
-        Description = "",
+        Description = "Compile an emblem binary archive from multiple images.",
         Action = EmblemsBinFromImages,
         ActionID = CliActionID.emblems_bin_from_images,
         InputIO = CliActionIO.Path,
@@ -57,7 +58,7 @@ public static class ActionsEmblem
 
     internal static GfzCliAction UsageEmblemGciToImage = new()
     {
-        Description = "",
+        Description = "Extract images from GCI emblem save files.",
         Action = EmblemGciToImage,
         ActionID = CliActionID.emblem_gci_to_image,
         InputIO = CliActionIO.Path,
@@ -66,22 +67,28 @@ public static class ActionsEmblem
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            // TODO: image format
+            IOptionsImageSharp.Arguments.ImageFormat,
             ],
     };
 
     internal static GfzCliAction UsageEmblemGciFromImage = new()
     {
-        Description = "",
+        Description = "Create a GCI emblem save file from one image.",
         Action = EmblemGciFromImage,
         ActionID = CliActionID.emblem_gci_from_image,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
         ActionOptions = CliActionOption.OPS,
-        RequiredArguments = [ ],
+        RequiredArguments = [
+            IOptionsImageSharp.Arguments.Resampler,
+            ],
         OptionalArguments = [
-            // TODO: image format
+            IOptionsImageSharp.Arguments.Compand,
+            IOptionsImageSharp.Arguments.ResizeMode,
+            IOptionsImageSharp.Arguments.PadColor,
+            IOptionsImageSharp.Arguments.Position,
+            IOptionsImageSharp.Arguments.PremultiplyAlpha,
             ],
     };
 
@@ -114,11 +121,7 @@ public static class ActionsEmblem
             emblemBIN.FileName = Path.GetFileNameWithoutExtension(inputFile);
         }
 
-        // Prepare image encoder
-        var encoder = new PngEncoder
-        {
-            CompressionLevel = PngCompressionLevel.BestCompression
-        };
+        ImageEncoder encoder = options.ImageEncoder;
         outputFile.PushDirectory(emblemBIN.FileName);
         outputFile.SetExtensions(".png");
 
@@ -267,10 +270,7 @@ public static class ActionsEmblem
         }
 
         // Prepare image encoder
-        var encoder = new PngEncoder
-        {
-            CompressionLevel = PngCompressionLevel.BestCompression
-        };
+        ImageEncoder encoder = options.ImageEncoder;
         // Strip .dat.gci extensions
         outputFile.SetExtensions("png");
 

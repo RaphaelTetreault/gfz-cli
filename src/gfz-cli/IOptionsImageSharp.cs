@@ -89,7 +89,7 @@ public interface IOptionsImageSharp
         {
             ArgumentName = Args.ImageFormat,
             ArgumentType = typeof(ImageFormat).Name,
-            ArgumentDefault = null,
+            ArgumentDefault = GFZCLI.ImageFormat.Png,
             Help = "Image format, such as PNG, JPG, TGA, etc.",
         };
     }

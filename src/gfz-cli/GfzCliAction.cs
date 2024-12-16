@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 
 namespace Manifold.GFZCLI;
 
@@ -130,7 +129,7 @@ public readonly record struct GfzCliAction()
         Terminal.Write($"\t");
         Terminal.Write($"--{argName}", argColor);
         Terminal.Write($" ");
-        Terminal.Write($"<{argType}{argDefault}>");//, argParamColor);
+        Terminal.Write($"<{argType}{argDefault}>", argColor);//, argParamColor);
         Terminal.Write($" ");
         // TEMP: move cursor / line up
         Console.SetCursorPosition(50, Console.CursorTop);

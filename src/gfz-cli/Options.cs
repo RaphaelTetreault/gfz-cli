@@ -59,7 +59,7 @@ public class Options :
     public int Width { get; set; }
     public int Height { get; set; }
     // Other
-    public string ImageFormatStr { get; set; } = string.Empty;
+    public string ImageFormatStr { get; set; } = IOptionsImageSharp.Arguments.ImageFormat.Default<ImageFormat>().ToString();
     public ImageFormat ImageFormat => GfzCliEnumParser.ParseDashRemoved<ImageFormat>(ImageFormatStr);
     public ImageEncoder ImageEncoder => IOptionsImageSharp.GetImageEncoder(ImageFormat);
 
