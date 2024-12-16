@@ -103,7 +103,7 @@ public static class Program
         ActionsFMI.ActionFmiFromPlainText,
         ActionsFMI.ActionFmiToPlainText,
         // GEN ASSETS
-        //case CliActionID.generate_asset_library: ActionsAssetLibrary.CreateGmaTplLibrary(options); break;
+        ActionsGMA.ActionPatchSubmeshRenderFlags,
         // GCI
         //case CliActionID.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
         // GMA
