@@ -105,7 +105,7 @@ public static class Program
         // GEN ASSETS
         ActionsGMA.ActionPatchSubmeshRenderFlags,
         // GCI
-        //case CliActionID.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
+        ActionsGhost.ActionExtractGhostFromGci,
         // GMA
         //case CliActionID.gma_patch_submesh_render_flags: ActionsGMA.PatchSubmeshRenderFlags(options); break;
         // IO - IN-OUT TESTS

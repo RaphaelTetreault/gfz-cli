@@ -6,7 +6,7 @@ using static Manifold.GFZCLI.GfzCliUtilities;
 namespace Manifold.GFZCLI;
 
 /// <summary>
-///     
+///     Actions for modifying GMA files.
 /// </summary>
 public static class ActionsGMA
 {
