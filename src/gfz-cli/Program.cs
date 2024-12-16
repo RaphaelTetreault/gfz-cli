@@ -92,8 +92,8 @@ public static class Program
         // TODO: Extract ./files/ only
         // TODO: Extract ./sys/ only
         // ENCODE TEXT
-        //case CliActionID.encode_windows_to_shift_jis: ActionsEncodeText.PrintAsciiToShiftJis(options); break;
-        //case CliActionID.encode_bytes_to_shift_jis: ActionsEncodeText.PrintBytesToShiftJis(options); break;
+        ActionsEncodeText.ActionEncodeBytesToShiftJis,
+        ActionsEncodeText.ActionEncodeWindows1252ToShiftJis,
         // EMBLEM
         ActionsEmblem.UsageEmblemsBinFromImages,
         ActionsEmblem.UsageEmblemsBinToImages,
