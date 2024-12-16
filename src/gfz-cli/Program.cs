@@ -103,16 +103,16 @@ public static class Program
         ActionsFMI.ActionFmiFromPlainText,
         ActionsFMI.ActionFmiToPlainText,
         // GEN ASSETS
-        ActionsGMA.ActionPatchSubmeshRenderFlags,
+
         // GCI
         ActionsGhost.ActionExtractGhostFromGci,
         // GMA
-        //case CliActionID.gma_patch_submesh_render_flags: ActionsGMA.PatchSubmeshRenderFlags(options); break;
-        // IO - IN-OUT TESTS
-        //case CliActionID.io_gma: ActionsIO.InOutGMA(options); break;
-        //case CliActionID.io_scene: ActionsIO.InOutScene(options); break;
-        //case CliActionID.io_scene_patch: ActionsIO.PatchSceneComment(options); break;
-        //case CliActionID.io_tpl: ActionsIO.InOutTPL(options); break;
+        ActionsGMA.ActionPatchSubmeshRenderFlags,
+        // IO: IN-OUT TESTS
+        ActionsIO.ActionInOutGMA,
+        ActionsIO.ActionInOutTPL,
+        ActionsIO.ActionInOutScene,
+        ActionsIO.ActionInOutScenePatch,
         // LIVE CAMERA STAGE
         //case CliActionID.live_camera_stage_from_tsv: ActionsLiveCameraStage.LiveCameraStageFromTsv(options); break;
         //case CliActionID.live_camera_stage_to_tsv: ActionsLiveCameraStage.LiveCameraStageToTsv(options); break;

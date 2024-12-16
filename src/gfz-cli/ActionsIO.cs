@@ -12,9 +12,64 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsIO
 {
+    public static readonly GfzCliAction ActionInOutGMA = new()
+    {
+        Description = "Round-trip serialize GMA files.",
+        Action = InOutGMA,
+        ActionID = CliActionID.io_gma,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionInOutTPL = new()
+    {
+        Description = "Round-trip serialize TPL files.",
+        Action = InOutTPL,
+        ActionID = CliActionID.io_tpl,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionInOutScene = new()
+    {
+        Description = "Round-trip serialize COLI_COURSE (scene) files.",
+        Action = InOutScene,
+        ActionID = CliActionID.io_scene,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPRS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    // TODO: probably belongs in ActionsColiCourse
+    public static readonly GfzCliAction ActionInOutScenePatch = new()
+    {
+        Description = "Patch COLI_COURSE (scene) auto-generate timestamp comment to help diff-ing.",
+        Action = InOutScene,
+        ActionID = CliActionID.io_scene_patch,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+
     public static void InOutGMA(Options options) => InOutFiles<Gma>(options, "*.gma");
     public static void InOutTPL(Options options) => InOutFiles<Tpl>(options, "*.tpl");
     public static void InOutScene(Options options) => InOutFiles<Scene>(options, "COLI_COURSE???");
+
 
     public static void InOutFiles<TFile>(Options options, string searchPattern)
         where TFile : IBinaryFileType, IBinarySerializable, new()
