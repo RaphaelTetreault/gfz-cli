@@ -8,14 +8,15 @@ public interface IOptionsLineRel
 
     public static class Arguments
     {
-        internal static GfzCliArgument Backup = new()
+        internal static readonly GfzCliArgument Backup = new()
         {
             ArgumentName = Args.Backup,
             ArgumentType = typeof(bool).Name,
             ArgumentDefault = true,
             Help = "Create backup of patched file.",
         };
-        internal static GfzCliArgument Value = new()
+
+        internal static readonly GfzCliArgument Value = new()
         {
             ArgumentName = Args.Value,
             ArgumentType = "variable",

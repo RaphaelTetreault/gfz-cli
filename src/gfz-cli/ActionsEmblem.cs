@@ -3,7 +3,6 @@ using GameCube.GFZ.GCI;
 using GameCube.GX.Texture;
 using Manifold.IO;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;

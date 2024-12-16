@@ -11,6 +11,14 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsColiCourse
 {
+    private static readonly GfzCliArgument Value = new()
+    {
+        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentType = typeof(ObjectRenderFlags0x00).Name,
+        ArgumentDefault = null,
+        Help = "The render flag value in decimal to apply.",
+    };
+
     public static readonly GfzCliAction ActionPatchFog = new()
     {
         Description = "Patch the fog parameters of scenes.",
@@ -44,7 +52,7 @@ public static class ActionsColiCourse
         ActionOptions = CliActionOption.FPRS,
         RequiredArguments = [
             IOptionsStage.Arguments.Name,
-            IOptionsLineRel.Arguments.Value,
+            Value,
             ],
         OptionalArguments = [
             IOptionsLineRel.Arguments.Backup,

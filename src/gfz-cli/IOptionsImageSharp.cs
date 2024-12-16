@@ -21,7 +21,7 @@ public interface IOptionsImageSharp
 
     public static class Arguments
     {
-        internal static GfzCliArgument Compand = new()
+        internal static readonly GfzCliArgument Compand = new()
         {
             ArgumentName = Args.Compand,
             ArgumentType = typeof(bool).Name,
@@ -29,7 +29,7 @@ public interface IOptionsImageSharp
             Help = "Whether to compress or expand individual pixel colors when scaling image.",
         };
 
-        internal static GfzCliArgument ResizeMode = new()
+        internal static readonly GfzCliArgument ResizeMode = new()
         {
             ArgumentName = Args.ResizeMode,
             ArgumentType = typeof(ResizeMode).Name,
@@ -37,7 +37,7 @@ public interface IOptionsImageSharp
             Help = "How the image should be resized.",
         };
 
-        internal static GfzCliArgument PadColor = new()
+        internal static readonly GfzCliArgument PadColor = new()
         {
             ArgumentName = Args.PadColor,
             ArgumentType = typeof(Color).Name,
@@ -45,7 +45,7 @@ public interface IOptionsImageSharp
             Help = "The padding color when scaling image.",
         };
 
-        internal static GfzCliArgument Position = new()
+        internal static readonly GfzCliArgument Position = new()
         {
             ArgumentName = Args.Position,
             ArgumentType = typeof(AnchorPositionMode).Name,
@@ -53,7 +53,7 @@ public interface IOptionsImageSharp
             Help = "Anchor positions to apply to resize image.",
         };
 
-        internal static GfzCliArgument PremultiplyAlpha = new()
+        internal static readonly GfzCliArgument PremultiplyAlpha = new()
         {
             ArgumentName = Args.PremultiplyAlpha,
             ArgumentType = typeof(bool).Name,
@@ -61,7 +61,7 @@ public interface IOptionsImageSharp
             Help = "Whether to use premultiplied alpha when scaling image.",
         };
 
-        internal static GfzCliArgument Resampler = new()
+        internal static readonly GfzCliArgument Resampler = new()
         {
             ArgumentName = Args.Resampler,
             ArgumentType = typeof(ResamplerType).Name,
@@ -69,7 +69,7 @@ public interface IOptionsImageSharp
             Help = "The resampler to use when scaling image.",
         };
 
-        internal static GfzCliArgument Width = new()
+        internal static readonly GfzCliArgument Width = new()
         {
             ArgumentName = Args.Width,
             ArgumentType = typeof(int).Name,
@@ -77,7 +77,7 @@ public interface IOptionsImageSharp
             Help = "The desired image width. May not be result width depending on 'resize-mode' option.",
         };
 
-        internal static GfzCliArgument Height = new()
+        internal static readonly GfzCliArgument Height = new()
         {
             ArgumentName = Args.Height,
             ArgumentType = typeof(int).Name,
@@ -85,7 +85,7 @@ public interface IOptionsImageSharp
             Help = "The desired image height. May not be result height depending on 'resize-mode' option.",
         };
 
-        internal static GfzCliArgument ImageFormat = new()
+        internal static readonly GfzCliArgument ImageFormat = new()
         {
             ArgumentName = Args.ImageFormat,
             ArgumentType = typeof(ImageFormat).Name,

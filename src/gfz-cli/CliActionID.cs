@@ -57,13 +57,11 @@ public enum CliActionID
     /// <summary>
     ///     Encode a byte array into a Shift-JIS string.
     /// </summary>
-    [Action(CliActionIO.None, CliActionIO.None, CliActionOption.None, specialOptions: ActionExOptions.encode_bytes_to_shift_jis)]
     encode_bytes_to_shift_jis,
 
     /// <summary>
     ///     Encode a Windows 1252 string into a Shift-JIS string.
     /// </summary>
-    [Action(CliActionIO.None, CliActionIO.None, CliActionOption.None, specialOptions: ActionExOptions.encode_windows_to_shift_jis)]
     encode_windows_to_shift_jis,
 
     /// <summary>

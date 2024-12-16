@@ -100,9 +100,9 @@ public static class Program
         ActionsEmblem.UsageEmblemGciFromImage,
         ActionsEmblem.UsageEmblemGciToImage,
         // FMI
-        //case CliActionID.fmi_from_plaintext: ActionsFMI.FmiFromPlaintext(options); break;
-        //case CliActionID.fmi_to_plaintext: ActionsFMI.FmiToPlainText(options); break;
-             
+        ActionsFMI.ActionFmiFromPlainText,
+        ActionsFMI.ActionFmiToPlainText,
+        // GEN ASSETS
         //case CliActionID.generate_asset_library: ActionsAssetLibrary.CreateGmaTplLibrary(options); break;
         // GCI
         //case CliActionID.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
@@ -241,7 +241,7 @@ public static class Program
             // TODO: Extract ./files/ only
             // TODO: Extract ./sys/ only
             // ENCODE TEXT
-            case CliActionID.encode_windows_to_shift_jis: ActionsEncodeText.PrintAsciiToShiftJis(options); break;
+            case CliActionID.encode_windows_to_shift_jis: ActionsEncodeText.PrintWindowsToShiftJis(options); break;
             case CliActionID.encode_bytes_to_shift_jis: ActionsEncodeText.PrintBytesToShiftJis(options); break;
             // EMBLEM
             case CliActionID.emblems_bin_from_images: ActionsEmblem.EmblemsBinFromImages(options); break;
@@ -249,7 +249,7 @@ public static class Program
             case CliActionID.emblem_gci_from_image: ActionsEmblem.EmblemGciFromImage(options); break;
             case CliActionID.emblem_gci_to_image: ActionsEmblem.EmblemGciToImage(options); break;
             // FMI
-            case CliActionID.fmi_from_plaintext: ActionsFMI.FmiFromPlaintext(options); break;
+            case CliActionID.fmi_from_plaintext: ActionsFMI.FmiFromPlainText(options); break;
             case CliActionID.fmi_to_plaintext: ActionsFMI.FmiToPlainText(options); break;
             // 
             case CliActionID.generate_asset_library: ActionsAssetLibrary.CreateGmaTplLibrary(options); break;

@@ -9,63 +9,63 @@ public interface IOptionsStage
 
     public static class Arguments
     {
-        internal static GfzCliArgument FogViewRangeNear = new()
+        internal static readonly GfzCliArgument FogViewRangeNear = new()
         {
             ArgumentName = Args.FogViewRangeNear,
             ArgumentType = typeof(float).Name,
             ArgumentDefault = null,
             Help = "Fog view range near plane distance.",
         };
-        internal static GfzCliArgument FogViewRangeFar = new()
+        internal static readonly GfzCliArgument FogViewRangeFar = new()
         {
             ArgumentName = Args.FogViewRangeFar,
             ArgumentType = typeof(float).Name,
             ArgumentDefault = null,
             Help = "Fog view range far plane distance.",
         };
-        internal static GfzCliArgument FogInterpolationMode = new()
+        internal static readonly GfzCliArgument FogInterpolationMode = new()
         {
             ArgumentName = Args.FogInterpolationMode,
             ArgumentType = typeof(FogType).Name,
             ArgumentDefault = null,
             Help = "The GX fog interpolation mode.",
         };
-        internal static GfzCliArgument ColorRed = new()
+        internal static readonly GfzCliArgument ColorRed = new()
         {
             ArgumentName = Args.ColorRed,
             ArgumentType = $"{typeof(byte).Name}|Hex|{typeof(float).Name}",
             ArgumentDefault = null,
             Help = "The color's red value.",
         };
-        internal static GfzCliArgument ColorGreen = new()
+        internal static readonly GfzCliArgument ColorGreen = new()
         {
             ArgumentName = Args.ColorGreen,
             ArgumentType = $"{typeof(byte).Name}|hex|{typeof(float).Name}",
             ArgumentDefault = null,
             Help = "The color's green value.",
         };
-        internal static GfzCliArgument ColorBlue = new()
+        internal static readonly GfzCliArgument ColorBlue = new()
         {
             ArgumentName = Args.ColorBlue,
             ArgumentType = $"{typeof(byte).Name}|hex|{typeof(float).Name}",
             ArgumentDefault = null,
             Help = "The color's blue value.",
         };
-        internal static GfzCliArgument ColorAlpha = new()
+        internal static readonly GfzCliArgument ColorAlpha = new()
         {
             ArgumentName = Args.ColorAlpha,
             ArgumentType = $"{typeof(byte).Name}|hex|{typeof(float).Name}",
             ArgumentDefault = null,
             Help = "The color's alpha value.",
         };
-        internal static GfzCliArgument Name = new()
+        internal static readonly GfzCliArgument Name = new()
         {
             ArgumentName = Args.Name,
             ArgumentType = typeof(string).Name,
             ArgumentDefault = null,
             Help = "The name of the target.",
         };
-        internal static GfzCliArgument SetFlagsOff = new()
+        internal static readonly GfzCliArgument SetFlagsOff = new()
         {
             ArgumentName = Args.SetFlagsOff,
             ArgumentType = typeof(bool).Name,

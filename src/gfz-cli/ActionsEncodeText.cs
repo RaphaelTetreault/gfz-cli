@@ -6,28 +6,37 @@ namespace Manifold.GFZCLI;
 
 public class ActionsEncodeText
 {
+    private static readonly GfzCliArgument Value = new()
+    {
+        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = null,
+        Help = "The text to encode.",
+    };
+
     public static readonly GfzCliAction ActionEncodeBytesToShiftJis = new()
     {
         Description = "Takes in hex-string of bytes and prints the Shift-JIS encoded version of the value.",
-        Action = PrintAsciiToShiftJis,
+        Action = PrintBytesToShiftJis,
         ActionID = CliActionID.encode_bytes_to_shift_jis,
         InputIO = CliActionIO.None,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
         ActionOptions = CliActionOption.None,
-        RequiredArguments = [],
+        RequiredArguments = [ Value ],
         OptionalArguments = [],
     };
+
     public static readonly GfzCliAction ActionEncodeWindows1252ToShiftJis = new()
     {
         Description = "Takes in Windows code page 1252 string and prints the Shift-JIS encoded version of the value.",
-        Action = PrintAsciiToShiftJis,
+        Action = PrintWindowsToShiftJis,
         ActionID = CliActionID.encode_windows_to_shift_jis,
         InputIO = CliActionIO.None,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
         ActionOptions = CliActionOption.None,
-        RequiredArguments = [],
+        RequiredArguments = [ Value ],
         OptionalArguments = [],
     };
 
@@ -140,6 +149,6 @@ public class ActionsEncodeText
     ///     Takes in Windows code page 1252 string and prints the Shift-JIS encoded version of the value.
     /// </summary>
     /// <param name="options">The options to parse.</param>
-    public static void PrintAsciiToShiftJis(Options options)
+    public static void PrintWindowsToShiftJis(Options options)
         => Terminal.WriteLine(ConvertWindows1252ToShiftJis(options));
 }
