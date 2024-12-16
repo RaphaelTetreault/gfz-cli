@@ -8,8 +8,24 @@ using static Manifold.GFZCLI.GfzCliUtilities;
 
 namespace Manifold.GFZCLI;
 
+/// <summary>
+///     Actions for managing GameCube ISOs.
+/// </summary>
 public static class ActionsISO
 {
+    public static readonly GfzCliAction ActionExtractISO = new()
+    {
+        Description = "Extract system data and files from GameCube ISO file.",
+        Action = IsoExtractAll,
+        ActionID = CliActionID.extract_iso,
+        InputIO = CliActionIO.File,
+        OutputIO = CliActionIO.Directory,
+        IsOutputOptional = false,
+        ActionOptions = CliActionOption.O,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
 
     public static void IsoExtractAll(Options options)
     {
@@ -111,7 +127,7 @@ public static class ActionsISO
         return tasksFinished;
     }
 
-    private static System.Action IsoExtractSystemFile(Options options, OSPath inputFile, string outputName, string outputExtension, byte[] data)
+    private static Action IsoExtractSystemFile(Options options, OSPath inputFile, string outputName, string outputExtension, byte[] data)
     {
         // Get output path
         OSPath outputFile = new OSPath();

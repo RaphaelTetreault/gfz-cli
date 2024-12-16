@@ -88,7 +88,7 @@ public static class Program
         ActionsColiCourse.ActionPatchFog,
         ActionsColiCourse.ActionPatchObjectRenderFlags,
         // ISO
-        //case CliActionID.extract_iso: ActionsISO.IsoExtractAll(options); break;
+        ActionsISO.ActionExtractISO,
         // TODO: Extract ./files/ only
         // TODO: Extract ./sys/ only
         // ENCODE TEXT
