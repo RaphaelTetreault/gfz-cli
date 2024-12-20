@@ -7,87 +7,25 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public enum CliActionID
 {
-    /// <summary>
-    ///     No action selected.
-    /// </summary>
     none,
-
-    /// <summary>
-    ///     List out all actions in brief.
-    /// </summary>
     list,
-
-    /// <summary>
-    ///     Prints out action usage.
-    /// </summary>
     usage,
 
-    /// <summary>
-    ///     Pack directory to .arc file.
-    /// </summary>
     arc_unpack,
-
-    /// <summary>
-    ///     Unpack .arc file into directory of contents.
-    /// </summary>
     arc_pack,
-
-    /// <summary>
-    ///     NOT IMPLEMENTED
-    /// </summary>
     auto_rename_gci,
-
-    /// <summary>
-    ///     Create cardata.lz from input cardata TSV.
-    /// </summary>
     cardata_from_tsv,
-
-    /// <summary>
-    ///     Create cardata TSV from input cardata.lz.
-    /// </summary>
     cardata_to_tsv,
-
     colicourse_patch_fog,
-
     colicourse_patch_object_render_flags,
-
-
     extract_iso,
-
-    /// <summary>
-    ///     Encode a byte array into a Shift-JIS string.
-    /// </summary>
     encode_bytes_to_shift_jis,
-
-    /// <summary>
-    ///     Encode a Windows 1252 string into a Shift-JIS string.
-    /// </summary>
     encode_windows_to_shift_jis,
-
-    /// <summary>
-    ///     Extract images from GCI emblem save files.
-    /// </summary>
     emblem_gci_from_image,
-
-    /// <summary>
-    ///     Create GCI emblem save files from images.
-    /// </summary>
     emblem_gci_to_image,
-
-    /// <summary>
-    ///     Compile an emblem binary archive from multiple images
-    /// </summary>
     emblems_bin_from_images,
-
-    /// <summary>
-    ///     Extract images from emblem binary archives.
-    /// </summary>
     emblems_bin_to_images,
-
-
     fmi_from_plaintext,
-
-
     fmi_to_plaintext,
 
     /// <summary>
@@ -115,24 +53,16 @@ public enum CliActionID
     /// </remarks>
     [Action(CliActionIO.Directory, CliActionIO.Directory, CliActionOption.O, outputOptional: false)]
     generate_asset_library,
-
-
     gci_extract_ghost,
-
-
     gma_patch_submesh_render_flags,
-
     io_gma,
     io_scene,
     io_scene_patch,
     io_tpl,
-
     live_camera_stage_to_tsv,
     live_camera_stage_from_tsv,
-
     lz_compress,
     lz_decompress,
-
     linerel_clear_all_course_names,
     linerel_clear_all_venue_names,
     linerel_clear_unused_course_names,
@@ -148,7 +78,6 @@ public enum CliActionID
     linerel_set_cup_course,
     linerel_set_machine_rating,
 
-    
     /// <summary>
     ///     Override the game's internal max speed cap.
     /// </summary>
@@ -161,7 +90,6 @@ public enum CliActionID
 
     linerel_set_venue,
     linerel_set_venue_name,
-
     tpl_generate_mipmaps,
     tpl_pack,
     tpl_unpack,

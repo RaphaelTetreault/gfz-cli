@@ -43,7 +43,7 @@ public static class ActionsColiCourse
 
     public static readonly GfzCliAction ActionPatchObjectRenderFlags = new()
     {
-        Description = "Patch an scene object's render flags by name.",
+        Description = "Patch a scene object's render flags by name.",
         Action = PatchSceneObjectDynamicRenderFlags,
         ActionID = CliActionID.colicourse_patch_object_render_flags,
         InputIO = CliActionIO.Path,

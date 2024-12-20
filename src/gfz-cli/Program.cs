@@ -2,7 +2,6 @@
 using Manifold.IO;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 
 namespace Manifold.GFZCLI;
@@ -219,87 +218,9 @@ public static class Program
     /// <exception cref="NotImplementedException"></exception>
     public static void ExecuteAction(Options options)
     {
-        // NEW WAY!!!
         GfzCliAction gfzCliAction = GfzCliActionsLibrary[options.Action];
         Assert.IsTrue(gfzCliAction.ActionID == options.Action);
         gfzCliAction.Action.Invoke(options);
-        return;
-
-        switch (options.Action)
-        {
-            // ARC
-            case CliActionID.arc_pack: ActionsARC.ArcPack(options); break;
-            case CliActionID.arc_unpack: ActionsARC.ArcUnpack(options); break;
-            // CARDATA
-            case CliActionID.cardata_from_tsv: ActionsCarData.CarDataFromTsv(options); break;
-            case CliActionID.cardata_to_tsv: ActionsCarData.CarDataToTsv(options); break;
-            // COLICOURSE
-            case CliActionID.colicourse_patch_fog: ActionsColiCourse.PatchFog(options); break;
-            case CliActionID.colicourse_patch_object_render_flags: ActionsColiCourse.PatchSceneObjectDynamicRenderFlags(options); break;
-            // ISO
-            case CliActionID.extract_iso: ActionsISO.IsoExtractAll(options); break;
-            // TODO: Extract ./files/ only
-            // TODO: Extract ./sys/ only
-            // ENCODE TEXT
-            case CliActionID.encode_windows_to_shift_jis: ActionsEncodeText.PrintWindowsToShiftJis(options); break;
-            case CliActionID.encode_bytes_to_shift_jis: ActionsEncodeText.PrintBytesToShiftJis(options); break;
-            // EMBLEM
-            case CliActionID.emblems_bin_from_images: ActionsEmblem.EmblemsBinFromImages(options); break;
-            case CliActionID.emblems_bin_to_images: ActionsEmblem.EmblemsBinToImages(options); break;
-            case CliActionID.emblem_gci_from_image: ActionsEmblem.EmblemGciFromImage(options); break;
-            case CliActionID.emblem_gci_to_image: ActionsEmblem.EmblemGciToImage(options); break;
-            // FMI
-            case CliActionID.fmi_from_plaintext: ActionsFMI.FmiFromPlainText(options); break;
-            case CliActionID.fmi_to_plaintext: ActionsFMI.FmiToPlainText(options); break;
-            // 
-            case CliActionID.generate_asset_library: ActionsAssetLibrary.CreateGmaTplLibrary(options); break;
-            // GCI
-            case CliActionID.gci_extract_ghost: ActionsGhost.ExtractGhostFromGci(options); break;
-            // GMA
-            case CliActionID.gma_patch_submesh_render_flags: ActionsGMA.PatchSubmeshRenderFlags(options); break;
-            // IO - IN-OUT TESTS
-            case CliActionID.io_gma: ActionsIO.InOutGMA(options); break;
-            case CliActionID.io_scene: ActionsIO.InOutScene(options); break;
-            case CliActionID.io_scene_patch: ActionsIO.PatchSceneComment(options); break;
-            case CliActionID.io_tpl: ActionsIO.InOutTPL(options); break;
-            // LIVE CAMERA STAGE
-            case CliActionID.live_camera_stage_from_tsv: ActionsLiveCameraStage.LiveCameraStageFromTsv(options); break;
-            case CliActionID.live_camera_stage_to_tsv: ActionsLiveCameraStage.LiveCameraStageToTsv(options); break;
-            // LZ
-            case CliActionID.lz_compress: ActionsLZ.LzCompress(options); break;
-            case CliActionID.lz_decompress: ActionsLZ.LzDecompress(options); break;
-            // line__.rel
-            case CliActionID.linerel_clear_all_course_names: ActionsLineREL.PatchClearAllCourseNames(options); break;
-            case CliActionID.linerel_clear_all_venue_names: ActionsLineREL.PatchClearAllVenueNames(options); break;
-            case CliActionID.linerel_clear_unused_course_names: ActionsLineREL.PatchClearUnusedCourseNames(options); break;
-            case CliActionID.linerel_clear_unused_venue_names: ActionsLineREL.PatchClearUnusedVenueNames(options); break;
-            case CliActionID.linerel_decrypt: ActionsLineREL.DecryptLineRel(options); break;
-            case CliActionID.linerel_encrypt: ActionsLineREL.EncryptLineRel(options); break;
-            case CliActionID.linerel_set_bgm: ActionsLineREL.PatchSetBgm(options); break;
-            case CliActionID.linerel_set_bgmfl: ActionsLineREL.PatchSetBgmFinalLap(options); break;
-            case CliActionID.linerel_set_bgm_bgmfl: ActionsLineREL.PatchSetBgmAndBgmFinalLap(options); break;
-            case CliActionID.linerel_set_cardata: ActionsLineREL.PatchSetCarData(options); break;
-            case CliActionID.linerel_set_course_difficulty: ActionsLineREL.PatchSetCourseDifficulty(options); break;
-            case CliActionID.linerel_set_course_name: ActionsLineREL.PatchSetCourseName(options); break;
-            case CliActionID.linerel_set_cup_course: ActionsLineREL.PatchSetCupCourse(options); break;
-            case CliActionID.linerel_set_machine_rating: ActionsLineREL.PatchMachineRating(options); break;
-            case CliActionID.linerel_set_max_speed: ActionsLineREL.PatchMaxSpeed(options); break;
-            case CliActionID.linerel_set_venue: ActionsLineREL.PatchSetVenueIndex(options); break;
-            case CliActionID.linerel_set_venue_name: ActionsLineREL.PatchSetVenueName(options); break;
-            // TPL
-            case CliActionID.tpl_generate_mipmaps: ActionsTPL.TplGenerateMipmaps(options); break;
-            case CliActionID.tpl_pack: ActionsTPL.TplPack(options); break;
-            case CliActionID.tpl_unpack: ActionsTPL.TplUnpack(options); break;
-
-            // PROGRAM-SPECIFIC
-            case CliActionID.usage: PrintActionUsage(options); break;
-            case CliActionID.none: PrintHelp(); break;
-
-            // ANYTHING ELSE
-            default:
-                string msg = $"Unimplemented command {options.Action}.";
-                throw new NotImplementedException(msg);
-        }
     }
 
     public static void PrintHelp()
@@ -309,7 +230,7 @@ public static class Program
     }
 
 
-    //    // TODO: use these instead of throwing errors! (When possible? Does this make sense? Maybe do custom error?)
+    // TODO: use these instead of throwing errors! (When possible? Does this make sense? Maybe do custom error?)
 
     [Obsolete]
     public static void ActionWarning(Options options, string message)
