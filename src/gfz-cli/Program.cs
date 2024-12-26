@@ -125,9 +125,9 @@ public static class Program
         //case CliActionID.linerel_clear_unused_venue_names: ActionsLineREL.PatchClearUnusedVenueNames(options); break;
         //case CliActionID.linerel_decrypt: ActionsLineREL.DecryptLineRel(options); break;
         //case CliActionID.linerel_encrypt: ActionsLineREL.EncryptLineRel(options); break;
-        //case CliActionID.linerel_set_bgm: ActionsLineREL.PatchSetBgm(options); break;
-        //case CliActionID.linerel_set_bgmfl: ActionsLineREL.PatchSetBgmFinalLap(options); break;
-        //case CliActionID.linerel_set_bgm_bgmfl: ActionsLineREL.PatchSetBgmAndBgmFinalLap(options); break;
+        ActionsLineREL.ActionPatchBgm,
+        ActionsLineREL.ActionPatchBgmFinalLap,
+        ActionsLineREL.ActionPatchBgmBoth,
         //case CliActionID.linerel_set_cardata: ActionsLineREL.PatchSetCarData(options); break;
         //case CliActionID.linerel_set_course_difficulty: ActionsLineREL.PatchSetCourseDifficulty(options); break;
         //case CliActionID.linerel_set_course_name: ActionsLineREL.PatchSetCourseName(options); break;

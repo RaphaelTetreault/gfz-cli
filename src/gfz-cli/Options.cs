@@ -70,12 +70,12 @@ public class Options :
 
     // LINE REL
     public bool BackupPatchFile { get; set; } = IOptionsLineRel.Arguments.Backup.Default<bool>();
-    public byte BgmIndex { get; set; } = 254; // default to invalid state
+    public byte BgmIndex { get; set; } = IOptionsLineRel.Arguments.BgmIndex.Default<byte>();
     public byte BgmFinalLapIndex { get; set; } = 254; // default to invalid state
+    public byte CourseIndex { get; set; } = 254; // default to invalid state
     public Cup Cup { get; set; } = (Cup)255; // default to invalid state
     public byte CupCourseIndex { get; set; } = 254; // default to invalid state
     public byte Difficulty { get; set; } = 254; // default to invalid state
-    public byte CourseIndex { get; set; } = 254; // default to invalid state
     public byte PilotNumber { get; set; } = 255; // default to invalid state
     public byte VenueIndex { get; set; } = 254; // default to invalid state
     public string Value { get; set; } = string.Empty;

@@ -14,6 +14,68 @@ namespace Manifold.GFZCLI;
 
 public static class ActionsLineREL
 {
+    //public static readonly GfzCliAction Action = new()
+    //{
+    //    Description = "",
+    //    Action = ,
+    //    ActionID = CliActionID,
+    //    InputIO = CliActionIO,
+    //    OutputIO = CliActionIO,
+    //    IsOutputOptional = true,
+    //    ActionOptions = CliActionOption,
+    //    RequiredArguments = [],
+    //    OptionalArguments = [],
+    //};
+
+    public static readonly GfzCliAction ActionPatchBgm = new()
+    {
+        Description = "Set the background music for a specific stage index.",
+        Action = PatchSetBgm,
+        ActionID = CliActionID.linerel_set_bgm,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PS,
+        RequiredArguments = [
+            IOptionsLineRel.Arguments.BgmIndex,
+            IOptionsLineRel.Arguments.CourseIndex,
+            ],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionPatchBgmFinalLap = new()
+    {
+        Description = "Set the final lap background music for a specific stage index.",
+        Action = PatchSetBgmFinalLap,
+        ActionID = CliActionID.linerel_set_bgmfl,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PS,
+        RequiredArguments = [
+            IOptionsLineRel.Arguments.BgmFinalLapIndex,
+            IOptionsLineRel.Arguments.CourseIndex,
+            ],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionPatchBgmBoth = new()
+    {
+        Description = "Set both default and final lap background music for a specific stage index.",
+        Action = PatchSetBgmAndBgmFinalLap,
+        ActionID = CliActionID.linerel_set_bgm_bgmfl,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PS,
+        RequiredArguments = [
+            IOptionsLineRel.Arguments.BgmIndex,
+            IOptionsLineRel.Arguments.BgmFinalLapIndex,
+            IOptionsLineRel.Arguments.CourseIndex,
+            ],
+        OptionalArguments = [],
+    };
+
     private const byte MaxDifficulty = 10;
     private const byte MaxCourseIndex = GameDataConsts.MaxStageIndex;
     private const byte MaxVenueIndex = 22;
@@ -201,7 +263,7 @@ public static class ActionsLineREL
     private static void PatchBgm(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         byte courseIndex = options.CourseIndex;
-        byte bgmIndex = options.BgmFinalLapIndex;
+        byte bgmIndex = options.BgmIndex;
         LineUtility.PatchCourseBgm(writer, info, courseIndex, bgmIndex);
         Terminal.Write($"Set course {courseIndex} bgm to {bgmIndex} ({(Bgm)bgmIndex}).");
     }

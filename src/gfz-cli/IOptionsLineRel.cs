@@ -16,6 +16,30 @@ public interface IOptionsLineRel
             Help = "Create backup of patched file.",
         };
 
+        internal static readonly GfzCliArgument BgmIndex = new()
+        {
+            ArgumentName = Args.BgmIndex,
+            ArgumentType = typeof(byte).Name,
+            ArgumentDefault = (byte)254, // default to invalid state
+            Help = "The background music index.",
+        };
+
+        internal static readonly GfzCliArgument BgmFinalLapIndex = new()
+        {
+            ArgumentName = Args.BgmFinalLapIndex,
+            ArgumentType = typeof(byte).Name,
+            ArgumentDefault = (byte)254, // default to invalid state
+            Help = "The final lap background music index.",
+        };
+
+        internal static readonly GfzCliArgument CourseIndex = new()
+        {
+            ArgumentName = Args.BgmIndex,
+            ArgumentType = typeof(byte).Name,
+            ArgumentDefault = (byte)254, // default to invalid state
+            Help = "The stage to modify's index.",
+        };
+
         internal static readonly GfzCliArgument Value = new()
         {
             ArgumentName = Args.Value,
@@ -29,7 +53,7 @@ public interface IOptionsLineRel
     {
         public const string Backup = "backup";
         public const string BgmIndex = "bgm";
-        public const string BgmFlIndex = "bgmfl";
+        public const string BgmFinalLapIndex = "bgmfl";
         public const string Cup = "cup";
         public const string CupCourseIndex = "cup-course";
         public const string CourseIndex = "course";
@@ -54,7 +78,7 @@ public interface IOptionsLineRel
     /// <summary>
     ///     The numeric index of a background music (BGM) song, used for stage final lap bgm.
     /// </summary>
-    [Option(Args.BgmFlIndex, Hidden = true)]
+    [Option(Args.BgmFinalLapIndex, Hidden = true)]
     public byte BgmFinalLapIndex { get; set; }
 
     /// <summary>

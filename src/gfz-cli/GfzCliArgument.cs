@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommandLine;
+using System;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Manifold.GFZCLI;
 
