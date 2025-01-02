@@ -116,8 +116,8 @@ public static class Program
         //case CliActionID.live_camera_stage_from_tsv: ActionsLiveCameraStage.LiveCameraStageFromTsv(options); break;
         //case CliActionID.live_camera_stage_to_tsv: ActionsLiveCameraStage.LiveCameraStageToTsv(options); break;
         // LZ
-        //case CliActionID.lz_compress: ActionsLZ.LzCompress(options); break;
-        //case CliActionID.lz_decompress: ActionsLZ.LzDecompress(options); break;
+        ActionsLZ.ActionLzCompress,
+        ActionsLZ.ActionLzDecompress,
         // line__.rel
         ActionsLineREL.ActionPatchClearAllCourseNames,
         ActionsLineREL.ActionPatchClearAllVenueNames,

@@ -6,6 +6,31 @@ namespace Manifold.GFZCLI;
 
 public static class ActionsLZ
 {
+    public static readonly GfzCliAction ActionLzCompress = new()
+    {
+        Description = "Compress files into an LZ file.",
+        Action = LzCompress,
+        ActionID = CliActionID.lz_compress,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.FOPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionLzDecompress = new()
+    {
+        Description = "Decompress an LZ file.",
+        Action = LzDecompress,
+        ActionID = CliActionID.lz_decompress,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
 
     public static void LzDecompress(Options options)
     {
