@@ -18,6 +18,49 @@ namespace Manifold.GFZCLI;
 
 public static class ActionsTPL
 {
+    public static readonly GfzCliAction ActionTplGenerateMipmaps = new()
+    {
+        Description = "TEMPORARY! Create mipmap images of source image.",
+        Action = TplGenerateMipmaps,
+        ActionID = CliActionID.tpl_generate_mipmaps,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [
+            IOptionsImageSharp.Arguments.Resampler,
+            IOptionsImageSharp.Arguments.ImageFormat,
+        ],
+    };
+
+    public static readonly GfzCliAction ActionTplPack = new()
+    {
+        Description = "WORK IN PROGRESS. Pack a directory into a TPL file.",
+        Action = TplPack,
+        ActionID = CliActionID.tpl_pack,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionTplUnpack = new()
+    {
+        Description = "Unpack a TPL file into a directory of images.",
+        Action = TplUnpack,
+        ActionID = CliActionID.tpl_unpack,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [
+
+            ],
+    };
 
     public static void TplUnpack(Options options)
     {
@@ -46,11 +89,8 @@ public static class ActionsTPL
         Directory.CreateDirectory(outputDirectory);
 
         // Prepare image encoder
-        var encoder = new PngEncoder
-        {
-            CompressionLevel = PngCompressionLevel.BestCompression
-        };
-        outputFile.SetExtensions(".png");
+        var encoder = options.ImageEncoder;
+        outputFile.SetExtensions(options.ImageExtension);
         outputFile.PushDirectory(tpl.FileName);
 
         // Iterate over texture and mipmaps, save to disk

@@ -90,7 +90,7 @@ public interface IOptionsImageSharp
             ArgumentName = Args.ImageFormat,
             ArgumentType = typeof(ImageFormat).Name,
             ArgumentDefault = GFZCLI.ImageFormat.Png,
-            Help = "Image format, such as PNG, JPG, TGA, etc.",
+            Help = "Supported image formats include BMP, GIF, JPEG, PBM, PNG, QOI, TIFF, TGA, and WebP.",
         };
     }
 
@@ -265,5 +265,21 @@ public interface IOptionsImageSharp
         };
     }
 
+    public static string GetImageExtension(ImageFormat imageFormat)
+    {
+        return imageFormat switch
+        {
+            ImageFormat.Bmp => ".bmp",
+            ImageFormat.Gif => ".gif",
+            ImageFormat.Jpeg => ".jpeg",
+            ImageFormat.Pbm => ".pbm",
+            ImageFormat.Png => ".png",
+            ImageFormat.Qoi => ".qoi",
+            ImageFormat.Tiff => ".tiff",
+            ImageFormat.Tga => ".tga",
+            ImageFormat.WebP => ".webp",
+            _ => throw new NotImplementedException(),
+        };
+    }
 
 }
