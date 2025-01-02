@@ -66,7 +66,7 @@ public interface IOptionsImageSharp
             ArgumentName = Args.Resampler,
             ArgumentType = typeof(ResamplerType).Name,
             ArgumentDefault = null,// (ResamplerType)0,
-            Help = "The resampler to use when scaling image.",
+            Help = "The resampler to use when scaling images.",
         };
 
         internal static readonly GfzCliArgument Width = new()

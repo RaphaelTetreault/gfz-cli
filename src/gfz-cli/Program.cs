@@ -81,7 +81,7 @@ public static class Program
         ActionsARC.ActionArcPack,
         ActionsARC.ActionArcUnpack,
         // ASSET LIBRARY
-        //      ActionsAssetLibrary.XXX
+        ActionsAssetLibrary.ActionCreateGmaTplLibrary,
         // CARDATA
         ActionsCarData.ActionCarDataToTSV,
         ActionsCarData.ActionCardDataFromTSV,

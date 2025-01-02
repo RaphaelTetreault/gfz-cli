@@ -54,7 +54,7 @@ public class Options :
     public AnchorPositionMode Position => GfzCliEnumParser.ParseDashRemoved<AnchorPositionMode>(PositionStr);
     public bool PremultiplyAlpha { get; set; } = true;
     public string ResamplerTypeStr { get; set; } = "Bicubic";
-    public ResamplerType ResamplerType => GfzCliEnumParser.ParseDashRemoved<ResamplerType>(PositionStr);
+    public ResamplerType ResamplerType => GfzCliEnumParser.ParseDashRemoved<ResamplerType>(ResamplerTypeStr);
     public IResampler Resampler => IOptionsImageSharp.GetResampler(ResamplerType);
     public int Width { get; set; }
     public int Height { get; set; }
