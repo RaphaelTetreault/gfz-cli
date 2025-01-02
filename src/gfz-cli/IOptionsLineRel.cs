@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using GameCube.GFZ.GameData;
 
 namespace Manifold.GFZCLI;
 
@@ -32,12 +33,52 @@ public interface IOptionsLineRel
             Help = "The final lap background music index.",
         };
 
-        internal static readonly GfzCliArgument CourseIndex = new()
+        internal static readonly GfzCliArgument StageIndex = new()
         {
-            ArgumentName = Args.BgmIndex,
+            ArgumentName = Args.StageIndex,
             ArgumentType = typeof(byte).Name,
             ArgumentDefault = (byte)254, // default to invalid state
             Help = "The stage to modify's index.",
+        };
+
+        internal static readonly GfzCliArgument Cup = new()
+        {
+            ArgumentName = Args.Cup,
+            ArgumentType = typeof(Cup).Name,
+            ArgumentDefault = null,
+            Help = "Grand prix cup index.",
+        };
+
+        internal static readonly GfzCliArgument CupStageIndex = new()
+        {
+            ArgumentName = Args.CupStageIndex,
+            ArgumentType = typeof(byte).Name,
+            ArgumentDefault = (byte)254, // default to invalid state
+            Help = "The stage to modify's index.",
+        };
+
+        internal static readonly GfzCliArgument Difficulty = new()
+        {
+            ArgumentName = Args.Difficulty,
+            ArgumentType = typeof(byte).Name,
+            ArgumentDefault = (byte)254, // default to invalid state
+            Help = "Stage difficulty rating in number of stars ★.",
+        };
+
+        internal static readonly GfzCliArgument PilotNumber = new()
+        {
+            ArgumentName = Args.PilotNumber,
+            ArgumentType = typeof(byte).Name,
+            ArgumentDefault = (byte)254, // default to invalid state
+            Help = "Vehicle pilot number (face-value, not internal).",
+        };
+
+        internal static readonly GfzCliArgument VenueIndex = new()
+        {
+            ArgumentName = Args.VenueIndex,
+            ArgumentType = typeof(byte).Name,
+            ArgumentDefault = (byte)254, // default to invalid state
+            Help = "A stage's venue index.",
         };
 
         internal static readonly GfzCliArgument Value = new()
@@ -55,8 +96,8 @@ public interface IOptionsLineRel
         public const string BgmIndex = "bgm";
         public const string BgmFinalLapIndex = "bgmfl";
         public const string Cup = "cup";
-        public const string CupCourseIndex = "cup-course";
-        public const string CourseIndex = "course";
+        public const string CupStageIndex = "cup-course";
+        public const string StageIndex = "course";
         public const string Difficulty = "difficulty";
         public const string PilotNumber = "pilot";
         public const string VenueIndex = "venue";
@@ -84,19 +125,19 @@ public interface IOptionsLineRel
     /// <summary>
     ///     The numeric index of a stage.
     /// </summary>
-    [Option(Args.CourseIndex, Hidden = true)]
+    [Option(Args.StageIndex, Hidden = true)]
     public byte CourseIndex { get; set; }
 
     /// <summary>
     ///     The cup which references a number of stages (typically 5).
     /// </summary>
     [Option(Args.Cup, Hidden = true)]
-    public GameCube.GFZ.GameData.Cup Cup { get; set; }
+    public Cup Cup { get; set; }
 
     /// <summary>
     ///     The cup which references a number of stages (typically 5).
     /// </summary>
-    [Option(Args.CupCourseIndex, Hidden = true)]
+    [Option(Args.CupStageIndex, Hidden = true)]
     public byte CupCourseIndex { get; set; }
 
     /// <summary>

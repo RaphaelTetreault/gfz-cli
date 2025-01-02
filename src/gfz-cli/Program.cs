@@ -73,13 +73,15 @@ public static class Program
     public static readonly Dictionary<CliActionID, GfzCliAction> GfzCliActionsLibrary = [];
     public static readonly GfzCliAction[] GfzCliActions =
     [
-        // PROGRAM-SPECIFIC: note same class actions need to be initialzed before this code runs...
+        // PROGRAM-SPECIFIC: note actions in this class need to be initialzed before this code runs...
         ActionNone,
         ActionList,
         ActionUsage,
         // ARC
         ActionsARC.ActionArcPack,
         ActionsARC.ActionArcUnpack,
+        // ASSET LIBRARY
+        //      ActionsAssetLibrary.XXX
         // CARDATA
         ActionsCarData.ActionCarDataToTSV,
         ActionsCarData.ActionCardDataFromTSV,
@@ -101,8 +103,6 @@ public static class Program
         // FMI
         ActionsFMI.ActionFmiFromPlainText,
         ActionsFMI.ActionFmiToPlainText,
-        // GEN ASSETS
-
         // GCI
         ActionsGhost.ActionExtractGhostFromGci,
         // GMA
@@ -119,23 +119,22 @@ public static class Program
         //case CliActionID.lz_compress: ActionsLZ.LzCompress(options); break;
         //case CliActionID.lz_decompress: ActionsLZ.LzDecompress(options); break;
         // line__.rel
-        //case CliActionID.linerel_clear_all_course_names: ActionsLineREL.PatchClearAllCourseNames(options); break;
-        //case CliActionID.linerel_clear_all_venue_names: ActionsLineREL.PatchClearAllVenueNames(options); break;
-        //case CliActionID.linerel_clear_unused_course_names: ActionsLineREL.PatchClearUnusedCourseNames(options); break;
-        //case CliActionID.linerel_clear_unused_venue_names: ActionsLineREL.PatchClearUnusedVenueNames(options); break;
-        //case CliActionID.linerel_decrypt: ActionsLineREL.DecryptLineRel(options); break;
-        //case CliActionID.linerel_encrypt: ActionsLineREL.EncryptLineRel(options); break;
+        ActionsLineREL.ActionPatchClearAllCourseNames,
+        ActionsLineREL.ActionPatchClearAllVenueNames,
+        ActionsLineREL.ActionPatchClearUnusedCourseNames,
+        ActionsLineREL.ActionPatchClearUnusedVenueNames,
+        ActionsLineREL.ActionDecryptLineREL,
+        ActionsLineREL.ActionEncryptLineREL,
         ActionsLineREL.ActionPatchBgm,
         ActionsLineREL.ActionPatchBgmFinalLap,
         ActionsLineREL.ActionPatchBgmBoth,
-        //case CliActionID.linerel_set_cardata: ActionsLineREL.PatchSetCarData(options); break;
-        //case CliActionID.linerel_set_course_difficulty: ActionsLineREL.PatchSetCourseDifficulty(options); break;
-        //case CliActionID.linerel_set_course_name: ActionsLineREL.PatchSetCourseName(options); break;
-        //case CliActionID.linerel_set_cup_course: ActionsLineREL.PatchSetCupCourse(options); break;
-        //case CliActionID.linerel_set_machine_rating: ActionsLineREL.PatchMachineRating(options); break;
-        //case CliActionID.linerel_set_max_speed: ActionsLineREL.PatchMaxSpeed(options); break;
-        //case CliActionID.linerel_set_venue: ActionsLineREL.PatchSetVenueIndex(options); break;
-        //case CliActionID.linerel_set_venue_name: ActionsLineREL.PatchSetVenueName(options); break;
+        ActionsLineREL.ActionPatchSetCarData,
+        ActionsLineREL.ActionPatchSetCourseName,
+        ActionsLineREL.ActionPatchSetCupCourse,
+        ActionsLineREL.ActionPatchMachineRating,
+        ActionsLineREL.ActionPatchMaxSpeed,
+        ActionsLineREL.ActionPatchSetCourseVenue,
+        ActionsLineREL.ActionPatchSetVenueName,
         // TPL
         //case CliActionID.tpl_generate_mipmaps: ActionsTPL.TplGenerateMipmaps(options); break;
         //case CliActionID.tpl_pack: ActionsTPL.TplPack(options); break;

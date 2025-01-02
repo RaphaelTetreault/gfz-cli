@@ -88,7 +88,7 @@ public enum CliActionID
     [Action(CliActionIO.None, CliActionIO.None, CliActionOption.R_SerializationRegion, specialOptions: ActionExOptions.linerel_set_max_speed)]
     linerel_set_max_speed,
 
-    linerel_set_venue,
+    linerel_set_course_venue,
     linerel_set_venue_name,
     tpl_generate_mipmaps,
     tpl_pack,

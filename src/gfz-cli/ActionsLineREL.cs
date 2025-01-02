@@ -14,19 +14,6 @@ namespace Manifold.GFZCLI;
 
 public static class ActionsLineREL
 {
-    //public static readonly GfzCliAction Action = new()
-    //{
-    //    Description = "",
-    //    Action = ,
-    //    ActionID = CliActionID,
-    //    InputIO = CliActionIO,
-    //    OutputIO = CliActionIO,
-    //    IsOutputOptional = true,
-    //    ActionOptions = CliActionOption,
-    //    RequiredArguments = [],
-    //    OptionalArguments = [],
-    //};
-
     public static readonly GfzCliAction ActionPatchBgm = new()
     {
         Description = "Set the background music for a specific stage index.",
@@ -35,10 +22,10 @@ public static class ActionsLineREL
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliActionOption.PS,
+        ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
             IOptionsLineRel.Arguments.BgmIndex,
-            IOptionsLineRel.Arguments.CourseIndex,
+            IOptionsLineRel.Arguments.StageIndex,
             ],
         OptionalArguments = [],
     };
@@ -51,10 +38,10 @@ public static class ActionsLineREL
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliActionOption.PS,
+        ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
             IOptionsLineRel.Arguments.BgmFinalLapIndex,
-            IOptionsLineRel.Arguments.CourseIndex,
+            IOptionsLineRel.Arguments.StageIndex,
             ],
         OptionalArguments = [],
     };
@@ -67,12 +54,253 @@ public static class ActionsLineREL
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliActionOption.PS,
+        ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
             IOptionsLineRel.Arguments.BgmIndex,
             IOptionsLineRel.Arguments.BgmFinalLapIndex,
-            IOptionsLineRel.Arguments.CourseIndex,
+            IOptionsLineRel.Arguments.StageIndex,
             ],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionPatchSetCourseDifficulty = new()
+    {
+        Description = "Set course difficulty star rating for a specific stage.",
+        Action = PatchSetCourseDifficulty,
+        ActionID = CliActionID.linerel_set_course_difficulty,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PRS,
+        RequiredArguments = [
+            IOptionsLineRel.Arguments.StageIndex,
+            IOptionsLineRel.Arguments.Difficulty,
+            ],
+        OptionalArguments = [],
+    };
+
+    internal static readonly GfzCliArgument Value_CourseName = new()
+    {
+        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = null,
+        Help = "The name of the course.",
+    };
+
+    public static readonly GfzCliAction ActionPatchSetCourseName = new()
+    {
+        Description = "Set course name for a specific stage index.",
+        Action = PatchSetCourseName,
+        ActionID = CliActionID.linerel_set_course_name,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PRS,
+        RequiredArguments = [
+            IOptionsLineRel.Arguments.StageIndex,
+            Value_CourseName,
+            ],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionPatchClearAllCourseNames = new()
+    {
+        Description = "Clear all names in course name table.",
+        Action = PatchClearAllCourseNames,
+        ActionID = CliActionID.linerel_clear_all_course_names,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PRS,
+        RequiredArguments = [ Value_CourseName ],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionPatchClearUnusedCourseNames = new()
+    {
+        Description = "Clear all unused course names in course name table.",
+        Action = PatchClearUnusedCourseNames,
+        ActionID = CliActionID.linerel_clear_unused_course_names,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PRS,
+        RequiredArguments = [ Value_CourseName ],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionPatchSetCourseVenue = new()
+    {
+        Description = "Set course venue for a specific stage index.",
+        Action = PatchSetVenueIndex,
+        ActionID = CliActionID.linerel_set_course_venue,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PRS,
+        RequiredArguments = [
+            IOptionsLineRel.Arguments.StageIndex,
+            IOptionsLineRel.Arguments.VenueIndex,
+            ],
+        OptionalArguments = [],
+    };
+
+    internal static readonly GfzCliArgument Value_VenueName = new()
+    {
+        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = null,
+        Help = "The name of the venue.",
+    };
+
+    public static readonly GfzCliAction ActionPatchSetVenueName = new()
+    {
+        Description = "Set venue name for a specific venue index.",
+        Action = PatchSetVenueName,
+        ActionID = CliActionID.linerel_set_venue_name,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PRS,
+        RequiredArguments = [
+            IOptionsLineRel.Arguments.VenueIndex,
+            Value_VenueName,
+            ],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionPatchClearAllVenueNames = new()
+    {
+        Description = "Clear all names in venue name table.",
+        Action = PatchClearAllVenueNames,
+        ActionID = CliActionID.linerel_clear_all_venue_names,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PRS,
+        RequiredArguments = [ Value_VenueName ],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionPatchClearUnusedVenueNames = new()
+    {
+        Description = "Clear all unused course names in course name table.",
+        Action = PatchClearUnusedVenueNames,
+        ActionID = CliActionID.linerel_clear_unused_venue_names,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PRS,
+        RequiredArguments = [ Value_VenueName ],
+        OptionalArguments = [],
+    };
+
+    internal static readonly GfzCliArgument Value_CarData = new()
+    {
+        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = null,
+        Help = "The file path to cardata (compressed, decompressed, or tsv).",
+    };
+
+    public static readonly GfzCliAction ActionPatchSetCarData = new()
+    {
+        Description = "Set \"graph console performance settings\" machine stats.",
+        Action = PatchSetCarData,
+        ActionID = CliActionID.linerel_set_cardata,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PRS,
+        RequiredArguments = [ Value_CarData ],
+        OptionalArguments = [],
+    };
+
+    internal static readonly GfzCliArgument Value_MachineRating = new()
+    {
+        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = null,
+        Help = "The machine rating as 3 consecutive numbers. Letters SABCDE maps to 012345. 123 is ABC.",
+    };
+
+    public static readonly GfzCliAction ActionPatchMachineRating = new()
+    {
+        Description = "Set machine letter ratings (SABCDE).",
+        Action = PatchMachineRating,
+        ActionID = CliActionID.linerel_set_machine_rating,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PRS,
+        RequiredArguments = [
+            IOptionsLineRel.Arguments.PilotNumber,
+            Value_MachineRating,
+            ],
+        OptionalArguments = [],
+    };
+
+    internal static readonly GfzCliArgument Value_MaxSpeed = new()
+    {
+        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentType = typeof(float).Name,
+        ArgumentDefault = float.PositiveInfinity,
+        Help = "Vehicle max speed cap.",
+    };
+
+    public static readonly GfzCliAction ActionPatchMaxSpeed = new()
+    {
+        Description = "Patch vehicle max speed.",
+        Action = PatchMaxSpeed,
+        ActionID = CliActionID.linerel_set_max_speed,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PRS,
+        RequiredArguments = [],
+        OptionalArguments = [ Value_MaxSpeed ],
+    };
+
+    public static readonly GfzCliAction ActionPatchSetCupCourse = new()
+    {
+        Description = "Set an individual stage reference in a cup.",
+        Action = PatchSetCupCourse,
+        ActionID = CliActionID.linerel_set_cup_course,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.PRS,
+        RequiredArguments = [
+            IOptionsLineRel.Arguments.Cup,           // cup to modify
+            IOptionsLineRel.Arguments.CupStageIndex, // stage in cup to modify 0-5 (count: 6)
+            IOptionsLineRel.Arguments.StageIndex,    // stage index to use
+            ],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionDecryptLineREL = new()
+    {
+        Description = "Decrypt line__.bin to line__.rel file.",
+        Action = DecryptLineRel,
+        ActionID = CliActionID.linerel_decrypt,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPRS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionEncryptLineREL = new()
+    {
+        Description = "Encrypt line__.rel to line__.bin file.",
+        Action = EncryptLineRel,
+        ActionID = CliActionID.linerel_encrypt,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPRS,
+        RequiredArguments = [],
         OptionalArguments = [],
     };
 
@@ -137,7 +365,7 @@ public static class ActionsLineREL
         if (options.CupCourseIndex < MinCupCourseIndex || options.CupCourseIndex > MaxCupCourseIndex)
         {
             string msg =
-                $"Argument --{nameof(IOptionsLineRel.Args.CupCourseIndex)} " +
+                $"Argument --{nameof(IOptionsLineRel.Args.CupStageIndex)} " +
                 $"must be a value in the range 1-{MaxCupCourseIndex}.";
             throw new ArgumentException(msg);
         }
@@ -147,7 +375,7 @@ public static class ActionsLineREL
         // Validate index
         if (options.CourseIndex > MaxCourseIndex)
         {
-            string msg = $"Argument --{IOptionsLineRel.Args.CourseIndex} must be a value in the range 0-{MaxCourseIndex}.";
+            string msg = $"Argument --{IOptionsLineRel.Args.StageIndex} must be a value in the range 0-{MaxCourseIndex}.";
             throw new ArgumentException(msg);
         }
     }
@@ -160,7 +388,7 @@ public static class ActionsLineREL
         if (isInvalid)
         {
             string msg =
-                $"Argument --{IOptionsLineRel.Args.CourseIndex} " +
+                $"Argument --{IOptionsLineRel.Args.StageIndex} " +
                 $"must be a value in the range 0-{MaxCourseIndex} or exactly {0xFF}.";
             throw new ArgumentException(msg);
         }
@@ -311,6 +539,7 @@ public static class ActionsLineREL
         // Write out information
         Terminal.Write($"Set course {options.CourseIndex} name to \"{options.Value}\". ");
         Terminal.Write($"Bytes remaining: {remainingBytes}.");
+        Terminal.WriteLine();
     }
     private static void PatchClearCourseNames(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
@@ -323,6 +552,7 @@ public static class ActionsLineREL
 
         Terminal.Write($"Cleared all course names. ");
         Terminal.Write($"Bytes available: {remainingBytes}.");
+        Terminal.WriteLine();
     }
     private static void PatchClearUnusedCourseNames(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
@@ -345,8 +575,9 @@ public static class ActionsLineREL
 
         Terminal.Write($"Cleared non-region course names. ");
         Terminal.Write($"Bytes available: {remainingBytes}.");
+        Terminal.WriteLine();
     }
-    private static void PatchSetVenueIndex(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+    private static void PatchSetCourseVenueIndex(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         AssertCourseIndex(options);
         AssertVenueIndex(options);
@@ -493,8 +724,8 @@ public static class ActionsLineREL
         AssertValue(options);
 
         double maxSpeed = string.IsNullOrEmpty(options.Value)
-            ? double.PositiveInfinity      // default maxlue
-            : double.Parse(options.Value); // user defined value
+            ? Value_MaxSpeed.Default<float>() // default max value (should be positive infinity)
+            : double.Parse(options.Value);    // user defined value
 
         Pointer address = info.VehicleMaxSpeedCap9990KmhPtr;
         writer.JumpToAddress(address);
@@ -662,7 +893,7 @@ public static class ActionsLineREL
     public static void PatchClearUnusedCourseNames(Options options) => Patch(options, PatchClearUnusedCourseNames);
     public static void PatchClearAllVenueNames(Options options) => Patch(options, PatchClearVenueNames);
     public static void PatchClearUnusedVenueNames(Options options) => Patch(options, PatchClearUnusedVenueNames);
-    public static void PatchSetVenueIndex(Options options) => Patch(options, PatchSetVenueIndex);
+    public static void PatchSetVenueIndex(Options options) => Patch(options, PatchSetCourseVenueIndex);
     public static void PatchSetVenueName(Options options) => Patch(options, PatchSetVenueName);
     public static void PatchSetCarData(Options options) => Patch(options, PatchCarData);
     public static void PatchMachineRating(Options options) => Patch(options, PatchMachineRating);

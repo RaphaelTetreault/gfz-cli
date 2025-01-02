@@ -75,6 +75,11 @@ public enum CliActionOption
     PS = P_SearchPattern | S_SearchSubdirectories,
 
     /// <summary>
+    ///     -p -r -s
+    /// </summary>
+    PRS = P_SearchPattern | R_SerializationRegion | S_SearchSubdirectories,
+
+    /// <summary>
     ///     -o -p -s
     /// </summary>
     OPS = O_OverwriteFiles | P_SearchPattern | S_SearchSubdirectories,
