@@ -12,7 +12,7 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsIO
 {
-    public static readonly GfzCliAction ActionInOutGMA = new()
+    public static readonly GfzCliAction ActionIOGma = new()
     {
         Description = "Round-trip serialize GMA files.",
         Action = InOutGMA,
@@ -25,7 +25,7 @@ public static class ActionsIO
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionInOutTPL = new()
+    public static readonly GfzCliAction ActionIOTpl = new()
     {
         Description = "Round-trip serialize TPL files.",
         Action = InOutTPL,
@@ -38,7 +38,7 @@ public static class ActionsIO
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionInOutScene = new()
+    public static readonly GfzCliAction ActionIOScene = new()
     {
         Description = "Round-trip serialize COLI_COURSE (scene) files.",
         Action = InOutScene,
@@ -52,7 +52,7 @@ public static class ActionsIO
     };
 
     // TODO: probably belongs in ActionsColiCourse
-    public static readonly GfzCliAction ActionInOutScenePatch = new()
+    public static readonly GfzCliAction ActionIOScenePatch = new()
     {
         Description = "Patch COLI_COURSE (scene) auto-generate timestamp comment to help diff-ing.",
         Action = InOutScene,

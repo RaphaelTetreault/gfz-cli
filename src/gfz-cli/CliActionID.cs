@@ -13,7 +13,8 @@ public enum CliActionID
 
     arc_unpack,
     arc_pack,
-    auto_rename_gci,
+    asset_library_generate,
+    auto_rename_gci, // UNIMPLEMENTED
     cardata_from_tsv,
     cardata_to_tsv,
     colicourse_patch_fog,
@@ -27,7 +28,6 @@ public enum CliActionID
     emblems_bin_to_images,
     fmi_from_plaintext,
     fmi_to_plaintext,
-    generate_asset_library,
     gci_extract_ghost,
     gma_patch_submesh_render_flags,
     io_gma,

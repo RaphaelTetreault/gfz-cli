@@ -19,7 +19,43 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsEmblem
 {
-    internal static GfzCliAction UsageEmblemsBinToImages = new()
+    internal static GfzCliAction ActionEmblemGciToImage = new()
+    {
+        Description = "Extract images from GCI emblem save files.",
+        Action = EmblemGciToImage,
+        ActionID = CliActionID.emblem_gci_to_image,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [
+        IOptionsImageSharp.Arguments.ImageFormat,
+            ],
+    };
+
+    internal static GfzCliAction ActionEmblemGciFromImage = new()
+    {
+        Description = "Create a GCI emblem save file from one image.",
+        Action = EmblemGciFromImage,
+        ActionID = CliActionID.emblem_gci_from_image,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [
+            IOptionsImageSharp.Arguments.Resampler,
+            ],
+        OptionalArguments = [
+            IOptionsImageSharp.Arguments.Compand,
+            IOptionsImageSharp.Arguments.ResizeMode,
+            IOptionsImageSharp.Arguments.PadColor,
+            IOptionsImageSharp.Arguments.Position,
+            IOptionsImageSharp.Arguments.PremultiplyAlpha,
+            ],
+    };
+
+    internal static GfzCliAction ActionEmblemsBinToImages = new()
     {
         Description = "Extract images from emblem binary archives.",
         Action = EmblemsBinToImages,
@@ -34,7 +70,7 @@ public static class ActionsEmblem
             ],
     };
 
-    internal static GfzCliAction UsageEmblemsBinFromImages = new()
+    internal static GfzCliAction ActionEmblemsBinFromImages = new()
     {
         Description = "Compile an emblem binary archive from multiple images.",
         Action = EmblemsBinFromImages,
@@ -42,42 +78,6 @@ public static class ActionsEmblem
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.File,
         IsOutputOptional = false,
-        ActionOptions = CliActionOption.OPS,
-        RequiredArguments = [
-            IOptionsImageSharp.Arguments.Resampler,
-            ],
-        OptionalArguments = [
-            IOptionsImageSharp.Arguments.Compand,
-            IOptionsImageSharp.Arguments.ResizeMode,
-            IOptionsImageSharp.Arguments.PadColor,
-            IOptionsImageSharp.Arguments.Position,
-            IOptionsImageSharp.Arguments.PremultiplyAlpha,
-            ],
-    };
-
-    internal static GfzCliAction UsageEmblemGciToImage = new()
-    {
-        Description = "Extract images from GCI emblem save files.",
-        Action = EmblemGciToImage,
-        ActionID = CliActionID.emblem_gci_to_image,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.Path,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.OPS,
-        RequiredArguments = [],
-        OptionalArguments = [
-            IOptionsImageSharp.Arguments.ImageFormat,
-            ],
-    };
-
-    internal static GfzCliAction UsageEmblemGciFromImage = new()
-    {
-        Description = "Create a GCI emblem save file from one image.",
-        Action = EmblemGciFromImage,
-        ActionID = CliActionID.emblem_gci_from_image,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.Path,
-        IsOutputOptional = true,
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [
             IOptionsImageSharp.Arguments.Resampler,

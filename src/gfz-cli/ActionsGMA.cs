@@ -26,7 +26,7 @@ public static class ActionsGMA
         Help = "The model render flags to set.",
     };
 
-    public static readonly GfzCliAction ActionPatchSubmeshRenderFlags = new()
+    public static readonly GfzCliAction ActionGmaPatchSubmeshRenderFlags = new()
     {
         Description = "Patch render flags on model submesh.",
         Action = PatchSubmeshRenderFlags,

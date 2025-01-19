@@ -22,9 +22,29 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsAssetLibrary
 {
+    public static readonly GfzCliAction ActionAssetLibraryGenerate = new()
+    {
+        Description = "Create a text-reference-linked GMA and TPL library.",
+        Action = CreateGmaTplLibrary,
+        ActionID = CliActionID.asset_library_generate,
+        InputIO = CliActionIO.Directory,
+        OutputIO = CliActionIO.Directory,
+        IsOutputOptional = false,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [
+            IOptionsImageSharp.Arguments.Resampler,
+            ],
+    };
+
+    private const string Designator = "Asset Library";
+
     /// <summary>
-    ///     Create an asset library for extracted game ISO.
+    ///     Create library of individual textures and models from TPLs and GMAs, respectively.
+    ///     Library includes files which correlate textures to each model using named references.
     /// </summary>
+    /// <param name="options"></param>
+    /// <exception cref="ArgumentException">Thrown if input or output are files.</exception>
     /// <remarks>
     ///     Output not optional. Input is directory, ideally root of ISO directory.
     /// <list type="bullet">
@@ -45,29 +65,6 @@ public static class ActionsAssetLibrary
     ///     </item>
     /// </list>
     /// </remarks>
-    public static readonly GfzCliAction ActionCreateGmaTplLibrary = new()
-    {
-        Description = "Create a text-reference-linked GMA and TPL library.",
-        Action = CreateGmaTplLibrary,
-        ActionID = CliActionID.generate_asset_library,
-        InputIO = CliActionIO.Directory,
-        OutputIO = CliActionIO.Directory,
-        IsOutputOptional = false,
-        ActionOptions = CliActionOption.OPS,
-        RequiredArguments = [],
-        OptionalArguments = [
-            IOptionsImageSharp.Arguments.Resampler,
-            ],
-    };
-
-    private const string Designator = "Asset Library";
-
-    /// <summary>
-    ///     Create library of individual textures and models from TPLs and GMAs, respectively.
-    ///     Library includes files which correlate textures to each model using named references.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <exception cref="ArgumentException">Thrown if input or output are files.</exception>
     public static void CreateGmaTplLibrary(Options options)
     {
         // Assert that destination is a folder.
@@ -290,7 +287,7 @@ public static class ActionsAssetLibrary
     }
 
     /// <summary>
-    ///     Writes single texture bundle (texture with mipmaps) as single <see cref="GxTexture"/>.
+    ///     Writes single texture bundle (texture with mipmaps) as single <see cref="GxTextureAsset"/>.
     /// </summary>
     /// <param name="textureBundle"></param>
     /// <param name="fullOutputPath"></param>
@@ -344,7 +341,7 @@ public static class ActionsAssetLibrary
         }
 
         // Prepare container
-        GxTexture gxTex = new()
+        GxTextureAsset gxTex = new()
         {
             Width = description.Width,
             Height = description.Height,
@@ -355,7 +352,7 @@ public static class ActionsAssetLibrary
         };
         // Write out texture
         EnsureDirectoriesExist(fullOutputPath);
-        using var writer = new EndianBinaryWriter(File.Create(fullOutputPath), GxTexture.endianness);
+        using var writer = new EndianBinaryWriter(File.Create(fullOutputPath), GxTextureAsset.endianness);
         writer.Write(gxTex);
     }
 

@@ -13,7 +13,7 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsISO
 {
-    public static readonly GfzCliAction ActionExtractISO = new()
+    public static readonly GfzCliAction ActionIsoExtractAll = new()
     {
         Description = "Extract system data and files from GameCube ISO file.",
         Action = IsoExtractAll,

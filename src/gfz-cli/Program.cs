@@ -68,41 +68,41 @@ public static class Program
         ActionsARC.ActionArcPack,
         ActionsARC.ActionArcUnpack,
         // ASSET LIBRARY
-        ActionsAssetLibrary.ActionCreateGmaTplLibrary,
+        ActionsAssetLibrary.ActionAssetLibraryGenerate,
         // CARDATA
+        ActionsCarData.ActionCarDataFromTSV,
         ActionsCarData.ActionCarDataToTSV,
-        ActionsCarData.ActionCardDataFromTSV,
         // COLICOURSE
-        ActionsColiCourse.ActionPatchFog,
-        ActionsColiCourse.ActionPatchObjectRenderFlags,
-        // ISO
-        ActionsISO.ActionExtractISO,
+        ActionsColiCourse.ActionColicoursePatchFog,
+        ActionsColiCourse.ActionColicoursePatchObjectRenderFlags,
         //      TODO: Extract ./files/ only
         //      TODO: Extract ./sys/ only
         // ENCODE TEXT
         ActionsEncodeText.ActionEncodeBytesToShiftJis,
         ActionsEncodeText.ActionEncodeWindows1252ToShiftJis,
         // EMBLEM
-        ActionsEmblem.UsageEmblemsBinFromImages,
-        ActionsEmblem.UsageEmblemsBinToImages,
-        ActionsEmblem.UsageEmblemGciFromImage,
-        ActionsEmblem.UsageEmblemGciToImage,
+        ActionsEmblem.ActionEmblemGciFromImage,
+        ActionsEmblem.ActionEmblemGciToImage,
+        ActionsEmblem.ActionEmblemsBinFromImages,
+        ActionsEmblem.ActionEmblemsBinToImages,
         // FMI
         ActionsFMI.ActionFmiFromPlainText,
         ActionsFMI.ActionFmiToPlainText,
         // GCI
-        ActionsGhost.ActionExtractGhostFromGci,
+        ActionsGhost.ActionGciExtractGhost,
         //      TODO: ActionsGCI - rename file...
         // GMA
-        ActionsGMA.ActionPatchSubmeshRenderFlags,
+        ActionsGMA.ActionGmaPatchSubmeshRenderFlags,
+        // ISO
+        ActionsISO.ActionIsoExtractAll,
         // IO: IN-OUT TESTS
-        ActionsIO.ActionInOutGMA,
-        ActionsIO.ActionInOutTPL,
-        ActionsIO.ActionInOutScene,
-        ActionsIO.ActionInOutScenePatch,
+        ActionsIO.ActionIOGma,
+        ActionsIO.ActionIOScene,
+        ActionsIO.ActionIOScenePatch,
+        ActionsIO.ActionIOTpl,
         // LZ
-        ActionsLZ.ActionLzCompress,
-        ActionsLZ.ActionLzDecompress,
+        ActionsLZ.ActionLZCompress,
+        ActionsLZ.ActionLZDecompress,
         // line__.rel
         ActionsLineREL.ActionPatchClearAllCourseNames,
         ActionsLineREL.ActionPatchClearAllVenueNames,

@@ -6,7 +6,7 @@ namespace Manifold.GFZCLI;
 
 public static class ActionsLZ
 {
-    public static readonly GfzCliAction ActionLzCompress = new()
+    public static readonly GfzCliAction ActionLZCompress = new()
     {
         Description = "Compress files into an LZ file.",
         Action = LzCompress,
@@ -19,7 +19,7 @@ public static class ActionsLZ
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionLzDecompress = new()
+    public static readonly GfzCliAction ActionLZDecompress = new()
     {
         Description = "Decompress an LZ file.",
         Action = LzDecompress,

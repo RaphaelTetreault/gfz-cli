@@ -19,7 +19,7 @@ public static class ActionsColiCourse
         Help = "The render flag value in decimal to apply.",
     };
 
-    public static readonly GfzCliAction ActionPatchFog = new()
+    public static readonly GfzCliAction ActionColicoursePatchFog = new()
     {
         Description = "Patch the fog parameters of scenes.",
         Action = PatchFog,
@@ -41,7 +41,7 @@ public static class ActionsColiCourse
             ],
     };
 
-    public static readonly GfzCliAction ActionPatchObjectRenderFlags = new()
+    public static readonly GfzCliAction ActionColicoursePatchObjectRenderFlags = new()
     {
         Description = "Patch a scene object's render flags by name.",
         Action = PatchSceneObjectDynamicRenderFlags,
