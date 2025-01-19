@@ -22,6 +22,29 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsAssetLibrary
 {
+    /// <summary>
+    ///     Create an asset library for extracted game ISO.
+    /// </summary>
+    /// <remarks>
+    ///     Output not optional. Input is directory, ideally root of ISO directory.
+    /// <list type="bullet">
+    ///     <item>
+    ///         <term>TPL</term>
+    ///         <description>
+    ///             Creates .PNG and .GXTEX files for each image in TPLs. Duplicates are
+    ///             not written using CRC32 hashes of the image data.
+    ///         </description>
+    ///     </item>
+    ///     <item>
+    ///         <term>GMA</term>
+    ///         <description>
+    ///             Creates .GMAREF files which map GMA to individual GCMF files. Creates 
+    ///             .GCMFX files for each GCMF in models. Duplicates are not written using
+    ///             CRC32 hashes of the model data.
+    ///         </description>
+    ///     </item>
+    /// </list>
+    /// </remarks>
     public static readonly GfzCliAction ActionCreateGmaTplLibrary = new()
     {
         Description = "Create a text-reference-linked GMA and TPL library.",

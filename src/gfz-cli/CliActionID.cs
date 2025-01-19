@@ -27,31 +27,6 @@ public enum CliActionID
     emblems_bin_to_images,
     fmi_from_plaintext,
     fmi_to_plaintext,
-
-    /// <summary>
-    ///     Create an asset library for extracted game ISO.
-    /// </summary>
-    /// <remarks>
-    ///     Output not optional. Input is directory, ideally root of ISO directory.
-    /// <list type="bullet">
-    ///     <item>
-    ///         <term>TPL</term>
-    ///         <description>
-    ///             Creates .PNG and .GXTEX files for each image in TPLs. Duplicates are
-    ///             not written using CRC32 hashes of the image data.
-    ///         </description>
-    ///     </item>
-    ///     <item>
-    ///         <term>GMA</term>
-    ///         <description>
-    ///             Creates .GMAREF files which map GMA to individual GCMF files. Creates 
-    ///             .GCMFX files for each GCMF in models. Duplicates are not written using
-    ///             CRC32 hashes of the model data.
-    ///         </description>
-    ///     </item>
-    /// </list>
-    /// </remarks>
-    [Action(CliActionIO.Directory, CliActionIO.Directory, CliActionOption.O, outputOptional: false)]
     generate_asset_library,
     gci_extract_ghost,
     gma_patch_submesh_render_flags,
@@ -59,8 +34,6 @@ public enum CliActionID
     io_scene,
     io_scene_patch,
     io_tpl,
-    live_camera_stage_to_tsv,
-    live_camera_stage_from_tsv,
     lz_compress,
     lz_decompress,
     linerel_clear_all_course_names,
@@ -77,17 +50,7 @@ public enum CliActionID
     linerel_set_course_name,
     linerel_set_cup_course,
     linerel_set_machine_rating,
-
-    /// <summary>
-    ///     Override the game's internal max speed cap.
-    /// </summary>
-    /// <remarks>
-    ///     The game' max speed is 9990 km/h. Calling this action without an
-    ///     argument will set the max speed cap to positive infinity.
-    /// </remarks>
-    [Action(CliActionIO.None, CliActionIO.None, CliActionOption.R_SerializationRegion, specialOptions: ActionExOptions.linerel_set_max_speed)]
     linerel_set_max_speed,
-
     linerel_set_course_venue,
     linerel_set_venue_name,
     tpl_generate_mipmaps,

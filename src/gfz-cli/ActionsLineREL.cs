@@ -719,6 +719,14 @@ public static class ActionsLineREL
         writer.JumpToAddress(address);
         writer.Write(vehicleRating);
     }
+
+    /// <summary>
+    ///     Override the game's internal max speed cap.
+    /// </summary>
+    /// <remarks>
+    ///     The game' max speed is 9990 km/h. Calling this action without an
+    ///     argument will set the max speed cap to positive infinity.
+    /// </remarks>
     private static void PatchMaxSpeed(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         AssertValue(options);

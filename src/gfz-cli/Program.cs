@@ -57,19 +57,6 @@ public static class Program
         OptionalArguments = [],
     };
 
-    //public static readonly GfzCliAction Action = new()
-    //{
-    //    Description = "",
-    //    Action = ,
-    //    ActionID = CliActionID,
-    //    InputIO = CliActionIO,
-    //    OutputIO = CliActionIO,
-    //    IsOutputOptional = true,
-    //    ActionOptions = CliActionOption,
-    //    RequiredArguments = [],
-    //    OptionalArguments = [],
-    //};
-
     public static readonly Dictionary<CliActionID, GfzCliAction> GfzCliActionsLibrary = [];
     public static readonly GfzCliAction[] GfzCliActions =
     [
@@ -90,8 +77,8 @@ public static class Program
         ActionsColiCourse.ActionPatchObjectRenderFlags,
         // ISO
         ActionsISO.ActionExtractISO,
-        // TODO: Extract ./files/ only
-        // TODO: Extract ./sys/ only
+        //      TODO: Extract ./files/ only
+        //      TODO: Extract ./sys/ only
         // ENCODE TEXT
         ActionsEncodeText.ActionEncodeBytesToShiftJis,
         ActionsEncodeText.ActionEncodeWindows1252ToShiftJis,
@@ -105,6 +92,7 @@ public static class Program
         ActionsFMI.ActionFmiToPlainText,
         // GCI
         ActionsGhost.ActionExtractGhostFromGci,
+        //      TODO: ActionsGCI - rename file...
         // GMA
         ActionsGMA.ActionPatchSubmeshRenderFlags,
         // IO: IN-OUT TESTS
@@ -112,9 +100,6 @@ public static class Program
         ActionsIO.ActionInOutTPL,
         ActionsIO.ActionInOutScene,
         ActionsIO.ActionInOutScenePatch,
-        // LIVE CAMERA STAGE
-        //case CliActionID.live_camera_stage_from_tsv: ActionsLiveCameraStage.LiveCameraStageFromTsv(options); break;
-        //case CliActionID.live_camera_stage_to_tsv: ActionsLiveCameraStage.LiveCameraStageToTsv(options); break;
         // LZ
         ActionsLZ.ActionLzCompress,
         ActionsLZ.ActionLzDecompress,
