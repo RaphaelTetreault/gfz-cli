@@ -391,10 +391,10 @@ public static class ActionsAssetLibrary
                 // The index the model wants from the TPL
                 int tplTextureIndex = gcmf.TevLayers[index].TplTextureIndex;
 
-                // Apply as normal
+                // Get the texture name using index
                 if (tplTextureIndex < gmaTextures.Length)
                     tevTextureReferences[index] = gmaTextures[tplTextureIndex];
-                // weird stuff with vehicle textures, basically write an error
+                // Weird stuff with vehicle textures, basically write an error
                 else
                     tevTextureReferences[index] = $"dynamic-reference:{tplTextureIndex}";
             }
@@ -432,7 +432,7 @@ public static class ActionsAssetLibrary
             OSPath gmarefOutputPath = outputPath.Copy();
             string fileName = Path.GetFileNameWithoutExtension(gma.FileName);
             gmarefOutputPath.SetFileName(fileName);
-            gmarefOutputPath.SetExtensions("gmaref");
+            gmarefOutputPath.SetExtensions(GmaRef.Extension);
             string directories = Path.GetDirectoryName(inputPath)![options.InputPath.Length..];
             gmarefOutputPath.PushDirectories(directories);
 
@@ -442,11 +442,11 @@ public static class ActionsAssetLibrary
             {
                 // Create .GMAREF file
                 EnsureDirectoriesExist(gmarefOutputPath);
-                using var writer = new StreamWriter(File.Create(gmarefOutputPath));
+                using var writer = new PlainTextWriter(File.Create(gmarefOutputPath), GmaRef.Encoding);
                 // Write a reference to each GCMF for this GMA file as a .GMAREF
-                int padWidth = gcmfAssetNames.Count.ToString().Length;
-                for (int i = 0; i < gcmfAssetNames.Count; i++)
-                    writer.Write($"{i.PadLeft(padWidth)}:\t{gcmfAssetNames[i]}\n");
+                GmaRef gmaRef = new();
+                gmaRef.GcmfModels = gcmfAssetNames.ToArray();
+                gmaRef.Serialize(writer);
             }
         }
     }
