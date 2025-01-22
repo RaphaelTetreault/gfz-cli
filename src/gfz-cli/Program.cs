@@ -173,8 +173,13 @@ public static class Program
         bool noArgumentsPassed = args.Length == 0;
         if (noArgumentsPassed)
         {
-            string msg = "You must call this program using arguments via the Console/Terminal.";
-            Terminal.WriteLine(msg, ConsoleColor.Black, ConsoleColor.Red);
+            string msg =
+                "Invalid use of program.\n" +
+                "Use command LIST to list all possible actions.\n" +
+                "Use command USAGE to show usage for all commands.\n" +
+                "Use command USAGE <command> to show specific command usage.";
+            //Terminal.WriteLine(msg, ConsoleColor.White, ConsoleColor.DarkRed);
+            Terminal.WriteLine(msg);
             Terminal.WriteLine();
             // Force help page
             args = HelpArg;
@@ -189,7 +194,7 @@ public static class Program
         if (noArgumentsPassed)
         {
             string msg = "Press ENTER to continue.";
-            Terminal.Write(msg, ConsoleColor.Black, ConsoleColor.Red);
+            Terminal.Write(msg, ConsoleColor.DarkRed, ConsoleColor.Black);
             Terminal.WriteLine();
             Console.Read();
         }
@@ -228,19 +233,28 @@ public static class Program
         throw new NotImplementedException();
     }
 
-    public static void PrintActionUsage(Options _)
+    public static void PrintActionUsage(Options options)
     {
-        // TODO: distinguish 'usage' from 'usage action'
-
-        foreach (var kvp in GfzCliActionsLibrary)
+        if (string.IsNullOrWhiteSpace(options.InputPath))
         {
-            // Skip these helpers
-            if (kvp.Key == CliActionID.none ||
-                kvp.Key == CliActionID.list || 
-                kvp.Key == CliActionID.usage)
-                continue;
+            // No action specified, so print all
+            foreach (var kvp in GfzCliActionsLibrary)
+            {
+                // Skip these helpers
+                if (kvp.Key == CliActionID.none ||
+                    kvp.Key == CliActionID.list ||
+                    kvp.Key == CliActionID.usage)
+                    continue;
 
-            kvp.Value.PrintAllArguments();
+                kvp.Value.PrintAllArguments();
+            }
+        }
+        else
+        {
+            // Action specified, print specific
+            string actionStr = options.InputPath;
+            CliActionID actionID = GfzCliEnumParser.ParseUnderscoreToDash<CliActionID>(actionStr);
+            PrintAction(actionID);
         }
     }
 
@@ -257,4 +271,11 @@ public static class Program
             kvp.Value.PrintActionAndDescription();
         }
     }
+
+    public static void PrintAction(CliActionID action)
+    {
+        var gfzCliAction = GfzCliActionsLibrary[action];
+        gfzCliAction.PrintAllArguments();
+    }
+
 }
