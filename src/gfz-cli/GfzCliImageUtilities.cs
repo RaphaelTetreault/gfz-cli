@@ -1,4 +1,5 @@
-﻿using GameCube.GX.Texture;
+﻿using GameCube.GFZ.TPL;
+using GameCube.GX.Texture;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;

@@ -37,6 +37,21 @@ public static class ActionsAssetLibrary
             ],
     };
 
+    public static readonly GfzCliAction ActionAssetImageToGxtex = new()
+    {
+        Description = "Convert image to a raw GameCube GX texture.",
+        Action = ImageToGxTexture,
+        ActionID = CliActionID.asset_image_to_gxtex,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = false,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [
+            IOptionsImageSharp.Arguments.Resampler,
+            ],
+    };
+
     private const string Designator = "Asset Library";
 
     /// <summary>
@@ -158,6 +173,47 @@ public static class ActionsAssetLibrary
         }
     }
 
+
+    public static void ImageToGxTexture(Options options)
+    {
+        // TODO: ingject search pattern?
+
+        Terminal.WriteLine($"{Designator}: converting image to GameCube GX texture.");
+        ParallelizeFileInFileOutTasks(options, ImageToGxTexture);
+        Terminal.WriteLine($"{Designator}: done.");
+    }
+
+    public static void ImageToGxTexture(Options options, OSPath inputPath, OSPath outputPath)
+    {
+        Image<Rgba32> image = (Image<Rgba32>)Image.Load(inputPath);
+        IResampler resampler = options.Resampler;
+        ImageToGxTexture(options, outputPath, image, resampler);
+    }
+
+    public static void ImageToGxTexture(Options options, OSPath outputPath, Image<Rgba32> image, IResampler resampler)
+    {
+        // Convert image to texture
+        Texture texture = ImageToTexture(image);
+        // Create TextureBundle
+        int textureCount = 1 + Texture.GetMaxMipmapCount(texture.Width, texture.Height);
+        // TRICK: Set only the first texture in the bundle. The default state for
+        //        Element.IsValid is false, which will force regeneration in the
+        //        serialization code :)
+        TextureBundleElement[] elements = new TextureBundleElement[textureCount];
+        elements[0] = new TextureBundleElement(texture);
+        // Init remaining elements
+        for (int i = 1; i < elements.Length; i++)
+            elements[i] = new();
+
+        // Add elements to bundle
+        // TODO: remove hardcoded format
+        TextureBundle textureBundle = new TextureBundle(elements, TextureFormat.CMPR);
+
+        // Save out
+        SaveGxtexAndPng(options, outputPath, resampler, textureBundle);
+    }
+
+
     /// <summary>
     ///     
     /// </summary>
@@ -196,35 +252,50 @@ public static class ActionsAssetLibrary
             textureNames[i] = name;
 
             // Create final output path
-            OSPath imageOutputPath = outputPath.Copy();
-            imageOutputPath.SetFileName(name);
-            imageOutputPath.SetExtensions("png");
-            OSPath gxtexOutputPath = imageOutputPath.Copy();
-            gxtexOutputPath.SetExtensions("gxtex");
-
-            // PNG
-            {
-                bool doWriteWrite = CheckWillFileWrite(options, imageOutputPath, out ActionTaskResult result);
-                PrintFileWriteResult(result, imageOutputPath, options.ActionStr);
-                if (doWriteWrite)
-                {
-                    WriteTextureBundleAsPNG(textureBundle, imageOutputPath, resampler);
-                }
-            }
-
-            // GXTEX
-            {
-                bool doWriteWrite = CheckWillFileWrite(options, gxtexOutputPath, out ActionTaskResult result);
-                PrintFileWriteResult(result, gxtexOutputPath, options.ActionStr);
-                if (doWriteWrite)
-                {
-                    WriteTextureBundleAsGxTexture(textureBundle, gxtexOutputPath, resampler);
-                }
-            }
+            OSPath outputPathCopy = outputPath.Copy();
+            outputPathCopy.SetFileName(name);
+            SaveGxtexAndPng(options, outputPathCopy, resampler, textureBundle);
         }
 
         // To be used to map GMA texture indexes to specific image files.
         return textureNames;
+    }
+
+    /// <summary>
+    ///     Saves out <paramref name="textureBundle"/> as .GXTEX and .PNG
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="gxtexOutputPath"></param>
+    /// <param name="imageOutputPath"></param>
+    /// <param name="resampler"></param>
+    /// <param name="textureBundle"></param>
+    private static void SaveGxtexAndPng(Options options, OSPath outputPath, IResampler resampler, TextureBundle textureBundle)
+    {
+        // Prepare output paths
+        OSPath imageOutputPath = outputPath.Copy();
+        imageOutputPath.SetExtensions("png");
+        OSPath gxtexOutputPath = imageOutputPath.Copy();
+        gxtexOutputPath.SetExtensions("gxtex");
+
+        // PNG
+        {
+            bool doWriteWrite = CheckWillFileWrite(options, imageOutputPath, out ActionTaskResult result);
+            PrintFileWriteResult(result, imageOutputPath, options.ActionStr);
+            if (doWriteWrite)
+            {
+                WriteTextureBundleAsPNG(textureBundle, imageOutputPath, resampler);
+            }
+        }
+
+        // GXTEX
+        {
+            bool doWriteWrite = CheckWillFileWrite(options, gxtexOutputPath, out ActionTaskResult result);
+            PrintFileWriteResult(result, gxtexOutputPath, options.ActionStr);
+            if (doWriteWrite)
+            {
+                WriteTextureBundleAsGxTexture(textureBundle, gxtexOutputPath, resampler);
+            }
+        }
     }
 
     /// <summary>
@@ -244,7 +315,9 @@ public static class ActionsAssetLibrary
 
         // Always process main texture
         var mainTexture = TextureToImage(textureBundle.Elements[0].Texture);
+        // Apply main texture to blank image
         image.Mutate(c => c.DrawImage(mainTexture, 1f));
+        // Set offset for next iteration
         offset.X = mainTexture.Width;
 
         // Get or generate mipmaps
@@ -259,7 +332,7 @@ public static class ActionsAssetLibrary
                 // If valid, load as-is
                 mipmap = TextureToImage(textureData.Texture);
             }
-            else // is corrupted
+            else // is corrupted or missing
             {
                 // Otherwise is corrupted, generate new mipmap
                 int resizeWidth = mainTexture.Width >> i;
@@ -267,8 +340,8 @@ public static class ActionsAssetLibrary
                 // If texture does not even have data, break loop
                 if (resizeWidth == 0 || resizeHeight == 0)
                     break;
-                // Resize texture
-                var generatedMipmap = image.Clone(c => c.Resize(resizeWidth, resizeHeight, resampler));
+                // Resize main texture for new mipmap
+                var generatedMipmap = mainTexture.Clone(c => c.Resize(resizeWidth, resizeHeight, resampler));
                 mipmap = generatedMipmap;
             }
 
@@ -450,4 +523,6 @@ public static class ActionsAssetLibrary
             }
         }
     }
+
+
 }
