@@ -174,6 +174,10 @@ public static class ActionsAssetLibrary
     }
 
 
+    /// <summary>
+    ///     Create a .GXTEX and preview .PNG from a source image.
+    /// </summary>
+    /// <param name="options"></param>
     public static void ImageToGxTexture(Options options)
     {
         // TODO: ingject search pattern?
@@ -183,6 +187,12 @@ public static class ActionsAssetLibrary
         Terminal.WriteLine($"{Designator}: done.");
     }
 
+    /// <summary>
+    ///     Create a .GXTEX and preview .PNG from a source image.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputPath">Input image path.</param>
+    /// <param name="outputPath">Output .GXTEX and .PNG path.</param>
     public static void ImageToGxTexture(Options options, OSPath inputPath, OSPath outputPath)
     {
         Image<Rgba32> image = (Image<Rgba32>)Image.Load(inputPath);
@@ -190,6 +200,13 @@ public static class ActionsAssetLibrary
         ImageToGxTexture(options, outputPath, image, resampler);
     }
 
+    /// <summary>
+    ///     Create a .GXTEX and preview .PNG from a source image.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="outputPath">Output .GXTEX and .PNG path.</param>
+    /// <param name="image">The image to convert to .GXTEX.</param>
+    /// <param name="resampler">The image resampler.</param>
     public static void ImageToGxTexture(Options options, OSPath outputPath, Image<Rgba32> image, IResampler resampler)
     {
         // Convert image to texture
@@ -206,8 +223,9 @@ public static class ActionsAssetLibrary
             elements[i] = new();
 
         // Add elements to bundle
+        // TODO: add options for image resize before processing. (review emblem functions)
         // TODO: remove hardcoded format
-        TextureBundle textureBundle = new TextureBundle(elements, TextureFormat.CMPR);
+        TextureBundle textureBundle = new(elements, TextureFormat.CMPR);
 
         // Save out
         SaveGxtexAndPng(options, outputPath, resampler, textureBundle);
@@ -262,11 +280,10 @@ public static class ActionsAssetLibrary
     }
 
     /// <summary>
-    ///     Saves out <paramref name="textureBundle"/> as .GXTEX and .PNG
+    ///     Creates a .GXTEX and preview .PNG from a <paramref name="textureBundle"/>.
     /// </summary>
     /// <param name="options"></param>
-    /// <param name="gxtexOutputPath"></param>
-    /// <param name="imageOutputPath"></param>
+    /// <param name="outputPath"></param>
     /// <param name="resampler"></param>
     /// <param name="textureBundle"></param>
     private static void SaveGxtexAndPng(Options options, OSPath outputPath, IResampler resampler, TextureBundle textureBundle)
