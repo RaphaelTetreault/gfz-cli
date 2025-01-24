@@ -290,7 +290,7 @@ public class OSPath
         bool argHasDirectory = !string.IsNullOrEmpty(directory);
         if (argHasDirectory)
         {
-            string msg = $"Argument {nameof(fileName)} contains directories.";
+            string msg = $"Argument {nameof(fileName)} \"{fileName}\" contains directories.";
             throw new ArgumentException(msg);
         }
 

@@ -378,7 +378,7 @@ public static class GfzCliUtilities
     {
         OSPath backupPath = filePath.Copy();
         DateTime dateTime = DateTime.Now;
-        string dateMarker = dateTime.ToShortDateString();
+        string dateMarker = dateTime.ToString("yyyy-MM-dd");
         string timeMarker = dateTime.ToString("HH-mm-ss");
         string name = $"{filePath.FileName} [{dateMarker} @ {timeMarker}]";
         backupPath.SetFileName(name);
