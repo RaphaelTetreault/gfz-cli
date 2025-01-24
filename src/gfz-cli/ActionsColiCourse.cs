@@ -27,7 +27,7 @@ public static class ActionsColiCourse
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliActionOption.FPRS,
+        ActionOptions = CliActionOption.FPS,
         RequiredArguments = [
             IOptionsStage.Arguments.ColorRed,
             IOptionsStage.Arguments.ColorGreen,
@@ -49,7 +49,7 @@ public static class ActionsColiCourse
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliActionOption.FPRS,
+        ActionOptions = CliActionOption.FPS,
         RequiredArguments = [
             IOptionsStage.Arguments.Name,
             Value,
@@ -80,6 +80,7 @@ public static class ActionsColiCourse
         inputPath.ThrowIfFileDoesNotExist();
 
         // Patch COLI_COURSE file
+        options.OverwriteFiles = true;
         bool doWriteFile = CheckWillFileWrite(options, inputPath, out ActionTaskResult result);
         PrintFileWriteResult(result, inputPath, options.ActionStr);
         if (doWriteFile)
@@ -96,7 +97,6 @@ public static class ActionsColiCourse
             scene.FileName = inputPath.FileName;
             using EndianBinaryReader reader = new(colicourseFile, Scene.endianness);
             scene.Deserialize(reader);
-            reader.Close();
 
             // Reset file stream position
             colicourseFile.Position = 0;

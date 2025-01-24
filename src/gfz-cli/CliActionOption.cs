@@ -75,6 +75,11 @@ public enum CliActionOption
     PS = P_SearchPattern | S_SearchSubdirectories,
 
     /// <summary>
+    ///     -f -o -p -s
+    /// </summary>
+    FOPS = F_SerializationFormat | O_OverwriteFiles | P_SearchPattern | S_SearchSubdirectories,
+
+    /// <summary>
     ///     -p -r -s
     /// </summary>
     PRS = P_SearchPattern | R_SerializationRegion | S_SearchSubdirectories,
@@ -90,9 +95,9 @@ public enum CliActionOption
     OPRS = O_OverwriteFiles | P_SearchPattern | R_SerializationRegion | S_SearchSubdirectories,
 
     /// <summary>
-    ///     -f -o -p -s
+    ///     -f -p -s
     /// </summary>
-    FOPS = F_SerializationFormat | O_OverwriteFiles | P_SearchPattern | S_SearchSubdirectories,
+    FPS = F_SerializationFormat | P_SearchPattern | S_SearchSubdirectories,
 
     /// <summary>
     ///     -f -p -r -s
