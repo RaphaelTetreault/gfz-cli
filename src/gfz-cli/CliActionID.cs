@@ -13,7 +13,7 @@ public enum CliActionID
 
     arc_unpack,
     arc_pack,
-    asset_library_generate,
+    asset_generate_library,
     asset_image_to_gxtex,
     asset_gmaref_to_gma,
     auto_rename_gci, // UNIMPLEMENTED

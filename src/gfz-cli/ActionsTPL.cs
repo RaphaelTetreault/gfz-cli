@@ -123,7 +123,7 @@ public static class ActionsTPL
                 // TODO
                 // Use new FileDescription
                 var texture = textureEntry.Texture;
-                string textureHash = textureBundle.Elements[entryIndex].CRC32;
+                string textureHash = textureBundle.Elements[entryIndex].Crc32Text;
                 OSPath textureOutput = new OSPath(outputFile);
                 textureOutput.SetFileName($"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}");
 

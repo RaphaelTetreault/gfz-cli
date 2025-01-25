@@ -26,7 +26,7 @@ public static class ActionsAssetLibrary
     {
         Description = "Create a text-reference-linked GMA and TPL library.",
         Action = CreateGmaTplLibrary,
-        ActionID = CliActionID.asset_library_generate,
+        ActionID = CliActionID.asset_generate_library,
         InputIO = CliActionIO.Directory,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = false,
@@ -231,7 +231,6 @@ public static class ActionsAssetLibrary
         SaveGxtexAndPng(options, outputPath, resampler, textureBundle);
     }
 
-
     /// <summary>
     ///     
     /// </summary>
@@ -265,14 +264,23 @@ public static class ActionsAssetLibrary
             // Output name is the hash of each texture in bundle
             StringBuilder builder = new();
             foreach (var textureEntry in textureBundle.Elements)
-                builder.Append($"{textureEntry.CRC32}-");
-            string name = builder.ToString()[..^1]; // removes last dash
-            textureNames[i] = name;
+                builder.Append($"{textureEntry.Crc32Text}-");
+            string textureCrc32sName = builder.ToString()[..^1]; // removes last dash
 
-            // Create final output path
-            OSPath outputPathCopy = outputPath.Copy();
-            outputPathCopy.SetFileName(name);
-            SaveGxtexAndPng(options, outputPathCopy, resampler, textureBundle);
+            // Create final output path, but wait a moment
+            OSPath targetOutputPath = outputPath.Copy();
+            targetOutputPath.SetFileName(textureCrc32sName);
+
+            // Many images are the same, but lowers mipmaps are bit-inaccurate, and so duplicates
+            // of the same image are made due to different CRCs. This function weeds those out.
+            // Function mutates name if neighbour exists.
+            bool _ = HasMipmapBitNeighbour(targetOutputPath, ref textureCrc32sName);
+            // Assign names again to correct anything
+            textureNames[i] = textureCrc32sName;
+            targetOutputPath.SetFileName(textureCrc32sName);
+
+            // Output images
+            SaveGxtexAndPng(options, targetOutputPath, resampler, textureBundle);
         }
 
         // To be used to map GMA texture indexes to specific image files.
@@ -315,6 +323,46 @@ public static class ActionsAssetLibrary
         }
     }
 
+    private static bool HasMipmapBitNeighbour(OSPath imageOutputPath, ref string name)
+    {
+        // It's worth noting most (all?) CRC32 mismatches seem to happen on the last valid
+        // valid mipmap, which is often 3rd from last, and on CMPR ones where compression
+        // settings could be messing with that, depending on PC/CPU or other factors.
+
+        int minLength = (8 * 3) + 2; // 3 CRC32s with 2 dashes
+        bool isImageWith3OrMoreMipmaps = imageOutputPath.FileName.Length > minLength;
+        if (isImageWith3OrMoreMipmaps)
+        {
+            string directory = imageOutputPath.Directories;
+            string fileName = imageOutputPath.FileName[..^minLength] + "*";
+            if (Directory.Exists(directory))
+            {
+                // Find files with same starting name
+                string[] matches = Directory.GetFiles(directory, fileName, SearchOption.TopDirectoryOnly);
+                foreach (var match in matches)
+                {
+                    // Check to see if these are compatible. Will often times compares the same image names
+                    // as the image we are checking just is a plain copy of an existing one. However, this
+                    // will also weed out those with just 1 CRC32 mismatch.
+                    string matchFileName = Path.GetFileNameWithoutExtension(matches[0]);
+                    bool hasSameMipmapCount = matchFileName.Length == name.Length;
+                    if (hasSameMipmapCount)
+                    {
+                        name = matchFileName;
+                        return true;
+                    }
+                }
+            }
+            else // directory does not exist, so no copies could exist
+                return false;
+        }
+
+        // Image does not have enough mipmaps to be worth comparing
+        return false;
+    }
+
+
+
     /// <summary>
     ///     Writes single texture bundle (texture with mipmaps) as single PNG.
     /// </summary>
@@ -326,7 +374,7 @@ public static class ActionsAssetLibrary
         // Prepare image buffer. Twice width to fit mipmaps if they exist.
         int width = textureBundle.Length > 1 ? textureBundle.Description.Width * 2 : textureBundle.Description.Width;
         int height = textureBundle.Description.Height;
-        Image<Rgba32> image = new(width, height, new(0, 0, 0));
+        Image<Rgba32> image = new(width, height, new(0, 0, 0, 0)); // transparent, alpha images are drawn on top of this
         // Where to draw within the larger texture, changes with each write (so not to overlap)
         Point offset = new(0, 0);
 
@@ -336,6 +384,9 @@ public static class ActionsAssetLibrary
         image.Mutate(c => c.DrawImage(mainTexture, 1f));
         // Set offset for next iteration
         offset.X = mainTexture.Width;
+
+        // Do a check where 4:1 ratio (wide/tall) textures actually have bad lowest mipmaps
+        bool isHighRatio = image.Width / image.Height > 4 || image.Height / image.Width > 4;
 
         // Get or generate mipmaps
         for (int i = 1; i < textureBundle.Length; i++)
@@ -540,6 +591,5 @@ public static class ActionsAssetLibrary
             }
         }
     }
-
 
 }
