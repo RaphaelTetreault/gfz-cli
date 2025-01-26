@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.IO.Enumeration;
 
 namespace Manifold.GFZCLI;
 
@@ -232,14 +233,17 @@ public static class ActionsAssetLibrary
     }
 
     /// <summary>
-    ///     
+    ///     Create a .GXTEX and .PNG for each texture in a TPL <paramref name="inputPath"/> file.
+    ///     Files are stored at <paramref name="outputPath"/>. Images that have invalid mipmaps
+    ///     will use <paramref name="resampler"/> to generate new mipmaps.
     /// </summary>
     /// <param name="options"></param>
     /// <param name="inputPath"></param>
     /// <param name="outputPath"></param>
     /// <param name="resampler">Pre-cached image resampler.</param>
     /// <returns>
-    ///     Runs an action on all texture bundles (TPLs).
+    ///     All CRC32 texture names, one for each texture in the TPL, with null strings for null
+    ///     entries in TPL (thus, all indexes match those in the TPL).
     /// </returns>
     private static string[] TplToGxtexAndPng(Options options, OSPath inputPath, OSPath outputPath, IResampler resampler)
     {
@@ -267,16 +271,14 @@ public static class ActionsAssetLibrary
                 builder.Append($"{textureEntry.Crc32Text}-");
             string textureCrc32sName = builder.ToString()[..^1]; // removes last dash
 
-            // Create final output path, but wait a moment
-            OSPath targetOutputPath = outputPath.Copy();
-            targetOutputPath.SetFileName(textureCrc32sName);
-
             // Many images are the same, but lowers mipmaps are bit-inaccurate, and so duplicates
             // of the same image are made due to different CRCs. This function weeds those out.
             // Function mutates name if neighbour exists.
-            bool _ = HasMipmapBitNeighbour(targetOutputPath, ref textureCrc32sName);
-            // Assign names again to correct anything
+            textureCrc32sName = GetSameCrc32FileNameOrMipmapBitNeighbourFileName(outputPath.Directories, textureCrc32sName);
+
+            // Assign potentially corrected texture, and create output path with it too
             textureNames[i] = textureCrc32sName;
+            OSPath targetOutputPath = outputPath.Copy();
             targetOutputPath.SetFileName(textureCrc32sName);
 
             // Output images
@@ -323,42 +325,44 @@ public static class ActionsAssetLibrary
         }
     }
 
-    private static bool HasMipmapBitNeighbour(OSPath imageOutputPath, ref string name)
+    /// <summary>
+    ///     Finds the texture by name in <paramref name="directory"/>> for this texture that shares
+    ///     the same main texture CRC32 and higher mipmaps, but ignores lower mipmap CRC32s as they
+    ///     are sometimes bit-different, but functionally idential. If not match found, returns the
+    ///     same <paramref name="crc32FileName"/>.
+    /// </summary>
+    /// <param name="directory">The directory to search for a match in.</param>
+    /// <param name="crc32FileName">The CRC32 filename to compare against.</param>
+    /// <returns>
+    ///     CRC32 file name of that is the same, or that shares the same upper CRC32s.
+    /// </returns>
+    private static string GetSameCrc32FileNameOrMipmapBitNeighbourFileName(string directory, string crc32FileName)
     {
         // It's worth noting most (all?) CRC32 mismatches seem to happen on the last valid
         // valid mipmap, which is often 3rd from last, and on CMPR ones where compression
         // settings could be messing with that, depending on PC/CPU or other factors.
 
         int minLength = (8 * 3) + 2; // 3 CRC32s with 2 dashes
-        bool isImageWith3OrMoreMipmaps = imageOutputPath.FileName.Length > minLength;
-        if (isImageWith3OrMoreMipmaps)
+        bool isImageWith3OrMoreMipmaps = crc32FileName.Length > minLength;
+        if (isImageWith3OrMoreMipmaps && Directory.Exists(directory))
         {
-            string directory = imageOutputPath.Directories;
-            string fileName = imageOutputPath.FileName[..^minLength] + "*";
-            if (Directory.Exists(directory))
+            // Find files with same starting name
+            string partialCrc32FileName = $"{crc32FileName[..^minLength]}*"; // add * for wildcard
+            string[] matches = Directory.GetFiles(directory, partialCrc32FileName, SearchOption.TopDirectoryOnly);
+            foreach (var match in matches)
             {
-                // Find files with same starting name
-                string[] matches = Directory.GetFiles(directory, fileName, SearchOption.TopDirectoryOnly);
-                foreach (var match in matches)
-                {
-                    // Check to see if these are compatible. Will often times compares the same image names
-                    // as the image we are checking just is a plain copy of an existing one. However, this
-                    // will also weed out those with just 1 CRC32 mismatch.
-                    string matchFileName = Path.GetFileNameWithoutExtension(matches[0]);
-                    bool hasSameMipmapCount = matchFileName.Length == name.Length;
-                    if (hasSameMipmapCount)
-                    {
-                        name = matchFileName;
-                        return true;
-                    }
-                }
+                // Check to see if these are compatible. Will often times compares the same image names
+                // as the image we are checking just is a plain copy of an existing one. However, this
+                // will also weed out those with just 1 CRC32 mismatch.
+                string matchFileName = Path.GetFileNameWithoutExtension(match);
+                bool hasSameMipmapCount = matchFileName.Length == crc32FileName.Length;
+                if (hasSameMipmapCount)
+                    return matchFileName;
             }
-            else // directory does not exist, so no copies could exist
-                return false;
         }
 
-        // Image does not have enough mipmaps to be worth comparing
-        return false;
+        // Image does not have enough mipmaps to be worth comparing, return filename
+        return crc32FileName;
     }
 
 
