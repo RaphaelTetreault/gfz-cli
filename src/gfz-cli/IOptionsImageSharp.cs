@@ -26,7 +26,7 @@ public interface IOptionsImageSharp
             ArgumentName = Args.Compand,
             ArgumentType = typeof(bool).Name,
             ArgumentDefault = false,
-            Help = "Whether to compress or expand individual pixel colors when scaling image.",
+            Help = "Whether to compress and expand the image color-space to gamma correct the image during processing.",
         };
 
         internal static readonly GfzCliArgument ResizeMode = new()
@@ -65,7 +65,7 @@ public interface IOptionsImageSharp
         {
             ArgumentName = Args.Resampler,
             ArgumentType = typeof(ResamplerType).Name,
-            ArgumentDefault = null,// (ResamplerType)0,
+            ArgumentDefault = null,
             Help = "The resampler to use when scaling images.",
         };
 
@@ -184,7 +184,7 @@ public interface IOptionsImageSharp
     private static readonly TgaEncoder TgaEncoder = new();
     private static readonly WebpEncoder WebpEncoder = new();
 
-
+    [Obsolete]
     public static ResizeOptions GetResizeOptions(IOptionsImageSharp imageResizeOptions)
     {
         return new ResizeOptions()
@@ -196,6 +196,8 @@ public interface IOptionsImageSharp
             PremultiplyAlpha = imageResizeOptions.PremultiplyAlpha,
             Sampler = imageResizeOptions.Resampler,
             //Size
+            //CenterCoordinates
+            //TargetRectangle
         };
     }
     public static Size GetResizeSize(IOptionsImageSharp imageResizeOptions, Image image)

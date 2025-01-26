@@ -47,21 +47,23 @@ public class Options :
     // IImageSharpOptions
     // ResizeOptions
     //public bool Resize { get; set; } = false;
-    public bool Compand { get; set; } = true;
+    public bool Compand { get; set; } = IOptionsImageSharp.Arguments.Compand.Default<bool>();
     public string ResizeModeStr { get; set; } = ResizeMode.Max.ToString();
     public ResizeMode ResizeMode => GfzCliEnumParser.ParseDashRemoved<ResizeMode>(ResizeModeStr);
     public string PadColorStr { get; set; } = "r=0;g=0;b=0;a=0";
     public Color PadColor => StringToColor(PadColorStr);
     public string PositionStr { get; set; } = AnchorPositionMode.Center.ToString();
     public AnchorPositionMode Position => GfzCliEnumParser.ParseDashRemoved<AnchorPositionMode>(PositionStr);
-    public bool PremultiplyAlpha { get; set; } = true;
-    public string ResamplerTypeStr { get; set; } = "Bicubic";
+    public bool PremultiplyAlpha { get; set; } = IOptionsImageSharp.Arguments.PremultiplyAlpha.Default<bool>();
+    public string ResamplerTypeStr { get; set; } = IOptionsImageSharp.Arguments.Resampler.AsText();
     public ResamplerType ResamplerType => GfzCliEnumParser.ParseDashRemoved<ResamplerType>(ResamplerTypeStr);
     public IResampler Resampler => IOptionsImageSharp.GetResampler(ResamplerType);
     public int Width { get; set; }
     public int Height { get; set; }
+    public Size Size => new(Width, Height);
+
     // Other
-    public string ImageFormatStr { get; set; } = IOptionsImageSharp.Arguments.ImageFormat.Default<ImageFormat>().ToString();
+    public string ImageFormatStr { get; set; } = IOptionsImageSharp.Arguments.ImageFormat.AsText();
     public ImageFormat ImageFormat => GfzCliEnumParser.ParseDashRemoved<ImageFormat>(ImageFormatStr);
     public ImageEncoder ImageEncoder => IOptionsImageSharp.GetImageEncoder(ImageFormat);
     public string ImageExtension => IOptionsImageSharp.GetImageExtension(ImageFormat);
@@ -88,7 +90,7 @@ public class Options :
     public float FogViewRangeNear { get; set; } = float.MaxValue; // consider nullable?
     public float FogViewRangeFar { get; set; } = float.MinValue; // consider nulalble?
     public string FogInterpolationModeStr { get; set; } = uint.MaxValue.ToString();
-    public FogType FogInterpolationMode => GetEnum<FogType>(FogInterpolationModeStr);
+    public FogType FogInterpolationMode => GfzCliEnumParser.ParseDashRemoved<FogType>(FogInterpolationModeStr);
     public string ColorRedStr { get; set; } = string.Empty;
     public string ColorGreenStr { get; set; } = string.Empty;
     public string ColorBlueStr { get; set; } = string.Empty;
@@ -192,6 +194,56 @@ public class Options :
         return code;
     }
 
+    public void ThrowIfInvalidRegion()
+    {
+        switch (SerializationRegion)
+        {
+            case Region.Japan:
+            case Region.NorthAmerica:
+            case Region.Europe:
+                return;
+
+            default:
+                string msg = $"Invalid region \"{SerializeRegionStr}\".";
+                throw new ArgumentException(msg);
+        }
+    }
+    public GameCode GetGameCode()
+    {
+        GameCode gameCode = GetGameCode(AvGame, SerializationRegion);
+        return gameCode;
+    }
+
+
+    // TODO: consider moving to GfzCliEnumParser
+    public static byte GetColorComponent(string colorValue)
+    {
+        byte byteValue;
+        float floatValue;
+        bool success;
+
+        // Parse as byte (0-255)
+        success = byte.TryParse(colorValue, out byteValue);
+        if (success)
+            return byteValue;
+
+        // Parse as byte (0-FF)
+        success = byte.TryParse(colorValue, NumberStyles.HexNumber, CultureInfo.DefaultThreadCurrentCulture, out byteValue);
+        if (success)
+            return byteValue;
+
+        // Parse as float
+        success = float.TryParse(colorValue, out floatValue);
+        if (success)
+        {
+            floatValue = Math.Clamp(floatValue, 0, 1);
+            byteValue = (byte)(floatValue * byte.MaxValue);
+            return byteValue;
+        }
+
+        string msg = $"Could not parse color value \"{colorValue}\".";
+        throw new ArgumentException(msg);
+    }
     private static Color StringToColor(string value)
     {
         byte r = 0;
@@ -229,56 +281,7 @@ public class Options :
         Color color = new Color(new Rgba32(r, g, b, a));
         return color;
     }
-
-    public void ThrowIfInvalidRegion()
-    {
-        switch (SerializationRegion)
-        {
-            case Region.Japan:
-            case Region.NorthAmerica:
-            case Region.Europe:
-                return;
-
-            default:
-                string msg = $"Invalid region \"{SerializeRegionStr}\".";
-                throw new ArgumentException(msg);
-        }
-    }
-    public GameCode GetGameCode()
-    {
-        GameCode gameCode = GetGameCode(AvGame, SerializationRegion);
-        return gameCode;
-    }
-
-    public byte GetColorComponent(string colorValue)
-    {
-        byte byteValue;
-        float floatValue;
-        bool success;
-
-        // Parse as byte (0-255)
-        success = byte.TryParse(colorValue, out byteValue);
-        if (success)
-            return byteValue;
-
-        // Parse as byte (0-FF)
-        success = byte.TryParse(colorValue, NumberStyles.HexNumber, CultureInfo.DefaultThreadCurrentCulture, out byteValue);
-        if (success)
-            return byteValue;
-
-        // Parse as float
-        success = float.TryParse(colorValue, out floatValue);
-        if (success)
-        {
-            floatValue = Math.Clamp(floatValue, 0, 1);
-            byteValue = (byte)(floatValue * byte.MaxValue);
-            return byteValue;
-        }
-
-        string msg = $"Could not parse color value \"{colorValue}\".";
-        throw new ArgumentException(msg);
-    }
-    public TEnum GetEnum<TEnum>(string value)
+    public static TEnum GetEnum<TEnum>(string value)
         where TEnum : struct, IComparable, IConvertible, IFormattable
     {
         TEnum @enum = Enum.Parse<TEnum>(value, true);

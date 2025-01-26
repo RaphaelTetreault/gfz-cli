@@ -226,7 +226,7 @@ public static class ActionsColiCourse
     public static void PatchSceneObjectDynamicRenderFlags(Options options, Scene scene, EndianBinaryWriter writer)
     {
         string name = options.Name;
-        ObjectRenderFlags0x00 renderFlags = options.GetEnum<ObjectRenderFlags0x00>(options.Value);
+        ObjectRenderFlags0x00 renderFlags = Options.GetEnum<ObjectRenderFlags0x00>(options.Value);
 
         bool foundMatch = false;
         foreach (SceneObjectDynamic dynamicSceneObject in scene.dynamicSceneObjects)

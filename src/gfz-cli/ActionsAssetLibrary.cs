@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO.Enumeration;
 
 namespace Manifold.GFZCLI;
 
@@ -38,6 +37,22 @@ public static class ActionsAssetLibrary
             ],
     };
 
+    internal static readonly GfzCliArgument Width = new()
+    {
+        ArgumentName = IOptionsImageSharp.Args.Width,
+        ArgumentType = typeof(int).Name,
+        ArgumentDefault = null,
+        Help = "Resize main texture width.",
+    };
+
+    internal static readonly GfzCliArgument Height = new()
+    {
+        ArgumentName = IOptionsImageSharp.Args.Height,
+        ArgumentType = typeof(int).Name,
+        ArgumentDefault = null,
+        Help = "Resize main texture height.",
+    };
+
     public static readonly GfzCliAction ActionAssetImageToGxtex = new()
     {
         Description = "Convert image to a raw GameCube GX texture.",
@@ -50,6 +65,9 @@ public static class ActionsAssetLibrary
         RequiredArguments = [],
         OptionalArguments = [
             IOptionsTpl.Arguments.TextureFormat,
+            Width,
+            Height,
+            IOptionsImageSharp.Arguments.Compand,
             IOptionsImageSharp.Arguments.Resampler,
             ],
     };
@@ -197,23 +215,11 @@ public static class ActionsAssetLibrary
     /// <param name="outputPath">Output .GXTEX and .PNG path.</param>
     public static void ImageToGxTexture(Options options, OSPath inputPath, OSPath outputPath)
     {
+        // Load image, convert to texture
         Image<Rgba32> image = (Image<Rgba32>)Image.Load(inputPath);
-        IResampler resampler = options.Resampler;
-        ImageToGxTexture(options, outputPath, image, resampler);
-    }
-
-    /// <summary>
-    ///     Create a .GXTEX and preview .PNG from a source image.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="outputPath">Output .GXTEX and .PNG path.</param>
-    /// <param name="image">The image to convert to .GXTEX.</param>
-    /// <param name="resampler">The image resampler.</param>
-    public static void ImageToGxTexture(Options options, OSPath outputPath, Image<Rgba32> image, IResampler resampler)
-    {
-        // Convert image to texture
         Texture texture = ImageToTexture(image);
-        // Create TextureBundle
+
+        // Create TextureBundle (main text + mipmaps)
         int textureCount = 1 + Texture.GetMaxMipmapCount(texture.Width, texture.Height);
         // TRICK: Set only the first texture in the bundle. The default state for
         //        Element.IsValid is false, which will force regeneration in the
@@ -224,11 +230,20 @@ public static class ActionsAssetLibrary
         for (int i = 1; i < elements.Length; i++)
             elements[i] = new();
 
-        // Add elements to bundle
-        // TODO: add options for image resize before processing. (review emblem functions)
-        TextureBundle textureBundle = new(elements, options.TextureFormat);
+        // Resize main texture, if specified
+        IResampler resampler = options.Resampler;
+        bool doResize = options.Width > 0 || options.Height > 0;
+        if (doResize)
+        {
+            // If w/h not specified, use existing value
+            int width = options.Width != 0 ? options.Width : image.Width;
+            int height = options.Height != 0 ? options.Height : image.Height;
+            Size size = new(width, height);
+            image.Mutate(img => img.Resize(size, resampler, options.Compand));
+        }
 
-        // Save out
+        // Add elements to bundle, save
+        TextureBundle textureBundle = new(elements, options.TextureFormat);
         SaveGxtexAndPng(options, outputPath, resampler, textureBundle);
     }
 
@@ -364,7 +379,6 @@ public static class ActionsAssetLibrary
         // Image does not have enough mipmaps to be worth comparing, return filename
         return crc32FileName;
     }
-
 
 
     /// <summary>

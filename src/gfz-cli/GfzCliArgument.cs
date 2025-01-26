@@ -45,7 +45,7 @@ public readonly record struct GfzCliArgument()
     }
 
     /// <summary>
-    ///     
+    ///     Get <see cref="ArgumentDefault"/> as type <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
@@ -69,5 +69,18 @@ public readonly record struct GfzCliArgument()
         }
 
         return (T)ArgumentDefault!;
-    } 
+    }
+
+    /// <summary>
+    ///     Get <see cref="ArgumentDefault"/> as string.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public string AsText()
+    {
+        if (ArgumentDefault is null || ArgumentDefault.ToString() == null)
+            return "null";
+        else
+            return ArgumentDefault.ToString()!;
+    }
 }
