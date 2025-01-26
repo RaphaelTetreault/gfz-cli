@@ -4,6 +4,7 @@ using GameCube.DiskImage;
 using GameCube.GFZ;
 using GameCube.GFZ.GameData;
 using GameCube.GFZ.Stage;
+using GameCube.GX.Texture;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
@@ -39,6 +40,7 @@ public class Options :
     public Region SerializationRegion => GetRegion(SerializeRegionStr);
 
     // ITplOptions
+    public TextureFormat TextureFormat { get; set; } = IOptionsImageSharp.Arguments.ImageFormat.Default<TextureFormat>();
     public bool TplUnpackMipmaps { get; set; }
     public bool TplUnpackSaveCorruptedTextures { get; set; }
 

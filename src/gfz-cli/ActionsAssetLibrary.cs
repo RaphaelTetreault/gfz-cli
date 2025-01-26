@@ -225,8 +225,7 @@ public static class ActionsAssetLibrary
 
         // Add elements to bundle
         // TODO: add options for image resize before processing. (review emblem functions)
-        // TODO: remove hardcoded format
-        TextureBundle textureBundle = new(elements, TextureFormat.CMPR);
+        TextureBundle textureBundle = new(elements, options.TextureFormat);
 
         // Save out
         SaveGxtexAndPng(options, outputPath, resampler, textureBundle);
