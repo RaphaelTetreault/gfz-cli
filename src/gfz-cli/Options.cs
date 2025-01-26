@@ -61,6 +61,10 @@ public class Options :
     public int Width { get; set; }
     public int Height { get; set; }
     public Size Size => new(Width, Height);
+    /// <summary>
+    ///     Indicates that the user specified <see cref="Width"/> or <see cref="Height"/>.
+    /// </summary>
+    public bool RequestingResize => Width > 0 || Height > 0;
 
     // Other
     public string ImageFormatStr { get; set; } = IOptionsImageSharp.Arguments.ImageFormat.AsText();

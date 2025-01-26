@@ -207,8 +207,7 @@ public static class ActionsAssetLibrary
         Image<Rgba32> image = (Image<Rgba32>)Image.Load(inputPath);
         // Resize image if specified
         IResampler resampler = options.Resampler;
-        bool doResize = options.Width > 0 || options.Height > 0;
-        if (doResize)
+        if (options.RequestingResize)
         {
             var resizeOptions = IOptionsImageSharp.GetResizeOptions(options);
             resizeOptions.Size = IOptionsImageSharp.GetResizeSize(options, image);
@@ -289,6 +288,7 @@ public static class ActionsAssetLibrary
         // To be used to map GMA texture indexes to specific image files.
         return textureNames;
     }
+
 
     /// <summary>
     ///     Creates a .GXTEX and preview .PNG from a <paramref name="textureBundle"/>.
