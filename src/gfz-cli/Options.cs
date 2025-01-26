@@ -40,7 +40,7 @@ public class Options :
     public Region SerializationRegion => GetRegion(SerializeRegionStr);
 
     // ITplOptions
-    public TextureFormat TextureFormat { get; set; } = IOptionsImageSharp.Arguments.ImageFormat.Default<TextureFormat>();
+    public TextureFormat TextureFormat { get; set; } = IOptionsTpl.Arguments.TextureFormat.Default<TextureFormat>();
     public bool TplUnpackMipmaps { get; set; }
     public bool TplUnpackSaveCorruptedTextures { get; set; }
 

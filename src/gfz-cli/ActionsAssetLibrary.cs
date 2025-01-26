@@ -23,7 +23,7 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsAssetLibrary
 {
-    public static readonly GfzCliAction ActionAssetLibraryGenerate = new()
+    public static readonly GfzCliAction ActionAssetGenerateLibrary = new()
     {
         Description = "Create a text-reference-linked GMA and TPL library.",
         Action = CreateGmaTplLibrary,
@@ -49,6 +49,7 @@ public static class ActionsAssetLibrary
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
+            IOptionsTpl.Arguments.TextureFormat,
             IOptionsImageSharp.Arguments.Resampler,
             ],
     };

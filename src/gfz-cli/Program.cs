@@ -68,7 +68,7 @@ public static class Program
         ActionsARC.ActionArcPack,
         ActionsARC.ActionArcUnpack,
         // ASSET LIBRARY
-        ActionsAssetLibrary.ActionAssetLibraryGenerate,
+        ActionsAssetLibrary.ActionAssetGenerateLibrary,
         ActionsAssetLibrary.ActionAssetImageToGxtex,
         // CARDATA
         ActionsCarData.ActionCarDataFromTSV,
