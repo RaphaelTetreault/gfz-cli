@@ -47,7 +47,7 @@ public static class ActionsARC
         if (inputNotADirectory)
         {
             string msg = $"{options.ActionStr} requires a directory as input path.";
-            Program.ActionWarning(options, msg);
+            Terminal.WriteLine(msg);
             return;
         }
 
@@ -56,8 +56,8 @@ public static class ActionsARC
         if (hasNoSearchPattern)
         {
             options.SearchPattern = "*";
-            string message = $"{options.ActionStr}: set {nameof(options.SearchPattern)} to \"{options.SearchPattern}\".";
-            Program.ActionNotification(message);
+            string message = $"{options.ActionStr}: {nameof(options.SearchPattern)} is null, now set to \"{options.SearchPattern}\".";
+            Terminal.Write(message);
         }
 
         // Get files in directory with search pattern

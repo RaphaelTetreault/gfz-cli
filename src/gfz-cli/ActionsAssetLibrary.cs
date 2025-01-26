@@ -60,7 +60,7 @@ public static class ActionsAssetLibrary
             ],
     };
 
-    private const string Designator = "Asset Library";
+    public const string Designator = "Asset";
 
     /// <summary>
     ///     Create library of individual textures and models from TPLs and GMAs, respectively.
