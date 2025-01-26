@@ -37,22 +37,6 @@ public static class ActionsAssetLibrary
             ],
     };
 
-    internal static readonly GfzCliArgument Width = new()
-    {
-        ArgumentName = IOptionsImageSharp.Args.Width,
-        ArgumentType = typeof(int).Name,
-        ArgumentDefault = null,
-        Help = "Resize main texture width.",
-    };
-
-    internal static readonly GfzCliArgument Height = new()
-    {
-        ArgumentName = IOptionsImageSharp.Args.Height,
-        ArgumentType = typeof(int).Name,
-        ArgumentDefault = null,
-        Help = "Resize main texture height.",
-    };
-
     public static readonly GfzCliAction ActionAssetImageToGxtex = new()
     {
         Description = "Convert image to a raw GameCube GX texture.",
@@ -65,10 +49,14 @@ public static class ActionsAssetLibrary
         RequiredArguments = [],
         OptionalArguments = [
             IOptionsTpl.Arguments.TextureFormat,
-            Width,
-            Height,
+            IOptionsImageSharp.Arguments.Width, // Size.X
+            IOptionsImageSharp.Arguments.Height, // Size.Y
             IOptionsImageSharp.Arguments.Compand,
+            IOptionsImageSharp.Arguments.PadColor,
+            IOptionsImageSharp.Arguments.Position,
+            IOptionsImageSharp.Arguments.PremultiplyAlpha,
             IOptionsImageSharp.Arguments.Resampler,
+            IOptionsImageSharp.Arguments.ResizeMode, // Mode
             ],
     };
 
@@ -215,8 +203,18 @@ public static class ActionsAssetLibrary
     /// <param name="outputPath">Output .GXTEX and .PNG path.</param>
     public static void ImageToGxTexture(Options options, OSPath inputPath, OSPath outputPath)
     {
-        // Load image, convert to texture
+        // Load image
         Image<Rgba32> image = (Image<Rgba32>)Image.Load(inputPath);
+        // Resize image if specified
+        IResampler resampler = options.Resampler;
+        bool doResize = options.Width > 0 || options.Height > 0;
+        if (doResize)
+        {
+            var resizeOptions = IOptionsImageSharp.GetResizeOptions(options);
+            resizeOptions.Size = IOptionsImageSharp.GetResizeSize(options, image);
+            image.Mutate(img => img.Resize(resizeOptions));
+        }
+        // Convert to texture
         Texture texture = ImageToTexture(image);
 
         // Create TextureBundle (main text + mipmaps)
@@ -229,18 +227,6 @@ public static class ActionsAssetLibrary
         // Init remaining elements
         for (int i = 1; i < elements.Length; i++)
             elements[i] = new();
-
-        // Resize main texture, if specified
-        IResampler resampler = options.Resampler;
-        bool doResize = options.Width > 0 || options.Height > 0;
-        if (doResize)
-        {
-            // If w/h not specified, use existing value
-            int width = options.Width != 0 ? options.Width : image.Width;
-            int height = options.Height != 0 ? options.Height : image.Height;
-            Size size = new(width, height);
-            image.Mutate(img => img.Resize(size, resampler, options.Compand));
-        }
 
         // Add elements to bundle, save
         TextureBundle textureBundle = new(elements, options.TextureFormat);

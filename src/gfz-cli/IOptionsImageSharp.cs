@@ -65,7 +65,7 @@ public interface IOptionsImageSharp
         {
             ArgumentName = Args.Resampler,
             ArgumentType = typeof(ResamplerType).Name,
-            ArgumentDefault = null,
+            ArgumentDefault = ResamplerType.Bicubic,
             Help = "The resampler to use when scaling images.",
         };
 
@@ -184,7 +184,11 @@ public interface IOptionsImageSharp
     private static readonly TgaEncoder TgaEncoder = new();
     private static readonly WebpEncoder WebpEncoder = new();
 
-    [Obsolete]
+    /// <summary>
+    ///     Get resize options in one structure. Pass to image.Resize()
+    /// </summary>
+    /// <param name="imageResizeOptions"></param>
+    /// <returns></returns>
     public static ResizeOptions GetResizeOptions(IOptionsImageSharp imageResizeOptions)
     {
         return new ResizeOptions()
@@ -195,7 +199,7 @@ public interface IOptionsImageSharp
             Position = imageResizeOptions.Position,
             PremultiplyAlpha = imageResizeOptions.PremultiplyAlpha,
             Sampler = imageResizeOptions.Resampler,
-            //Size
+            Size = new(imageResizeOptions.Width, imageResizeOptions.Height),
             //CenterCoordinates
             //TargetRectangle
         };
