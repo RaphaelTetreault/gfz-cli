@@ -222,18 +222,6 @@ public static class Program
 
     // TODO: use these instead of throwing errors! (When possible? Does this make sense? Maybe do custom error?)
 
-    [Obsolete]
-    public static void ActionWarning(Options options, string message)
-    {
-        throw new NotImplementedException();
-    }
-
-    [Obsolete]
-    public static void ActionNotification(string message)
-    {
-        throw new NotImplementedException();
-    }
-
     public static void PrintActionUsage(Options options)
     {
         if (string.IsNullOrWhiteSpace(options.InputPath))

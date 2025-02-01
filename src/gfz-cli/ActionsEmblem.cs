@@ -345,7 +345,7 @@ public static class ActionsEmblem
         Texture iconTexture = ImageAsCenteredTexture(iconImage, EmblemGCI.IconWidth, EmblemGCI.IconHeight);
         Texture banner = new(EmblemGCI.BannerWidth, EmblemGCI.BannerHeight, EmblemGCI.DirectFormat);
         // todo: blank banner!
-        Texture[] icons = new[] { iconTexture };
+        Texture[] icons = [iconTexture];
         Emblem emblem = new(emblemTexture);
         EmblemGCI emblemGci = new(options.SerializationRegion);
         options.ThrowIfInvalidRegion();

@@ -2,7 +2,6 @@
 using GameCube.GX.Texture;
 using Manifold.IO;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
@@ -57,11 +56,10 @@ public static class ActionsTPL
         IsOutputOptional = true,
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
-        OptionalArguments = [
-
-            ],
+        OptionalArguments = [],
     };
 
+    [Obsolete("Poor quality code.")]
     public static void TplUnpack(Options options)
     {
         // Force search TPL files IF there is no defined search pattern
@@ -73,10 +71,12 @@ public static class ActionsTPL
         int taskCount = ParallelizeFileInFileOutTasks(options, TplUnpackFile);
         Terminal.WriteLine($"TPL: done unpacking {taskCount} TPL file{(taskCount != 1 ? 's' : "")}.");
     }
+
+    [Obsolete("Poor quality code.")]
     public static void TplUnpackFile(Options options, OSPath inputFile, OSPath outputFile)
     {
         // Deserialize the TPL
-        Tpl tpl = new Tpl();
+        Tpl tpl = new();
         using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), Tpl.endianness))
         {
             tpl.Deserialize(reader);
@@ -123,7 +123,7 @@ public static class ActionsTPL
                 // 
                 var texture = textureEntry.Texture;
                 string textureHash = textureBundle.Elements[entryIndex].Crc32Text;
-                OSPath textureOutput = new OSPath(outputFile);
+                OSPath textureOutput = new(outputFile);
                 textureOutput.SetFileName($"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}");
 
                 // Write file
@@ -140,6 +140,7 @@ public static class ActionsTPL
         }
     }
 
+    [Obsolete("Poor quality code.")]
     public static void TplPack(Options options)
     {
         string path = options.InputPath;
@@ -153,7 +154,7 @@ public static class ActionsTPL
 
         // TEMP: just do 1 file
         Image<Rgba32> image = Image.Load<Rgba32>(path);
-        Texture texture = new Texture(image.Width, image.Height, TextureFormat.CMPR);
+        Texture texture = new(image.Width, image.Height, TextureFormat.CMPR);
 
         for (int y = 0; y < image.Height; y++)
         {
@@ -168,53 +169,49 @@ public static class ActionsTPL
         string fileName = $"temp.tpl";
         string filePath = Path.Combine(directory, fileName);
         //using (var writer = new EndianBinaryWriter(new MemoryStream(), Tpl.endianness))
-        using (var writer = new EndianBinaryWriter(File.Create(filePath), Tpl.endianness))
+        using var writer = new EndianBinaryWriter(File.Create(filePath), Tpl.endianness);
+        var encoding = new EncodingCMPR(BCnEncoder.Encoder.CompressionQuality.BestQuality);
+        //var encoding = Encoding.EncodingRGBA8;
+        //var encoding = Encoding.EncodingRGB565;
+        //var encoding = Encoding.EncodingRGB5A3;
+        //var encoding = Encoding.EncodingIA8;
+        //var encoding = Encoding.EncodingIA4;
+        var blocks = Texture.CreateDirectColorBlocksFromTexture(texture, encoding, out int bch, out int bcv);
+        encoding.WriteTexture(writer, blocks);
+        writer.Flush();
+
+        writer.BaseStream.Position = 0;
+        using var reader = new EndianBinaryReader(writer.BaseStream, Tpl.endianness);
+        var blocksCopy = encoding.ReadBlocks<DirectBlock>(reader, encoding, blocks.Length);
+        Texture textureCopy = Texture.FromDirectBlocks(blocksCopy, bch, bcv);
+
+        // HACK - copy/paste garbage test
+        // Copy contents of GameCube texture into ImageSharp representation
+        Image<Rgba32> imageCopy = new(textureCopy.Width, textureCopy.Height);
+        for (int y = 0; y < textureCopy.Height; y++)
         {
-            var encoding = new EncodingCMPR(BCnEncoder.Encoder.CompressionQuality.BestQuality);
-            //var encoding = Encoding.EncodingRGBA8;
-            //var encoding = Encoding.EncodingRGB565;
-            //var encoding = Encoding.EncodingRGB5A3;
-            //var encoding = Encoding.EncodingIA8;
-            //var encoding = Encoding.EncodingIA4;
-            var blocks = Texture.CreateDirectColorBlocksFromTexture(texture, encoding, out int bch, out int bcv);
-            encoding.WriteTexture(writer, blocks);
-            writer.Flush();
-
-            writer.BaseStream.Position = 0;
-            using (var reader = new EndianBinaryReader(writer.BaseStream, Tpl.endianness))
+            for (int x = 0; x < textureCopy.Width; x++)
             {
-                var blocksCopy = encoding.ReadBlocks<DirectBlock>(reader, encoding, blocks.Length);
-                Texture textureCopy = Texture.FromDirectBlocks(blocksCopy, bch, bcv);
-
-                // HACK - copy/paste garbage test
-                // Copy contents of GameCube texture into ImageSharp representation
-                Image<Rgba32> imageCopy = new Image<Rgba32>(textureCopy.Width, textureCopy.Height);
-                for (int y = 0; y < textureCopy.Height; y++)
-                {
-                    for (int x = 0; x < textureCopy.Width; x++)
-                    {
-                        TextureColor pixel = textureCopy[x, y];
-                        imageCopy[x, y] = new Rgba32(pixel.r, pixel.g, pixel.b, pixel.a);
-                    }
-                }
-
-                //var tempStream = new MemoryStream();
-                //var format = PngFormat.Instance;
-                //imageCopy.Save(tempStream, format);
-                //var imageHash = GetMD5Hastpl-packhName(tempStream);
-
-                // Find where to save file
-                directory = Path.GetDirectoryName(path);
-                fileName = $"temp.png";
-                filePath = Path.Combine(directory, fileName);
-                // Save to disk
-                imageCopy.SaveAsPng(filePath);
-                Terminal.WriteLine($"Wrote file: {filePath}");
+                TextureColor pixel = textureCopy[x, y];
+                imageCopy[x, y] = new Rgba32(pixel.r, pixel.g, pixel.b, pixel.a);
             }
         }
+
+        //var tempStream = new MemoryStream();
+        //var format = PngFormat.Instance;
+        //imageCopy.Save(tempStream, format);
+        //var imageHash = GetMD5Hastpl-packhName(tempStream);
+
+        // Find where to save file
+        directory = Path.GetDirectoryName(path);
+        fileName = $"temp.png";
+        filePath = Path.Combine(directory, fileName);
+        // Save to disk
+        imageCopy.SaveAsPng(filePath);
+        Terminal.WriteLine($"Wrote file: {filePath}");
     }
 
-
+    [Obsolete("Poor quality code.")]
     public static void TplGenerateMipmaps(Options options)
     {
         bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
@@ -225,6 +222,8 @@ public static class ActionsTPL
         int taskCount = ParallelizeFileInFileOutTasks(options, TplGenerateMipmaps);
         Terminal.WriteLine($"TPL: done generating mipmaps for {taskCount} file{(taskCount != 1 ? 's' : "")}.");
     }
+
+    [Obsolete("Poor quality code.")]
     public static void TplGenerateMipmaps(Options options, OSPath inputFilePath, OSPath outputFilePath)
     {
         // Check to see if file can be loaded, error if not.
@@ -235,7 +234,7 @@ public static class ActionsTPL
         }
         catch (Exception e)
         {
-            StringBuilder supportedTypes = new StringBuilder();
+            StringBuilder supportedTypes = new();
             foreach (var type in Enum.GetNames<ImageFormat>())
                 supportedTypes.Append($" {type}");
 

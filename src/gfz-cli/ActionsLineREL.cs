@@ -325,7 +325,7 @@ public static class ActionsLineREL
             string msg = $"Input arguments found {inputFiles.Length} files, must only be 1 file.";
             throw new ArgumentException(msg);
         }
-        OSPath inputFilePath = new OSPath(inputFiles[0]);
+        OSPath inputFilePath = new(inputFiles[0]);
         inputFilePath.ThrowIfFileDoesNotExist();
 
         //
@@ -435,7 +435,7 @@ public static class ActionsLineREL
 
         ParallelizeFileInFileOutTasks(options, EncryptLine);
     }
-    public static void CryptLine(Options options, OSPath inputFile, OSPath outputFile, bool doEncrypt, string extension)
+    public static void CryptLine(Options options, OSPath inputFile, OSPath outputFile, string extension)
     {
         // Remove extension
         outputFile.PopExtension();
@@ -456,12 +456,12 @@ public static class ActionsLineREL
     public static void DecryptLine(Options options, OSPath inputFile, OSPath outputFile)
     {
         // Step 1: Decrypt line__.bin into line__.rel.lz
-        CryptLine(options, inputFile, outputFile, false, "rel.lz");
+        CryptLine(options, inputFile, outputFile, "rel.lz");
 
         // Step 2: Get path to line__.rel.lz
-        OSPath lzInputFile = new OSPath(outputFile);
+        OSPath lzInputFile = new(outputFile);
         lzInputFile.SetExtensions("rel.lz");
-        OSPath lzOutputFile = new OSPath(lzInputFile);
+        OSPath lzOutputFile = new(lzInputFile);
 
         // Step 3: Decompress line__.rel.lz into line__.rel
         ActionsLZ.LzDecompressFile(options, lzInputFile, lzOutputFile);
@@ -472,12 +472,12 @@ public static class ActionsLineREL
         ActionsLZ.LzCompressFile(options, inputFile, outputFile);
 
         // Step 2: Get path to line__.rel.lz
-        OSPath lzInputFile = new OSPath(outputFile);
+        OSPath lzInputFile = new(outputFile);
         lzInputFile.PushExtension("lz");
-        OSPath lzOutputFile = new OSPath(lzInputFile);
+        OSPath lzOutputFile = new(lzInputFile);
 
         // Step 3: Encrypt line_rel.lz into line__.bin
-        CryptLine(options, lzInputFile, lzOutputFile, true, "bin");
+        CryptLine(options, lzInputFile, lzOutputFile, "bin");
     }
 
     // The code that actually patches
@@ -537,10 +537,10 @@ public static class ActionsLineREL
     private static void PatchClearCourseNames(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         DataBlock[] dataBlocks =
-        {
+        [
             info.CourseNamesEnglish,
             info.CourseNamesLocalizations,
-        };
+        ];
         int remainingBytes = ClearStringTable(options, writer, info.StringTableBaseAddress, info.CourseNameOffsets, dataBlocks);
 
         Terminal.Write($"Cleared all course names. ");
@@ -605,10 +605,10 @@ public static class ActionsLineREL
     private static void PatchClearVenueNames(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         DataBlock[] dataBlocks =
-        {
+        [
             info.VenueNamesEnglish,
             info.VenueNamesJapanese,
-        };
+        ];
         int remainingBytes = ClearStringTable(options, writer, info.StringTableBaseAddress, info.VenueNameOffsets, dataBlocks);
 
         Terminal.Write($"Cleared all venue names. ");
@@ -864,20 +864,20 @@ public static class ActionsLineREL
     private static int SetCourseNames(ShiftJisCString[] courseNames, LineRelInfo info, EndianBinaryWriter writer)
     {
         DataBlock[] dataBlocks =
-        {
+        [
             info.CourseNamesEnglish,
             info.CourseNamesLocalizations,
-        };
+        ];
         int remainingBytes = SetStrings(courseNames, writer, info.StringTableBaseAddress, info.CourseNameOffsets, dataBlocks);
         return remainingBytes;
     }
     private static int SetVenueNames(ShiftJisCString[] venueNames, LineRelInfo info, EndianBinaryWriter writer)
     {
         DataBlock[] dataBlocks =
-        {
+        [
             info.VenueNamesEnglish,
             info.VenueNamesJapanese,
-        };
+        ];
         int remainingBytes = SetStrings(venueNames, writer, info.StringTableBaseAddress, info.VenueNameOffsets, dataBlocks);
         return remainingBytes;
     }

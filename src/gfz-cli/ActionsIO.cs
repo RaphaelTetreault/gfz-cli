@@ -88,7 +88,6 @@ public static class ActionsIO
     {
         // Mutate name
         outputFile.SetFileName(outputFile.FileName + "_copy");
-        string designator = $"IO {typeof(TFile).Name}";
 
         // Read in file, write out file
         bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);

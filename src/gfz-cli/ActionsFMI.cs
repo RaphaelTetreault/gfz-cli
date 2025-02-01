@@ -85,7 +85,7 @@ public static class ActionsFMI
         if (doWriteFile)
         {
             // Read data
-            FmiFile fmiFile = new FmiFile();
+            FmiFile fmiFile = new();
             using EndianBinaryReader reader = new(File.OpenRead(inputFile), FmiFile.endianness);
             fmiFile.Deserialize(reader);
 

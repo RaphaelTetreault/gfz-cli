@@ -42,7 +42,7 @@ public static class ActionsISO
         }
 
         // Read ISO
-        DiskImage iso = new DiskImage();
+        DiskImage iso = new();
         string isoPath = options.InputPath;
         using (var isoFile = File.OpenRead(isoPath))
         {
@@ -51,17 +51,17 @@ public static class ActionsISO
         }
 
         // Run tasks and wait for completion
-        var task0 = IsoExtractFiles(options, iso, inputFile);
-        var task1 = IsoExtractSystem(options, iso, inputFile);
+        var task0 = IsoExtractFiles(options, iso);
+        var task1 = IsoExtractSystem(options, iso);
         task0.Wait();
         task1.Wait();
     }
 
-    private static Task IsoExtractFiles(Options options, DiskImage iso, OSPath inputFile)
+    private static Task IsoExtractFiles(Options options, DiskImage iso)
     {
         // Prepare files for writing
-        var files = iso.FileSystem.GetFiles();
-        List<Task> tasks = new List<Task>(files.Length);
+        FileNode[] files = iso.FileSystem.GetFiles();
+        List<Task> tasks = new(files.Length);
         for (int i = 0; i < files.Length; i++)
         {
             // Get output path
@@ -93,31 +93,31 @@ public static class ActionsISO
         return tasksFinished;
     }
 
-    private static Task IsoExtractSystem(Options options, DiskImage iso, OSPath inputFile)
+    private static Task IsoExtractSystem(Options options, DiskImage iso)
     {
         // Prepare functions
-        var makeBootBin = IsoExtractSystemFile(options, inputFile, "boot", "bin", iso.DiskHeader.BootBinRaw);
-        var makeBi2Bin = IsoExtractSystemFile(options, inputFile, "bi2", "bin", iso.DiskHeaderInformation.Bi2BinRaw);
-        var makeApploader = IsoExtractSystemFile(options, inputFile, "apploader", "img", iso.Apploader.Raw);
-        var makeFilesystem = IsoExtractSystemFile(options, inputFile, "fst", "bin", iso.FileSystem.Raw);
-        var makeMainDol = IsoExtractSystemFile(options, inputFile, "main", "dol", iso.MainExecutableRaw);
+        var makeBootBin = IsoExtractSystemFile(options, "boot", "bin", iso.DiskHeader.BootBinRaw);
+        var makeBi2Bin = IsoExtractSystemFile(options, "bi2", "bin", iso.DiskHeaderInformation.Bi2BinRaw);
+        var makeApploader = IsoExtractSystemFile(options, "apploader", "img", iso.Apploader.Raw);
+        var makeFilesystem = IsoExtractSystemFile(options, "fst", "bin", iso.FileSystem.Raw);
+        var makeMainDol = IsoExtractSystemFile(options, "main", "dol", iso.MainExecutableRaw);
 
         // Create tasks
-        List<Task> tasks = new List<Task>
-        {
+        List<Task> tasks =
+        [
             Task.Factory.StartNew(makeBootBin),
             Task.Factory.StartNew(makeBi2Bin),
             Task.Factory.StartNew(makeApploader),
             Task.Factory.StartNew(makeFilesystem),
             Task.Factory.StartNew(makeMainDol),
-        };
+        ];
 
         // Wait for tasks to finish before returning
         var tasksFinished = Task.WhenAll(tasks);
         return tasksFinished;
     }
 
-    private static Action IsoExtractSystemFile(Options options, OSPath inputFile, string outputName, string outputExtension, byte[] data)
+    private static Action IsoExtractSystemFile(Options options, string outputName, string outputExtension, byte[] data)
     {
         // Get output path
         OSPath outputFile = new();

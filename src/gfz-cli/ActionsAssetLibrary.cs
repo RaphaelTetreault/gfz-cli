@@ -515,7 +515,7 @@ public static class ActionsAssetLibrary
         gma.FileName = inputPath;
 
         //　Record names of generated files for .gmaref
-        List<string> gcmfAssetNames = new();
+        List<string> gcmfAssetNames = [];
 
         // Iterate over all models in GMA
         int numModels = gma.Models.Length;
@@ -527,9 +527,7 @@ public static class ActionsAssetLibrary
 
             // Get this GMA's texture references.
             // If no textures provided, do not get texture names
-            string[] tevTextureReferences = gmaTextures.Length > 0
-                ? new string[gcmf.TevLayers.Length]
-                : Array.Empty<string>();
+            string[] tevTextureReferences = gmaTextures.Length > 0 ? new string[gcmf.TevLayers.Length] : [];
             // Iterate and assign references
             for (int index = 0; index < tevTextureReferences.Length; index++)
             {

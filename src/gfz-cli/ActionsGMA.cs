@@ -75,7 +75,7 @@ public static class ActionsGMA
             const FileShare fileShare = FileShare.ReadWrite;
 
             // Read GMA
-            Gma gma = new Gma();
+            Gma gma = new();
             using EndianBinaryReader reader = new(File.Open(inputPath, fileMode, fileAccess, fileShare), Gma.endianness);
             gma.Deserialize(reader);
 

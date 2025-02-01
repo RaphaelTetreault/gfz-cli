@@ -67,7 +67,7 @@ public static class GfzCliImageUtilities
     /// <param name="encoder">The image encoder to save image with.</param>
     public static void WriteTextureAsImage(Options options, OSPath outputPath, Texture texture, IImageEncoder encoder)
     {
-        bool canWrite = CheckWillFileWrite(options, outputPath, out ActionTaskResult result);
+        bool canWrite = CheckWillFileWrite(options, outputPath, out ActionTaskResult _);
         if (canWrite)
         {
             Image<Rgba32> image = TextureToImage(texture);

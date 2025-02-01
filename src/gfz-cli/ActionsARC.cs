@@ -76,7 +76,7 @@ public static class ActionsARC
         if (doesNotHaveOutputSpecified)
             outputFile.PopDirectory();
 
-        bool canWrite = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+        bool canWrite = CheckWillFileWrite(options, outputFile, out ActionTaskResult _);
         if (canWrite)
         {
             // Display files being compilled into ARC
