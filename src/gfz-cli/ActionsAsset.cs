@@ -20,7 +20,7 @@ namespace Manifold.GFZCLI;
 /// <summary>
 ///     Actions for creating a litghtly-managed GFZ asset library.
 /// </summary>
-public static class ActionsAssetLibrary
+public static class ActionsAsset
 {
     public static readonly GfzCliAction ActionAssetGenerateLibrary = new()
     {
@@ -97,6 +97,14 @@ public static class ActionsAssetLibrary
         {
             string msg = $"Incorrect command usage.";
             throw new ArgumentException(msg);
+        }
+
+        // Disable overwrite files as it does not work well with duplicate files across archives.
+        if (options.OverwriteFiles)
+        {
+            string msg = "Disabled overwrite files as it would write duplicate files to disk thousands of times.";
+            Terminal.WriteLine(msg);
+            options.OverwriteFiles = false;
         }
 
         Terminal.WriteLine($"{Designator}: generating asset library.");
