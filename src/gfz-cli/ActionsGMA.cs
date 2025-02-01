@@ -62,7 +62,10 @@ public static class ActionsGMA
     {
         inputPath.ThrowIfFileDoesNotExist();
 
-        var fileWrite = () =>
+        // Write file
+        bool doWriteFile = CheckWillFileWrite(options, outputPath, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputPath, options.ActionStr);
+        if (doWriteFile)
         {
             // Copy input to output if needed
             CreateBackupFileIfAble(options, outputPath);
@@ -79,15 +82,7 @@ public static class ActionsGMA
             // Patch GMA
             using EndianBinaryWriter writer = new(File.Open(outputPath, fileMode, fileAccess, fileShare), Gma.endianness);
             PatchSubmeshRenderFlags(options, gma, writer);
-        };
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputPath,
-            OutputFilePath = outputPath,
-            PrintPrefix = "GMA",
-            PrintActionDescription = $"patch GMA render flags",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
+        }
     }
 
     /// <summary>

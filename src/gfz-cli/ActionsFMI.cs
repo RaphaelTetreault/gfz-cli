@@ -79,7 +79,10 @@ public static class ActionsFMI
         // Set output extensions
         outputFile.SetExtensions(".fmi.txt");
 
-        var fileWrite = () =>
+        // Write file
+        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputFile, options.ActionStr);
+        if (doWriteFile)
         {
             // Read data
             FmiFile fmiFile = new FmiFile();
@@ -90,15 +93,7 @@ public static class ActionsFMI
             using PlainTextWriter writer = new(outputFile);
             fmiFile.Value.Serialize(writer);
             writer.Flush();
-        };
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputFile,
-            OutputFilePath = outputFile,
-            PrintPrefix = "FMI",
-            PrintActionDescription = $"converting FMI binary to plain text using",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
+        }
     }
 
     /// <summary>
@@ -112,7 +107,10 @@ public static class ActionsFMI
         // Set output extension
         outputFile.SetExtensions(".fmi");
 
-        var fileWrite = () =>
+        // Write file
+        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputFile, options.ActionStr);
+        if (doWriteFile)
         {
             // Read data
             FmiFile fmiFile = new();
@@ -123,15 +121,7 @@ public static class ActionsFMI
             using EndianBinaryWriter writer = new(File.Create(outputFile), FmiFile.endianness);
             fmiFile.Value.Serialize(writer);
             writer.Flush();
-        };
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputFile,
-            OutputFilePath = outputFile,
-            PrintPrefix = "FMI",
-            PrintActionDescription = $"converting FMI plain text to binary using",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
+        }
     }
 
 }

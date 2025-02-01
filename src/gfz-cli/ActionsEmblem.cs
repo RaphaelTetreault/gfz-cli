@@ -128,20 +128,19 @@ public static class ActionsEmblem
         int formatLength = emblemBIN.Emblems.LengthToFormat();
         for (int i = 0; i < emblemBIN.Emblems.Length; i++)
         {
+            // Prepare emblem name
             var emblem = emblemBIN.Emblems[i];
             int index = i + 1;
             string indexStr = index.PadLeft(formatLength, '0');
             outputFile.SetFileName($"{inputFile.FileName}-{indexStr}");
-            // Info for file write + console print
-            var fileWriteInfo = new FileWriteInfo()
+            // Write file, if able
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            PrintFileWriteResult(result, outputFile, options.ActionStr);
+            if (doWriteFile)
             {
-                InputFilePath = inputFile,
-                OutputFilePath = outputFile,
-                PrintPrefix = "Emblem",
-                PrintActionDescription = $"converting emblem {indexStr} of",
-            };
-            EnsureDirectoriesExist(outputFile);
-            WriteImage(options, encoder, emblem.Texture, fileWriteInfo);
+                EnsureDirectoriesExist(outputFile);
+                WriteTextureAsImage(options, outputFile, emblem.Texture, encoder);
+            }
         }
     }
 
@@ -205,30 +204,23 @@ public static class ActionsEmblem
     /// <returns></returns>
     public static Emblem[] ImageToEmblemBin(Options options)
     {
+        // Get emblems
         var emblems = ParallelizeFileInTypeOutTasks(options, ImageToEmblemBin);
+        OSPath outputPath = new(EnforceUnixSeparators(options.OutputPath));
 
-        string outputFilePath = EnforceUnixSeparators(options.OutputPath);
-
-        // Info for file write + console print
-        var info = new FileWriteInfo()
+        // Write file, if able
+        bool doWriteFile = CheckWillFileWrite(options, outputPath, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputPath, options.ActionStr);
+        if (doWriteFile)
         {
-            InputFilePath = options.InputPath,
-            OutputFilePath = outputFilePath,
-            PrintPrefix = "Emblem",
-            PrintActionDescription = "packaging path",
-        };
-
-        var fileWrite = () =>
-        {
-            using var fileStream = File.Create(outputFilePath);
+            using var fileStream = File.Create(outputPath);
             using var writer = new EndianBinaryWriter(fileStream, EmblemBIN.endianness);
             EmblemBIN emblemBin = new();
             emblemBin.Emblems = emblems;
             emblemBin.Serialize(writer);
-        };
+        }
 
-        FileWriteOverwriteHandler(options, fileWrite, info);
-
+        // Return emblems to caller
         return emblems;
     }
 
@@ -273,47 +265,44 @@ public static class ActionsEmblem
         // Strip .dat.gci extensions
         outputFile.SetExtensions("png");
 
-        // Info for file write + console print
-
         // BANNER
         {
-            OSPath textureOutput = new(outputFile);
-            textureOutput.SetFileName($"{outputFile.FileName}-banner");
-            var fileWriteInfo = new FileWriteInfo()
+            OSPath texturePath = new(outputFile);
+            texturePath.SetFileName($"{outputFile.FileName}-banner");
+            // Write file, if able
+            bool doWriteFile = CheckWillFileWrite(options, texturePath, out ActionTaskResult result);
+            PrintFileWriteResult(result, texturePath, options.ActionStr);
+            if (doWriteFile)
             {
-                InputFilePath = inputFile,
-                OutputFilePath = textureOutput,
-                PrintPrefix = "Emblem",
-                PrintActionDescription = "converting emblem banner",
-            };
-            WriteImage(options, encoder, emblemGCI.Banner, fileWriteInfo);
+                WriteTextureAsImage(options, texturePath, emblemGCI.Banner, encoder);
+            }
         }
+
         // ICON
         for (int i = 0; i < emblemGCI.Icons.Length; i++)
         {
             var icon = emblemGCI.Icons[i];
             // Strip original file name, replace with GC game code
-            OSPath textureOutput = new(outputFile);
-            textureOutput.SetFileName($"{emblemGCI.Header}-icon{i}");
-            var fileWriteInfo = new FileWriteInfo()
+            OSPath texturePath = new(outputFile);
+            texturePath.SetFileName($"{emblemGCI.Header}-icon{i}");
+            // Write file, if able
+            bool doWriteFile = CheckWillFileWrite(options, texturePath, out ActionTaskResult result);
+            PrintFileWriteResult(result, texturePath, options.ActionStr);
+            if (doWriteFile)
             {
-                InputFilePath = inputFile,
-                OutputFilePath = textureOutput,
-                PrintPrefix = "Emblem",
-                PrintActionDescription = $"converting emblem icon #{i}",
-            };
-            WriteImage(options, encoder, icon, fileWriteInfo);
+                WriteTextureAsImage(options, texturePath, icon, encoder);
+            }
         }
+
         // EMBLEM
         {
-            var fileWriteInfo = new FileWriteInfo()
+            // Write file, if able
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            PrintFileWriteResult(result, outputFile, options.ActionStr);
+            if (doWriteFile)
             {
-                InputFilePath = inputFile,
-                OutputFilePath = outputFile,
-                PrintPrefix = "Emblem",
-                PrintActionDescription = "converting emblem",
-            };
-            WriteImage(options, encoder, emblemGCI.Emblem.Texture, fileWriteInfo);
+                WriteTextureAsImage(options, outputFile, emblemGCI.Emblem.Texture, encoder);
+            }
         }
     }
 
@@ -372,21 +361,15 @@ public static class ActionsEmblem
         emblemGci.SetFileName(fileName);
 
         // Write file
-        var fileWrite = () =>
-        {
+        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputFile, options.ActionStr);
+        if (doWriteFile)
+        {   
             // Save emblem
             using var fileStream = File.Create(outputFile);
             using var writer = new EndianBinaryWriter(fileStream, EmblemGCI.endianness);
             emblemGci.Serialize(writer);
-        };
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputFile,
-            OutputFilePath = outputFile,
-            PrintPrefix = "Emblem",
-            PrintActionDescription = "creating emblem",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
+        }
     }
 
     #endregion

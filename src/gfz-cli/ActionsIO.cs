@@ -91,7 +91,9 @@ public static class ActionsIO
         string designator = $"IO {typeof(TFile).Name}";
 
         // Read in file, write out file
-        void fileWrite()
+        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputFile, options.ActionStr);
+        if (doWriteFile)
         {
             // In
             TFile source = new();
@@ -103,14 +105,6 @@ public static class ActionsIO
             using EndianBinaryWriter writer = new(File.OpenWrite(outputFile), source.Endianness);
             writer.Write(source);
         }
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputFile,
-            OutputFilePath = outputFile,
-            PrintPrefix = designator,
-            PrintActionDescription = "re-serializing file",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
     }
 
 
@@ -126,20 +120,14 @@ public static class ActionsIO
     }
     public static void PatchSceneComment(Options options, OSPath inputFile, OSPath _)
     {
-        // Read in file, write out file
-        void filePatch()
+        // Read in file, edit
+        bool doWriteFile = CheckWillFileWrite(options, inputFile, out ActionTaskResult result);
+        PrintFileWriteResult(result, inputFile, options.ActionStr);
+        if (doWriteFile)
         {
             using EndianBinaryWriter writer = new(File.OpenWrite(inputFile), Scene.endianness);
             writer.JumpToAddress(0x130);
             writer.WritePadding(0xF0, 0x20);
         }
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputFile,
-            OutputFilePath = inputFile,
-            PrintPrefix = "PATCH",
-            PrintActionDescription = "patching scene",
-        };
-        FileWriteOverwriteHandler(options, filePatch, info);
     }
 }

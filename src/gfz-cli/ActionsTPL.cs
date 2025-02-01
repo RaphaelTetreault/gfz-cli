@@ -120,30 +120,22 @@ public static class ActionsTPL
                 if (skipCorruptedTexture)
                     continue;
 
-                // TODO
-                // Use new FileDescription
+                // 
                 var texture = textureEntry.Texture;
                 string textureHash = textureBundle.Elements[entryIndex].Crc32Text;
                 OSPath textureOutput = new OSPath(outputFile);
                 textureOutput.SetFileName($"{tplIndex}-{mipmapIndex}-{texture.Format}-{textureHash}");
 
-                //
-                var fileWrite = () =>
+                // Write file
+                bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+                PrintFileWriteResult(result, outputFile, options.ActionStr);
+                if (doWriteFile)
                 {
                     // Copy contents of GameCube texture into ImageSharp representation
-                    var texture = textureEntry.Texture;
                     Image<Rgba32> image = TextureToImage(texture);
                     // Save to disk
                     image.Save(textureOutput, encoder);
-                };
-                var info = new FileWriteInfo()
-                {
-                    InputFilePath = inputFile,
-                    OutputFilePath = textureOutput,
-                    PrintPrefix = "TPL",
-                    PrintActionDescription = $"unpacking texture {tplIndex} mipmap {mipmapIndex} of file",
-                };
-                FileWriteOverwriteHandler(options, fileWrite, info);
+                }
             }
         }
     }
@@ -264,15 +256,7 @@ public static class ActionsTPL
         TplTextureName baseTextureName = new(outputFilePath.FileName);
 
         // Calculate number of texture levels (1 main tex + mipmap count)
-        int numberOfLevels = 1;
-        int resizeWidth = image.Width / 2;
-        int resizeHeight = image.Height / 2;
-        while (resizeWidth > 0 && resizeHeight > 0)
-        {
-            numberOfLevels++;
-            resizeWidth >>= 1; // div by 2
-            resizeHeight >>= 1; // div by 2
-        }
+        int numberOfLevels = 1 + Texture.GetMaxMipmapCount(image.Width, image.Height);
 
         // Create mipmaps
         for (int mipmapLevel = 1; mipmapLevel < numberOfLevels; mipmapLevel++)
@@ -293,10 +277,6 @@ public static class ActionsTPL
                 continue;
             }
 
-            // Compute w/h for this iteration
-            resizeWidth = image.Width >> mipmapLevel;
-            resizeHeight = image.Height >> mipmapLevel;
-
             // Create name for this mipmap based on main texture
             TplTextureName mipmapName = new()
             {
@@ -310,32 +290,22 @@ public static class ActionsTPL
             mipmapNames.Add(mipmapPath);
 
             // Actual code which writes mipmaps
-            void WriteMipmapFile()
+            bool doWriteFile = CheckWillFileWrite(options, mipmapPath, out ActionTaskResult result);
+            PrintFileWriteResult(result, mipmapPath, options.ActionStr);
+            if (doWriteFile)
             {
-                // Copy data local to function/thread
-                int _mipmapLevel = mipmapLevel;
-                int _resizeWidth = resizeWidth;
-                int _resizeHeight = resizeHeight;
+                // Compute w/h for this iteration
+                int resizeWidth = image.Width >> mipmapLevel;
+                int resizeHeight = image.Height >> mipmapLevel;
 
                 // Create resized clone
-                var imageCopy = image.Clone(c => c.Resize(_resizeWidth, _resizeHeight, resampler));
+                var imageCopy = image.Clone(c => c.Resize(resizeWidth, resizeHeight, resampler));
 
                 // Save out mipmap
-                string mipmapName = mipmapNames[mipmapLevel];
-                using var mipmapFile = File.Create(mipmapName);
+                string o = mipmapNames[mipmapLevel];
+                using var mipmapFile = File.Create(o);
                 imageCopy.Save(mipmapFile, imageEncoder);
             }
-            // Info when writing mipmaps out
-            var info = new FileWriteInfo()
-            {
-                InputFilePath = inputFilePath,
-                OutputFilePath = mipmapNames[mipmapLevel],
-                PrintPrefix = "TPL",
-                PrintActionDescription = $"generating mipmap level {mipmapLevel} of",
-            };
-            // Code that runs function, writes info, decides if functions runs (eg: allow overwrite)
-            FileWriteOverwriteHandler(options, WriteMipmapFile, info);
         }
     }
-
 }

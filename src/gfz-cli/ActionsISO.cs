@@ -66,35 +66,25 @@ public static class ActionsISO
         {
             // Get output path
             var file = files[i];
-            OSPath outputFile = new OSPath();
+            OSPath outputFile = new();
             outputFile.SetDirectory(options.OutputPath);
             outputFile.PushDirectory("files");
             outputFile.AppendRelativePathToDirectories(file.GetResolvedPath());
 
-            // Function to write file
-            var fileWrite = () =>
+            void ExtractIsoFile()
             {
-                EnsureDirectoriesExist(outputFile);
-                using (var writer = new BinaryWriter(File.Open(outputFile, FileMode.Create)))
+                bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+                PrintFileWriteResult(result, outputFile, options.ActionStr);
+                if (doWriteFile)
                 {
+                    EnsureDirectoriesExist(outputFile);
+                    using var writer = new BinaryWriter(File.Open(outputFile, FileMode.Create));
                     writer.Write(file.Data);
                 }
-            };
-
-            // Print information
-            var info = new FileWriteInfo()
-            {
-                InputFilePath = inputFile,
-                OutputFilePath = outputFile,
-                PrintPrefix = "ISO",
-                PrintActionDescription = "extracting file from",
-            };
-
-            // Function to print and the call above function
-            var finalAction = () => { FileWriteOverwriteHandler(options, fileWrite, info); };
+            }
 
             // Run tasks
-            var task = Task.Factory.StartNew(finalAction);
+            var task = Task.Factory.StartNew(ExtractIsoFile);
             tasks.Add(task);
         }
 
@@ -130,31 +120,25 @@ public static class ActionsISO
     private static Action IsoExtractSystemFile(Options options, OSPath inputFile, string outputName, string outputExtension, byte[] data)
     {
         // Get output path
-        OSPath outputFile = new OSPath();
+        OSPath outputFile = new();
         outputFile.SetDirectory(options.OutputPath);
         outputFile.PushDirectory("sys");
         outputFile.SetFileName(outputName);
         outputFile.SetExtensions(outputExtension);
 
-        // Print information
-        var info = new FileWriteInfo()
+        void ExtractIsoSystemFile()
         {
-            InputFilePath = inputFile,
-            OutputFilePath = outputFile,
-            PrintPrefix = "ISO",
-            PrintActionDescription = "extracting system file from",
-        };
-
-        var fileWrite = () =>
-        {
-            EnsureDirectoriesExist(outputFile);
-            using (var writer = new BinaryWriter(File.Create(outputFile)))
+            // Write file
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            PrintFileWriteResult(result, outputFile, options.ActionStr);
+            if (doWriteFile)
             {
+                EnsureDirectoriesExist(outputFile);
+                using var writer = new BinaryWriter(File.Create(outputFile));
                 writer.Write(data);
             }
-        };
+        }
 
-        var outputAction = () => { FileWriteOverwriteHandler(options, fileWrite, info); };
-        return outputAction;
+        return ExtractIsoSystemFile;
     }
 }

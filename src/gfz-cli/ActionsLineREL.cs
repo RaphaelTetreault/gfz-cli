@@ -441,24 +441,17 @@ public static class ActionsLineREL
         outputFile.PopExtension();
         outputFile.SetExtensions(extension);
 
-        // 
-        var fileWrite = () =>
+        // Write file
+        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputFile, options.ActionStr);
+        if (doWriteFile)
         {
             GameCode gameCode = options.GetGameCode();
             var lookup = LineRelLookup.GetInfo(gameCode);
             using var stream = LineUtility.Crypt(inputFile, lookup);
             using var writer = File.Create(outputFile);
             writer.Write(stream.ToArray());
-        };
-        string verb = doEncrypt ? "encrypting" : "decrypting";
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputFile,
-            OutputFilePath = outputFile,
-            PrintPrefix = "LineREL",
-            PrintActionDescription = $"{verb} file with region {options.SerializationRegion}",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
+        }
     }
     public static void DecryptLine(Options options, OSPath inputFile, OSPath outputFile)
     {

@@ -55,19 +55,15 @@ public class ActionsGhost
 
         // TODO: parameterize extensions
         outputFile.SetExtensions(GhostData.fileExtension);
-        var fileWrite = () =>
+
+        // Write file
+        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputFile, options.ActionStr);
+        if (doWriteFile)
         {
             using var writer = new EndianBinaryWriter(File.Create(outputFile), GhostData.endianness);
             writer.Write(ghost);
-        };
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputFile,
-            OutputFilePath = outputFile,
-            PrintPrefix = "GHOST",
-            PrintActionDescription = "writing file",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
+        }
     }
 
 }

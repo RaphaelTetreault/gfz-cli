@@ -137,50 +137,7 @@ public static class GfzCliUtilities
         }
     }
 
-
     // NEW STUFF ENDS
-
-    public static bool FileWriteOverwriteHandler(Options options, System.Action fileWrite, FileWriteInfo info)
-    {
-        bool outputFileExists = File.Exists(info.OutputFilePath);
-        bool doWriteFile = !outputFileExists || options.OverwriteFiles;
-        bool isOverwritingFile = outputFileExists && doWriteFile;
-        var writeColor = isOverwritingFile ? FileOverwriteColor : FileWriteColor;
-        var writeMsg = isOverwritingFile ? "Overwrote" : "Wrote";
-
-        lock (LockConsoleWrite)
-        {
-            Terminal.Write($"{info.PrintPrefix}: ");
-            if (doWriteFile)
-            {
-                Terminal.Write(info.PrintActionDescription);
-                Terminal.Write(" ");
-                Terminal.Write(info.InputFilePath, FileNameColor);
-                Terminal.Write(". ");
-                Terminal.Write(writeMsg, writeColor);
-                Terminal.Write(" file ");
-                Terminal.Write(info.OutputFilePath, FileNameColor);
-            }
-            else
-            {
-                Terminal.Write("skip ");
-                Terminal.Write(info.PrintActionDescription);
-                Terminal.Write(" ");
-                Terminal.Write(info.InputFilePath, FileNameColor);
-                Terminal.Write(" since ");
-                Terminal.Write(info.OutputFilePath, FileNameColor);
-                Terminal.Write(" already exists. ");
-                Terminal.Write(info.PrintMoreInfoOnSkip);
-            }
-            Terminal.WriteLine();
-        }
-
-        if (doWriteFile)
-        {
-            fileWrite.Invoke();
-        }
-        return doWriteFile;
-    }
 
     private static string[] GetFilesInInputDirectory(Options options)
     {

@@ -57,7 +57,7 @@ public static class ActionsARC
         {
             options.SearchPattern = "*";
             string message = $"{options.ActionStr}: {nameof(options.SearchPattern)} is null, now set to \"{options.SearchPattern}\".";
-            Terminal.Write(message);
+            Terminal.WriteLine(message);
         }
 
         // Get files in directory with search pattern

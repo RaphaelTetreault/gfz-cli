@@ -49,26 +49,16 @@ public static class ActionsLZ
         // Remove extension
         outputFile.PopExtension();
 
-        // 
-        var fileWrite = () =>
+        // Write file
+        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputFile, options.ActionStr);
+        if (doWriteFile)
         {
             // TODO: add LZ function in library to read from inputFilePath, decompress, save to outputFilePath
-            using (var stream = LzUtility.DecompressAvLz(inputFile))
-            {
-                using (var writer = File.Create(outputFile))
-                {
-                    writer.Write(stream.ToArray());
-                }
-            }
-        };
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputFile,
-            OutputFilePath = outputFile,
-            PrintPrefix = "LZ",
-            PrintActionDescription = "decompressing file",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
+            using var stream = LzUtility.DecompressAvLz(inputFile);
+            using var writer = File.Create(outputFile);
+            writer.Write(stream.ToArray());
+        }
     }
 
     public static void LzCompress(Options options)
@@ -82,24 +72,15 @@ public static class ActionsLZ
     {
         outputFile.PushExtension(".lz");
 
-        var fileWrite = () =>
-        {
+        // Write file
+        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputFile, options.ActionStr);
+        if (doWriteFile)
+        {            
             // TODO: add LZ function in library to read from inputFile, compress, save to outputFile
-            using (var stream = LzUtility.CompressAvLz(inputFile, options.AvGame))
-            {
-                using (var writer = File.Create(outputFile))
-                {
-                    writer.Write(stream.ToArray());
-                }
-            }
-        };
-        var info = new FileWriteInfo()
-        {
-            InputFilePath = inputFile,
-            OutputFilePath = outputFile,
-            PrintPrefix = "LZ",
-            PrintActionDescription = "compressing input file",
-        };
-        FileWriteOverwriteHandler(options, fileWrite, info);
+            using var stream = LzUtility.CompressAvLz(inputFile, options.AvGame);
+            using var writer = File.Create(outputFile);
+            writer.Write(stream.ToArray());
+        }
     }
 }
