@@ -1,8 +1,6 @@
 ﻿using GameCube.GFZ.GMA;
 using GameCube.GFZ.TPL;
 using GameCube.GX.Texture;
-using static Manifold.GFZCLI.GfzCliUtilities;
-using static Manifold.GFZCLI.GfzCliImageUtilities;
 using Manifold.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
@@ -14,6 +12,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using static Manifold.GFZCLI.GfzCliUtilities;
+using static Manifold.GFZCLI.GfzCliImageUtilities;
 
 namespace Manifold.GFZCLI;
 

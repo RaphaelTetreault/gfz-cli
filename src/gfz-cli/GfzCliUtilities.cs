@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using static Manifold.GFZCLI.Program;
 
 namespace Manifold.GFZCLI;
 

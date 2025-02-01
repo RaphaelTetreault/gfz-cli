@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Manifold.GFZCLI;
+﻿namespace Manifold.GFZCLI;
 
 /// <summary>
 ///     List of all possible actions in this CLI program.
@@ -58,23 +56,4 @@ public enum CliActionID
     tpl_generate_mipmaps,
     tpl_pack,
     tpl_unpack,
-}
-
-/// <summary>
-///     Metadata for <see cref="ActionAttribute"/> in <see cref="CliActionID"/>.
-/// </summary>
-internal static class ActionExOptions
-{
-    public const string OptionalsSeparator = "\n\t\t";
-
-    public const string encode_bytes_to_shift_jis =
-        $"--{IOptionsLineRel.Args.Value} <hex-string>";
-
-    public const string encode_windows_to_shift_jis =
-        $"--{IOptionsLineRel.Args.Value} <string>";
-
-    public const string linerel_set_max_speed =
-        OptionalsSeparator +
-        $"[--{IOptionsLineRel.Args.Value} <max-speed=+infinity>]";
-
 }

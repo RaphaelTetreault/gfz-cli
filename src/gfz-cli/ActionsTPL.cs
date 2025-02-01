@@ -2,16 +2,17 @@
 using GameCube.GX.Texture;
 using Manifold.IO;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using static Manifold.GFZCLI.GfzCliUtilities;
 using static Manifold.GFZCLI.GfzCliImageUtilities;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Processing.Processors.Transforms;
-using System.Text;
-using SixLabors.ImageSharp.Formats;
+
 
 namespace Manifold.GFZCLI;
 
