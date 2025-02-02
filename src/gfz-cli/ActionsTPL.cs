@@ -85,7 +85,8 @@ public static class ActionsTPL
         }
 
         // Create folder named the same thing as the TPL input file
-        string directory = Path.GetDirectoryName(outputFile);
+        string directory = Path.GetDirectoryName(outputFile)!;
+        directory ??= "";
         string outputDirectory = Path.Combine(directory, tpl.FileName);
         Directory.CreateDirectory(outputDirectory);
 
@@ -166,7 +167,8 @@ public static class ActionsTPL
             }
         }
 
-        string directory = Path.GetDirectoryName(path);
+        string directory = Path.GetDirectoryName(path)!;
+        directory ??= "";
         string fileName = $"temp.tpl";
         string filePath = Path.Combine(directory, fileName);
         //using (var writer = new EndianBinaryWriter(new MemoryStream(), Tpl.endianness))
@@ -204,7 +206,8 @@ public static class ActionsTPL
         //var imageHash = GetMD5Hastpl-packhName(tempStream);
 
         // Find where to save file
-        directory = Path.GetDirectoryName(path);
+        directory = Path.GetDirectoryName(path)!;
+        directory ??= "";
         fileName = $"temp.png";
         filePath = Path.Combine(directory, fileName);
         // Save to disk

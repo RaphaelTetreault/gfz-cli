@@ -36,14 +36,14 @@ public readonly record struct GfzCliAction()
     public const ConsoleColor RequiredArgDescriptionColor = ConsoleColor.White;
     public const ConsoleColor OptionalArgDescriptionColor = ConsoleColor.DarkGray;
 
-    private ConsoleColor GetArgumentColor(bool isRequired)
+    private static ConsoleColor GetArgumentColor(bool isRequired)
     {
         ConsoleColor color = isRequired
             ? RequiredArgColor
             : OptionalArgColor;
         return color;
     }
-    private ConsoleColor GetArgDescriptionColor(bool isRequired)
+    private static ConsoleColor GetArgDescriptionColor(bool isRequired)
     {
         ConsoleColor color = isRequired
             ? RequiredArgDescriptionColor
@@ -113,7 +113,7 @@ public readonly record struct GfzCliAction()
         Terminal.WriteLine();
     }
 
-    private void PrintArgument(GfzCliArgument argumentInfo, bool isRequired)
+    private static void PrintArgument(GfzCliArgument argumentInfo, bool isRequired)
     {
         string argName = argumentInfo.ArgumentName;
         string argType = argumentInfo.ArgumentType;

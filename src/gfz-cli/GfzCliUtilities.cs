@@ -28,8 +28,8 @@ public static class GfzCliUtilities
             var inputFile = new OSPath(inputFilePaths[i]);
             var outputFile = new OSPath(outputFilePaths[i]);
 
-            var action = () => { fileTask(options, inputFile, outputFile); };
-            var task = Task.Factory.StartNew(action);
+            void Action() { fileTask(options, inputFile, outputFile); }
+            var task = Task.Factory.StartNew(Action);
             tasks.Add(task);
         }
 
@@ -47,7 +47,7 @@ public static class GfzCliUtilities
         // Create tasks and store result of each task
         Task[] tasks = new Task[inputFilePaths.Length];
         T[] results = new T[tasks.Length];
-        object lock_results = new object();
+        object lock_results = new();
 
         //  Schedule tasks, indicate where to store value
         for (int i = 0; i < tasks.Length; i++)
@@ -55,8 +55,8 @@ public static class GfzCliUtilities
             var inputFile = new OSPath(inputFilePaths[i]);
             int index = i;
 
-            var action = () => { results[index] = processFileTask(options, inputFile); };
-            var task = Task.Factory.StartNew(action);
+            void Action() { results[index] = processFileTask(options, inputFile); }
+            var task = Task.Factory.StartNew(Action);
             tasks[i] = task;
         }
 
@@ -140,7 +140,7 @@ public static class GfzCliUtilities
 
     private static string[] GetFilesInInputDirectory(Options options)
     {
-        string[] files = Array.Empty<string>();
+        string[] files = [];
 
         bool directoryExists = Directory.Exists(options.InputPath);
         if (directoryExists)
@@ -169,7 +169,7 @@ public static class GfzCliUtilities
         }
 
         string[] files = fileExists
-            ? new string[] { options.InputPath }
+            ? [options.InputPath]
             : GetFilesInInputDirectory(options);
 
         // Quick and dirty way to sort files
@@ -234,9 +234,10 @@ public static class GfzCliUtilities
                 // Remove inputPath from the file Path
                 string relativePath = inputFile.Replace(inputPath, "");
 
+                // Assumes Unix style string, enforced earlier in function
                 if (relativePath.Length > 0)
-                    if (relativePath[0] == '\\' || relativePath[0] == '/') //TODO: assume / if properly enforced...
-                        relativePath = relativePath.Substring(1);
+                    if (relativePath[0] == '\\' || relativePath[0] == '/')
+                        relativePath = relativePath[1..];
 
                 // Append the relative path to the end of the output path
                 string cleanOutputPath = Path.Combine(outputPath, relativePath);
@@ -312,16 +313,6 @@ public static class GfzCliUtilities
     }
     public static string Plural(Array array) => Plural(array.Length);
 
-    [Obsolete]
-    public static bool CopyInputToOutputIfNotSamePath(string inputPath, string outputPath)
-    {
-        bool isNotSameFile = inputPath != outputPath;
-        if (isNotSameFile)
-        {
-            File.Copy(inputPath, outputPath, true);
-        }
-        return isNotSameFile;
-    }
 
     /// <summary>
     ///     Create a backup of file at <paramref name="filePath"/>.

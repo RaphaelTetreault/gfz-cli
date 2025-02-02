@@ -165,36 +165,24 @@ public class Options :
         GameCode code = 0;
 
         // Add region
-        switch (region)
+        code += region switch
         {
-            case Region.Japan:
-                code += (int)GameCodeFields.Japan;
-                break;
-            case Region.NorthAmerica:
-                code += (int)GameCodeFields.NorthAmerica;
-                break;
-            case Region.Europe:
-                code += (int)GameCodeFields.Europe;
-                break;
-
-            default:
-                throw new NotImplementedException(region.ToString());
-        }
+            Region.Japan => (int)GameCodeFields.Japan,
+            Region.NorthAmerica => (int)GameCodeFields.NorthAmerica,
+            Region.Europe => (int)GameCodeFields.Europe,
+            Region.RegionFree => throw new ArgumentException(region.ToString()),
+            _ => throw new NotImplementedException(region.ToString()),
+        };
 
         // Add game
-        switch (avGame)
+        code += avGame switch
         {
-            case AvGame.FZeroAX:
-                code += (int)GameCodeFields.AX;
-                break;
-            case AvGame.FZeroGX:
-                code += (int)GameCodeFields.GX;
-                break;
-
-            default:
-                throw new NotImplementedException(avGame.ToString());
-        }
-
+            AvGame.FZeroAX => (int)GameCodeFields.AX,
+            AvGame.FZeroGX => (int)GameCodeFields.GX,
+            AvGame.SuperMonkeyBall or
+            AvGame.SuperMonkeyBallDX => throw new ArgumentException(avGame.ToString()),
+            _ => throw new NotImplementedException(avGame.ToString()),
+        };
         return code;
     }
 
@@ -222,12 +210,10 @@ public class Options :
     // TODO: consider moving to GfzCliEnumParser
     public static byte GetColorComponent(string colorValue)
     {
-        byte byteValue;
-        float floatValue;
         bool success;
 
         // Parse as byte (0-255)
-        success = byte.TryParse(colorValue, out byteValue);
+        success = byte.TryParse(colorValue, out byte byteValue);
         if (success)
             return byteValue;
 
@@ -237,7 +223,7 @@ public class Options :
             return byteValue;
 
         // Parse as float
-        success = float.TryParse(colorValue, out floatValue);
+        success = float.TryParse(colorValue, out float floatValue);
         if (success)
         {
             floatValue = Math.Clamp(floatValue, 0, 1);
@@ -282,7 +268,7 @@ public class Options :
             }
         }
 
-        Color color = new Color(new Rgba32(r, g, b, a));
+        Color color = new(new Rgba32(r, g, b, a));
         return color;
     }
     public static TEnum GetEnum<TEnum>(string value)

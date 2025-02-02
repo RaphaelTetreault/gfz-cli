@@ -16,7 +16,7 @@ public static class ActionsMisc
         }
 
         string outputPath = GetOutputDirectory(options);
-        OSPath fileOutputPath = new OSPath(outputPath);
+        OSPath fileOutputPath = new(outputPath);
         fileOutputPath.SetFileName("test");
         fileOutputPath.PushExtension("tsv");
         using var writer = new StreamWriter(File.Create(fileOutputPath));

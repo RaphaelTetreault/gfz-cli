@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <Version>0.4.6</Version>
     <AssemblyName>gfz</AssemblyName>
+    <NoWarn>$(NoWarn);SYSLIB1045</NoWarn><!-- SYSLIB1045 Use GeneratedRegexAttribute to generate the regular expression implementation at compile time. -->
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />

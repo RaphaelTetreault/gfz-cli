@@ -13,14 +13,16 @@ namespace Manifold.GFZCLI;
 public class OSPath
 {
     // CONSTANTS
+#pragma warning disable IDE0051 // Remove unused private members
     private const string MatchEverythingBeforePeriod = @"[^.]*";
     private const string MatchEverythingAfterPeriod = @"\..*";
     private const string MatchEverythingAfterLastSlash = @"([^\/]+$)";
+#pragma warning restore IDE0051 // Remove unused private members
 
     // MEMBERS
     private string fileName = string.Empty;
-    private readonly List<string> directoriesList = new();
-    private readonly List<string> extensionsList = new();
+    private readonly List<string> directoriesList = [];
+    private readonly List<string> extensionsList = [];
     private readonly StringBuilder builder = new();
 
     // PROPERTIES
@@ -44,7 +46,7 @@ public class OSPath
     /// <remarks>
     ///     Returns an empty string if no extensions are assigned to this path.
     /// </remarks>
-    public string[] Extensions => extensionsList.ToArray();
+    public string[] Extensions => [.. extensionsList];
     /// <summary>
     ///     Returns this path's file name.
     /// </summary>
@@ -102,7 +104,7 @@ public class OSPath
         else
         {
             // We might have any number of extensions
-            List<string> extensionList = new();
+            List<string> extensionList = [];
             string[] splitExtensions = extensions.Split('.');
             foreach (string splitExtension in splitExtensions)
             {
@@ -112,7 +114,7 @@ public class OSPath
 
                 extensionList.Add(splitExtension);
             }
-            return extensionList.ToArray();
+            return [.. extensionList];
         }
     }
     private static string EnforceUnixPath(string path)
@@ -489,7 +491,7 @@ public class OSPath
         bool beginsWithPeriod = extension[0] == '.';
         if (beginsWithPeriod)
         {
-            extension = extension.Substring(1);
+            extension = extension[1..];
         }
 
         string selfExtension = GetExtension();

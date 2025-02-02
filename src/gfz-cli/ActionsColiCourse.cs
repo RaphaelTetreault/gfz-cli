@@ -93,7 +93,7 @@ public static class ActionsColiCourse
             using var colicourseFile = File.Open(inputPath, fileMode, fileAccess, fileShare);
 
             // Read data
-            Scene scene = new Scene();
+            Scene scene = new();
             scene.FileName = inputPath.FileName;
             using EndianBinaryReader reader = new(colicourseFile, Scene.endianness);
             scene.Deserialize(reader);
@@ -202,7 +202,7 @@ public static class ActionsColiCourse
             const FileShare fileShare = FileShare.ReadWrite;
             using var colicourseFile = File.Open(inputPath, fileMode, fileAccess, fileShare);
 
-            Scene scene = new Scene();
+            Scene scene = new();
             scene.FileName = inputPath.FileName;
             using EndianBinaryReader reader = new(colicourseFile, Scene.endianness);
             scene.Deserialize(reader);

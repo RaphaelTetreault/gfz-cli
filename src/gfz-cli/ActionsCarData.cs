@@ -85,8 +85,9 @@ public static class ActionsCarData
         PrintFileWriteResult(result, outputFile, options.ActionStr);
         if (doWriteFile)
         {
-            TableCollection tableCollection = new();
-            tableCollection.Add(carData.CreateTables());
+            TableCollection tableCollection = [];
+            Table[] table = carData.CreateTables();
+            tableCollection.Add(table);
             tableCollection.ToFile(outputFile, TableEncodingTSV.Encoding);
         }
     }

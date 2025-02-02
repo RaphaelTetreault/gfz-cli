@@ -128,7 +128,7 @@ public static class ActionsAsset
         string[] gmaFiles = GetInputFiles(options);
         // Get TPL file paths
         options.SearchPattern = "*.tpl";
-        List<string> tplFiles = GetInputFiles(options).ToList();
+        List<string> tplFiles = [.. GetInputFiles(options)];
         // Restore search pattern
         options.SearchPattern = searchPattern;
 
@@ -501,7 +501,7 @@ public static class ActionsAsset
             Format = description.TextureFormat,
             Count = actualTextureCount,
             DataLength = textureBundleData.Count,
-            Data = textureBundleData.ToArray(),
+            Data = [.. textureBundleData],
         };
         // Write out texture
         EnsureDirectoriesExist(fullOutputPath);
@@ -596,7 +596,7 @@ public static class ActionsAsset
                 using var writer = new PlainTextWriter(File.Create(gmarefOutputPath), GmaRef.Encoding);
                 // Write a reference to each GCMF for this GMA file as a .GMAREF
                 GmaRef gmaRef = new();
-                gmaRef.GcmfModels = gcmfAssetNames.ToArray();
+                gmaRef.GcmfModels = [.. gcmfAssetNames];
                 gmaRef.Serialize(writer);
             }
         }
