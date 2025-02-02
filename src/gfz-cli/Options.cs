@@ -277,4 +277,11 @@ public class Options :
         TEnum @enum = Enum.Parse<TEnum>(value, true);
         return @enum;
     }
+
+    public void OverrideSearchPatternIfUnset(string overrideSearchPattern)
+    {
+        bool hasNoSearchPattern = string.IsNullOrEmpty(SearchPattern);
+        if (hasNoSearchPattern)
+            SearchPattern = overrideSearchPattern;
+    }
 }

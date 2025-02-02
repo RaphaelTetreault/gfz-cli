@@ -160,6 +160,13 @@ public class OSPath
 
     // DIRECTORIES
     /// <summary>
+    ///     Remove all directories from path.
+    /// </summary>
+    public void ClearDirectories()
+    {
+        directoriesList.Clear();
+    }
+    /// <summary>
     ///     Return single string with all directories.
     /// </summary>
     /// <returns>
@@ -279,6 +286,13 @@ public class OSPath
 
     // NAME
     /// <summary>
+    ///     Clear file name.
+    /// </summary>
+    public void ClearFileName()
+    {
+        fileName = string.Empty;
+    }
+    /// <summary>
     ///     Sets the file name to <paramref name="fileName"/>.
     /// </summary>
     /// <param name="fileName">The value to set as the file name.</param>
@@ -353,6 +367,13 @@ public class OSPath
     }
 
     // EXTENSIONS
+    /// <summary>
+    ///     Remove all extensions.
+    /// </summary>
+    public void ClearExtensions()
+    {
+        extensionsList.Clear();
+    }
     /// <summary>
     ///     Returns the last extension, if any.
     /// </summary>

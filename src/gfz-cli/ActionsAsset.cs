@@ -60,8 +60,6 @@ public static class ActionsAsset
             ],
     };
 
-    public const string Designator = "Asset";
-
     /// <summary>
     ///     Create library of individual textures and models from TPLs and GMAs, respectively.
     ///     Library includes files which correlate textures to each model using named references.
@@ -107,9 +105,9 @@ public static class ActionsAsset
             options.OverwriteFiles = false;
         }
 
-        Terminal.WriteLine($"{Designator}: generating asset library.");
+        Terminal.WriteLine($"{options.ActionStr}: generating asset library.");
         CreateGmaTplLibrary(options, new(options.InputPath), new(options.OutputPath + "/"));
-        Terminal.WriteLine($"{Designator}: done.");
+        Terminal.WriteLine($"{options.ActionStr}: done.");
     }
 
     /// <summary>
@@ -190,17 +188,41 @@ public static class ActionsAsset
     }
 
 
+    //
+    public static void UnpackTpl(Options options)
+    {
+        options.OverrideSearchPatternIfUnset("*.tpl");
+        Terminal.WriteLine($"{options.ActionStr}: unpacking file(s).");
+        int taskCount = ParallelizeFileInFileOutTasks(options, UnpackTpl);
+        Terminal.WriteLine($"{options.ActionStr}: done unpacking {taskCount} TPL file{Plural(taskCount)}.");
+    }
+
+    public static void UnpackTpl(Options options, OSPath inputPath, OSPath outputPath)
+    {
+        // input path is file
+        // output path is file, convert to folder
+        outputPath.PushDirectory(outputPath.FileName);
+        outputPath.ClearFileName();
+        outputPath.ClearExtensions();
+
+        //
+        
+    }
+
+
+
+
     /// <summary>
     ///     Create a .GXTEX and preview .PNG from a source image.
     /// </summary>
     /// <param name="options"></param>
     public static void ImageToGxTexture(Options options)
     {
-        // TODO: ingject search pattern?
+        // TODO: inject search pattern?
 
-        Terminal.WriteLine($"{Designator}: converting image to GameCube GX texture.");
+        Terminal.WriteLine($"{options.ActionStr}: converting image to GameCube GX texture.");
         ParallelizeFileInFileOutTasks(options, ImageToGxTexture);
-        Terminal.WriteLine($"{Designator}: done.");
+        Terminal.WriteLine($"{options.ActionStr}: done.");
     }
 
     /// <summary>
@@ -256,8 +278,7 @@ public static class ActionsAsset
     private static string[] TplToGxtexAndPng(Options options, OSPath inputPath, OSPath outputPath, IResampler resampler)
     {
         // Load TPL file
-        Tpl tpl = BinarySerializableIO.LoadFile<Tpl>(inputPath);
-        tpl.FileName = inputPath;
+        Tpl tpl = new TplFile(inputPath).Value;
 
         // Iterate over all texture bundle (each bundle is main texture + optional mipmaps)
         int numTextures = tpl.TextureBundles.Length;
@@ -481,7 +502,7 @@ public static class ActionsAsset
                 Texture mipmapTexture = ImageToTexture(mipmapImage);
                 // Write texture data to memory
                 using var memory = new MemoryStream();
-                using var memoryWriter = new EndianBinaryWriter(memory, Tpl.endianness);
+                using var memoryWriter = new EndianBinaryWriter(memory, TplFile.endianness);
                 Texture.WriteDirectColorTexture(memoryWriter, mipmapTexture, description.TextureFormat);
                 memoryWriter.Flush();
                 // Add data to array
