@@ -122,9 +122,9 @@ public static class Program
         ActionsLineREL.ActionPatchSetCourseVenue,
         ActionsLineREL.ActionPatchSetVenueName,
         // TPL
-        ActionsTPL.ActionTplGenerateMipmaps,
-        ActionsTPL.ActionTplPack,
-        ActionsTPL.ActionTplUnpack,
+        //ActionsTPL.ActionTplGenerateMipmaps,
+        //ActionsTPL.ActionTplPack,
+        //ActionsTPL.ActionTplUnpack,
     ];
 
     private static void InitUsageDictionary()
