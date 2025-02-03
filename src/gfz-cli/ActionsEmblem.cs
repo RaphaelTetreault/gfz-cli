@@ -113,23 +113,19 @@ public static class ActionsEmblem
     private static void EmblemBinToImages(Options options, OSPath inputFile, OSPath outputFile)
     {
         // Read BIN Emblem data
-        var emblemBIN = new EmblemBIN();
-        using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemBIN.endianness))
-        {
-            emblemBIN.Deserialize(reader);
-            emblemBIN.FileName = Path.GetFileNameWithoutExtension(inputFile);
-        }
+        EmblemBIN emblemBIN = new(inputFile);
+        Emblem[] emblems = emblemBIN.Value.Emblems;
 
         ImageEncoder encoder = options.ImageEncoder;
         outputFile.PushDirectory(emblemBIN.FileName);
         outputFile.SetExtensions(".png");
 
         // Write out each emblem in file
-        int formatLength = emblemBIN.Emblems.LengthToFormat();
-        for (int i = 0; i < emblemBIN.Emblems.Length; i++)
+        int formatLength = emblems.LengthToFormat();
+        for (int i = 0; i < emblems.Length; i++)
         {
             // Prepare emblem name
-            var emblem = emblemBIN.Emblems[i];
+            var emblem = emblems[i];
             int index = i + 1;
             string indexStr = index.PadLeft(formatLength, '0');
             outputFile.SetFileName($"{inputFile.FileName}-{indexStr}");
@@ -216,7 +212,7 @@ public static class ActionsEmblem
             using var fileStream = File.Create(outputPath);
             using var writer = new EndianBinaryWriter(fileStream, EmblemBIN.endianness);
             EmblemBIN emblemBin = new();
-            emblemBin.Emblems = emblems;
+            emblemBin.Value.Emblems = emblems;
             emblemBin.Serialize(writer);
         }
 

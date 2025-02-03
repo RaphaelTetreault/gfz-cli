@@ -43,26 +43,26 @@ public class ActionsGhost
     /// <param name="outputFile"></param>
     private static void ExtractGhostDataFromGci(Options options, OSPath inputFile, OSPath outputFile)
     {
-        // 
-        var gci = new GhostDataGCI();
-        GhostData ghost;
+        // Copy value over
+        var ghostGci = new GhostDataGCI();
+        GhostDataBIN ghostBin = new();
         using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), GhostDataGCI.endianness))
         {
-            gci.Deserialize(reader);
-            ghost = gci.GhostData;
-            ghost.FileName = Path.GetFileNameWithoutExtension(inputFile);
+            ghostGci.Deserialize(reader);
+            ghostBin.Value = ghostGci.GhostData;
+            ghostBin.FileName = Path.GetFileNameWithoutExtension(inputFile);
         }
 
         // TODO: parameterize extensions
-        outputFile.SetExtensions(GhostData.fileExtension);
+        outputFile.SetExtensions(GhostDataBIN.extension);
 
         // Write file
         bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
         PrintFileWriteResult(result, outputFile, options.ActionStr);
         if (doWriteFile)
         {
-            using var writer = new EndianBinaryWriter(File.Create(outputFile), GhostData.endianness);
-            writer.Write(ghost);
+            using var writer = new EndianBinaryWriter(File.Create(outputFile), GhostDataBIN.endianness);
+            writer.Write(ghostBin);
         }
     }
 
