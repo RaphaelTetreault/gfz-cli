@@ -58,30 +58,27 @@ public static class ActionsGMA
     /// <param name="options"></param>
     /// <param name="inputPath"></param>
     /// <param name="outputPath"></param>
-    public static void PatchSubmeshRenderFlags(Options options, OSPath inputPath, OSPath outputPath)
+    public static void PatchSubmeshRenderFlags(Options options, OSPath inputPath, OSPath _)
     {
         inputPath.ThrowIfFileDoesNotExist();
 
         // Write file
-        bool doWriteFile = CheckWillFileWrite(options, outputPath, out ActionTaskResult result);
-        PrintFileWriteResult(result, outputPath, options.ActionStr);
+        bool doWriteFile = CheckWillFileWrite(options, inputPath, out ActionTaskResult result);
+        PrintFileWriteResult(result, inputPath, options.ActionStr);
         if (doWriteFile)
         {
             // Copy input to output if needed
-            CreateBackupFileIfAble(options, outputPath);
+            CreateBackupFileIfAble(options, inputPath);
 
             const FileMode fileMode = FileMode.OpenOrCreate;
             const FileAccess fileAccess = FileAccess.ReadWrite;
             const FileShare fileShare = FileShare.ReadWrite;
 
             // Read GMA
-            Gma gma = new();
-            using EndianBinaryReader reader = new(File.Open(inputPath, fileMode, fileAccess, fileShare), Gma.endianness);
-            gma.Deserialize(reader);
-
+            GmaFile gmaFile = new(inputPath);
             // Patch GMA
-            using EndianBinaryWriter writer = new(File.Open(outputPath, fileMode, fileAccess, fileShare), Gma.endianness);
-            PatchSubmeshRenderFlags(options, gma, writer);
+            using EndianBinaryWriter writer = new(File.Open(inputPath, fileMode, fileAccess, fileShare), GmaFile.endianness);
+            PatchSubmeshRenderFlags(options, gmaFile, writer);
         }
     }
 

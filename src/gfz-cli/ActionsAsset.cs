@@ -540,8 +540,8 @@ public static class ActionsAsset
     private static void WriteModels(Options options, OSPath inputPath, OSPath outputPath, string[] gmaTextures)
     {
         // Load GMA file
-        Gma gma = BinarySerializableIO.LoadFile<Gma>(inputPath);
-        gma.FileName = inputPath;
+        GmaFile gmaFile = new(inputPath);
+        Gma gma = gmaFile.Value;
 
         //　Record names of generated files for .gmaref
         List<string> gcmfAssetNames = [];
@@ -585,15 +585,17 @@ public static class ActionsAsset
                 PrintFileWriteResult(result, modelOutputPath, options.ActionStr);
                 if (doWriteWrite)
                 {
-                    GcmfAsset gcmfAsset = new()
+                    GcmfAssetFile gcmfAssetFile = new()
                     {
-                        Name = name,
-                        TevTextureReferences = tevTextureReferences,
-                        Gcmf = gcmf,
+                        Value = new()
+                        {
+                            Name = name,
+                            TevTextureReferences = tevTextureReferences,
+                            Gcmf = gcmf,
+                        }
                     };
                     EnsureDirectoriesExist(modelOutputPath);
-                    using var writer = new EndianBinaryWriter(File.Create(modelOutputPath), Gma.endianness);
-                    writer.Write(gcmfAsset);
+                    gcmfAssetFile.WriteFile(modelOutputPath);
                 }
             }
         }
@@ -602,7 +604,7 @@ public static class ActionsAsset
         // Create GMA ref file (plaintext)
         {
             OSPath gmarefOutputPath = outputPath.Copy();
-            string fileName = Path.GetFileNameWithoutExtension(gma.FileName);
+            string fileName = Path.GetFileNameWithoutExtension(gmaFile.FileName);
             gmarefOutputPath.SetFileName(fileName);
             gmarefOutputPath.SetExtensions(GmaRef.Extension);
             string directories = Path.GetDirectoryName(inputPath)![options.InputPath.Length..];

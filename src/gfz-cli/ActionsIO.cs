@@ -66,7 +66,7 @@ public static class ActionsIO
     };
 
 
-    public static void InOutGMA(Options options) => InOutFiles<Gma>(options, "*.gma");
+    public static void InOutGMA(Options options) => InOutFiles<GmaFile>(options, "*.gma");
     public static void InOutTPL(Options options) => InOutFiles<TplFile>(options, "*.tpl");
     public static void InOutScene(Options options) => InOutFiles<Scene>(options, "COLI_COURSE???");
 
