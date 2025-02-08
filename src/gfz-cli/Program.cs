@@ -8,7 +8,6 @@ namespace Manifold.GFZCLI;
 
 public static class Program
 {
-    public static object LockConsoleWrite { get; } = new();
     public const ConsoleColor FileNameColor = ConsoleColor.Cyan;
     public const ConsoleColor FileWriteColor = ConsoleColor.Green;
     public const ConsoleColor FileOverwriteColor = ConsoleColor.DarkYellow;

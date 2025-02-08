@@ -181,7 +181,8 @@ public static class ActionsEmblem
         };
 
         // Write some useful information to the terminal
-        lock (LockConsoleWrite)
+        // TODO: unify with new CheckWillFileWrite method?
+        lock (Terminal.Lock)
         {
             Terminal.Write($"Emblem: ");
             Terminal.Write($"processing image ");
