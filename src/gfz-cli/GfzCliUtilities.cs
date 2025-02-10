@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Manifold.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -134,6 +135,19 @@ public static class GfzCliUtilities
             default:
                 throw new ArgumentException($"Unsupported result: {result}");
         }
+    }
+    public static bool CanWriteFileAndPrintResult(Options options, OSPath outputPath)
+    {
+        bool success = CheckWillFileWrite(options, outputPath, out ActionTaskResult result);
+        PrintFileWriteResult(result, outputPath, options.ActionStr);
+        return success;
+    }
+    public static bool CanWriteFileAndPrintResult(Options options, OSPath outputPath, out FileStream stream)
+    {
+        bool success = CanWriteFileAndPrintResult(options, outputPath);
+        EnsureDirectoriesExist(outputPath);
+        stream = File.Create(outputPath);
+        return success;
     }
 
     // NEW STUFF ENDS

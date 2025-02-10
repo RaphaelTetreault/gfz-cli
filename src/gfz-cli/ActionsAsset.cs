@@ -60,6 +60,19 @@ public static class ActionsAsset
             ],
     };
 
+    public static readonly GfzCliAction ActionAssetTplUnpack = new()
+    {
+        Description = "",
+        Action = UnpackTpl,
+        ActionID = CliActionID.asset_tpl_unpack,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
     /// <summary>
     ///     Create library of individual textures and models from TPLs and GMAs, respectively.
     ///     Library includes files which correlate textures to each model using named references.
@@ -164,7 +177,8 @@ public static class ActionsAsset
                 tplFiles.Remove(assetFile);
 
                 // Write out textures
-                var textureNames = TplToGxtexAndPng(options, tplPath, tplOutputPath, resampler);
+                TplEntryInfo[] tplEntryInfos = GetTplEntryInfos(options, tplPath, tplOutputPath, resampler);
+                string[] textureNames = tplEntryInfos.GetCrc32Names();
                 // Write out models with texture references :)
                 WriteModels(options, gmaPath, gmaOutputPath, textureNames);
             }
@@ -183,7 +197,7 @@ public static class ActionsAsset
             OSPath tplFilePath = new(tplFile);
             tplFilePath.SetExtensions("tpl");
             // Write out textures
-            TplToGxtexAndPng(options, tplFilePath, tplOutputPath, resampler);
+            GetTplEntryInfos(options, tplFilePath, tplOutputPath, resampler);
         }
     }
 
@@ -199,14 +213,53 @@ public static class ActionsAsset
 
     public static void UnpackTpl(Options options, OSPath inputPath, OSPath outputPath)
     {
-        // input path is file
-        // output path is file, convert to folder
-        outputPath.PushDirectory(outputPath.FileName);
-        outputPath.ClearFileName();
-        outputPath.ClearExtensions();
+        TplEntryInfo[] tplEntryInfosNumbered;
+        {
+            // input path is file
+            // output path is file, convert to folder
+            OSPath tplTextureOutputDir = outputPath.Copy();
+            tplTextureOutputDir.PushDirectory(outputPath.FileName);
+            tplTextureOutputDir.ClearFileName();
+            tplTextureOutputDir.ClearExtensions();
+            // Get tpl entry info
+            TplEntryInfo[] tplEntryInfos = GetTplEntryInfos(options, inputPath, tplTextureOutputDir, options.Resampler);
+            tplEntryInfosNumbered = new TplEntryInfo[tplEntryInfos.Length];
+            // Mutate names of all entries
+            int padLength = tplEntryInfos.Length.ToString().Length;
+            for (int i = 0; i < tplEntryInfos.Length; i++)
+            {
+                // Extract data
+                string crc32Name = tplEntryInfos[i].Crc32Name;
+                TextureBundle textureBundle = tplEntryInfos[i].TextureBundle;
+                
+                // Skip if texture is null
+                if (string.IsNullOrWhiteSpace(crc32Name) || textureBundle is null)
+                    continue;
 
-        //
-        
+                // Add prefix to texture name
+                string indexPrefix = i.PadLeft(padLength, '0');
+                tplEntryInfosNumbered[i] = new TplEntryInfo
+                {
+                    Crc32Name = $"{indexPrefix}-{crc32Name}",
+                    TextureBundle = textureBundle,
+                };
+            }
+            // Save out data with mutated name
+            SaveGxtexAndPng(options, tplEntryInfosNumbered, tplTextureOutputDir);
+        }
+
+        // output path is file but instead of
+        OSPath tplrefOutputFile = outputPath.Copy();
+        tplrefOutputFile.PushDirectory(outputPath.FileName);
+        tplrefOutputFile.SetExtensions(TplRef.Extension);
+        // Save out .TPLREF
+        if (CanWriteFileAndPrintResult(options, tplrefOutputFile, out FileStream fs))
+        {
+            using var writer = new PlainTextWriter(fs, TplRef.Encoding);
+            TplRef tplref = new();
+            tplref.Textures = tplEntryInfosNumbered.GetCrc32Names();
+            tplref.Serialize(writer);
+        }
     }
 
 
@@ -275,14 +328,14 @@ public static class ActionsAsset
     ///     All CRC32 texture names, one for each texture in the TPL, with null strings for null
     ///     entries in TPL (thus, all indexes match those in the TPL).
     /// </returns>
-    private static string[] TplToGxtexAndPng(Options options, OSPath inputPath, OSPath outputPath, IResampler resampler)
+    private static TplEntryInfo[] GetTplEntryInfos(Options options, OSPath inputPath, OSPath outputPath, IResampler resampler)
     {
         // Load TPL file
         Tpl tpl = new TplFile(inputPath).Value;
 
         // Iterate over all texture bundle (each bundle is main texture + optional mipmaps)
         int numTextures = tpl.TextureBundles.Length;
-        string[] textureNames = new string[numTextures];
+        TplEntryInfo[] texInfos = new TplEntryInfo[numTextures];
 
         for (int i = 0; i < numTextures; i++)
         {
@@ -300,24 +353,38 @@ public static class ActionsAsset
                 builder.Append($"{textureEntry.Crc32Text}-");
             string textureCrc32sName = builder.ToString()[..^1]; // removes last dash
 
+            // WHEN BUILDING LIBRARY WITH SHARED FOLDER
             // Many images are the same, but lowers mipmaps are bit-inaccurate, and so duplicates
             // of the same image are made due to different CRCs. This function weeds those out.
             // Function mutates name if neighbour exists.
             textureCrc32sName = GetSameCrc32FileNameOrMipmapBitNeighbourFileName(outputPath.Directories, textureCrc32sName);
 
-            // Assign potentially corrected texture, and create output path with it too
-            textureNames[i] = textureCrc32sName;
-            OSPath targetOutputPath = outputPath.Copy();
-            targetOutputPath.SetFileName(textureCrc32sName);
-
-            // Output images
-            SaveGxtexAndPng(options, targetOutputPath, resampler, textureBundle);
+            texInfos[i] = new()
+            {
+                Crc32Name = textureCrc32sName,
+                TextureBundle = textureBundle,
+            };
         }
 
         // To be used to map GMA texture indexes to specific image files.
-        return textureNames;
+        return texInfos;
     }
+    private static void SaveGxtexAndPng(Options options, TplEntryInfo[] tplEntryInfos, OSPath outputPath)
+    {
+        var resampler = options.Resampler;
 
+        foreach (var tplEntryInfo in tplEntryInfos)
+        {
+            // Skip null entries
+            if (tplEntryInfo.TextureBundle is null)
+                continue;
+            // Assign potentially corrected texture, and create output path with it too
+            OSPath targetOutputPath = outputPath.Copy();
+            targetOutputPath.SetFileName(tplEntryInfo.Crc32Name);
+            // Output images
+            SaveGxtexAndPng(options, targetOutputPath, resampler, tplEntryInfo.TextureBundle);
+        }
+    }
 
     /// <summary>
     ///     Creates a .GXTEX and preview .PNG from a <paramref name="textureBundle"/>.
@@ -625,4 +692,36 @@ public static class ActionsAsset
         }
     }
 
+}
+
+
+
+public readonly record struct TplEntryInfo
+{
+    public TplEntryInfo(string crc32Name, TextureBundle textureBundle)
+    {
+        Crc32Name = crc32Name;
+        TextureBundle = textureBundle;
+    }
+
+    public required string Crc32Name { get; init; }
+    public required TextureBundle TextureBundle { get; init; }
+}
+public static class TplEntryInfoExt
+{
+    public static string[] GetCrc32Names(this TplEntryInfo[] infos)
+    {
+        var crc32Names = new string[infos.Length];
+        for (int i = 0; i < infos.Length; i++)
+            crc32Names[i] = infos[i].Crc32Name;
+        return crc32Names;
+    }
+
+    public static TextureBundle[] GetTextureBundles(this TplEntryInfo[] infos)
+    {
+        var textureBundle = new TextureBundle[infos.Length];
+        for (int i = 0; i < infos.Length; i++)
+            textureBundle[i] = infos[i].TextureBundle;
+        return textureBundle;
+    }
 }
