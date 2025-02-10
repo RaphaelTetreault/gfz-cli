@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using static Manifold.GFZCLI.GfzCliUtilities;
 using static Manifold.GFZCLI.GfzCliImageUtilities;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Manifold.GFZCLI;
 
@@ -62,8 +63,8 @@ public static class ActionsAsset
 
     public static readonly GfzCliAction ActionAssetTplUnpack = new()
     {
-        Description = "",
-        Action = UnpackTpl,
+        Description = "Unpack TPL files.",
+        Action = TplUnpack,
         ActionID = CliActionID.asset_tpl_unpack,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -71,6 +72,28 @@ public static class ActionsAsset
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
+    };
+
+
+    internal static readonly GfzCliArgument AssetLibraryPath = new()
+    {
+        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = null,
+        Help = "The asset library... TODO: make this a new arg.",
+    };
+
+    public static readonly GfzCliAction ActionAssetTplPack = new()
+    {
+        Description = "Pack TPL file.",
+        Action = TplrefPack,
+        ActionID = CliActionID.asset_tplref_pack,
+        InputIO = CliActionIO.File,
+        OutputIO = CliActionIO.Directory,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [AssetLibraryPath],
     };
 
     /// <summary>
@@ -203,15 +226,15 @@ public static class ActionsAsset
 
 
     //
-    public static void UnpackTpl(Options options)
+    public static void TplUnpack(Options options)
     {
         options.OverrideSearchPatternIfUnset("*.tpl");
         Terminal.WriteLine($"{options.ActionStr}: unpacking file(s).");
-        int taskCount = ParallelizeFileInFileOutTasks(options, UnpackTpl);
+        int taskCount = ParallelizeFileInFileOutTasks(options, TplUnpack);
         Terminal.WriteLine($"{options.ActionStr}: done unpacking {taskCount} TPL file{Plural(taskCount)}.");
     }
 
-    public static void UnpackTpl(Options options, OSPath inputPath, OSPath outputPath)
+    public static void TplUnpack(Options options, OSPath inputPath, OSPath outputPath)
     {
         TplEntryInfo[] tplEntryInfosNumbered;
         {
@@ -231,7 +254,7 @@ public static class ActionsAsset
                 // Extract data
                 string crc32Name = tplEntryInfos[i].Crc32Name;
                 TextureBundle textureBundle = tplEntryInfos[i].TextureBundle;
-                
+
                 // Skip if texture is null
                 if (string.IsNullOrWhiteSpace(crc32Name) || textureBundle is null)
                     continue;
@@ -262,6 +285,77 @@ public static class ActionsAsset
         }
     }
 
+    public static void TplrefPack(Options options)
+    {
+        options.OverrideSearchPatternIfUnset($"*.{TplRef.Extension}");
+        Terminal.WriteLine($"{options.ActionStr}: unpacking file(s).");
+        int taskCount = ParallelizeFileInFileOutTasks(options, TplPack);
+        Terminal.WriteLine($"{options.ActionStr}: done unpacking {taskCount} TPL file{Plural(taskCount)}.");
+    }
+
+    public static void TplPack(Options options, OSPath inputPath, OSPath outputPath)
+    {
+        // Read TPLREF
+        using var reader = new PlainTextReader(inputPath);
+        TplRef tplRef = new();
+        tplRef.Deserialize(reader);
+
+        // Get path to tpl textures
+        OSPath assetLibDir = string.IsNullOrWhiteSpace(options.Value)
+            ? new(inputPath.Directories) // use folder we are in
+            : new(options.Value);
+
+        // Abort if unable to write
+        outputPath.SetExtensions(TplFile.extension);
+        if (!CanWriteFileAndPrintResult(options, outputPath))
+            return;
+
+        // load GXTEXs
+        int texCount = tplRef.Textures.Length;
+        TextureBundleDescription[] descs = new TextureBundleDescription[texCount];
+        GxTexture[] gxTextures = new GxTexture[texCount];
+        for (int i = 0; i < texCount; i++)
+        {
+            // Init description
+            descs[i] = new TextureBundleDescription();
+
+            // Skip missing texture entries
+            string textureName = tplRef.Textures[i];
+            if (string.IsNullOrWhiteSpace(textureName))
+                continue;
+
+            // Get texture path
+            OSPath texturePath = assetLibDir.Copy();
+            texturePath.SetFileName(textureName);
+            texturePath.SetExtensions(GxTextureFile.extension);
+            // Load texture
+            GxTexture gxTexture = new GxTextureFile(texturePath);
+            gxTextures[i] = gxTexture;
+            // Get description, update array
+            descs[i] = gxTextures[i].GetDescription();
+        }
+
+        // HACK BUT GOOD?
+        // Hack up a TPL. First, write out descriptions and padding. Reuse existing code.
+        TplFile tplFile = new();
+        tplFile.Value.TextureBundleDescriptions = descs;
+        tplFile.Value.TextureBundles = [];
+        using var writer = new EndianBinaryWriter(File.Create(outputPath), TplFile.endianness);
+        tplFile.Serialize(writer);
+        // Now keep using writer and just write out texture data raw and update desc pointers
+        for (int i = 0; i < gxTextures.Length; i++)
+        {
+            if (gxTextures[i] is null || gxTextures[i].Data is null)
+                continue;
+
+            descs[i].TextureBundlePtr = writer.GetPositionAsPointer();
+            writer.Write(gxTextures[i].Data);
+        }
+        // Go back to start, writer desc data again to update pointers
+        writer.SeekBegin();
+        tplFile.Serialize(writer);
+        // Done! B)
+    }
 
 
 
@@ -528,7 +622,7 @@ public static class ActionsAsset
     }
 
     /// <summary>
-    ///     Writes single texture bundle (texture with mipmaps) as single <see cref="GxTextureAsset"/>.
+    ///     Writes single texture bundle (texture with mipmaps) as single <see cref="GxTexture"/>.
     /// </summary>
     /// <param name="textureBundle"></param>
     /// <param name="fullOutputPath"></param>
@@ -582,19 +676,21 @@ public static class ActionsAsset
         }
 
         // Prepare container
-        GxTextureAsset gxTex = new()
+        GxTextureFile gxTextureFile = new()
         {
-            Width = description.Width,
-            Height = description.Height,
-            Format = description.TextureFormat,
-            Count = actualTextureCount,
-            DataLength = textureBundleData.Count,
-            Data = [.. textureBundleData],
+            Value = new()
+            {
+                Width = description.Width,
+                Height = description.Height,
+                Format = description.TextureFormat,
+                Count = actualTextureCount,
+                DataLength = textureBundleData.Count,
+                Data = [.. textureBundleData],
+            }
         };
         // Write out texture
         EnsureDirectoriesExist(fullOutputPath);
-        using var writer = new EndianBinaryWriter(File.Create(fullOutputPath), GxTextureAsset.endianness);
-        writer.Write(gxTex);
+        gxTextureFile.WriteFile(fullOutputPath);
     }
 
     /// <summary>

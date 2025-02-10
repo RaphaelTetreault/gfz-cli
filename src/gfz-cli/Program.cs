@@ -69,6 +69,7 @@ public static class Program
         // ASSET LIBRARY
         ActionsAsset.ActionAssetGenerateLibrary,
         ActionsAsset.ActionAssetImageToGxtex,
+        ActionsAsset.ActionAssetTplPack,
         ActionsAsset.ActionAssetTplUnpack,
         // CARDATA
         ActionsCarData.ActionCarDataFromTSV,

@@ -54,6 +54,6 @@ public enum CliActionID
     linerel_set_course_venue,
     linerel_set_venue_name,
     tpl_generate_mipmaps,
-    tpl_pack,
+    asset_tplref_pack,
     asset_tpl_unpack,
 }
