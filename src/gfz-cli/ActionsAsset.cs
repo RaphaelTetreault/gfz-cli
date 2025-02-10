@@ -387,6 +387,10 @@ public static class ActionsAsset
         }
         // Convert to texture
         Texture texture = ImageToTexture(image);
+        var memoryStream = new MemoryStream();
+        using var writer = new EndianBinaryWriter(memoryStream, TplFile.endianness);
+        Texture.WriteDirectColorTexture(writer, texture, options.TextureFormat);
+        byte[] rawData = memoryStream.ToArray();
 
         // Create TextureBundle (main text + mipmaps)
         int textureCount = 1 + Texture.GetMaxMipmapCount(texture.Width, texture.Height);
@@ -394,7 +398,13 @@ public static class ActionsAsset
         //        Element.IsValid is false, which will force regeneration in the
         //        serialization code :)
         TextureBundleElement[] elements = new TextureBundleElement[textureCount];
-        elements[0] = new TextureBundleElement(texture);
+        elements[0] = new TextureBundleElement()
+        {
+            IsValid = true,
+            Texture = texture,
+            RawTextureData = rawData,
+        };
+
         // Init remaining elements
         for (int i = 1; i < elements.Length; i++)
             elements[i] = new();
