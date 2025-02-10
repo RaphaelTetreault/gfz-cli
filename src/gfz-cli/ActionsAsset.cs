@@ -10,11 +10,9 @@ using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using static Manifold.GFZCLI.GfzCliUtilities;
 using static Manifold.GFZCLI.GfzCliImageUtilities;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Manifold.GFZCLI;
 
@@ -49,6 +47,7 @@ public static class ActionsAsset
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
+            // TODO: for mipmap details
             IOptionsTpl.Arguments.TextureFormat,
             IOptionsImageSharp.Arguments.Width, // Size.X
             IOptionsImageSharp.Arguments.Height, // Size.Y
@@ -80,7 +79,7 @@ public static class ActionsAsset
         ArgumentName = IOptionsLineRel.Args.Value,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
-        Help = "The asset library... TODO: make this a new arg.",
+        Help = "The asset library path... TODO: make this a new arg.",
     };
 
     public static readonly GfzCliAction ActionAssetTplPack = new()
@@ -224,8 +223,6 @@ public static class ActionsAsset
         }
     }
 
-
-    //
     public static void TplUnpack(Options options)
     {
         options.OverrideSearchPatternIfUnset("*.tpl");
@@ -276,7 +273,7 @@ public static class ActionsAsset
         tplrefOutputFile.PushDirectory(outputPath.FileName);
         tplrefOutputFile.SetExtensions(TplRef.Extension);
         // Save out .TPLREF
-        if (CanWriteFileAndPrintResult(options, tplrefOutputFile, out FileStream fs))
+        if (CanWriteFileAndPrintResult(options, tplrefOutputFile, out Stream fs))
         {
             using var writer = new PlainTextWriter(fs, TplRef.Encoding);
             TplRef tplref = new();
@@ -289,11 +286,11 @@ public static class ActionsAsset
     {
         options.OverrideSearchPatternIfUnset($"*.{TplRef.Extension}");
         Terminal.WriteLine($"{options.ActionStr}: unpacking file(s).");
-        int taskCount = ParallelizeFileInFileOutTasks(options, TplPack);
+        int taskCount = ParallelizeFileInFileOutTasks(options, TplrefPack);
         Terminal.WriteLine($"{options.ActionStr}: done unpacking {taskCount} TPL file{Plural(taskCount)}.");
     }
 
-    public static void TplPack(Options options, OSPath inputPath, OSPath outputPath)
+    public static void TplrefPack(Options options, OSPath inputPath, OSPath outputPath)
     {
         // Read TPLREF
         using var reader = new PlainTextReader(inputPath);
@@ -356,8 +353,6 @@ public static class ActionsAsset
         tplFile.Serialize(writer);
         // Done! B)
     }
-
-
 
     /// <summary>
     ///     Create a .GXTEX and preview .PNG from a source image.
@@ -788,36 +783,4 @@ public static class ActionsAsset
         }
     }
 
-}
-
-
-
-public readonly record struct TplEntryInfo
-{
-    public TplEntryInfo(string crc32Name, TextureBundle textureBundle)
-    {
-        Crc32Name = crc32Name;
-        TextureBundle = textureBundle;
-    }
-
-    public required string Crc32Name { get; init; }
-    public required TextureBundle TextureBundle { get; init; }
-}
-public static class TplEntryInfoExt
-{
-    public static string[] GetCrc32Names(this TplEntryInfo[] infos)
-    {
-        var crc32Names = new string[infos.Length];
-        for (int i = 0; i < infos.Length; i++)
-            crc32Names[i] = infos[i].Crc32Name;
-        return crc32Names;
-    }
-
-    public static TextureBundle[] GetTextureBundles(this TplEntryInfo[] infos)
-    {
-        var textureBundle = new TextureBundle[infos.Length];
-        for (int i = 0; i < infos.Length; i++)
-            textureBundle[i] = infos[i].TextureBundle;
-        return textureBundle;
-    }
 }

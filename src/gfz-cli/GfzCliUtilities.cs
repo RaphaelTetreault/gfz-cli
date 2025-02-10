@@ -142,11 +142,18 @@ public static class GfzCliUtilities
         PrintFileWriteResult(result, outputPath, options.ActionStr);
         return success;
     }
-    public static bool CanWriteFileAndPrintResult(Options options, OSPath outputPath, out FileStream stream)
+    public static bool CanWriteFileAndPrintResult(Options options, OSPath outputPath, out Stream stream)
     {
         bool success = CanWriteFileAndPrintResult(options, outputPath);
         EnsureDirectoriesExist(outputPath);
-        stream = File.Create(outputPath);
+        if (success)
+        {
+            stream = File.Create(outputPath);
+        }
+        else
+        {
+            stream = new MemoryStream();
+        }
         return success;
     }
 
