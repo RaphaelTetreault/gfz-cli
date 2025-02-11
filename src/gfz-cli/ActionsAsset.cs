@@ -47,8 +47,34 @@ public static class ActionsAsset
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            // TODO: for mipmap details
-            IOptionsTpl.Arguments.TextureFormat,
+            IOptionsAssets.Arguments.MipmapCount,
+            IOptionsAssets.Arguments.TextureFormat,
+            // Resize
+            IOptionsImageSharp.Arguments.Width, // Size.X
+            IOptionsImageSharp.Arguments.Height, // Size.Y
+            IOptionsImageSharp.Arguments.Compand,
+            IOptionsImageSharp.Arguments.PadColor,
+            IOptionsImageSharp.Arguments.Position,
+            IOptionsImageSharp.Arguments.PremultiplyAlpha,
+            IOptionsImageSharp.Arguments.Resampler,
+            IOptionsImageSharp.Arguments.ResizeMode, // Mode
+            ],
+    };
+
+    public static readonly GfzCliAction ActionAssetCustomMipmapGxtex = new()
+    {
+        Description = "Convert images (main texture and mipmaps) to a raw GameCube GX texture.",
+        Action = ImagesToCustomMipmapGxtex,
+        ActionID = CliActionID.asset_custom_mipmap_gxtex,
+        InputIO = CliActionIO.File,
+        OutputIO = CliActionIO.File,
+        IsOutputOptional = false,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [
+            IOptionsAssets.Arguments.MipmapCount,
+            IOptionsAssets.Arguments.TextureFormat,
+            // Resize
             IOptionsImageSharp.Arguments.Width, // Size.X
             IOptionsImageSharp.Arguments.Height, // Size.Y
             IOptionsImageSharp.Arguments.Compand,
@@ -73,15 +99,6 @@ public static class ActionsAsset
         OptionalArguments = [],
     };
 
-
-    internal static readonly GfzCliArgument AssetLibraryPath = new()
-    {
-        ArgumentName = IOptionsLineRel.Args.Value,
-        ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
-        Help = "The asset library path... TODO: make this a new arg.",
-    };
-
     public static readonly GfzCliAction ActionAssetTplPack = new()
     {
         Description = "Pack TPL file.",
@@ -92,7 +109,9 @@ public static class ActionsAsset
         IsOutputOptional = true,
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
-        OptionalArguments = [AssetLibraryPath],
+        OptionalArguments = [
+            IOptionsAssets.Arguments.AssetLibraryRoot,
+            ],
     };
 
     /// <summary>
@@ -285,9 +304,9 @@ public static class ActionsAsset
     public static void TplrefPack(Options options)
     {
         options.OverrideSearchPatternIfUnset($"*.{TplRef.Extension}");
-        Terminal.WriteLine($"{options.ActionStr}: unpacking file(s).");
+        Terminal.WriteLine($"{options.ActionStr}: packing file(s).");
         int taskCount = ParallelizeFileInFileOutTasks(options, TplrefPack);
-        Terminal.WriteLine($"{options.ActionStr}: done unpacking {taskCount} TPL file{Plural(taskCount)}.");
+        Terminal.WriteLine($"{options.ActionStr}: done packing {taskCount} file{Plural(taskCount)} into TPL.");
     }
 
     public static void TplrefPack(Options options, OSPath inputPath, OSPath outputPath)
@@ -354,14 +373,8 @@ public static class ActionsAsset
         // Done! B)
     }
 
-    /// <summary>
-    ///     Create a .GXTEX and preview .PNG from a source image.
-    /// </summary>
-    /// <param name="options"></param>
-    public static void ImageToGxTexture(Options options)
+    public static void ImagesToCustomMipmapGxtex(Options options)
     {
-        // TODO: inject search pattern?
-
         Terminal.WriteLine($"{options.ActionStr}: converting image to GameCube GX texture.");
         ParallelizeFileInFileOutTasks(options, ImageToGxTexture);
         Terminal.WriteLine($"{options.ActionStr}: done.");
@@ -371,48 +384,87 @@ public static class ActionsAsset
     ///     Create a .GXTEX and preview .PNG from a source image.
     /// </summary>
     /// <param name="options"></param>
-    /// <param name="inputPath">Input image path.</param>
-    /// <param name="outputPath">Output .GXTEX and .PNG path.</param>
-    public static void ImageToGxTexture(Options options, OSPath inputPath, OSPath outputPath)
+    public static void ImageToGxTexture(Options options)
     {
-        // Load image
-        Image<Rgba32> image = (Image<Rgba32>)Image.Load(inputPath);
-        // Resize image if specified
-        IResampler resampler = options.Resampler;
-        if (options.RequestingResize)
+        Terminal.WriteLine($"{options.ActionStr}: converting image to GameCube GX texture.");
+        int taskCount = ParallelizeFileInFileOutTasks(options, ImageToGxTexture);
+        Terminal.WriteLine($"{options.ActionStr}: done unpacking {taskCount} TPL file{Plural(taskCount)}.");
+    }
+
+    /// <summary>
+    ///     Create a .GXTEX and preview .PNG from a source image or images.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="_">Input image path.</param>
+    /// <param name="outputPath">Output .GXTEX and .PNG path.</param>
+    public static void ImageToGxTexture(Options options, OSPath _, OSPath outputPath)
+    {
+        // Load main texture, mipmap paths
+        var images = GetTexturesAndMipmapImages(options);
+        var mainImage = images[0];
+
+        // Get output texture size for main texture
+        var resizeOptions = IOptionsImageSharp.GetResizeOptions(options);
+        resizeOptions.Size = IOptionsImageSharp.GetResizeSize(options, mainImage);
+
+        // Compute number of mipmaps to generate for texture. Autocalc if not specified.
+        int mipmapCount = options.MipmapCount < 0
+            ? Texture.GetMaxMipmapCount(mainImage.Width, mainImage.Height)
+            : options.MipmapCount;
+        int texCount = 1 + mipmapCount;
+        // Create texture + texture bundle
+        TextureBundleElement[] elements = new TextureBundleElement[texCount];
+        for (int i = 0; i < texCount; i++)
         {
-            var resizeOptions = IOptionsImageSharp.GetResizeOptions(options);
-            resizeOptions.Size = IOptionsImageSharp.GetResizeSize(options, image);
-            image.Mutate(img => img.Resize(resizeOptions));
+            // Cycle through images with wrap around
+            int textureIndex = i % images.Length;
+            // Clone images and resize it
+            var imageClone = images[textureIndex].Clone();
+            imageClone.Mutate(img => img.Resize(resizeOptions));
+            // Convert to texture
+            Texture texture = ImageToTexture(imageClone);
+            byte[] rawData = texture.GetRawBytes(options.TextureFormat);
+            elements[i] = new TextureBundleElement()
+            {
+                IsValid = true,
+                Texture = texture,
+                RawTextureData = rawData,
+            };
+            // Update future size for mipmaps
+            resizeOptions.Size = new Size(resizeOptions.Size.Width >> 1, resizeOptions.Size.Height >> 1);
         }
-        // Convert to texture
-        Texture texture = ImageToTexture(image);
-        var memoryStream = new MemoryStream();
-        using var writer = new EndianBinaryWriter(memoryStream, TplFile.endianness);
-        Texture.WriteDirectColorTexture(writer, texture, options.TextureFormat);
-        byte[] rawData = memoryStream.ToArray();
-
-        // Create TextureBundle (main text + mipmaps)
-        int textureCount = 1 + Texture.GetMaxMipmapCount(texture.Width, texture.Height);
-        // TRICK: Set only the first texture in the bundle. The default state for
-        //        Element.IsValid is false, which will force regeneration in the
-        //        serialization code :)
-        TextureBundleElement[] elements = new TextureBundleElement[textureCount];
-        elements[0] = new TextureBundleElement()
-        {
-            IsValid = true,
-            Texture = texture,
-            RawTextureData = rawData,
-        };
-
-        // Init remaining elements
-        for (int i = 1; i < elements.Length; i++)
-            elements[i] = new();
 
         // Add elements to bundle, save
         TextureBundle textureBundle = new(elements, options.TextureFormat);
-        SaveGxtexAndPng(options, outputPath, resampler, textureBundle);
+        SaveGxtexAndPng(options, outputPath, resizeOptions.Sampler, textureBundle);
     }
+    private static OSPath[] GetMipmapPathsFromValue(Options options)
+    {
+        string[] mipmapPaths = options.Value.Split(';');
+        List<OSPath> validPaths = [];
+        for (int i = 0; i < mipmapPaths.Length; i++)
+        {
+            if (string.IsNullOrWhiteSpace(mipmapPaths[i]))
+                continue;
+            validPaths.Add(new(mipmapPaths[i]));
+        }
+        return [.. validPaths];
+    }
+    private static Image<Rgba32>[] GetTexturesAndMipmapImages(Options options)
+    {
+        // Get textures as images
+        OSPath inputPath = new(options.InputPath);
+        OSPath[] mipmapPaths = GetMipmapPathsFromValue(options);
+        // Load images
+        Image<Rgba32>[] images = new Image<Rgba32>[1 + mipmapPaths.Length];
+        images[0] = (Image<Rgba32>)Image.Load(inputPath);
+        for (int i = 1; i < images.Length; i++)
+        {
+            images[i] = (Image<Rgba32>)Image.Load(mipmapPaths[i - 1]);
+        }
+        return images;
+    }
+
 
     /// <summary>
     ///     Create a .GXTEX and .PNG for each texture in a TPL <paramref name="inputPath"/> file.
@@ -560,7 +612,6 @@ public static class ActionsAsset
         // Image does not have enough mipmaps to be worth comparing, return filename
         return crc32FileName;
     }
-
 
     /// <summary>
     ///     Writes single texture bundle (texture with mipmaps) as single PNG.

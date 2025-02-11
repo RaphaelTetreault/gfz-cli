@@ -68,6 +68,7 @@ public static class Program
         ActionsARC.ActionArcUnpack,
         // ASSET LIBRARY
         ActionsAsset.ActionAssetGenerateLibrary,
+        ActionsAsset.ActionAssetCustomMipmapGxtex,
         ActionsAsset.ActionAssetImageToGxtex,
         ActionsAsset.ActionAssetTplPack,
         ActionsAsset.ActionAssetTplUnpack,

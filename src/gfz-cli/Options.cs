@@ -21,7 +21,7 @@ public class Options :
     IOptionsImageSharp,
     IOptionsLineRel,
     IOptionsStage,
-    IOptionsTpl
+    IOptionsAssets
 {
     // IGfzCliOptions
     //public bool DisplayUsageGuide { get; set; }
@@ -40,9 +40,9 @@ public class Options :
     public Region SerializationRegion => GetRegion(SerializeRegionStr);
 
     // ITplOptions
-    public TextureFormat TextureFormat { get; set; } = IOptionsTpl.Arguments.TextureFormat.Default<TextureFormat>();
-    public bool TplUnpackMipmaps { get; set; }
-    public bool TplUnpackSaveCorruptedTextures { get; set; }
+    public TextureFormat TextureFormat { get; set; } = IOptionsAssets.Arguments.TextureFormat.Default<TextureFormat>();
+    public int MipmapCount { get; set; } = -1;
+    public string AssetLibraryRoot { get; set; } = string.Empty;
 
     // IImageSharpOptions
     // ResizeOptions
@@ -76,6 +76,7 @@ public class Options :
     // UNSORTED IN INTERFACES
     [Option("emblem-border", Hidden = true)]
     public bool EmblemHasAlphaBorder { get; set; } = true;
+
 
     // LINE REL
     public bool BackupPatchFile { get; set; } = IOptionsLineRel.Arguments.Backup.Default<bool>();

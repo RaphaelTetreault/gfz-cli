@@ -13,7 +13,10 @@ public enum CliActionID
     arc_pack,
     asset_generate_library,
     asset_image_to_gxtex,
+    asset_custom_mipmap_gxtex,
     asset_gmaref_to_gma,
+    asset_tpl_unpack,
+    asset_tplref_pack,
     auto_rename_gci, // UNIMPLEMENTED
     cardata_from_tsv,
     cardata_to_tsv,
@@ -53,7 +56,4 @@ public enum CliActionID
     linerel_set_max_speed,
     linerel_set_course_venue,
     linerel_set_venue_name,
-    tpl_generate_mipmaps,
-    asset_tplref_pack,
-    asset_tpl_unpack,
 }
