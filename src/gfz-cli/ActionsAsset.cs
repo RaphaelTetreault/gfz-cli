@@ -47,7 +47,9 @@ public static class ActionsAsset
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
+            IOptionsAssets.Arguments.MipmapFiles,
             IOptionsAssets.Arguments.MipmapCount,
+            IOptionsAssets.Arguments.MipmapMode,
             IOptionsAssets.Arguments.TextureFormat,
             // Resize
             IOptionsImageSharp.Arguments.Width, // Size.X
@@ -72,7 +74,9 @@ public static class ActionsAsset
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
+            IOptionsAssets.Arguments.MipmapFiles,
             IOptionsAssets.Arguments.MipmapCount,
+            IOptionsAssets.Arguments.MipmapMode,
             IOptionsAssets.Arguments.TextureFormat,
             // Resize
             IOptionsImageSharp.Arguments.Width, // Size.X
@@ -400,24 +404,20 @@ public static class ActionsAsset
     public static void ImageToGxTexture(Options options, OSPath _, OSPath outputPath)
     {
         // Load main texture, mipmap paths
-        var images = GetTexturesAndMipmapImages(options);
+        var images = GetMainTextureAndMipmapImages(options);
         var mainImage = images[0];
 
         // Get output texture size for main texture
         var resizeOptions = IOptionsImageSharp.GetResizeOptions(options);
         resizeOptions.Size = IOptionsImageSharp.GetResizeSize(options, mainImage);
 
-        // Compute number of mipmaps to generate for texture. Autocalc if not specified.
-        int mipmapCount = options.MipmapCount < 0
-            ? Texture.GetMaxMipmapCount(mainImage.Width, mainImage.Height)
-            : options.MipmapCount;
-        int texCount = 1 + mipmapCount;
         // Create texture + texture bundle
+        int texCount = 1 + GetMipmapCount(options, resizeOptions.Size.Width, resizeOptions.Size.Height);
         TextureBundleElement[] elements = new TextureBundleElement[texCount];
         for (int i = 0; i < texCount; i++)
         {
-            // Cycle through images with wrap around
-            int textureIndex = i % images.Length;
+            // Get correct image for mipmap based on mode
+            int textureIndex = GetMipmapByIndex(i, images.Length, options.MipmapMode);
             // Clone images and resize it
             var imageClone = images[textureIndex].Clone();
             imageClone.Mutate(img => img.Resize(resizeOptions));
@@ -438,9 +438,15 @@ public static class ActionsAsset
         TextureBundle textureBundle = new(elements, options.TextureFormat);
         SaveGxtexAndPng(options, outputPath, resizeOptions.Sampler, textureBundle);
     }
-    private static OSPath[] GetMipmapPathsFromValue(Options options)
+    private static int GetMipmapCount(Options options, int width, int height)
     {
-        string[] mipmapPaths = options.Value.Split(';');
+        int mipmapCountMax = Texture.GetMaxMipmapCount(width, height);
+        int mipmapCount = options.MipmapCount < 0 ? mipmapCountMax : Math.Clamp(options.MipmapCount, 0, mipmapCountMax);
+        return mipmapCount;
+    }
+    private static OSPath[] GetMipmapPaths(Options options)
+    {
+        string[] mipmapPaths = options.MipmapFiles.Split(';');
         List<OSPath> validPaths = [];
         for (int i = 0; i < mipmapPaths.Length; i++)
         {
@@ -450,11 +456,11 @@ public static class ActionsAsset
         }
         return [.. validPaths];
     }
-    private static Image<Rgba32>[] GetTexturesAndMipmapImages(Options options)
+    private static Image<Rgba32>[] GetMainTextureAndMipmapImages(Options options)
     {
         // Get textures as images
         OSPath inputPath = new(options.InputPath);
-        OSPath[] mipmapPaths = GetMipmapPathsFromValue(options);
+        OSPath[] mipmapPaths = GetMipmapPaths(options);
         // Load images
         Image<Rgba32>[] images = new Image<Rgba32>[1 + mipmapPaths.Length];
         images[0] = (Image<Rgba32>)Image.Load(inputPath);
@@ -463,6 +469,32 @@ public static class ActionsAsset
             images[i] = (Image<Rgba32>)Image.Load(mipmapPaths[i - 1]);
         }
         return images;
+    }
+    private static int GetMipmapByIndex(int index, int arraySize, MipmapGenerationMode mipmapGenerationMode)
+    {
+        return (mipmapGenerationMode) switch
+        {
+            MipmapGenerationMode.Last => (index >= arraySize) ? arraySize - 1 : index,
+            MipmapGenerationMode.Wrap => index % arraySize,
+            MipmapGenerationMode.PingPong => PingPong(index, arraySize),
+            _ => throw new NotImplementedException($"{mipmapGenerationMode}"),
+        };
+    }
+    private static int PingPong(int index, int arraySize)
+    {
+        if (arraySize < 2)
+            return 0;
+
+        int max = arraySize * 2 - 2;
+        index %= max;
+        if (index % max < arraySize)
+        {
+            return index % max;
+        }
+        else
+        {
+            return max - index;
+        }
     }
 
 

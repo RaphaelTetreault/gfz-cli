@@ -9,6 +9,8 @@ public interface IOptionsAssets
     {
         public const string TextureFormat = "texture-format";
         public const string MipmapCount = "mipmap-count";
+        public const string MipmapFiles = "mipmap-files";
+        public const string MipmapMode = "mipmap-mode";
         public const string AssetLibraryRoot = "asset-library";
     }
 
@@ -31,6 +33,22 @@ public interface IOptionsAssets
             Help = "The number of mipmaps to generate. -1 means max mipmaps generated.",
         };
 
+        internal static readonly GfzCliArgument MipmapFiles = new()
+        {
+            ArgumentName = Args.MipmapFiles,
+            ArgumentType = typeof(string).Name,
+            ArgumentDefault = null,
+            Help = "The mipmaps image(s) to use. Separate values with ; semicolon.",
+        };
+
+        internal static readonly GfzCliArgument MipmapMode = new()
+        {
+            ArgumentName = Args.MipmapMode,
+            ArgumentType = typeof(MipmapGenerationMode).Name,
+            ArgumentDefault = (MipmapGenerationMode)0,
+            Help = "How missing mipmaps are generated.",
+        };
+
         internal static readonly GfzCliArgument AssetLibraryRoot = new()
         {
             ArgumentName = Args.AssetLibraryRoot,
@@ -41,14 +59,22 @@ public interface IOptionsAssets
     }
 
 
-    [Option(Args.TextureFormat, Hidden = true)]
-    public TextureFormat TextureFormat { get; set; }
+    [Option(Args.AssetLibraryRoot, Hidden = true)]
+    public string AssetLibraryRoot { get; set; }
 
 
     [Option(Args.MipmapCount, Hidden = true)]
     public int MipmapCount { get; set; }
 
 
-    [Option(Args.AssetLibraryRoot, Hidden = true)]
-    public string AssetLibraryRoot { get; set; }
+    [Option(Args.MipmapFiles, Hidden = true)]
+    public string MipmapFiles { get; set; }
+
+
+    [Option(Args.MipmapMode, Hidden = true)]
+    public string MipmapModeStr { get; set; }
+    public MipmapGenerationMode MipmapMode { get; }
+
+    [Option(Args.TextureFormat, Hidden = true)]
+    public TextureFormat TextureFormat { get; set; }
 }

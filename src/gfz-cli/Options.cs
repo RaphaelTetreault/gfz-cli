@@ -39,10 +39,14 @@ public class Options :
     public string SerializeRegionStr { get; set; } = "J";
     public Region SerializationRegion => GetRegion(SerializeRegionStr);
 
-    // ITplOptions
-    public TextureFormat TextureFormat { get; set; } = IOptionsAssets.Arguments.TextureFormat.Default<TextureFormat>();
-    public int MipmapCount { get; set; } = -1;
+    // IAssetsOptions
     public string AssetLibraryRoot { get; set; } = string.Empty;
+    public int MipmapCount { get; set; } = -1;
+    public string MipmapFiles { get; set; } = string.Empty;
+    public string MipmapModeStr { get; set; } = ((MipmapGenerationMode)0).ToString();
+    public MipmapGenerationMode MipmapMode => GfzCliEnumParser.ParseDashRemoved<MipmapGenerationMode>(MipmapModeStr);
+    public TextureFormat TextureFormat { get; set; } = IOptionsAssets.Arguments.TextureFormat.Default<TextureFormat>();
+
 
     // IImageSharpOptions
     // ResizeOptions
