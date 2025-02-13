@@ -722,7 +722,7 @@ public static class ActionsAsset
         var textureEncoding = GameCube.GX.Texture.Encoding.GetEncoding(description.TextureFormat);
 
         // Get main texture if CMPR, will need to fix texture
-        bool isCMPR = textureBundle.Description.TextureFormat == TextureFormat.CMPR;
+        bool isCMPR = description.TextureFormat == TextureFormat.CMPR;
         Image<Rgba32> mainTexture = isCMPR
             ? TextureToImage(textureBundle.Elements[0].Texture)
             : new Image<Rgba32>(1, 1);
@@ -749,13 +749,8 @@ public static class ActionsAsset
                 // Resize texture
                 Image<Rgba32> mipmapImage = mainTexture.Clone(c => c.Resize(resizeWidth, resizeHeight, resampler));
                 Texture mipmapTexture = ImageToTexture(mipmapImage);
-                // Write texture data to memory
-                using var memory = new MemoryStream();
-                using var memoryWriter = new EndianBinaryWriter(memory, TplFile.endianness);
-                Texture.WriteDirectColorTexture(memoryWriter, mipmapTexture, description.TextureFormat);
-                memoryWriter.Flush();
                 // Add data to array
-                byte[] mipmapData = memory.ToArray();
+                byte[] mipmapData = mipmapTexture.GetRawBytes(description.TextureFormat);
                 textureBundleData.AddRange(mipmapData);
             }
 
