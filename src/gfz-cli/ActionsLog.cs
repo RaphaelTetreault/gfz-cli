@@ -45,9 +45,11 @@ public static class ActionsLog
         options.OverrideSearchPatternIfUnset("COLI_COURSE???");
         OSPath outputFile = new(options.OutputPath);
         outputFile.SetFileNameAndExtensions(logFuncFile.FileName);
-        IEnumerable<Scene> scenes = BinarySerializableIO.LoadFile<Scene>(options.GetInputFiles());
         if (CanWriteFileAndPrintResult(options, outputFile))
+        {
+            IEnumerable<Scene> scenes = BinarySerializableIO.LoadFile<Scene>(options.GetInputFiles());
             logFuncFile.AnalysisFunction.Invoke(scenes.ToArray(), outputFile);
+        }
     }
 
 }
