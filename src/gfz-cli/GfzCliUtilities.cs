@@ -199,6 +199,7 @@ public static class GfzCliUtilities
 
         return files;
     }
+
     public static string[] GetOutputFiles(Options options)
         => GetOutputFiles(options, out _);
     private static string[] GetOutputFiles(Options options, out string[] inputFiles)
@@ -303,7 +304,6 @@ public static class GfzCliUtilities
         bool directoryExists = Directory.Exists(options.InputPath);
         return directoryExists;
     }
-
 
     public static void EnsureDirectoriesExist(string filePath)
     {

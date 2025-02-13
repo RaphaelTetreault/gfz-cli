@@ -283,10 +283,15 @@ public class Options :
         return @enum;
     }
 
+
     public void OverrideSearchPatternIfUnset(string overrideSearchPattern)
     {
         bool hasNoSearchPattern = string.IsNullOrEmpty(SearchPattern);
         if (hasNoSearchPattern)
             SearchPattern = overrideSearchPattern;
     }
+
+    // Forward
+    public string[] GetInputFiles() => GfzCliUtilities.GetInputFiles(this);
+
 }

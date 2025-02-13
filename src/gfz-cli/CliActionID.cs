@@ -37,8 +37,6 @@ public enum CliActionID
     io_scene,
     io_scene_patch,
     io_tpl,
-    lz_compress,
-    lz_decompress,
     linerel_clear_all_course_names,
     linerel_clear_all_venue_names,
     linerel_clear_unused_course_names,
@@ -56,4 +54,8 @@ public enum CliActionID
     linerel_set_max_speed,
     linerel_set_course_venue,
     linerel_set_venue_name,
+    log_stage_all,
+    log_stage_track_keyables,
+    lz_compress,
+    lz_decompress,
 }

@@ -103,9 +103,6 @@ public static class Program
         ActionsIO.ActionIOScene,
         ActionsIO.ActionIOScenePatch,
         ActionsIO.ActionIOTpl,
-        // LZ
-        ActionsLZ.ActionLZCompress,
-        ActionsLZ.ActionLZDecompress,
         // line__.rel
         ActionsLineREL.ActionPatchClearAllCourseNames,
         ActionsLineREL.ActionPatchClearAllVenueNames,
@@ -123,10 +120,11 @@ public static class Program
         ActionsLineREL.ActionPatchMaxSpeed,
         ActionsLineREL.ActionPatchSetCourseVenue,
         ActionsLineREL.ActionPatchSetVenueName,
-        // TPL
-        //ActionsTPL.ActionTplGenerateMipmaps,
-        //ActionsTPL.ActionTplPack,
-        //ActionsTPL.ActionTplUnpack,
+        // Log
+        ActionsLog.ActionLogStage,
+        // LZ
+        ActionsLZ.ActionLZCompress,
+        ActionsLZ.ActionLZDecompress,
     ];
 
     private static void InitUsageDictionary()
