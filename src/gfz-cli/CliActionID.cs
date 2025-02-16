@@ -54,6 +54,7 @@ public enum CliActionID
     linerel_set_max_speed,
     linerel_set_course_venue,
     linerel_set_venue_name,
+    log_gma_all,
     log_stage_all,
     log_stage_track_keyables,
     lz_compress,

@@ -122,6 +122,7 @@ public static class Program
         ActionsLineREL.ActionPatchSetVenueName,
         // Log
         ActionsLog.ActionLogStage,
+        ActionsLog.ActionLogGma,
         // LZ
         ActionsLZ.ActionLZCompress,
         ActionsLZ.ActionLZDecompress,
