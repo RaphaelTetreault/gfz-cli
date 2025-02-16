@@ -24,7 +24,7 @@ public static class ActionsLog
     public static readonly GfzCliAction ActionLogStageTrackKeyables = new()
     {
         Description = "Create a .tsv log of track keyables from COLI_COURSE stage files.",
-        Action = (Options options) => LogStage(options, StageTableLogger.LogTrackKeyablesAll),
+        Action = (Options options) => Log(options, StageTableLogger.LogTrackKeyablesAll),
         ActionID = CliActionID.log_stage_track_keyables,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,
@@ -36,20 +36,24 @@ public static class ActionsLog
 
     public static void LogStageAll(Options options)
     {
-        foreach (LogFuncFile logFuncFile in StageTableLogger.AllLogFunctionFiles)
-            LogStage(options, logFuncFile);
+        foreach (TableLogger.LogFuncFile<Scene> logFuncFile in StageTableLogger.AllLogFunctionFiles)
+            Log(options, logFuncFile);
     }
 
-    public static void LogStage(Options options, LogFuncFile logFuncFile)
+
+
+    public static void Log<TBinarySerializable>(Options options, TableLogger.LogFuncFile<TBinarySerializable> logFuncFile)
+        where TBinarySerializable : IBinarySerializable, IBinaryFileType, new()
     {
         options.OverrideSearchPatternIfUnset("COLI_COURSE???");
         OSPath outputFile = new(options.OutputPath);
         outputFile.SetFileNameAndExtensions(logFuncFile.FileName);
         if (CanWriteFileAndPrintResult(options, outputFile))
         {
-            IEnumerable<Scene> scenes = BinarySerializableIO.LoadFile<Scene>(options.GetInputFiles());
+            IEnumerable<TBinarySerializable> scenes = BinarySerializableIO.LoadFile<TBinarySerializable>(options.GetInputFiles());
             logFuncFile.AnalysisFunction.Invoke(scenes.ToArray(), outputFile);
         }
     }
+
 
 }
