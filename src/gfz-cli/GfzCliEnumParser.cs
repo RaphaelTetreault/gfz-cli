@@ -24,7 +24,7 @@ public static class GfzCliEnumParser
         if (!success)
         {
             string message = $"Could not parse value \"{sanitizedValue}\" into enum of type {typeof(TEnum).Name}.";
-            Terminal.WriteLine(message, Program.WarningColor);
+            Terminal.WriteLine(message, GfzCli.WarningColor);
         }
         return enumValue;
     }
@@ -46,7 +46,7 @@ public static class GfzCliEnumParser
         if (!success)
         {
             string message = $"Could not parse value \"{sanitizedValue}\" into enum of type {typeof(TEnum).Name}.";
-            Terminal.WriteLine(message, Program.WarningColor);
+            Terminal.WriteLine(message, GfzCli.WarningColor);
         }
         return enumValue;
     }

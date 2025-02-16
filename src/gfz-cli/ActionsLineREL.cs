@@ -330,7 +330,7 @@ public static class ActionsLineREL
 
         //
         Terminal.Write($"LineREL: opening file ");
-        Terminal.Write(inputFilePath, Program.FileNameColor);
+        Terminal.Write(inputFilePath, GfzCli.FileNameColor);
         Terminal.Write($" with region {options.SerializationRegion}. ");
 
         // Open file, set up writer, get action to patch file through writer

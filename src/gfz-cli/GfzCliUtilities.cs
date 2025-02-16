@@ -100,7 +100,7 @@ public static class GfzCliUtilities
                 {
                     Terminal.Write(prefix);
                     Terminal.Write("write file ");
-                    Terminal.Write(filePath, Program.FileWriteColor);
+                    Terminal.Write(filePath, GfzCli.FileWriteColor);
                     Terminal.WriteLine();
                 }
                 break;
@@ -109,7 +109,7 @@ public static class GfzCliUtilities
                 {
                     Terminal.Write(prefix);
                     Terminal.Write("skip file ");
-                    Terminal.Write(filePath, Program.FileOverwriteSkipColor);
+                    Terminal.Write(filePath, GfzCli.FileOverwriteSkipColor);
                     Terminal.WriteLine();
                 }
                 break;
@@ -118,7 +118,7 @@ public static class GfzCliUtilities
                 {
                     Terminal.Write(prefix);
                     Terminal.Write("overwrite file ");
-                    Terminal.Write(filePath, Program.FileOverwriteColor);
+                    Terminal.Write(filePath, GfzCli.FileOverwriteColor);
                     Terminal.WriteLine();
                 }
                 break;
@@ -127,7 +127,7 @@ public static class GfzCliUtilities
                 {
                     Terminal.Write(prefix);
                     Terminal.Write("patch file ");
-                    Terminal.Write(filePath, Program.FileOverwriteColor);
+                    Terminal.Write(filePath, GfzCli.FileOverwriteColor);
                     Terminal.WriteLine();
                 }
                 break;

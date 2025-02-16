@@ -249,7 +249,7 @@ public static class ActionsColiCourse
         // TODO: make a better message, use color. Add occurrence count?
         if (!foundMatch)
         {
-            Terminal.WriteLine($"Did not find match for \"{name}\"", Program.WarningColor);
+            Terminal.WriteLine($"Did not find match for \"{name}\"", GfzCli.WarningColor);
         }
     }
 }

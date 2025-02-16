@@ -86,7 +86,7 @@ public static class ActionsARC
             {
                 var inputFilePath = inputFilePaths[i];
                 string msg = $"ARC:\tFile {(i + 1).PadLeft(digitsCount)}/{inputFilePaths.Length} {inputFilePath}";
-                Terminal.WriteLine(msg, Program.SubTaskColor);
+                Terminal.WriteLine(msg, GfzCli.SubTaskColor);
             }
 
             // Actually write the file

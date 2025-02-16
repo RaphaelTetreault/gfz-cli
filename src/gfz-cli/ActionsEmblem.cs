@@ -10,7 +10,6 @@ using System;
 using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 using static Manifold.GFZCLI.GfzCliImageUtilities;
-using static Manifold.GFZCLI.Program;
 
 namespace Manifold.GFZCLI;
 
@@ -186,7 +185,7 @@ public static class ActionsEmblem
         {
             Terminal.Write($"Emblem: ");
             Terminal.Write($"processing image ");
-            Terminal.Write(inputFile, FileNameColor);
+            Terminal.Write(inputFile, GfzCli.FileNameColor);
             Terminal.Write($" ({image.Width},{image.Height}).");
             Terminal.WriteLine();
         }
