@@ -76,6 +76,7 @@ public static class ActionsLog
         outputFile.SetFileNameAndExtensions(logFuncFile.FileName);
         if (CanWriteFileAndPrintResult(options, outputFile))
         {
+            EnsureDirectoriesExist(outputFile);
             IEnumerable<TBinarySerializable> scenes = BinarySerializableIO.LoadFile<TBinarySerializable>(options.GetInputFiles());
             logFuncFile.AnalysisFunction.Invoke(scenes.ToArray(), outputFile);
         }
