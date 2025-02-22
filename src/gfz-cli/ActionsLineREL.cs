@@ -683,7 +683,7 @@ public static class ActionsLineREL
             // Open the file if decompressed, decompress file stream otherwise
             carData = new CarData();
             using Stream fileStream = isLzCompressed ? LzUtility.DecompressAvLz(carDataPath) : File.OpenRead(carDataPath);
-            using EndianBinaryReader reader = new(fileStream, CarData.endianness);
+            using EndianBinaryReader reader = new(fileStream, CarDataFile.endianness);
             carData.Deserialize(reader);
         }
         else

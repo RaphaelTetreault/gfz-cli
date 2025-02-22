@@ -1,5 +1,4 @@
 ﻿using GameCube.DiskImage;
-using Manifold.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,13 +41,8 @@ public static class ActionsISO
         }
 
         // Read ISO
-        DiskImage iso = new();
         string isoPath = options.InputPath;
-        using (var isoFile = File.OpenRead(isoPath))
-        {
-            using var isoReader = new EndianBinaryReader(isoFile, DiskImage.endianness);
-            iso.Deserialize(isoReader);
-        }
+        DiskImage iso = new DiskImageFile(isoPath);
 
         // Run tasks and wait for completion
         var task0 = IsoExtractFiles(options, iso);

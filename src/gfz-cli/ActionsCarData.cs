@@ -76,7 +76,7 @@ public static class ActionsCarData
         // Open the file if decompressed, decompress file stream otherwise
         var carData = new CarData();
         using (Stream fileStream = isLzCompressed ? LzUtility.DecompressAvLz(inputFile) : File.OpenRead(inputFile))
-        using (var reader = new EndianBinaryReader(fileStream, CarData.endianness))
+        using (var reader = new EndianBinaryReader(fileStream, CarDataFile.endianness))
             carData.Deserialize(reader);
 
         // Write TSV file
@@ -132,7 +132,7 @@ public static class ActionsCarData
         {
             // UNCOMPRESSED
             // Save out file (this file is not yet compressed)
-            using var writer = new EndianBinaryWriter(new MemoryStream(), CarData.endianness);
+            using var writer = new EndianBinaryWriter(new MemoryStream(), CarDataFile.endianness);
             // Write data to stream in memory
             carData.Serialize(writer);
 

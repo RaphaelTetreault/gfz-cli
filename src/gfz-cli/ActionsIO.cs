@@ -68,7 +68,7 @@ public static class ActionsIO
 
     public static void InOutGMA(Options options) => InOutFiles<GmaFile>(options, "*.gma");
     public static void InOutTPL(Options options) => InOutFiles<TplFile>(options, "*.tpl");
-    public static void InOutScene(Options options) => InOutFiles<Scene>(options, "COLI_COURSE???");
+    public static void InOutScene(Options options) => InOutFiles<SceneFile>(options, "COLI_COURSE???");
 
 
     public static void InOutFiles<TFile>(Options options, string searchPattern)
@@ -124,7 +124,7 @@ public static class ActionsIO
         PrintFileWriteResult(result, inputFile, options.ActionStr);
         if (doWriteFile)
         {
-            using EndianBinaryWriter writer = new(File.OpenWrite(inputFile), Scene.endianness);
+            using EndianBinaryWriter writer = new(File.OpenWrite(inputFile), SceneFile.endianness);
             writer.JumpToAddress(0x130);
             writer.WritePadding(0xF0, 0x20);
         }

@@ -55,7 +55,7 @@ public static class ActionsLog
 
     public static void LogStageAll(Options options)
     {
-        foreach (TableLogger.LogFuncFile<Scene> logFuncFile in StageTableLogger.AllLogFunctionFiles)
+        foreach (TableLogger.LogFuncFile<SceneFile> logFuncFile in StageTableLogger.AllLogFunctionFiles)
             Log(options, logFuncFile, SceneSearchPattern);
     }
     public static void LogGmaAll(Options options)

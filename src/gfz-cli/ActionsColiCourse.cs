@@ -87,21 +87,18 @@ public static class ActionsColiCourse
         {
             // Copy input to output if needed
             CreateBackupFileIfAble(options, inputPath);
+
+            // Open stream to modify file
             const FileMode fileMode = FileMode.OpenOrCreate;
             const FileAccess fileAccess = FileAccess.ReadWrite;
             const FileShare fileShare = FileShare.ReadWrite;
             using var colicourseFile = File.Open(inputPath, fileMode, fileAccess, fileShare);
+            using EndianBinaryWriter writer = new(colicourseFile, SceneFile.endianness);
 
-            // Read data
-            Scene scene = new();
-            scene.FileName = inputPath.FileName;
-            using EndianBinaryReader reader = new(colicourseFile, Scene.endianness);
-            scene.Deserialize(reader);
+            // Read data in new stream
+            Scene scene = new SceneFile(inputPath);
 
-            // Reset file stream position
-            colicourseFile.Position = 0;
             // Modify existin file (in the future, re-serialize file)
-            using EndianBinaryWriter writer = new(colicourseFile, scene.Endianness);
             PatchFog(options, scene, writer);
         }
     }
@@ -197,21 +194,18 @@ public static class ActionsColiCourse
         {
             // Make backup if desired, then open file
             CreateBackupFileIfAble(options, inputPath);
+
+            // Open stream to modify file
             const FileMode fileMode = FileMode.OpenOrCreate;
             const FileAccess fileAccess = FileAccess.ReadWrite;
             const FileShare fileShare = FileShare.ReadWrite;
             using var colicourseFile = File.Open(inputPath, fileMode, fileAccess, fileShare);
+            using EndianBinaryWriter writer = new(colicourseFile, SceneFile.endianness);
 
-            Scene scene = new();
-            scene.FileName = inputPath.FileName;
-            using EndianBinaryReader reader = new(colicourseFile, Scene.endianness);
-            scene.Deserialize(reader);
-            reader.Close();
+            // Read data in new stream
+            Scene scene = new SceneFile(inputPath);
 
-            // Reset file stream position
-            colicourseFile.Position = 0;
             // Modify existing file (in the future, re-serialize file)
-            using EndianBinaryWriter writer = new(colicourseFile, Scene.endianness);
             PatchSceneObjectDynamicRenderFlags(options, scene, writer);
         }
     }
