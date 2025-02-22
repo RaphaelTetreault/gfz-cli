@@ -819,7 +819,7 @@ public static class ActionsAsset
 
             // Create final output path
             OSPath modelOutputPath = outputPath.Copy();
-            modelOutputPath.SetFileName($"{name}-{gcmf.CRC32}");
+            modelOutputPath.SetFileName($"{name}-{gcmf.CRC32:x8}");
             modelOutputPath.SetExtensions("gcmfx");
             //
             gcmfAssetNames.Add(modelOutputPath.FileNameAndExtensions);

@@ -1,4 +1,4 @@
-﻿using GameCube.GFZ;
+﻿using GameCube.Common;
 using System;
 using System.Text;
 
