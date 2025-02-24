@@ -25,7 +25,6 @@
     <ProjectReference Include="..\..\libs\GameCube.Core\src\GameCube.GX\GameCube.GX.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Camera\GameCube.GFZ.Camera.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.CarData\GameCube.GFZ.CarData.csproj" />
-    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Cheats\GameCube.GFZ.Cheats.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Emblem\GameCube.GFZ.Emblem.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.FMI\GameCube.GFZ.FMI.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GameData\GameCube.GFZ.GameData.csproj" />
