@@ -85,7 +85,7 @@ public static class ActionsARC
             for (int i = 0; i < inputFilePaths.Length; i++)
             {
                 var inputFilePath = inputFilePaths[i];
-                string msg = $"ARC:\tFile {(i + 1).PadLeft(digitsCount)}/{inputFilePaths.Length} {inputFilePath}";
+                string msg = $"{options.ActionStr}:\tFile {(i + 1).PadLeft(digitsCount)}/{inputFilePaths.Length} {inputFilePath}";
                 Terminal.WriteLine(msg, GfzCli.SubTaskColor);
             }
 

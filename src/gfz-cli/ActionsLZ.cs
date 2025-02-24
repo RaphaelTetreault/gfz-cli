@@ -39,9 +39,9 @@ public static class ActionsLZ
         if (hasNoSearchPattern)
             options.SearchPattern = $"*.lz";
 
-        Terminal.WriteLine($"LZ: decompressing file(s).");
+        Terminal.WriteLine($"{options.ActionStr}: decompressing file(s).");
         int taskCount = ParallelizeFileInFileOutTasks(options, LzDecompressFile);
-        Terminal.WriteLine($"LZ: done decompressing {taskCount} file{Plural(taskCount)}.");
+        Terminal.WriteLine($"{options.ActionStr}: done decompressing {taskCount} file{Plural(taskCount)}.");
     }
 
     public static void LzDecompressFile(Options options, OSPath inputFile, OSPath outputFile)
@@ -63,9 +63,9 @@ public static class ActionsLZ
 
     public static void LzCompress(Options options)
     {
-        Terminal.WriteLine("LZ: Compressing file(s).");
+        Terminal.WriteLine($"{options.ActionStr}: compressing file(s).");
         int taskCount = ParallelizeFileInFileOutTasks(options, LzCompressFile);
-        Terminal.WriteLine($"LZ: done compressing {taskCount} file{(taskCount != 1 ? 's' : "")}.");
+        Terminal.WriteLine($"{options.ActionStr}: compressed {taskCount} file{(taskCount != 1 ? 's' : "")}.");
     }
 
     public static void LzCompressFile(Options options, OSPath inputFile, OSPath outputFile)

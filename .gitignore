@@ -7,6 +7,9 @@
 [Tt]est
 [Tt]ests
 
+# Unit tests -> will be generated
+[Uu]nit-[Tt]ests
+
 ##############################################################################################
 
 ## Ignore Visual Studio temporary files, build results, and
