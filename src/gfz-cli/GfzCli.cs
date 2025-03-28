@@ -69,6 +69,7 @@ public static class GfzCli
         // ASSET LIBRARY
         ActionsAsset.ActionAssetGenerateLibrary,
         ActionsAsset.ActionAssetCustomMipmapGxtex,
+        ActionsAsset.ActionAssetGmarefPack,
         ActionsAsset.ActionAssetImageToGxtex,
         ActionsAsset.ActionAssetTplPack,
         ActionsAsset.ActionAssetTplUnpack,

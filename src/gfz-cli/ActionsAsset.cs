@@ -92,7 +92,7 @@ public static class ActionsAsset
 
     public static readonly GfzCliAction ActionAssetTplUnpack = new()
     {
-        Description = "Unpack TPL files.",
+        Description = "Unpack TPL files into TPLREFs.",
         Action = TplUnpack,
         ActionID = CliActionID.asset_tpl_unpack,
         InputIO = CliActionIO.Path,
@@ -105,11 +105,26 @@ public static class ActionsAsset
 
     public static readonly GfzCliAction ActionAssetTplPack = new()
     {
-        Description = "Pack TPL file.",
+        Description = "Pack TPL file from TPLREF.",
         Action = TplrefPack,
         ActionID = CliActionID.asset_tplref_pack,
         InputIO = CliActionIO.File,
-        OutputIO = CliActionIO.Directory,
+        OutputIO = CliActionIO.File,
+        IsOutputOptional = true,
+        ActionOptions = CliActionOption.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [
+            IOptionsAssets.Arguments.AssetLibraryRoot,
+            ],
+    };
+
+    public static readonly GfzCliAction ActionAssetGmarefPack = new()
+    {
+        Description = "Pack GMA file from GMAREF.",
+        Action = GmarefPack,
+        ActionID = CliActionID.asset_gmaref_to_gma,
+        InputIO = CliActionIO.File,
+        OutputIO = CliActionIO.File,
         IsOutputOptional = true,
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
@@ -320,10 +335,15 @@ public static class ActionsAsset
         TplRef tplRef = new();
         tplRef.Deserialize(reader);
 
+        TplrefPack2(options, inputPath, outputPath, tplRef);
+    }
+
+    private static void TplrefPack2(Options options, OSPath inputPath, OSPath outputPath, TplRef tplRef)
+    {
         // Get path to tpl textures
-        OSPath assetLibDir = string.IsNullOrWhiteSpace(options.Value)
-            ? new(inputPath.Directories) // use folder we are in
-            : new(options.Value);
+        OSPath assetLibDir = string.IsNullOrWhiteSpace(options.AssetLibraryRoot)
+            ? new(inputPath.Directories)     // use folder we are in
+            : new(options.AssetLibraryRoot + "/tex/"); // use specified directory
 
         // Abort if unable to write
         outputPath.SetExtensions(TplFile.extension);
@@ -376,6 +396,91 @@ public static class ActionsAsset
         tplFile.Serialize(writer);
         // Done! B)
     }
+
+
+    public static void GmarefPack(Options options)
+    {
+        options.OverrideSearchPatternIfUnset($"*.{GmaRef.Extension}");
+        Terminal.WriteLine($"{options.ActionStr}: packing GMA file(s).");
+        int taskCount = ParallelizeFileInFileOutTasks(options, GmarefPack);
+        Terminal.WriteLine($"{options.ActionStr}: done packing {taskCount} file{Plural(taskCount)} into GMA.");
+    }
+
+    public static void GmarefPack(Options options, OSPath inputPath, OSPath outputPath)
+    {
+        // Read GMAREF
+        using var reader = new PlainTextReader(inputPath);
+        GmaRef gmaref = new();
+        gmaref.Deserialize(reader);
+
+        // Get path to gma models
+        OSPath assetLibDir = string.IsNullOrWhiteSpace(options.AssetLibraryRoot)
+            ? new(inputPath.Directories)     // use folder we are in
+            : new(options.AssetLibraryRoot + "/mdl/"); // use specified directory
+
+        // Abort if unable to write
+        outputPath.SetExtensions(GmaFile.extension);
+        if (!CanWriteFileAndPrintResult(options, outputPath))
+            return;
+
+        // Record textures used for model.
+        List<string> textures = [];
+        // Load GCMFX via GMAREF, then use data in GCMFX 
+        GmaFile gma = new();
+        gma.Value.Models = new Model[gmaref.GcmfModels.Length];
+        for (int i = 0; i < gmaref.GcmfModels.Length; i++)
+        {
+            // Load GCMFX data
+            string gcmfAssetName = gmaref.GcmfModels[i];
+            OSPath gcmfAssetPath = assetLibDir.Copy();
+            gcmfAssetPath.SetFileNameAndExtensions(gcmfAssetName);
+            GcmfAssetFile gcmfAsset = new(gcmfAssetPath);
+
+            // Create model from file
+            Model model = new()
+            {
+                Name = gcmfAsset.Value.Name,
+                Gcmf = gcmfAsset.Value.Gcmf,
+            };
+
+            // Assign possible textures
+            for (int texIndex = 0; texIndex < gcmfAsset.Value.TevTextureReferences.Length; texIndex++)
+            {
+                string textureName = gcmfAsset.Value.TevTextureReferences[texIndex];
+
+                // Only add if not present -- no duplicates
+                if (!textures.Contains(textureName))
+                {
+                    // New texture's index
+                    int newIndex = textures.Count;
+                    // Add tex to list
+                    textures.Add(textureName);
+                    // Assign texture index
+                    model.Gcmf.TevLayers[texIndex].TplTextureIndex = (ushort)newIndex;
+                }
+                // Exists, but must assign index to TEV layer
+                else
+                {
+                    int existingIndex = textures.IndexOf(textureName);
+                    model.Gcmf.TevLayers[texIndex].TplTextureIndex = (ushort)existingIndex;
+                }
+            }
+
+            // Assign model to GMA
+            gma.Value.Models[i] = model;
+        }
+
+        // Write GMA file
+        GmaFile gmaFile = new();
+        gmaFile.Value = gma;
+        gmaFile.WriteFile(outputPath, GmaFile.endianness);
+
+        // Convert texture list to TplRef to reuse function and generate final TPL
+        TplRef tplRef = new();
+        tplRef.Textures = textures.ToArray();
+        TplrefPack2(options, inputPath.Copy(), outputPath.Copy(), tplRef);
+    }
+
 
     public static void ImagesToCustomMipmapGxtex(Options options)
     {
