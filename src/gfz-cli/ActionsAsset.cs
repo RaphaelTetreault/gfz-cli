@@ -330,27 +330,28 @@ public static class ActionsAsset
 
     public static void TplrefPack(Options options, OSPath inputPath, OSPath outputPath)
     {
+        // Abort if not allowed to write
+        outputPath.SetExtensions(TplFile.extension);
+        if (!CanWriteFileAndPrintResult(options, outputPath))
+            return;
+
         // Read TPLREF
         using var reader = new PlainTextReader(inputPath);
         TplRef tplRef = new();
         tplRef.Deserialize(reader);
 
-        TplrefPack2(options, inputPath, outputPath, tplRef);
+        // Split off into function so GMA can reuse code
+        TplrefPackValue(options, inputPath, outputPath, tplRef);
     }
 
-    private static void TplrefPack2(Options options, OSPath inputPath, OSPath outputPath, TplRef tplRef)
+    private static void TplrefPackValue(Options options, OSPath inputPath, OSPath outputPath, TplRef tplRef)
     {
         // Get path to tpl textures
         OSPath assetLibDir = string.IsNullOrWhiteSpace(options.AssetLibraryRoot)
             ? new(inputPath.Directories)     // use folder we are in
             : new(options.AssetLibraryRoot + "/tex/"); // use specified directory
 
-        // Abort if unable to write
-        outputPath.SetExtensions(TplFile.extension);
-        if (!CanWriteFileAndPrintResult(options, outputPath))
-            return;
-
-        // load GXTEXs
+        // Load GXTEXs
         int texCount = tplRef.Textures.Length;
         TextureBundleDescription[] descs = new TextureBundleDescription[texCount];
         GxTexture[] gxTextures = new GxTexture[texCount];
@@ -369,13 +370,12 @@ public static class ActionsAsset
             texturePath.SetFileName(textureName);
             texturePath.SetExtensions(GxTextureFile.extension);
             // Load texture
-            GxTexture gxTexture = new GxTextureFile(texturePath);
-            gxTextures[i] = gxTexture;
-            // Get description, update array
+            gxTextures[i] = new GxTextureFile(texturePath);
+            // Update texture description
             descs[i] = gxTextures[i].GetDescription();
         }
 
-        // HACK BUT GOOD?
+        // HACK BUT GOOD? TODO: maybe put in GFZ.TPL class?
         // Hack up a TPL. First, write out descriptions and padding. Reuse existing code.
         TplFile tplFile = new();
         tplFile.Value.TextureBundleDescriptions = descs;
@@ -403,11 +403,16 @@ public static class ActionsAsset
         options.OverrideSearchPatternIfUnset($"*.{GmaRef.Extension}");
         Terminal.WriteLine($"{options.ActionStr}: packing GMA file(s).");
         int taskCount = ParallelizeFileInFileOutTasks(options, GmarefPack);
-        Terminal.WriteLine($"{options.ActionStr}: done packing {taskCount} file{Plural(taskCount)} into GMA.");
+        Terminal.WriteLine($"{options.ActionStr}: done packing {taskCount} file{Plural(taskCount)} into GMA and TPL.");
     }
 
     public static void GmarefPack(Options options, OSPath inputPath, OSPath outputPath)
     {
+        // Abort if not allowed to write
+        outputPath.SetExtensions(GmaFile.extension);
+        if (!CanWriteFileAndPrintResult(options, outputPath))
+            return;
+
         // Read GMAREF
         using var reader = new PlainTextReader(inputPath);
         GmaRef gmaref = new();
@@ -417,11 +422,6 @@ public static class ActionsAsset
         OSPath assetLibDir = string.IsNullOrWhiteSpace(options.AssetLibraryRoot)
             ? new(inputPath.Directories)     // use folder we are in
             : new(options.AssetLibraryRoot + "/mdl/"); // use specified directory
-
-        // Abort if unable to write
-        outputPath.SetExtensions(GmaFile.extension);
-        if (!CanWriteFileAndPrintResult(options, outputPath))
-            return;
 
         // Record textures used for model.
         List<string> textures = [];
@@ -478,7 +478,7 @@ public static class ActionsAsset
         // Convert texture list to TplRef to reuse function and generate final TPL
         TplRef tplRef = new();
         tplRef.Textures = textures.ToArray();
-        TplrefPack2(options, inputPath.Copy(), outputPath.Copy(), tplRef);
+        TplrefPackValue(options, inputPath.Copy(), outputPath.Copy(), tplRef);
     }
 
 
