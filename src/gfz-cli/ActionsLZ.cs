@@ -48,11 +48,7 @@ public static class ActionsLZ
     {
         // Remove extension
         outputFile.PopExtension();
-
-        // Write file
-        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
-        PrintFileWriteResult(result, outputFile, options.ActionStr);
-        if (doWriteFile)
+        if (CanWriteFileAndPrintResult(options, outputFile))
         {
             // TODO: add LZ function in library to read from inputFilePath, decompress, save to outputFilePath
             using var stream = LzUtility.DecompressAvLz(inputFile);
@@ -70,13 +66,9 @@ public static class ActionsLZ
 
     public static void LzCompressFile(Options options, OSPath inputFile, OSPath outputFile)
     {
-        outputFile.PushExtension(".lz");
-
-        // Write file
-        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
-        PrintFileWriteResult(result, outputFile, options.ActionStr);
-        if (doWriteFile)
-        {            
+        outputFile.PushExtension("lz");
+        if (CanWriteFileAndPrintResult(options, outputFile))
+        {
             // TODO: add LZ function in library to read from inputFile, compress, save to outputFile
             using var stream = LzUtility.CompressAvLz(inputFile, options.AvGame);
             using var writer = File.Create(outputFile);

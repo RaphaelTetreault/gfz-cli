@@ -131,6 +131,10 @@ public static class GfzCli
 
     private static void InitUsageDictionary()
     {
+        // Prevent running twice
+        if (GfzCliActionsLibrary.Count != 0)
+            return;
+
         foreach (GfzCliAction value in GfzCliActions)
         {
             CliActionID key = value.ActionID;

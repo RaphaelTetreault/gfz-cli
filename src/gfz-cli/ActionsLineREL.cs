@@ -314,9 +314,7 @@ public static class ActionsLineREL
     public static void Patch(Options options, PatchLineREL patchLineRelAction)
     {
         // Default search
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-            options.SearchPattern = $"*line__.rel";
+        options.OverrideSearchPatternIfUnset("*line__.rel");
 
         // Check to make sure we have expected input
         string[] inputFiles = GetInputFiles(options);
@@ -421,18 +419,12 @@ public static class ActionsLineREL
 
     public static void DecryptLineRel(Options options)
     {
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-            options.SearchPattern = $"*line__.bin";
-
+        options.OverrideSearchPatternIfUnset("*line__.bin");
         ParallelizeFileInFileOutTasks(options, DecryptLine);
     }
     public static void EncryptLineRel(Options options)
     {
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-            options.SearchPattern = $"*line__.rel";
-
+        options.OverrideSearchPatternIfUnset("*line__.rel");
         ParallelizeFileInFileOutTasks(options, EncryptLine);
     }
     public static void CryptLine(Options options, OSPath inputFile, OSPath outputFile, string extension)
@@ -442,9 +434,7 @@ public static class ActionsLineREL
         outputFile.SetExtensions(extension);
 
         // Write file
-        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
-        PrintFileWriteResult(result, outputFile, options.ActionStr);
-        if (doWriteFile)
+        if (CanWriteFileAndPrintResult(options, outputFile))
         {
             GameCode gameCode = options.GetGameCode();
             var lookup = LineRelLookup.GetInfo(gameCode);
