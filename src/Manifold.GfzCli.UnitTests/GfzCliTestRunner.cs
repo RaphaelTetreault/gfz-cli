@@ -17,17 +17,29 @@ public static class GfzCliTestRunner
         return parts;
     }
 
-    public static void RunArgsAssertPass(string args)
+    private static void RunArgs(string args)
     {
         string cwd = Directory.GetCurrentDirectory();
         Console.WriteLine($"CWD: {cwd}");
         Console.WriteLine($"ARG: {args}");
-        Console.WriteLine();
-
         string[] argsSplit = InputStringToArgsStringArray(args);
         GFZCLI.GfzCli.RunCliParseArgs(argsSplit);
+    }
+    public static void RunArgsAssertPass(string args)
+    {
+        RunArgs(args);
         Assert.Pass();
     }
+    public static void RunArgsAssertPass(ReadOnlySpan<string> args)
+    {
+        foreach (string arg in args)
+        {
+            RunArgs(arg);
+            Console.WriteLine();
+        }
+        Assert.Pass();
+    }
+
 
     public static void SetCurrentWorkingDirectory()
     {
@@ -62,7 +74,8 @@ public static class GfzCliTestRunner
             //Console.WriteLine(dst);
             Directory.CreateDirectory(dst.Directories);
             if (!File.Exists(dst) || @params.Overwrite)
-                File.Copy(src, dst, @params.Overwrite);
+                File.Copy(src, dst, true);
         }
     }
+
 }
