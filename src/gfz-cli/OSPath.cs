@@ -67,9 +67,30 @@ public class OSPath
     public OSPath() { }
     public OSPath(string filePath)
     {
-        fileName = GetFileNameFromPath(filePath);
-        SetExtensions(GetExtensionsFromPath(filePath));
-        SetDirectories(GetDirectoriesFromPath(filePath));
+        // Handle null: make default
+        if (filePath is null)
+        {
+            return;
+        }
+        // Handle relative paths
+        else if (filePath.StartsWith("../"))
+        {
+            string baseDir = Directory.GetCurrentDirectory();
+            OSPath fullPath = new();
+            fullPath.SetDirectories(baseDir);
+            fullPath.AppendRelativePathToDirectories(filePath);
+            // Copy data
+            this.fileName = fullPath.fileName;
+            this.extensionsList = fullPath.extensionsList;
+            this.directoriesList = fullPath.directoriesList;
+        }
+        // All other cases
+        else
+        {
+            fileName = GetFileNameFromPath(filePath);
+            SetExtensions(GetExtensionsFromPath(filePath));
+            SetDirectories(GetDirectoriesFromPath(filePath));
+        }
     }
 
     // OPERATORS
