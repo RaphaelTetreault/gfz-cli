@@ -74,7 +74,7 @@ public static class GfzCliTestRunner
             //Console.WriteLine(dst);
             Directory.CreateDirectory(dst.Directories);
             if (!File.Exists(dst) || @params.Overwrite)
-                File.Copy(src, dst, true);
+                File.Copy(src, dst, @params.Overwrite);
         }
     }
 

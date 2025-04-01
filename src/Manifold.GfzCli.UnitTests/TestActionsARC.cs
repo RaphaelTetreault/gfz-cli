@@ -6,8 +6,16 @@
 
 
 using Manifold.GFZCLI;
+using Newtonsoft.Json;
 
 namespace Manifold.GfzCli.UnitTests;
+
+public readonly record struct CliDebugData
+{
+    public readonly required string[] CliArgs { get; init; }
+}
+
+
 
 public class Tests
 {
@@ -16,10 +24,14 @@ public class Tests
     const string Files = "files";
     const string Processed = "processed";
     const string Marker = "lz";
-    readonly string[] AllGameCodes = ["gfze01", "gfzj01", "gfzp01", "gfzj8p"];
-    readonly string[] GCGameCodes = ["gfze01", "gfzj01", "gfzp01"];
+    static readonly string[] AllGameCodes = ["gfze01", "gfzj01", "gfzp01", "gfzj8p"];
+    static readonly string[] GCGameCodes = ["gfze01", "gfzj01", "gfzp01"];
 
-    public string[] Process(string template, CliActionID cliActionID, string[] gameCodes)
+    const string FilesDir = "files/";
+    const string ProcessedDir = "processed/";
+
+
+    public string[] PrepareTestAndCliArgs(string template, CliActionID cliActionID, string[] gameCodes)
     {
         string[] args = new string[gameCodes.Length];
         for (int i = 0; i < args.Length; i++)
@@ -31,17 +43,6 @@ public class Tests
         return args;
     }
 
-    //public string[] Process(string template, FileCopyParams @params, CliActionID cliActionID, string[] gameCodes)
-    //{
-    //    string[] args = new string[gameCodes.Length];
-    //    for (int i = 0; i < args.Length; i++)
-    //    {
-    //        args[i] = template
-    //            .Replace("<ACTION>", cliActionID.ToString().Replace("_", "-"))
-    //            .Replace("<GAMECODE>", gameCodes[i]);
-    //    }
-    //    return args;
-    //}
 
 
     // TODO: use diff input after solving file copy setup.
@@ -62,19 +63,50 @@ public class Tests
     };
 
 
-    string[] LzCompressArgs => Process(LzCompressTemplate, CliActionID.lz_compress, AllGameCodes);
-    string[] LzDecompressArgs => Process(LzDecompressTemplate, CliActionID.lz_decompress, AllGameCodes);
+    string[] LzCompressArgs => PrepareTestAndCliArgs(LzCompressTemplate, CliActionID.lz_compress, AllGameCodes);
+    string[] LzDecompressArgs => PrepareTestAndCliArgs(LzDecompressTemplate, CliActionID.lz_decompress, AllGameCodes);
 
     // TODO: move?
     [SetUp]
     public void Setup()
     {
         GfzCliTestRunner.SetCurrentWorkingDirectory();
-        GfzCliTestRunner.CopyFiles(lzc);
     }
 
-    [Test] public void _SetupBlank() => Console.WriteLine("Setup completed.");
-    [Test] public void LzCompressFile() => GfzCliTestRunner.RunArgsAssertPass(LzCompressArgs);
-    [Test] public void LzDecompressFile() => GfzCliTestRunner.RunArgsAssertPass(LzDecompressArgs);
+    //[Test] public void _SetupBlank() => Console.WriteLine("Setup completed.");
+    //[Test] public void LzCompressFile() => GfzCliTestRunner.RunArgsAssertPass(LzCompressArgs);
+    //[Test] public void LzDecompressFile() => GfzCliTestRunner.RunArgsAssertPass(LzDecompressArgs);
+
+
+
+
+    [Test] public void LzCompressFile() => GfzCliTestRunner.RunArgsAssertPass(new CliDebugParams()
+    {
+        CliActionID = CliActionID.lz_compress,
+        CliArg = $"<ACTION> <TESTDIR> -p *.tpl -o",
+        GameCodes = AllGameCodes,
+        CopySubdirectory = ProcessedDir + "bg/",
+        TestSubdirectory = "", // subdir in generated test folder
+        SrcCopySearchPattern = "*.tpl",
+        SrcCopySearchOption = SearchOption.TopDirectoryOnly,
+        DstCopyOverwrite = false,
+        SrcCopyLimit = 3,
+    }.PrepareAndGenerateTestCliArgs());
+
+    //public static readonly CliDebugParams LZC = new()
+    //{
+    //    CliActionID = CliActionID.lz_compress,
+    //    CliArg = $"<ACTION> <TESTDIR> -p *.tpl -o",
+    //    GameCodes = AllGameCodes,
+    //    SrcSubdirectory = FilesDir + "bg/",
+    //    DstSubdirectory = ProcessedDir, // other subdirs generated?
+    //    SrcCopySearchPattern = "*.tpl",
+    //    SrcCopySearchOption = SearchOption.TopDirectoryOnly,
+    //    DstCopyOverwrite = false,
+    //    SrcCopyLimit = 3,
+    //}; 
+
+
+
 
 }
