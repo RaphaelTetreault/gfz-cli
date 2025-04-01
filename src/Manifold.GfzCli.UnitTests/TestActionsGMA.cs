@@ -3,7 +3,7 @@ using static Manifold.GfzCli.UnitTests.GfzCliTestRunner;
 
 namespace Manifold.GfzCli.UnitTests;
 
-public class TestActionsARC
+public class TestActionsGMA
 {
     [SetUp] public void Setup() => InitSetup();
 
