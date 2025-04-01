@@ -2,20 +2,6 @@
 
 namespace Manifold.GfzCli.UnitTests;
 
-public readonly record struct FileCopyParams
-{
-    public FileCopyParams()
-    {
-    }
-
-    public readonly required string FilesSource { get; init; }
-    public readonly required string FilesDestination { get; init; }
-    public readonly string SearchPattern { get; init; } = string.Empty;
-    public readonly SearchOption SearchOption { get; init; } = SearchOption.TopDirectoryOnly;
-    public readonly bool Overwrite { get; init; } = false;
-    public readonly int FileCopyLimit { get; init; } = int.MaxValue;
-}
-
 public readonly record struct CliDebugParams
 {
     public CliDebugParams()
@@ -25,12 +11,20 @@ public readonly record struct CliDebugParams
     /// <summary>
     ///     Where to copy test files from.
     /// </summary>
-    public const string CopyDirectory = "./res/<GAMECODE>/";
+    public readonly string CopyDirectory = $"./res/{TagGameCode}/";
 
     /// <summary>
     ///     Where to dump copy files to, and where to run test from.
     /// </summary>
-    public const string TestDirectory = "./tests-<GAMECODE>/<ACTION-PREFIX>/<ACTION>/";
+    public const string TestDirectory = $"./tests-{TagGameCode}/{TagActionPrefix}/{TagAction}/";
+
+
+    public const string TagAction = "<ACTION>";
+    public const string TagActionPrefix = "<ACTION-PREFIX>";
+    public const string TagGameCode = "<GAMECODE>";
+    public const string TagTestDir = "<TESTDIR>";
+
+
 
     public readonly required CliActionID CliActionID { get; init; }
     public readonly required string CliArg { get; init; }
@@ -53,7 +47,7 @@ public readonly record struct CliDebugParams
     {
         string dir = CopyDirectory + CopySubdirectory;
         dir = dir
-            .Replace("<GAMECODE>", gameCode);
+            .Replace(TagGameCode, gameCode);
         return dir;
     }
 
@@ -68,9 +62,9 @@ public readonly record struct CliDebugParams
     {
         string dir = TestDirectory + TestSubdirectory;
         dir = dir
-            .Replace("<ACTION-PREFIX>", CliActionID.ToString().Split('_')[0])
-            .Replace("<ACTION>", CliActionID.ToString().Replace('_', '-'))
-            .Replace("<GAMECODE>", gameCode);
+            .Replace(TagActionPrefix, CliActionID.ToString().Split('_')[0])
+            .Replace(TagAction, CliActionID.ToString().Replace('_', '-'))
+            .Replace(TagGameCode, gameCode);
         return dir;
     }
 
@@ -127,9 +121,9 @@ public readonly record struct CliDebugParams
             string gameCode = GameCodes[i];
             string testDirectory = BuildTestDir(gameCode);
             cliArgs[i] = CliArg
-                .Replace("<TESTDIR>", testDirectory) // Contains <GAMECODE> and <ACTION>, so parse first
-                .Replace("<ACTION>", CliActionID.ToString().Replace('_', '-'))
-                .Replace("<GAMECODE>", gameCode)
+                .Replace(TagTestDir, testDirectory)
+                .Replace(TagAction, CliActionID.ToString().Replace('_', '-'))
+                .Replace(TagGameCode, gameCode)
                 ;
 
             if (cliArgs[i].Contains('<') || cliArgs[i].Contains('>'))

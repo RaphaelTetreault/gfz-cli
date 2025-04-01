@@ -5,6 +5,11 @@ namespace Manifold.GfzCli.UnitTests;
 
 public static class GfzCliTestRunner
 {
+    public static readonly string[] AllGameCodes = ["gfze01", "gfzj01", "gfzp01", "gfzj8p"];
+    public static readonly string[] GCGameCodes = ["gfze01", "gfzj01", "gfzp01"];
+    public const string FilesDir = "files/";
+    public const string ProcessedDir = "processed/";
+
     private static bool hasSetCWD = false;
 
     public static string[] InputStringToArgsStringArray(string input)
@@ -40,8 +45,7 @@ public static class GfzCliTestRunner
         Assert.Pass();
     }
 
-
-    public static void SetCurrentWorkingDirectory()
+    public static void InitSetup()
     {
         if (hasSetCWD)
             return;
@@ -53,29 +57,4 @@ public static class GfzCliTestRunner
         
         hasSetCWD = true;
     }
-
-    public static void CopyFiles(FileCopyParams @params)
-    {
-        string cwd = Directory.GetCurrentDirectory();
-        OSPath _srcDir = new();
-        _srcDir.SetDirectories(cwd, @params.FilesSource);
-
-        string[] files = Directory.GetFiles(_srcDir, @params.SearchPattern, @params.SearchOption);
-        int copyFileCount = Math.Min(files.Length, @params.FileCopyLimit);
-
-        for (int i = 0; i < copyFileCount; i++)
-        {
-            string file = files[i];
-            OSPath src = new(file);
-            OSPath dst = new(file);
-            dst.SetDirectories(cwd);
-            dst.PushDirectories(@params.FilesDestination);
-            //Console.WriteLine(src);
-            //Console.WriteLine(dst);
-            Directory.CreateDirectory(dst.Directories);
-            if (!File.Exists(dst) || @params.Overwrite)
-                File.Copy(src, dst, @params.Overwrite);
-        }
-    }
-
 }
