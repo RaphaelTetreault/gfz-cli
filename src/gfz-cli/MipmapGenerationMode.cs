@@ -1,7 +1,7 @@
 ﻿namespace Manifold.GFZCLI;
 
 /// <summary>
-///     Define how mipmaps are generating.
+///     Define how mipmaps are generated.
 /// </summary>
 public enum MipmapGenerationMode
 {

@@ -190,7 +190,6 @@ public class Options :
         };
         return code;
     }
-
     public void ThrowIfInvalidRegion()
     {
         switch (SerializationRegion)
