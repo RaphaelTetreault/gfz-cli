@@ -9,6 +9,9 @@ public interface IOptionsLineRel
 
     public static class Arguments
     {
+        // Most values in here use 255 for something, so 254 is the highest invalid index.
+        internal const byte InvalidIndex = 254;
+
         internal static readonly GfzCliArgument Backup = new()
         {
             ArgumentName = Args.Backup,
@@ -21,7 +24,7 @@ public interface IOptionsLineRel
         {
             ArgumentName = Args.BgmIndex,
             ArgumentType = typeof(byte).Name,
-            ArgumentDefault = (byte)254, // default to invalid state
+            ArgumentDefault = InvalidIndex, // default to invalid state
             Help = "The background music index.",
         };
 
@@ -29,7 +32,7 @@ public interface IOptionsLineRel
         {
             ArgumentName = Args.BgmFinalLapIndex,
             ArgumentType = typeof(byte).Name,
-            ArgumentDefault = (byte)254, // default to invalid state
+            ArgumentDefault = InvalidIndex, // default to invalid state
             Help = "The final lap background music index.",
         };
 
@@ -37,7 +40,7 @@ public interface IOptionsLineRel
         {
             ArgumentName = Args.StageIndex,
             ArgumentType = typeof(byte).Name,
-            ArgumentDefault = (byte)254, // default to invalid state
+            ArgumentDefault = InvalidIndex, // default to invalid state
             Help = "The stage to modify's index.",
         };
 
@@ -45,7 +48,7 @@ public interface IOptionsLineRel
         {
             ArgumentName = Args.Cup,
             ArgumentType = typeof(Cup).Name,
-            ArgumentDefault = null,
+            ArgumentDefault = (Cup)255, // default to invalid state
             Help = "Grand prix cup index.",
         };
 
@@ -53,7 +56,7 @@ public interface IOptionsLineRel
         {
             ArgumentName = Args.CupStageIndex,
             ArgumentType = typeof(byte).Name,
-            ArgumentDefault = (byte)254, // default to invalid state
+            ArgumentDefault = InvalidIndex, // default to invalid state
             Help = "The stage to modify's index.",
         };
 
@@ -61,7 +64,7 @@ public interface IOptionsLineRel
         {
             ArgumentName = Args.Difficulty,
             ArgumentType = typeof(byte).Name,
-            ArgumentDefault = (byte)254, // default to invalid state
+            ArgumentDefault = InvalidIndex, // default to invalid state
             Help = "Stage difficulty rating in number of stars ★.",
         };
 
@@ -69,7 +72,7 @@ public interface IOptionsLineRel
         {
             ArgumentName = Args.PilotNumber,
             ArgumentType = typeof(byte).Name,
-            ArgumentDefault = (byte)254, // default to invalid state
+            ArgumentDefault = InvalidIndex, // default to invalid state
             Help = "Vehicle pilot number (face-value, not internal).",
         };
 
@@ -77,7 +80,7 @@ public interface IOptionsLineRel
         {
             ArgumentName = Args.VenueIndex,
             ArgumentType = typeof(byte).Name,
-            ArgumentDefault = (byte)254, // default to invalid state
+            ArgumentDefault = InvalidIndex, // default to invalid state
             Help = "A stage's venue index.",
         };
 

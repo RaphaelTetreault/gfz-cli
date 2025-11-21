@@ -248,7 +248,7 @@ public static class GfzCli
         {
             // Action specified, print specific
             string actionStr = options.InputPath;
-            CliActionID actionID = GfzCliEnumParser.ParseUnderscoreToDash<CliActionID>(actionStr);
+            CliActionID actionID = GfzCliParser.EnumParseUnderscoreToDash<CliActionID>(actionStr);
             PrintAction(actionID);
         }
     }

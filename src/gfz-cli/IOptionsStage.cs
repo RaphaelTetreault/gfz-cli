@@ -13,21 +13,21 @@ public interface IOptionsStage
         {
             ArgumentName = Args.FogViewRangeNear,
             ArgumentType = typeof(float).Name,
-            ArgumentDefault = null,
+            ArgumentDefault = null, //float.MaxValue,
             Help = "Fog view range near plane distance.",
         };
         internal static readonly GfzCliArgument FogViewRangeFar = new()
         {
             ArgumentName = Args.FogViewRangeFar,
             ArgumentType = typeof(float).Name,
-            ArgumentDefault = null,
+            ArgumentDefault = null, //float.MinValue,
             Help = "Fog view range far plane distance.",
         };
         internal static readonly GfzCliArgument FogInterpolationMode = new()
         {
             ArgumentName = Args.FogInterpolationMode,
             ArgumentType = typeof(FogType).Name,
-            ArgumentDefault = null,
+            ArgumentDefault = FogType.None,
             Help = "The GX fog interpolation mode.",
         };
         internal static readonly GfzCliArgument ColorRed = new()

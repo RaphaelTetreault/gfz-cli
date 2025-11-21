@@ -91,7 +91,7 @@ public static class ActionsGMA
     public static void PatchSubmeshRenderFlags(Options options, Gma gma, EndianBinaryWriter writer)
     {
         string name = options.Name;
-        RenderFlags renderFlags = Options.GetEnum<RenderFlags>(options.Value);
+        RenderFlags renderFlags = GfzCliParser.GetEnum<RenderFlags>(options.Value);
 
         int countMatches = 0;
         foreach (Model model in gma.Models)
