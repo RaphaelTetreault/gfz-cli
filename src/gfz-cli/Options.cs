@@ -50,14 +50,14 @@ public class Options :
     // ResizeOptions
     //public bool Resize { get; set; } = false;
     public bool Compand { get; set; } = IOptionsImageSharp.Arguments.Compand.Default<bool>();
-    public string ResizeModeStr { get; set; } = ResizeMode.Max.ToString();
+    public string ResizeModeStr { get; set; } = IOptionsImageSharp.Arguments.ResizeMode.AsText();
     public ResizeMode ResizeMode => GfzCliParser.EnumParseDashRemoved<ResizeMode>(ResizeModeStr);
-    public string PadColorStr { get; set; } = "r=0;g=0;b=0;a=0";
+    public string PadColorStr { get; set; } = "r=0;g=0;b=0;a=0"; // TODO!: IOptionsImageSharp.Arguments.PadColor.AsText(); -OR- merge with RGBA params...
     public Color PadColor => GfzCliParser.StringToColor(PadColorStr);
-    public string PositionStr { get; set; } = AnchorPositionMode.Center.ToString();
+    public string PositionStr { get; set; } = IOptionsImageSharp.Arguments.Position.AsText();
     public AnchorPositionMode Position => GfzCliParser.EnumParseDashRemoved<AnchorPositionMode>(PositionStr);
     public bool PremultiplyAlpha { get; set; } = IOptionsImageSharp.Arguments.PremultiplyAlpha.Default<bool>();
-    public string ResamplerTypeStr { get; set; } = IOptionsImageSharp.Arguments.Resampler.AsText();
+    public string ResamplerTypeStr { get; set; } = IOptionsImageSharp.Arguments.ResamplerType.AsText();
     public ResamplerType ResamplerType => GfzCliParser.EnumParseDashRemoved<ResamplerType>(ResamplerTypeStr);
     public IResampler Resampler => IOptionsImageSharp.GetResampler(ResamplerType);
     public int Width { get; set; }
@@ -96,7 +96,7 @@ public class Options :
     // IStageOptions
     public float FogViewRangeNear { get; set; } = IOptionsStage.Arguments.FogViewRangeNear.Default<float>();
     public float FogViewRangeFar { get; set; } = IOptionsStage.Arguments.FogViewRangeFar.Default<float>();
-    public string FogInterpolationModeStr { get; set; } = IOptionsStage.Arguments.FogInterpolationMode.Default<FogType>().ToString();
+    public string FogInterpolationModeStr { get; set; } = IOptionsStage.Arguments.FogInterpolationMode.AsText();
     public FogType FogInterpolationMode => GfzCliParser.EnumParseDashRemoved<FogType>(FogInterpolationModeStr);
     public string ColorRedStr { get; set; } = string.Empty;
     public string ColorGreenStr { get; set; } = string.Empty;

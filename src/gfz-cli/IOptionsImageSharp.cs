@@ -33,7 +33,7 @@ public interface IOptionsImageSharp
         {
             ArgumentName = Args.ResizeMode,
             ArgumentType = typeof(ResizeMode).Name,
-            ArgumentDefault = (ResizeMode)0,
+            ArgumentDefault = SixLabors.ImageSharp.Processing.ResizeMode.Max,
             Help = "How the image should be resized.",
         };
 
@@ -49,7 +49,7 @@ public interface IOptionsImageSharp
         {
             ArgumentName = Args.Position,
             ArgumentType = typeof(AnchorPositionMode).Name,
-            ArgumentDefault = (AnchorPositionMode)0,
+            ArgumentDefault = AnchorPositionMode.Center,
             Help = "Anchor positions to apply to resize image.",
         };
 
@@ -61,11 +61,11 @@ public interface IOptionsImageSharp
             Help = "Whether to use premultiplied alpha when scaling image.",
         };
 
-        internal static readonly GfzCliArgument Resampler = new()
+        internal static readonly GfzCliArgument ResamplerType = new()
         {
             ArgumentName = Args.Resampler,
             ArgumentType = typeof(ResamplerType).Name,
-            ArgumentDefault = ResamplerType.Bicubic,
+            ArgumentDefault = GFZCLI.ResamplerType.Bicubic,
             Help = "The resampler to use when scaling images.",
         };
 

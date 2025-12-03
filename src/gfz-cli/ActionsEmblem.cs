@@ -43,7 +43,7 @@ public static class ActionsEmblem
         IsOutputOptional = true,
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [
-            IOptionsImageSharp.Arguments.Resampler,
+            IOptionsImageSharp.Arguments.ResamplerType,
             ],
         OptionalArguments = [
             IOptionsImageSharp.Arguments.Compand,
@@ -79,7 +79,7 @@ public static class ActionsEmblem
         IsOutputOptional = false,
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [
-            IOptionsImageSharp.Arguments.Resampler,
+            IOptionsImageSharp.Arguments.ResamplerType,
             ],
         OptionalArguments = [
             IOptionsImageSharp.Arguments.Compand,
