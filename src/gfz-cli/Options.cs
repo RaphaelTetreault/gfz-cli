@@ -31,11 +31,11 @@ public class Options :
     public string SearchPattern { get; set; } = string.Empty;
     public bool SearchSubdirectories { get; set; } = false;
     public SearchOption SearchOption => SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-    public string SerializationFormatStr { get; set; } = "gx";
-    public SerializeFormat SerializeFormat => Enum.Parse<SerializeFormat>(SerializationFormatStr, true);
+    public string str_SerializationFormat { get; set; } = "gx";
+    public SerializeFormat SerializeFormat => Enum.Parse<SerializeFormat>(str_SerializationFormat, true);
     public AvGame AvGame => GetAvFormat(SerializeFormat);
-    public string SerializeRegionStr { get; set; } = "J";
-    public Region SerializationRegion => GetRegion(SerializeRegionStr);
+    public string SerializationRegionStr { get; set; } = "J";
+    public Region SerializationRegion => GetRegion(SerializationRegionStr);
 
     // IAssetsOptions
     public string AssetLibraryRoot { get; set; } = string.Empty;
@@ -198,7 +198,7 @@ public class Options :
                 return;
 
             default:
-                string msg = $"Invalid region \"{SerializeRegionStr}\".";
+                string msg = $"Invalid region \"{SerializationRegionStr}\".";
                 throw new ArgumentException(msg);
         }
     }

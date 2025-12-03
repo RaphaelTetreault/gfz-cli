@@ -113,14 +113,14 @@ public interface IOptionsGfzCli
     public SearchOption SearchOption { get; }
 
     [Option(ArgsShort.SerializationFormat, Args.SerializationFormat, HelpText = Help.SerializationFormat)]
-    public string SerializationFormatStr { get; set; }
+    public string str_SerializationFormat { get; set; }
     /// <summary>
     ///     Which game to serialize.
     /// </summary>
     public SerializeFormat SerializeFormat { get; }
 
     [Option(ArgsShort.SerializationRegion, Args.SerializationRegion, HelpText = Help.SerializationRegion)]
-    public string SerializeRegionStr { get; set; }
+    public string SerializationRegionStr { get; set; }
     /// <summary>
     ///     Which region to serialize to.
     /// </summary>
