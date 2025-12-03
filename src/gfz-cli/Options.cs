@@ -39,9 +39,9 @@ public class Options :
 
     // IAssetsOptions
     public string AssetLibraryRoot { get; set; } = string.Empty;
-    public int MipmapCount { get; set; } = -1;
+    public int MipmapCount { get; set; } = IOptionsAssets.Arguments.MipmapCount.Default<int>();
     public string MipmapFiles { get; set; } = string.Empty;
-    public string MipmapModeStr { get; set; } = ((MipmapGenerationMode)0).ToString();
+    public string MipmapModeStr { get; set; } = IOptionsAssets.Arguments.MipmapMode.AsText();
     public MipmapGenerationMode MipmapMode => GfzCliParser.EnumParseDashRemoved<MipmapGenerationMode>(MipmapModeStr);
     public TextureFormat TextureFormat { get; set; } = IOptionsAssets.Arguments.TextureFormat.Default<TextureFormat>();
 
