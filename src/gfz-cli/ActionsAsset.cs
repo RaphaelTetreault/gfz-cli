@@ -32,7 +32,7 @@ public static class ActionsAsset
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            IOptionsImageSharp.Arguments.Resampler,
+            IOptionsImageSharp.Arguments.ResamplerType,
             ],
     };
 
@@ -58,7 +58,7 @@ public static class ActionsAsset
             IOptionsImageSharp.Arguments.PadColor,
             IOptionsImageSharp.Arguments.Position,
             IOptionsImageSharp.Arguments.PremultiplyAlpha,
-            IOptionsImageSharp.Arguments.Resampler,
+            IOptionsImageSharp.Arguments.ResamplerType,
             IOptionsImageSharp.Arguments.ResizeMode, // Mode
             ],
     };
@@ -85,7 +85,7 @@ public static class ActionsAsset
             IOptionsImageSharp.Arguments.PadColor,
             IOptionsImageSharp.Arguments.Position,
             IOptionsImageSharp.Arguments.PremultiplyAlpha,
-            IOptionsImageSharp.Arguments.Resampler,
+            IOptionsImageSharp.Arguments.ResamplerType,
             IOptionsImageSharp.Arguments.ResizeMode, // Mode
             ],
     };
