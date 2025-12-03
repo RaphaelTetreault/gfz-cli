@@ -113,7 +113,7 @@ public interface IOptionsGfzCli
     public SearchOption SearchOption { get; }
 
     [Option(ArgsShort.SerializationFormat, Args.SerializationFormat, HelpText = Help.SerializationFormat)]
-    public string str_SerializationFormat { get; set; }
+    public string SerializationFormat { get; set; }
     /// <summary>
     ///     Which game to serialize.
     /// </summary>

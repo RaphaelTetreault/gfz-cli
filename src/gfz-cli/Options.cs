@@ -31,8 +31,8 @@ public class Options :
     public string SearchPattern { get; set; } = string.Empty;
     public bool SearchSubdirectories { get; set; } = false;
     public SearchOption SearchOption => SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-    public string str_SerializationFormat { get; set; } = "gx";
-    public SerializeFormat SerializeFormat => Enum.Parse<SerializeFormat>(str_SerializationFormat, true);
+    public string SerializationFormat { get; set; } = "gx";
+    public SerializeFormat SerializeFormat => Enum.Parse<SerializeFormat>(SerializationFormat, true);
     public AvGame AvGame => GetAvFormat(SerializeFormat);
     public string SerializationRegionStr { get; set; } = "J";
     public Region SerializationRegion => GetRegion(SerializationRegionStr);
