@@ -58,6 +58,13 @@ public interface IOptionsStage
             ArgumentDefault = null,
             Help = "The color's alpha value.",
         };
+        internal static readonly GfzCliArgument Color = new()
+        {
+            ArgumentName = Args.Color,
+            ArgumentType = $"HexColor",
+            ArgumentDefault = "00000000",
+            Help = "The color's hexadecimal value. Can be defined via each component individually.",
+        };
         internal static readonly GfzCliArgument Name = new()
         {
             ArgumentName = Args.Name,
@@ -79,6 +86,7 @@ public interface IOptionsStage
         public const string FogViewRangeNear = "fog-view-range-near";
         public const string FogViewRangeFar = "fog-view-range-far";
         public const string FogInterpolationMode = "fog-interpolation-mode";
+        public const string Color = "color";
         public const string ColorRed = "color-r";
         public const string ColorGreen = "color-g";
         public const string ColorBlue = "color-b";

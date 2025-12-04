@@ -38,7 +38,7 @@ public class Options :
     public Region SerializationRegion => GetRegion(SerializationRegionStr);
 
     // IAssetsOptions
-    public string AssetLibraryRoot { get; set; } = string.Empty;
+    public string AssetLibraryRoot { get; set; } = IOptionsAssets.Arguments.AssetLibraryRoot.Default<string>();
     public int MipmapCount { get; set; } = IOptionsAssets.Arguments.MipmapCount.Default<int>();
     public string MipmapFiles { get; set; } = string.Empty;
     public string MipmapModeStr { get; set; } = IOptionsAssets.Arguments.MipmapMode.AsText();
@@ -52,8 +52,7 @@ public class Options :
     public bool Compand { get; set; } = IOptionsImageSharp.Arguments.Compand.Default<bool>();
     public string ResizeModeStr { get; set; } = IOptionsImageSharp.Arguments.ResizeMode.AsText();
     public ResizeMode ResizeMode => GfzCliParser.EnumParseDashRemoved<ResizeMode>(ResizeModeStr);
-    public string PadColorStr { get; set; } = "r=0;g=0;b=0;a=0"; // TODO!: IOptionsImageSharp.Arguments.PadColor.AsText(); -OR- merge with RGBA params...
-    public Color PadColor => GfzCliParser.StringToColor(PadColorStr);
+    public string PadColorStr { get; set; } = "00000000";
     public string PositionStr { get; set; } = IOptionsImageSharp.Arguments.Position.AsText();
     public AnchorPositionMode Position => GfzCliParser.EnumParseDashRemoved<AnchorPositionMode>(PositionStr);
     public bool PremultiplyAlpha { get; set; } = IOptionsImageSharp.Arguments.PremultiplyAlpha.Default<bool>();
@@ -98,12 +97,17 @@ public class Options :
     public float FogViewRangeFar { get; set; } = IOptionsStage.Arguments.FogViewRangeFar.Default<float>();
     public string FogInterpolationModeStr { get; set; } = IOptionsStage.Arguments.FogInterpolationMode.AsText();
     public FogType FogInterpolationMode => GfzCliParser.EnumParseDashRemoved<FogType>(FogInterpolationModeStr);
+    public string Name { get; set; } = string.Empty;
+    public bool SetFlagsOff { get; set; } = IOptionsStage.Arguments.SetFlagsOff.Default<bool>();
+
+
+    // TODO: move COLOR into it's own thing
+    //public string ColorStr { get; set; } = string.Empty;
+    public Color Color => GfzCliParser.GetColorFallbackFromColorComponents(PadColorStr, ColorRedStr, ColorGreenStr, ColorBlueStr, ColorAlphaStr);
     public string ColorRedStr { get; set; } = string.Empty;
     public string ColorGreenStr { get; set; } = string.Empty;
     public string ColorBlueStr { get; set; } = string.Empty;
     public string ColorAlphaStr { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public bool SetFlagsOff { get; set; } = IOptionsStage.Arguments.SetFlagsOff.Default<bool>();
     public byte ColorRed => GfzCliParser.GetColorComponent(ColorRedStr);
     public byte ColorGreen => GfzCliParser.GetColorComponent(ColorGreenStr);
     public byte ColorBlue => GfzCliParser.GetColorComponent(ColorBlueStr);

@@ -131,7 +131,7 @@ public interface IOptionsImageSharp
     /// </summary>
     [Option(Args.PadColor, Hidden = true)]
     public string PadColorStr { get; set; }
-    public Color PadColor { get; }
+    public Color Color { get; }
 
     /// <summary>
     ///     Anchor positions to apply to resize image.
@@ -195,7 +195,7 @@ public interface IOptionsImageSharp
         {
             Compand = imageResizeOptions.Compand,
             Mode = imageResizeOptions.ResizeMode,
-            PadColor = imageResizeOptions.PadColor,
+            PadColor = imageResizeOptions.Color,
             Position = imageResizeOptions.Position,
             PremultiplyAlpha = imageResizeOptions.PremultiplyAlpha,
             Sampler = imageResizeOptions.Resampler,

@@ -29,6 +29,7 @@ public static class ActionsColiCourse
         IsOutputOptional = true,
         ActionOptions = CliActionOption.FPS,
         RequiredArguments = [
+            IOptionsStage.Arguments.Color,
             IOptionsStage.Arguments.ColorRed,
             IOptionsStage.Arguments.ColorGreen,
             IOptionsStage.Arguments.ColorBlue,

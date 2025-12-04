@@ -35,7 +35,8 @@ public readonly record struct GfzCliArgument()
     /// </returns>
     public string GetDefaultValueFormatted()
     {
-        string @default = ArgumentDefault != null
+        // string.IsNullOrEmpty(ArgumentDefault as string) //
+        string @default = ArgumentDefault != null && ArgumentDefault != (object)string.Empty
             ? $"={ArgumentDefault}"
             : string.Empty;
 
