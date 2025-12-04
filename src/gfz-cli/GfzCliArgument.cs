@@ -8,34 +8,35 @@ namespace Manifold.GFZCLI;
 public readonly record struct GfzCliArgument()
 {
     /// <summary>
-    ///     
+    ///     Long name of argument for CLI.
     /// </summary>
     public required string ArgumentName { get; init; }
 
     /// <summary>
-    ///     
+    ///     Argument type information. User-facing and not for casting.
     /// </summary>
     public required string ArgumentType { get; init; }
 
     /// <summary>
-    ///     
+    ///     Default parameter to use if unset.
+    ///     Null means no default parameter is defined.
     /// </summary>
     public required object? ArgumentDefault { get; init; }
 
     /// <summary>
-    ///     
+    ///     Argument help text.
     /// </summary>
     public required string Help { get; init; }
 
     /// <summary>
-    ///     
+    ///     Get <see cref="ArgumentDefault"/> formatted as string for display in
+    ///     help/usage window.
     /// </summary>
     /// <returns>
     ///     
     /// </returns>
     public string GetDefaultValueFormatted()
     {
-        // string.IsNullOrEmpty(ArgumentDefault as string) //
         string @default = ArgumentDefault != null && ArgumentDefault != (object)string.Empty
             ? $"={ArgumentDefault}"
             : string.Empty;
