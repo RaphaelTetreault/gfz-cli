@@ -30,9 +30,9 @@ public static class ActionsColiCourse
         ActionOptions = CliActionOption.FPS,
         RequiredArguments = [
             IOptionsStage.Arguments.Color,
-            IOptionsStage.Arguments.ColorRed,
-            IOptionsStage.Arguments.ColorGreen,
-            IOptionsStage.Arguments.ColorBlue,
+            IOptionsStage.Arguments.ColorR,
+            IOptionsStage.Arguments.ColorG,
+            IOptionsStage.Arguments.ColorB,
             ],
         OptionalArguments = [
             IOptionsLineRel.Arguments.Backup,
@@ -123,9 +123,9 @@ public static class ActionsColiCourse
             ? scene.fog.FogRange.far
             : options.FogViewRangeFar;
         // Get color value
-        byte r = options.ColorRed;
-        byte g = options.ColorGreen;
-        byte b = options.ColorBlue;
+        byte r = options.ColorR;
+        byte g = options.ColorG;
+        byte b = options.ColorB;
 
         // Create new fog
         Fog fog = new()

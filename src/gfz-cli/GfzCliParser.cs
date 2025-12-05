@@ -10,6 +10,8 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class GfzCliParser
 {
+    #region Parse Enum
+
     /// <summary>
     ///     Returns the <typeparamref name="TEnum"/> value corresponding to <paramref name="value"/>
     ///     where all underscore '_' characters in the string are replaced with dash '-' characters.
@@ -55,12 +57,12 @@ public static class GfzCliParser
     }
 
     /// <summary>
-    ///     
+    ///     Parse <paramref name="value"/> to <typeparamref name="TEnum"/>.
     /// </summary>
-    /// <typeparam name="TEnum"></typeparam>
-    /// <param name="value"></param>
+    /// <typeparam name="TEnum">The type to convert to.</typeparam>
+    /// <param name="value">The string value to parse.</param>
     /// <returns>
-    ///     
+    ///     Input string <paramref name="value"/> as enum of <typeparamref name="TEnum"/> type.
     /// </returns>
     public static TEnum GetEnum<TEnum>(string value)
         where TEnum : struct, IComparable, IConvertible, IFormattable
@@ -68,6 +70,10 @@ public static class GfzCliParser
         TEnum @enum = Enum.Parse<TEnum>(value, true);
         return @enum;
     }
+
+    #endregion
+
+    #region Parse Color
 
     /// <summary>
     ///     
@@ -256,6 +262,18 @@ public static class GfzCliParser
         return color;
     }
 
+    /// <summary>
+    ///     Get color from either <paramref name="color"/> (priority) or component values.
+    /// </summary>
+    /// <param name="color">The color string to parse.</param>
+    /// <param name="r">Fallback R component if <paramref name="color"/> is default.</param>
+    /// <param name="g">Fallback G component if <paramref name="color"/> is default.</param>
+    /// <param name="b">Fallback B component if <paramref name="color"/> is default.</param>
+    /// <param name="a">Fallback A component if <paramref name="color"/> is default.</param>
+    /// <returns>
+    ///     Either <paramref name="color"/> parsed if non-default value;
+    ///     a new color built from individual components otherwise.
+    /// </returns>
     public static Color GetColorFallbackFromColorComponents(string color, string r, string g, string b, string a)
     {
         // Get color from main color string (all components in one).
@@ -267,4 +285,7 @@ public static class GfzCliParser
 
         return value;
     }
+
+    #endregion
+
 }

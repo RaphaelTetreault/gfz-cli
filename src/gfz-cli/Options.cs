@@ -46,13 +46,10 @@ public class Options :
     public TextureFormat TextureFormat { get; set; } = IOptionsAssets.Arguments.TextureFormat.Default<TextureFormat>();
 
 
-    // IImageSharpOptions
-    // ResizeOptions
-    //public bool Resize { get; set; } = false;
+    // IImageSharpOptions. NOTE: ColorStr defined in multiple interfaces.
     public bool Compand { get; set; } = IOptionsImageSharp.Arguments.Compand.Default<bool>();
     public string ResizeModeStr { get; set; } = IOptionsImageSharp.Arguments.ResizeMode.AsText();
     public ResizeMode ResizeMode => GfzCliParser.EnumParseDashRemoved<ResizeMode>(ResizeModeStr);
-    public string PadColorStr { get; set; } = "00000000";
     public string PositionStr { get; set; } = IOptionsImageSharp.Arguments.Position.AsText();
     public AnchorPositionMode Position => GfzCliParser.EnumParseDashRemoved<AnchorPositionMode>(PositionStr);
     public bool PremultiplyAlpha { get; set; } = IOptionsImageSharp.Arguments.PremultiplyAlpha.Default<bool>();
@@ -101,17 +98,19 @@ public class Options :
     public bool SetFlagsOff { get; set; } = IOptionsStage.Arguments.SetFlagsOff.Default<bool>();
 
 
-    // TODO: move COLOR into it's own thing
-    //public string ColorStr { get; set; } = string.Empty;
-    public Color Color => GfzCliParser.GetColorFallbackFromColorComponents(PadColorStr, ColorRedStr, ColorGreenStr, ColorBlueStr, ColorAlphaStr);
-    public string ColorRedStr { get; set; } = string.Empty;
-    public string ColorGreenStr { get; set; } = string.Empty;
-    public string ColorBlueStr { get; set; } = string.Empty;
-    public string ColorAlphaStr { get; set; } = string.Empty;
-    public byte ColorRed => GfzCliParser.GetColorComponent(ColorRedStr);
-    public byte ColorGreen => GfzCliParser.GetColorComponent(ColorGreenStr);
-    public byte ColorBlue => GfzCliParser.GetColorComponent(ColorBlueStr);
-    public byte ColorAlpha => GfzCliParser.GetColorComponent(ColorAlphaStr);
+    // TODO: move COLOR into it's own thing?
+    // Test shows multiple interface cooperate. However, organization is worse.
+    // Fragemented and so just harder to follow...
+    public string ColorStr { get; set; } = "00000000";
+    public string ColorRStr { get; set; } = string.Empty;
+    public string ColorGStr { get; set; } = string.Empty;
+    public string ColorBStr { get; set; } = string.Empty;
+    public string ColorAStr { get; set; } = string.Empty;
+    public Color Color => GfzCliParser.GetColorFallbackFromColorComponents(ColorStr, ColorRStr, ColorGStr, ColorBStr, ColorAStr);
+    public byte ColorR => GfzCliParser.GetColorComponent(ColorRStr);
+    public byte ColorG => GfzCliParser.GetColorComponent(ColorGStr);
+    public byte ColorB => GfzCliParser.GetColorComponent(ColorBStr);
+    public byte ColorA => GfzCliParser.GetColorComponent(ColorAStr); 
 
 
 

@@ -37,13 +37,13 @@ public interface IOptionsImageSharp
             Help = "How the image should be resized.",
         };
 
-        internal static readonly GfzCliArgument PadColor = new()
+        internal static readonly GfzCliArgument PadColor = IOptionsColor.Arguments.Color with
         {
             ArgumentName = Args.PadColor,
-            ArgumentType = typeof(Color).Name,
-            ArgumentDefault = new Color(),
             Help = "The padding color when scaling image.",
         };
+
+        // TODO: add color components, eg. pad-color-r, pad-color-g, etc...
 
         internal static readonly GfzCliArgument Position = new()
         {
@@ -109,10 +109,6 @@ public interface IOptionsImageSharp
         public const string ImageFormat = "image-format";
     }
 
-    // Whether to resize image.
-    //[Option(Args.Resize, Hidden = true)]
-    //public bool Resize { get; set; }
-
     /// <summary>
     ///     Whether to compress or expand individual pixel colors when scaling image.
     /// </summary>
@@ -130,7 +126,7 @@ public interface IOptionsImageSharp
     ///     The padding color when scaling image.
     /// </summary>
     [Option(Args.PadColor, Hidden = true)]
-    public string PadColorStr { get; set; }
+    public string ColorStr { get; set; }
     public Color Color { get; }
 
     /// <summary>
@@ -188,7 +184,9 @@ public interface IOptionsImageSharp
     ///     Get resize options in one structure. Pass to image.Resize()
     /// </summary>
     /// <param name="imageResizeOptions"></param>
-    /// <returns></returns>
+    /// <returns>
+    ///     
+    /// </returns>
     public static ResizeOptions GetResizeOptions(IOptionsImageSharp imageResizeOptions)
     {
         return new ResizeOptions()
