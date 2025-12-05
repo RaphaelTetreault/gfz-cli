@@ -56,29 +56,49 @@ public interface IOptionsColor
     ///     The color's value.
     /// </summary>
     public string ColorStr { get; set; }
+
+    /// <summary>
+    ///     The color's value.
+    /// </summary>
     public Color Color { get; }
 
     /// <summary>
     ///     The color's red value.
     /// </summary>
     public string ColorRStr { get; set; }
+
+    /// <summary>
+    ///     The color's red value.
+    /// </summary>
     public byte ColorR { get; }
 
     /// <summary>
     ///     The color's green value.
     /// </summary>
     public string ColorGStr { get; set; }
+
+    /// <summary>
+    ///     The color's green value.
+    /// </summary>
     public byte ColorG { get; }
 
     /// <summary>
     ///     The color's blue value.
     /// </summary>
     public string ColorBStr { get; set; }
+
+    /// <summary>
+    ///     The color's blue value.
+    /// </summary>
     public byte ColorB { get; }
 
     /// <summary>
     ///     The color's alpha value.
     /// </summary>
     public string ColorAStr { get; set; }
+
+    /// <summary>
+    ///     The color's alpha value.
+    /// </summary>
     public byte ColorA { get; }
 }
