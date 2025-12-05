@@ -288,10 +288,10 @@ public static class ActionsAsset
             {
                 // Extract data
                 string crc32Name = tplEntryInfos[i].Crc32Name;
-                TextureBundle textureBundle = tplEntryInfos[i].TextureBundle;
+                TextureSequence textureSequence = tplEntryInfos[i].TextureSequence;
 
                 // Skip if texture is null
-                if (string.IsNullOrWhiteSpace(crc32Name) || textureBundle is null)
+                if (string.IsNullOrWhiteSpace(crc32Name) || textureSequence is null)
                     continue;
 
                 // Add prefix to texture name
@@ -299,7 +299,7 @@ public static class ActionsAsset
                 tplEntryInfosNumbered[i] = new TplEntryInfo
                 {
                     Crc32Name = $"{indexPrefix}-{crc32Name}",
-                    TextureBundle = textureBundle,
+                    TextureSequence = textureSequence,
                 };
             }
             // Save out data with mutated name
@@ -353,12 +353,12 @@ public static class ActionsAsset
 
         // Load GXTEXs
         int texCount = tplRef.Textures.Length;
-        TextureBundleDescription[] descs = new TextureBundleDescription[texCount];
+        TextureSequenceDescription[] descs = new TextureSequenceDescription[texCount];
         GxTexture[] gxTextures = new GxTexture[texCount];
         for (int i = 0; i < texCount; i++)
         {
             // Init description
-            descs[i] = new TextureBundleDescription();
+            descs[i] = new TextureSequenceDescription();
 
             // Skip missing texture entries
             string textureName = tplRef.Textures[i];
@@ -378,8 +378,8 @@ public static class ActionsAsset
         // HACK BUT GOOD? TODO: maybe put in GFZ.TPL class?
         // Hack up a TPL. First, write out descriptions and padding. Reuse existing code.
         TplFile tplFile = new();
-        tplFile.Value.TextureBundleDescriptions = descs;
-        tplFile.Value.TextureBundles = [];
+        tplFile.Value.TextureSequenceDescriptions = descs;
+        tplFile.Value.TextureSequences = [];
         using var writer = new EndianBinaryWriter(File.Create(outputPath), TplFile.endianness);
         tplFile.Serialize(writer);
         // Now keep using writer and just write out texture data raw and update desc pointers
@@ -388,7 +388,7 @@ public static class ActionsAsset
             if (gxTextures[i] is null || gxTextures[i].Data is null)
                 continue;
 
-            descs[i].TextureBundlePtr = writer.GetPositionAsPointer();
+            descs[i].TextureSequencePtr = writer.GetPositionAsPointer();
             writer.Write(gxTextures[i].Data);
         }
         // Go back to start, writer desc data again to update pointers
@@ -516,9 +516,9 @@ public static class ActionsAsset
         var resizeOptions = IOptionsImageSharp.GetResizeOptions(options);
         resizeOptions.Size = IOptionsImageSharp.GetResizeSize(options, mainImage);
 
-        // Create texture + texture bundle
+        // Create texture + texture sequence
         int texCount = 1 + GetMipmapCount(options, resizeOptions.Size.Width, resizeOptions.Size.Height);
-        TextureBundleElement[] elements = new TextureBundleElement[texCount];
+        TextureSquenceElement[] elements = new TextureSquenceElement[texCount];
         for (int i = 0; i < texCount; i++)
         {
             // Get correct image for mipmap based on mode
@@ -529,7 +529,7 @@ public static class ActionsAsset
             // Convert to texture
             Texture texture = ImageToTexture(imageClone);
             byte[] rawData = texture.GetRawBytes(options.TextureFormat);
-            elements[i] = new TextureBundleElement()
+            elements[i] = new TextureSquenceElement()
             {
                 IsValid = true,
                 Texture = texture,
@@ -539,9 +539,9 @@ public static class ActionsAsset
             resizeOptions.Size = new Size(resizeOptions.Size.Width >> 1, resizeOptions.Size.Height >> 1);
         }
 
-        // Add elements to bundle, save
-        TextureBundle textureBundle = new(elements, options.TextureFormat);
-        SaveGxtexAndPng(options, outputPath, resizeOptions.Sampler, textureBundle);
+        // Add elements to sequence, save
+        TextureSequence textureSequence = new(elements, options.TextureFormat);
+        SaveGxtexAndPng(options, outputPath, resizeOptions.Sampler, textureSequence);
     }
     private static int GetMipmapCount(Options options, int width, int height)
     {
@@ -621,23 +621,23 @@ public static class ActionsAsset
         // Load TPL file
         Tpl tpl = new TplFile(inputPath).Value;
 
-        // Iterate over all texture bundle (each bundle is main texture + optional mipmaps)
-        int numTextures = tpl.TextureBundles.Length;
+        // Iterate over all texture sequence (each sequence is main texture + optional mipmaps)
+        int numTextures = tpl.TextureSequences.Length;
         TplEntryInfo[] texInfos = new TplEntryInfo[numTextures];
 
         for (int i = 0; i < numTextures; i++)
         {
-            // Get texture bundle
-            TextureBundle textureBundle = tpl.TextureBundles[i];
+            // Get texture sequence
+            TextureSequence textureSequence = tpl.TextureSequences[i];
             // Skip if bleh
-            if (textureBundle is null ||
-                textureBundle.Description.IsGarbageEntry ||
-                textureBundle.Description.IsNull)
+            if (textureSequence is null ||
+                textureSequence.Description.IsGarbageEntry ||
+                textureSequence.Description.IsNull)
                 continue;
 
-            // Output name is the hash of each texture in bundle
+            // Output name is the hash of each texture in sequence
             StringBuilder builder = new();
-            foreach (var textureEntry in textureBundle.Elements)
+            foreach (var textureEntry in textureSequence.Elements)
                 builder.Append($"{textureEntry.Crc32Text}-");
             string textureCrc32sName = builder.ToString()[..^1]; // removes last dash
 
@@ -650,7 +650,7 @@ public static class ActionsAsset
             texInfos[i] = new()
             {
                 Crc32Name = textureCrc32sName,
-                TextureBundle = textureBundle,
+                TextureSequence = textureSequence,
             };
         }
 
@@ -664,24 +664,24 @@ public static class ActionsAsset
         foreach (var tplEntryInfo in tplEntryInfos)
         {
             // Skip null entries
-            if (tplEntryInfo.TextureBundle is null)
+            if (tplEntryInfo.TextureSequence is null)
                 continue;
             // Assign potentially corrected texture, and create output path with it too
             OSPath targetOutputPath = outputPath.Copy();
             targetOutputPath.SetFileName(tplEntryInfo.Crc32Name);
             // Output images
-            SaveGxtexAndPng(options, targetOutputPath, resampler, tplEntryInfo.TextureBundle);
+            SaveGxtexAndPng(options, targetOutputPath, resampler, tplEntryInfo.TextureSequence);
         }
     }
 
     /// <summary>
-    ///     Creates a .GXTEX and preview .PNG from a <paramref name="textureBundle"/>.
+    ///     Creates a .GXTEX and preview .PNG from a <paramref name="textureSequence"/>.
     /// </summary>
     /// <param name="options"></param>
     /// <param name="outputPath"></param>
     /// <param name="resampler"></param>
-    /// <param name="textureBundle"></param>
-    private static void SaveGxtexAndPng(Options options, OSPath outputPath, IResampler resampler, TextureBundle textureBundle)
+    /// <param name="textureSequence"></param>
+    private static void SaveGxtexAndPng(Options options, OSPath outputPath, IResampler resampler, TextureSequence textureSequence)
     {
         // Prepare output paths
         OSPath imageOutputPath = outputPath.Copy();
@@ -695,7 +695,7 @@ public static class ActionsAsset
             PrintFileWriteResult(result, imageOutputPath, options.ActionStr);
             if (doWriteWrite)
             {
-                WriteTextureBundleAsPNG(textureBundle, imageOutputPath, resampler);
+                WriteTextureSequenceAsPNG(textureSequence, imageOutputPath, resampler);
             }
         }
 
@@ -705,7 +705,7 @@ public static class ActionsAsset
             PrintFileWriteResult(result, gxtexOutputPath, options.ActionStr);
             if (doWriteWrite)
             {
-                WriteTextureBundleAsGxTexture(textureBundle, gxtexOutputPath, resampler);
+                WriteTextureSequenceAsGxTexture(textureSequence, gxtexOutputPath, resampler);
             }
         }
     }
@@ -751,22 +751,22 @@ public static class ActionsAsset
     }
 
     /// <summary>
-    ///     Writes single texture bundle (texture with mipmaps) as single PNG.
+    ///     Writes single texture sequence (texture with mipmaps) as single PNG.
     /// </summary>
-    /// <param name="textureBundle"></param>
+    /// <param name="textureSequence"></param>
     /// <param name="fullOutputPath"></param>
     /// <param name="resampler"></param>
-    private static void WriteTextureBundleAsPNG(TextureBundle textureBundle, string fullOutputPath, IResampler resampler)
+    private static void WriteTextureSequenceAsPNG(TextureSequence textureSequence, string fullOutputPath, IResampler resampler)
     {
         // Prepare image buffer. Twice width to fit mipmaps if they exist.
-        int width = textureBundle.Length > 1 ? textureBundle.Description.Width * 2 : textureBundle.Description.Width;
-        int height = textureBundle.Description.Height;
+        int width = textureSequence.Length > 1 ? textureSequence.Description.Width * 2 : textureSequence.Description.Width;
+        int height = textureSequence.Description.Height;
         Image<Rgba32> image = new(width, height, new(0, 0, 0, 0)); // transparent, alpha images are drawn on top of this
         // Where to draw within the larger texture, changes with each write (so not to overlap)
         Point offset = new(0, 0);
 
         // Always process main texture
-        var mainTexture = TextureToImage(textureBundle.Elements[0].Texture);
+        var mainTexture = TextureToImage(textureSequence.Elements[0].Texture);
         // Apply main texture to blank image
         image.Mutate(c => c.DrawImage(mainTexture, 1f));
         // Set offset for next iteration
@@ -776,10 +776,10 @@ public static class ActionsAsset
         bool isHighRatio = image.Width / image.Height > 4 || image.Height / image.Width > 4;
 
         // Get or generate mipmaps
-        for (int i = 1; i < textureBundle.Length; i++)
+        for (int i = 1; i < textureSequence.Length; i++)
         {
             // Get texture data
-            TextureBundleElement textureData = textureBundle.Elements[i];
+            TextureSquenceElement textureData = textureSequence.Elements[i];
             Image<Rgba32> mipmap;
 
             if (textureData.IsValid)
@@ -815,33 +815,33 @@ public static class ActionsAsset
     }
 
     /// <summary>
-    ///     Writes single texture bundle (texture with mipmaps) as single <see cref="GxTexture"/>.
+    ///     Writes single texture sequence (texture with mipmaps) as single <see cref="GxTexture"/>.
     /// </summary>
-    /// <param name="textureBundle"></param>
+    /// <param name="textureSequence"></param>
     /// <param name="fullOutputPath"></param>
     /// <param name="resampler"></param>
-    private static void WriteTextureBundleAsGxTexture(TextureBundle textureBundle, string fullOutputPath, IResampler resampler)
+    private static void WriteTextureSequenceAsGxTexture(TextureSequence textureSequence, string fullOutputPath, IResampler resampler)
     {
         // Break outy some data
-        var description = textureBundle.Description;
+        var description = textureSequence.Description;
         var textureEncoding = GameCube.GX.Texture.Encoding.GetEncoding(description.TextureFormat);
 
         // Get main texture if CMPR, will need to fix texture
         bool isCMPR = description.TextureFormat == TextureFormat.CMPR;
         Image<Rgba32> mainTexture = isCMPR
-            ? TextureToImage(textureBundle.Elements[0].Texture)
+            ? TextureToImage(textureSequence.Elements[0].Texture)
             : new Image<Rgba32>(1, 1);
 
         // Load up texture data or create it if needed
         byte actualTextureCount = 0;
-        var textureBundleData = new List<byte>(textureBundle.AddressRange.Size);
-        // Iterate over each texture/mipmap in bundle
-        for (int i = 0; i < textureBundle.Length; i++)
+        var textureSequenceData = new List<byte>(textureSequence.AddressRange.Size);
+        // Iterate over each texture/mipmap in sequence
+        for (int i = 0; i < textureSequence.Length; i++)
         {
-            TextureBundleElement textureBundleElement = textureBundle.Elements[i];
-            if (textureBundleElement.IsValid)
+            TextureSquenceElement textureSequenceElement = textureSequence.Elements[i];
+            if (textureSequenceElement.IsValid)
             {
-                textureBundleData.AddRange(textureBundleElement.RawTextureData);
+                textureSequenceData.AddRange(textureSequenceElement.RawTextureData);
             }
             else // is corrupted
             {
@@ -856,7 +856,7 @@ public static class ActionsAsset
                 Texture mipmapTexture = ImageToTexture(mipmapImage);
                 // Add data to array
                 byte[] mipmapData = mipmapTexture.GetRawBytes(description.TextureFormat);
-                textureBundleData.AddRange(mipmapData);
+                textureSequenceData.AddRange(mipmapData);
             }
 
             // If we get this far, we know we have a real texture encoded
@@ -872,8 +872,8 @@ public static class ActionsAsset
                 Height = description.Height,
                 Format = description.TextureFormat,
                 Count = actualTextureCount,
-                DataLength = textureBundleData.Count,
-                Data = [.. textureBundleData],
+                DataLength = textureSequenceData.Count,
+                Data = [.. textureSequenceData],
             }
         };
         // Write out texture
