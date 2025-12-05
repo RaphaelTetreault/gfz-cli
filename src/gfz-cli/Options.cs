@@ -38,7 +38,7 @@ public class Options :
     public Region SerializationRegion => GetRegion(SerializationRegionStr);
 
     // IAssetsOptions
-    public string AssetLibraryRoot { get; set; } = IOptionsAssets.Arguments.AssetLibraryRoot.Default<string>();
+    public string AssetLibraryRoot { get; set; } = string.Empty;
     public int MipmapCount { get; set; } = IOptionsAssets.Arguments.MipmapCount.Default<int>();
     public string MipmapFiles { get; set; } = string.Empty;
     public string MipmapModeStr { get; set; } = IOptionsAssets.Arguments.MipmapMode.AsText();

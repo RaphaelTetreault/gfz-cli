@@ -78,8 +78,8 @@ public readonly record struct GfzCliArgument()
     /// <exception cref="Exception"></exception>
     public string AsText()
     {
-        if (ArgumentDefault is null || ArgumentDefault.ToString() == null)
-            return "null";
+        if (ArgumentDefault is null)
+            throw new Exception("Cannot get argument as text since default argument value is null.");
         else
             return ArgumentDefault.ToString()!;
     }
