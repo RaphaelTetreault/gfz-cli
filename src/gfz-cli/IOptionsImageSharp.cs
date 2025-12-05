@@ -15,11 +15,12 @@ using System;
 
 namespace Manifold.GFZCLI;
 
-public interface IOptionsImageSharp
+public interface IOptionsImageSharp :
+    IOptionsColor
 {
     //internal const string Set = "image-sharp";
 
-    public static class Arguments
+    new public static class Arguments
     {
         internal static readonly GfzCliArgument Compand = new()
         {
@@ -126,8 +127,8 @@ public interface IOptionsImageSharp
     ///     The padding color when scaling image.
     /// </summary>
     [Option(Args.PadColor, Hidden = true)]
-    public string ColorStr { get; set; }
-    public Color Color { get; }
+    new public string ColorStr { get; set; }
+    new public Color Color { get; }
 
     /// <summary>
     ///     Anchor positions to apply to resize image.
