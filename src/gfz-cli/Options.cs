@@ -98,9 +98,7 @@ public class Options :
     public bool SetFlagsOff { get; set; } = IOptionsStage.Arguments.SetFlagsOff.Default<bool>();
 
 
-    // TODO: move COLOR into it's own thing?
-    // Test shows multiple interface cooperate. However, organization is worse.
-    // Fragemented and so just harder to follow...
+    // IoptionsColor, implemented by at least IOptionsImageSharp (resize) and IOptionsStage (fog).
     public string ColorStr { get; set; } = "00000000";
     public string ColorRStr { get; set; } = string.Empty;
     public string ColorGStr { get; set; } = string.Empty;
