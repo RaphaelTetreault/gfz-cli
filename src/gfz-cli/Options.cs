@@ -98,7 +98,7 @@ public class Options :
     public bool SetFlagsOff { get; set; } = IOptionsStage.Arguments.SetFlagsOff.Default<bool>();
 
 
-    // IoptionsColor, implemented by at least IOptionsImageSharp (resize) and IOptionsStage (fog).
+    // IOptionsColor, implemented by at least IOptionsImageSharp (resize) and IOptionsStage (fog).
     public string ColorStr { get; set; } = "00000000";
     public string ColorRStr { get; set; } = string.Empty;
     public string ColorGStr { get; set; } = string.Empty;
