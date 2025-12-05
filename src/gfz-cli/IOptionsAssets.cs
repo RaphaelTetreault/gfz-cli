@@ -45,7 +45,7 @@ public interface IOptionsAssets
         {
             ArgumentName = Args.MipmapMode,
             ArgumentType = typeof(MipmapGenerationMode).Name,
-            ArgumentDefault = (MipmapGenerationMode)0,
+            ArgumentDefault = MipmapGenerationMode.Last,
             Help = "How missing mipmaps are generated.",
         };
 
@@ -74,6 +74,7 @@ public interface IOptionsAssets
     [Option(Args.MipmapMode, Hidden = true)]
     public string MipmapModeStr { get; set; }
     public MipmapGenerationMode MipmapMode { get; }
+
 
     [Option(Args.TextureFormat, Hidden = true)]
     public TextureFormat TextureFormat { get; set; }
