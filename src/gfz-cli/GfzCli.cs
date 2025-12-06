@@ -165,7 +165,7 @@ public static class GfzCli
     /// <summary>
     ///     Effective Main for this program.
     /// </summary>
-    /// <param name="args"></param>
+    /// <param name="args">Program arguments.</param>
     public static void RunCliParseArgs(string[] args)
     {
         // Initialize text capabilities
@@ -182,11 +182,11 @@ public static class GfzCli
         {
             string msg =
                 "Invalid use of program.\n" +
-                "Use command LIST to list all possible actions.\n" +
-                "Use command USAGE to show usage for all commands.\n" +
-                "Use command USAGE <command> to show specific command usage.";
-            //Terminal.WriteLine(msg, ConsoleColor.White, ConsoleColor.DarkRed);
-            Terminal.WriteLine(msg);
+                "• Call command LIST to list all possible actions.\n" +
+                "• Call command USAGE to show usage for all commands.\n" +
+                "• Call command USAGE [COMMAND] to show specific command usage.";
+            Terminal.WriteLine(msg, ConsoleColor.DarkYellow, ConsoleColor.Black);
+            //Terminal.WriteLine(msg);
             Terminal.WriteLine();
             // Force help page
             args = HelpArg;
@@ -201,17 +201,16 @@ public static class GfzCli
         if (noArgumentsPassed)
         {
             string msg = "Press ENTER to continue.";
-            Terminal.Write(msg, ConsoleColor.DarkRed, ConsoleColor.Black);
+            Terminal.Write(msg, ConsoleColor.DarkYellow, ConsoleColor.Black);
             Terminal.WriteLine();
             Console.Read();
         }
     }
 
     /// <summary>
-    /// 
+    ///     Parse action parameter in <paramref name="options"/> and run it.
     /// </summary>
-    /// <param name="options"></param>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <param name="options">The action and related arguments.</param>
     public static void ExecuteAction(Options options)
     {
         GfzCliAction gfzCliAction = GfzCliActionsLibrary[options.Action];
@@ -219,15 +218,19 @@ public static class GfzCli
         gfzCliAction.Action.Invoke(options);
     }
 
+    /// <summary>
+    ///     Force print --help text.
+    /// </summary>
     public static void PrintHelp()
     {
         // Force show --help menu
         Parser.Default.ParseArguments<Options>(HelpArg).WithParsed(ExecuteAction);
     }
 
-
-    // TODO: use these instead of throwing errors! (When possible? Does this make sense? Maybe do custom error?)
-
+    /// <summary>
+    ///     Print action description and parameters in <paramref name="options"/>.
+    /// </summary>
+    /// <param name="options">The action and related arguments.</param>
     public static void PrintActionUsage(Options options)
     {
         if (string.IsNullOrWhiteSpace(options.InputPath))
@@ -253,6 +256,10 @@ public static class GfzCli
         }
     }
 
+    /// <summary>
+    ///     Print list of all actions possible with this program.
+    /// </summary>
+    /// <param name="_">Discard; formatted to conform to <see cref="GfzCliAction.Action"/>.</param>
     public static void PrintActionList(Options _)
     {
         foreach (var kvp in GfzCliActionsLibrary)
@@ -267,6 +274,10 @@ public static class GfzCli
         }
     }
 
+    /// <summary>
+    ///     Print <paramref name="action"/> description and parameters.
+    /// </summary>
+    /// <param name="action">The action information to print.</param>
     public static void PrintAction(CliActionID action)
     {
         var gfzCliAction = GfzCliActionsLibrary[action];

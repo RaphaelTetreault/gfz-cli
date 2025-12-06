@@ -19,8 +19,6 @@ public interface IOptionsGfzCli
     internal static class Args
     {
         //public const string Verbose = "verbose";
-        //public const string Usage = "usage";
-
         public const string Action = "action";
         public const string InputPath = "input-path";
         public const string OutputPath = "output-path";
@@ -37,16 +35,15 @@ public interface IOptionsGfzCli
         //public const string Verbose =
         //    "Output all messages to console.\n" +
         //    "\tEnabled only when called.";
-
-        //public const string Usage =
-        //    "Lists all possible actions this tool can perform.";
-
         public const string Action =
-            "The action to perform. Call \"--usage\" for a complete list of actions.";
+            "The action to perform.\n" +
+            "Call \"usage\" for a complete list of actions.\n" +
+            "Call \"usage [action]\" for specific action usage.";
         public const string InputPath =
-            "The input path to a file or folder for the specified action. Most actions support both.";
+            "The input path to a file or folder for the specified action.\n" +
+            "Most actions support both.";
         public const string OutputPath =
-            "Optional. The output path. Can be a full file path (for single file actions) " +
+            "Optional. The output path. Can be a full file path (for single file actions)\n" +
             "or destination directory (for multi file actions).";
 
         public const string OverwriteFiles =
@@ -67,32 +64,30 @@ public interface IOptionsGfzCli
             "Options: \"J\" (JP), \"E\" (NA), \"P\" (EU). Set to \"J\" by default.";
     }
 
-
-    // VALUES
+    /// <summary>
+    ///     Input string for enum.
+    ///     GFZ CLI action to perform.
+    /// </summary>
     [Value(0, MetaName = Args.Action, HelpText = Help.Action, Required = true)]
     public string ActionStr { get; set; }
+
     /// <summary>
-    ///     
+    ///     GFZ CLI action to perform.
     /// </summary>
     public CliActionID Action { get; }
 
     /// <summary>
-    ///     
+    ///     Input path for action.
     /// </summary>
     [Value(1, MetaName = Args.InputPath, HelpText = Help.InputPath, Required = false)]
     public string InputPath { get; set; }
 
     /// <summary>
-    ///     
+    ///     Output path for action.
     /// </summary>
     [Value(2, MetaName = Args.OutputPath, HelpText = Help.OutputPath, Required = false)]
     public string OutputPath { get; set; }
 
-
-    // TODO...?
-    //public bool DisplayUsageGuide { get; set; }
-
-    // GENERAL OPTIONS
     /// <summary>
     ///     Whether overwriting files is allowed.
     /// </summary>
@@ -103,24 +98,39 @@ public interface IOptionsGfzCli
     ///     File search pattern. Uses * and ? wildcards.
     /// </summary>
     [Option(ArgsShort.SearchPattern, Args.SearchPattern, HelpText = Help.SearchPattern)]
-    public string SearchPattern { get; set; } 
+    public string SearchPattern { get; set; }
 
+    /// <summary>
+    ///     Input string for enum.
+    ///     Whether search pattern applies to files in subfolders.
+    /// </summary>
     [Option(ArgsShort.SearchSubdirectories, Args.SearchSubdirectories, HelpText = Help.SearchSubdirectories)]
     public bool SearchSubdirectories { get; set; }
+    
     /// <summary>
     ///     Whether search pattern applies to files in subfolders.
     /// </summary>
     public SearchOption SearchOption { get; }
 
+    /// <summary>
+    ///     Input string for enum.
+    ///     Which game to serialize.
+    /// </summary>
     [Option(ArgsShort.SerializationFormat, Args.SerializationFormat, HelpText = Help.SerializationFormat)]
     public string SerializationFormat { get; set; }
+
     /// <summary>
     ///     Which game to serialize.
     /// </summary>
     public SerializeFormat SerializeFormat { get; }
 
+    /// <summary>
+    ///     Input string for enum.
+    ///     Which region to serialize to.
+    /// </summary>
     [Option(ArgsShort.SerializationRegion, Args.SerializationRegion, HelpText = Help.SerializationRegion)]
     public string SerializationRegionStr { get; set; }
+
     /// <summary>
     ///     Which region to serialize to.
     /// </summary>
