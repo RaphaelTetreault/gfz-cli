@@ -9,7 +9,7 @@ public interface IOptionsStage :
 {
     //internal const string Set = "stage";
 
-    public static class Arguments
+    new public static class Arguments
     {
         internal static readonly GfzCliArgument FogViewRangeNear = new()
         {

@@ -7,6 +7,7 @@ using GameCube.GFZ.Stage;
 using GameCube.GX.Texture;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
@@ -16,6 +17,7 @@ namespace Manifold.GFZCLI;
 
 public class Options :
     IOptionsGfzCli,
+    IOptionsColor,
     IOptionsImageSharp,
     IOptionsLineRel,
     IOptionsStage,
@@ -59,11 +61,16 @@ public class Options :
     public string ColorGStr { get; set; } = string.Empty;
     public string ColorBStr { get; set; } = string.Empty;
     public string ColorAStr { get; set; } = string.Empty;
-    public Color Color => GfzCliParser.GetColorFallbackFromColorComponents(ColorStr, ColorRStr, ColorGStr, ColorBStr, ColorAStr);
+    public Color Color => GfzCliParser.GetColorFromHexString(ColorStr);
     public byte ColorR => GfzCliParser.GetColorComponent(ColorRStr);
     public byte ColorG => GfzCliParser.GetColorComponent(ColorGStr);
     public byte ColorB => GfzCliParser.GetColorComponent(ColorBStr);
     public byte ColorA => GfzCliParser.GetColorComponent(ColorAStr);
+    public Color UnionColor => GfzCliParser.GetUnionColor(ColorStr, ColorRStr, ColorGStr, ColorBStr, ColorAStr);
+    public byte UnionColorR => GfzCliParser.GetUnionColorComponent(ColorRStr, ColorStr, 0..2);
+    public byte UnionColorG => GfzCliParser.GetUnionColorComponent(ColorGStr, ColorStr, 2..4);
+    public byte UnionColorB => GfzCliParser.GetUnionColorComponent(ColorBStr, ColorStr, 4..6);
+    public byte UnionColorA => GfzCliParser.GetUnionColorComponent(ColorAStr, ColorStr, 6..8);
 
 
     // IImageSharpOptions. NOTE: ColorStr defined in multiple interfaces.

@@ -194,7 +194,7 @@ public interface IOptionsImageSharp :
         {
             Compand = imageResizeOptions.Compand,
             Mode = imageResizeOptions.ResizeMode,
-            PadColor = imageResizeOptions.Color,
+            PadColor = imageResizeOptions.UnionColor,
             Position = imageResizeOptions.Position,
             PremultiplyAlpha = imageResizeOptions.PremultiplyAlpha,
             Sampler = imageResizeOptions.Resampler,

@@ -1,5 +1,6 @@
 ﻿using GameCube.GFZ.Stage;
 using Manifold.IO;
+using SixLabors.ImageSharp.PixelFormats;
 using System.IO;
 using System.Numerics;
 using static Manifold.GFZCLI.GfzCliUtilities;
@@ -122,10 +123,10 @@ public static class ActionsColiCourse
         float fogViewRangeFar = options.FogViewRangeFar == float.MinValue
             ? scene.fog.FogRange.far
             : options.FogViewRangeFar;
-        // Get color value
-        byte r = options.ColorR;
-        byte g = options.ColorG;
-        byte b = options.ColorB;
+        // Get color value from either components or single color
+        byte r = options.UnionColorR;
+        byte g = options.UnionColorG;
+        byte b = options.UnionColorB;
 
         // Create new fog
         Fog fog = new()

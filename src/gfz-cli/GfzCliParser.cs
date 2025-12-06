@@ -174,7 +174,7 @@ public static class GfzCliParser
     /// <exception cref="ArgumentException">
     ///     
     /// </exception>
-    public static Color HexStringToColor(string value)
+    public static Color GetColorFromHexString(string value)
     {
         byte r = 0;
         byte g = 0;
@@ -274,14 +274,38 @@ public static class GfzCliParser
     ///     Either <paramref name="color"/> parsed if non-default value;
     ///     a new color built from individual components otherwise.
     /// </returns>
-    public static Color GetColorFallbackFromColorComponents(string color, string r, string g, string b, string a)
+    public static Color GetUnionColor(string color, string r, string g, string b, string a)
     {
         // Get color from main color string (all components in one).
-        Color value = HexStringToColor(color);
+        Color value = GetColorFromHexString(color);
 
         // If not defined, then build color from individual components.
         if (value == new Color())
             value = GetColorFromOptionComponents(r, g, b, a);
+
+        return value;
+    }
+
+    /// <summary>
+    ///     Get color from either <paramref name="color"/> (priority) or component values.
+    /// </summary>
+    /// <param name="component">Individual color component to parse.</param>
+    /// <param name="color">The color string to parse.</param>
+    /// <param name="range">Range in <paramref name="color"/> hex to read component.</param>
+    /// <returns></returns>
+    public static byte GetUnionColorComponent(string component, string color, Range range)
+    {
+        byte value;
+        if (color != IOptionsColor.Arguments.Color.Default<string>())
+        {
+            // Doing the conversion here sanitizes the value and normilazes the length.
+            string hex = GetColorFromHexString(color).ToHex();
+            value = GetColorComponent(hex[range]);
+        }
+        else
+        {
+            value = GetColorComponent(component);
+        }
 
         return value;
     }
