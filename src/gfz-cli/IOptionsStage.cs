@@ -112,12 +112,8 @@ public interface IOptionsStage :
     /// <summary>
     ///     The name of the target.
     /// </summary>
-    /// <remarks>
-    ///     TODO: more generic usage...
-    ///     See ILineRel.Value
-    /// </remarks>
-    [Option(Args.Name, Hidden = true)]
-    public string Name { get; set; } // TODO: bring this and ILineRel.Value to general interface?
+    [Option(Args.Name, Hidden = true)] // TBD generic in Options
+    public string Name { get; set; }
 
     /// <summary>
     ///     Whether to set flags on or off (true or flase).

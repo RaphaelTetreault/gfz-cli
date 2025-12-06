@@ -21,8 +21,15 @@ public class Options :
     IOptionsStage,
     IOptionsAssets
 {
+    // Args not currently in an organized interface
+    internal static class Args
+    {
+        public const string EmblemHasAlphaBorder = "emblem-border";
+        public const string Name = "name";
+        public const string Value = "value";
+    }
+
     // IGfzCliOptions
-    //public bool DisplayUsageGuide { get; set; }
     public string ActionStr { get; set; } = string.Empty;
     public CliActionID Action => GfzCliParser.EnumParseUnderscoreToDash<CliActionID>(ActionStr);
     public string InputPath { get; set; } = string.Empty;
@@ -44,6 +51,19 @@ public class Options :
     public string MipmapModeStr { get; set; } = IOptionsAssets.Arguments.MipmapMode.AsText();
     public MipmapGenerationMode MipmapMode => GfzCliParser.EnumParseDashRemoved<MipmapGenerationMode>(MipmapModeStr);
     public TextureFormat TextureFormat { get; set; } = IOptionsAssets.Arguments.TextureFormat.Default<TextureFormat>();
+
+
+    // IOptionsColor, implemented by at least IOptionsImageSharp (resize) and IOptionsStage (fog).
+    public string ColorStr { get; set; } = "00000000";
+    public string ColorRStr { get; set; } = string.Empty;
+    public string ColorGStr { get; set; } = string.Empty;
+    public string ColorBStr { get; set; } = string.Empty;
+    public string ColorAStr { get; set; } = string.Empty;
+    public Color Color => GfzCliParser.GetColorFallbackFromColorComponents(ColorStr, ColorRStr, ColorGStr, ColorBStr, ColorAStr);
+    public byte ColorR => GfzCliParser.GetColorComponent(ColorRStr);
+    public byte ColorG => GfzCliParser.GetColorComponent(ColorGStr);
+    public byte ColorB => GfzCliParser.GetColorComponent(ColorBStr);
+    public byte ColorA => GfzCliParser.GetColorComponent(ColorAStr);
 
 
     // IImageSharpOptions. NOTE: ColorStr defined in multiple interfaces.
@@ -72,7 +92,7 @@ public class Options :
 
 
     // UNSORTED IN INTERFACES
-    [Option("emblem-border", Hidden = true)]
+    [Option(Args.EmblemHasAlphaBorder, Hidden = true)]
     public bool EmblemHasAlphaBorder { get; set; } = true;
 
 
@@ -86,7 +106,7 @@ public class Options :
     public byte Difficulty { get; set; } = IOptionsLineRel.Arguments.Difficulty.Default<byte>();
     public byte PilotNumber { get; set; } = IOptionsLineRel.Arguments.PilotNumber.Default<byte>();
     public byte VenueIndex { get; set; } = IOptionsLineRel.Arguments.VenueIndex.Default<byte>();
-    public string Value { get; set; } = string.Empty;
+    //public string Value { get; set; } = string.Empty;
 
 
     // IStageOptions
@@ -94,22 +114,21 @@ public class Options :
     public float FogViewRangeFar { get; set; } = IOptionsStage.Arguments.FogViewRangeFar.Default<float>();
     public string FogInterpolationModeStr { get; set; } = IOptionsStage.Arguments.FogInterpolationMode.AsText();
     public FogType FogInterpolationMode => GfzCliParser.EnumParseDashRemoved<FogType>(FogInterpolationModeStr);
-    public string Name { get; set; } = string.Empty;
+    //public string Name { get; set; } = string.Empty;
     public bool SetFlagsOff { get; set; } = IOptionsStage.Arguments.SetFlagsOff.Default<bool>();
 
 
-    // IOptionsColor, implemented by at least IOptionsImageSharp (resize) and IOptionsStage (fog).
-    public string ColorStr { get; set; } = "00000000";
-    public string ColorRStr { get; set; } = string.Empty;
-    public string ColorGStr { get; set; } = string.Empty;
-    public string ColorBStr { get; set; } = string.Empty;
-    public string ColorAStr { get; set; } = string.Empty;
-    public Color Color => GfzCliParser.GetColorFallbackFromColorComponents(ColorStr, ColorRStr, ColorGStr, ColorBStr, ColorAStr);
-    public byte ColorR => GfzCliParser.GetColorComponent(ColorRStr);
-    public byte ColorG => GfzCliParser.GetColorComponent(ColorGStr);
-    public byte ColorB => GfzCliParser.GetColorComponent(ColorBStr);
-    public byte ColorA => GfzCliParser.GetColorComponent(ColorAStr); 
+    /// <summary>
+    ///     A generic name parameter.
+    /// </summary>
+    [Option(Args.Name, Hidden = true)]
+    public string Name { get; set; } = string.Empty;
 
+    /// <summary>
+    ///     A generic value parameter.
+    /// </summary>
+    [Option(Args.Value, Hidden = true)]
+    public string Value { get; set; } = string.Empty;
 
 
     /// <summary>

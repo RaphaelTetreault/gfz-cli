@@ -152,8 +152,8 @@ public interface IOptionsLineRel
     /// <summary>
     ///     A generic value as parameter.
     /// </summary>
-    [Option(Args.Value, Hidden = true)]
-    public string Value { get; set; } // TODO: move to general gfz-cli options interface? TODO: compare with IStageOptions.Name
+    [Option(Args.Value, Hidden = true)] // TBD generic in Options
+    public string Value { get; set; }
 
     /// <summary>
     ///     A pilot's racing number.
