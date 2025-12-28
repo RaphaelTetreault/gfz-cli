@@ -1,4 +1,5 @@
-﻿using GameCube.GFZ.GMA;
+﻿using GameCube.GFZ.Asset;
+using GameCube.GFZ.GMA;
 using GameCube.GFZ.TPL;
 using GameCube.GX.Texture;
 using Manifold.IO;

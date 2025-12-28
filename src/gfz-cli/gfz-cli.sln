@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.2.32630.192
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gfz-cli", "gfz-cli.csproj", "{53C635FF-CA63-41B0-ABF2-57B3AC76EA5E}"
 EndProject
@@ -58,6 +58,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manifold.Text.Tables", "..\..\libs\Manifold.Core\src\Manifold.Text.Tables\Manifold.Text.Tables.csproj", "{E50F515B-EF89-41E1-B99D-1ADF20ECF26B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manifold.Spline", "..\..\libs\Manifold.Core\src\Manifold.Spline\Manifold.Spline.csproj", "{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameCube.GFZ.Asset", "..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Asset\GameCube.GFZ.Asset.csproj", "{E2B0A8CE-332D-2610-3875-9C399C15C491}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -291,6 +293,14 @@ Global
 		{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}.Release|x64.ActiveCfg = Release|Any CPU
 		{75C6D9F4-5D3F-40FF-AD7F-62617FBF791B}.Release|x64.Build.0 = Release|Any CPU
+		{E2B0A8CE-332D-2610-3875-9C399C15C491}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2B0A8CE-332D-2610-3875-9C399C15C491}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2B0A8CE-332D-2610-3875-9C399C15C491}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E2B0A8CE-332D-2610-3875-9C399C15C491}.Debug|x64.Build.0 = Debug|Any CPU
+		{E2B0A8CE-332D-2610-3875-9C399C15C491}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2B0A8CE-332D-2610-3875-9C399C15C491}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2B0A8CE-332D-2610-3875-9C399C15C491}.Release|x64.ActiveCfg = Release|Any CPU
+		{E2B0A8CE-332D-2610-3875-9C399C15C491}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
