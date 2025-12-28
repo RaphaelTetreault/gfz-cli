@@ -102,15 +102,15 @@ public static class GfzCli
         // IO: IN-OUT TESTS
         ActionsIO.ActionIOGma,
         ActionsIO.ActionIOScene,
-        ActionsIO.ActionIOScenePatch,
+        ActionsIO.ActionIOSceneAddComment,
         ActionsIO.ActionIOTpl,
         // line__.rel
+        ActionsLineREL.ActionDecryptLineREL,
+        ActionsLineREL.ActionEncryptLineREL,
         ActionsLineREL.ActionPatchClearAllCourseNames,
         ActionsLineREL.ActionPatchClearAllVenueNames,
         ActionsLineREL.ActionPatchClearUnusedCourseNames,
         ActionsLineREL.ActionPatchClearUnusedVenueNames,
-        ActionsLineREL.ActionDecryptLineREL,
-        ActionsLineREL.ActionEncryptLineREL,
         ActionsLineREL.ActionPatchBgm,
         ActionsLineREL.ActionPatchBgmFinalLap,
         ActionsLineREL.ActionPatchBgmBoth,

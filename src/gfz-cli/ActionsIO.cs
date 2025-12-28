@@ -52,7 +52,7 @@ public static class ActionsIO
     };
 
     // TODO: probably belongs in ActionsColiCourse
-    public static readonly GfzCliAction ActionIOScenePatch = new()
+    public static readonly GfzCliAction ActionIOSceneAddComment = new()
     {
         Description = "Patch COLI_COURSE (scene) auto-generate timestamp comment to help diff-ing.",
         Action = InOutScene,
@@ -74,9 +74,7 @@ public static class ActionsIO
     public static void InOutFiles<TFile>(Options options, string searchPattern)
         where TFile : IBinaryFileType, IBinarySerializable, new()
     {
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-            options.SearchPattern = searchPattern;
+        options.OverrideSearchPatternIfUnset(searchPattern);
 
         string typeName = typeof(TFile).Name;
         Terminal.WriteLine($"IO {typeName}: in-out re-serialization of file(s).");

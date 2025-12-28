@@ -57,7 +57,7 @@ public static class ActionsGMA
     /// </summary>
     /// <param name="options"></param>
     /// <param name="inputPath"></param>
-    /// <param name="outputPath"></param>
+    /// <param name="_">outputPath, unused but maintains function signature.</param>
     public static void PatchSubmeshRenderFlags(Options options, OSPath inputPath, OSPath _)
     {
         inputPath.ThrowIfFileDoesNotExist();

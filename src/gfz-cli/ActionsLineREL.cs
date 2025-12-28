@@ -112,7 +112,7 @@ public static class ActionsLineREL
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
-        RequiredArguments = [ Value_CourseName ],
+        RequiredArguments = [Value_CourseName],
         OptionalArguments = [],
     };
 
@@ -125,7 +125,7 @@ public static class ActionsLineREL
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
-        RequiredArguments = [ Value_CourseName ],
+        RequiredArguments = [Value_CourseName],
         OptionalArguments = [],
     };
 
@@ -178,7 +178,7 @@ public static class ActionsLineREL
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
-        RequiredArguments = [ Value_VenueName ],
+        RequiredArguments = [Value_VenueName],
         OptionalArguments = [],
     };
 
@@ -191,7 +191,7 @@ public static class ActionsLineREL
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
-        RequiredArguments = [ Value_VenueName ],
+        RequiredArguments = [Value_VenueName],
         OptionalArguments = [],
     };
 
@@ -212,7 +212,7 @@ public static class ActionsLineREL
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
-        RequiredArguments = [ Value_CarData ],
+        RequiredArguments = [Value_CarData],
         OptionalArguments = [],
     };
 
@@ -258,7 +258,7 @@ public static class ActionsLineREL
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
         RequiredArguments = [],
-        OptionalArguments = [ Value_MaxSpeed ],
+        OptionalArguments = [Value_MaxSpeed],
     };
 
     public static readonly GfzCliAction ActionPatchSetCupCourse = new()
@@ -326,23 +326,30 @@ public static class ActionsLineREL
         OSPath inputFilePath = new(inputFiles[0]);
         inputFilePath.ThrowIfFileDoesNotExist();
 
-        //
+        // Give user a little hint as to what is going on. Useful for debuging.
         Terminal.Write($"LineREL: opening file ");
         Terminal.Write(inputFilePath, GfzCli.FileNameColor);
         Terminal.Write($" with region {options.SerializationRegion}. ");
 
         // Open file, set up writer, get action to patch file through writer
+        GameCode gameCode = options.GetGameCode();
+        LineRelInfo info = LineRelLookup.GetInfo(gameCode);
+        // Copy input to output if needed
+        string newTempFile = CreateBackupFileIfAble(options, inputFilePath);
+        try
         {
-            GameCode gameCode = options.GetGameCode();
-            LineRelInfo info = LineRelLookup.GetInfo(gameCode);
-
+            // Do patch action
             using var file = File.Open(inputFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             using var reader = new EndianBinaryReader(file, Line.endianness);
             using var writer = new EndianBinaryWriter(file, Line.endianness);
             patchLineRelAction.Invoke(options, info, reader, writer);
         }
-
-        //
+        catch
+        {
+            // Delete temp file if patch fails.
+            File.Delete(newTempFile);
+        }
+        
         Terminal.WriteLine();
     }
 
@@ -873,7 +880,7 @@ public static class ActionsLineREL
     }
 
 
-    // The same code but wrapped in a function that prepared the file streams, line__.rel info, etc.
+    // The same code but wrapped in a function that prepares the file streams, line__.rel info, etc.
     public static void PatchSetBgm(Options options) => Patch(options, PatchBgm);
     public static void PatchSetBgmFinalLap(Options options) => Patch(options, PatchBgmFinalLap);
     public static void PatchSetBgmAndBgmFinalLap(Options options) => Patch(options, PatchBgmBoth);
