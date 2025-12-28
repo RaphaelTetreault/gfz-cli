@@ -355,7 +355,7 @@ public static class ActionsAsset
         // Load GXTEXs
         int texCount = tplRef.Textures.Length;
         TextureSequenceDescription[] descs = new TextureSequenceDescription[texCount];
-        GxTexture[] gxTextures = new GxTexture[texCount];
+        GxTextureAsset[] gxTextures = new GxTextureAsset[texCount];
         for (int i = 0; i < texCount; i++)
         {
             // Init description
@@ -369,9 +369,9 @@ public static class ActionsAsset
             // Get texture path
             OSPath texturePath = assetLibDir.Copy();
             texturePath.SetFileName(textureName);
-            texturePath.SetExtensions(GxTextureFile.extension);
+            texturePath.SetExtensions(GxTextureAssetFile.extension);
             // Load texture
-            gxTextures[i] = new GxTextureFile(texturePath);
+            gxTextures[i] = new GxTextureAssetFile(texturePath);
             // Update texture description
             descs[i] = gxTextures[i].GetDescription();
         }
@@ -816,7 +816,7 @@ public static class ActionsAsset
     }
 
     /// <summary>
-    ///     Writes single texture sequence (texture with mipmaps) as single <see cref="GxTexture"/>.
+    ///     Writes single texture sequence (texture with mipmaps) as single <see cref="GxTextureAsset"/>.
     /// </summary>
     /// <param name="textureSequence"></param>
     /// <param name="fullOutputPath"></param>
@@ -865,14 +865,14 @@ public static class ActionsAsset
         }
 
         // Prepare container
-        GxTextureFile gxTextureFile = new()
+        GxTextureAssetFile gxTextureFile = new()
         {
             Value = new()
             {
                 Width = description.Width,
                 Height = description.Height,
                 Format = description.TextureFormat,
-                Count = actualTextureCount,
+                TextureCount = actualTextureCount,
                 DataLength = textureSequenceData.Count,
                 Data = [.. textureSequenceData],
             }
