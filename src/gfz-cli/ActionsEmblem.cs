@@ -209,11 +209,12 @@ public static class ActionsEmblem
         PrintFileWriteResult(result, outputPath, options.ActionStr);
         if (doWriteFile)
         {
-            using var fileStream = File.Create(outputPath);
-            using var writer = new EndianBinaryWriter(fileStream, EmblemBIN.endianness);
+            //using var fileStream = File.Create(outputPath);
+            //using var writer = new EndianBinaryWriter(fileStream, EmblemBIN.endianness);
             EmblemBIN emblemBin = new();
             emblemBin.Value.Emblems = emblems;
-            emblemBin.Serialize(writer);
+            emblemBin.WriteFile(outputPath);
+            //emblemBin.Serialize(writer);
         }
 
         // Return emblems to caller

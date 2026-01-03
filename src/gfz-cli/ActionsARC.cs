@@ -71,7 +71,7 @@ public static class ActionsARC
         outputFile.SetDirectory(directory);
         outputFile.SetFileName(fileName);
         outputFile.PushExtension(ArchiveFile.fileExtension);
-        // drop down 1 directory so have have ARC beside folder if no output path specified
+        // drop down 1 directory so to have ARC beside folder if no output path specified
         bool doesNotHaveOutputSpecified = string.IsNullOrEmpty(options.OutputPath);
         if (doesNotHaveOutputSpecified)
             outputFile.PopDirectory();

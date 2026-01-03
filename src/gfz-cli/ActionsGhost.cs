@@ -44,7 +44,7 @@ public class ActionsGhost
     private static void ExtractGhostDataFromGci(Options options, OSPath inputFile, OSPath outputFile)
     {
         // Copy value over
-        var ghostGci = new GhostDataGCI();
+        GhostDataGCI ghostGci = new();
         GhostDataBIN ghostBin = new();
         using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), GhostDataGCI.endianness))
         {
@@ -61,8 +61,7 @@ public class ActionsGhost
         PrintFileWriteResult(result, outputFile, options.ActionStr);
         if (doWriteFile)
         {
-            using var writer = new EndianBinaryWriter(File.Create(outputFile), GhostDataBIN.endianness);
-            writer.Write(ghostBin);
+            ghostBin.WriteFile(outputFile);
         }
     }
 

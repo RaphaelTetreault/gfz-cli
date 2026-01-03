@@ -349,7 +349,7 @@ public static class ActionsAsset
     {
         // Get path to tpl textures
         OSPath assetLibDir = string.IsNullOrWhiteSpace(options.AssetLibraryRoot)
-            ? new(inputPath.Directories)     // use folder we are in
+            ? new(inputPath.Directories)               // use folder we are in
             : new(options.AssetLibraryRoot + "/tex/"); // use specified directory
 
         // Load GXTEXs
@@ -378,6 +378,7 @@ public static class ActionsAsset
 
         // HACK BUT GOOD? TODO: maybe put in GFZ.TPL class?
         // Hack up a TPL. First, write out descriptions and padding. Reuse existing code.
+        // This is done to bypass lossy conversions here of BIN > TEX > BIN, especially CMPR.
         TplFile tplFile = new();
         tplFile.Value.TextureSequenceDescriptions = descs;
         tplFile.Value.TextureSequences = [];
@@ -392,7 +393,7 @@ public static class ActionsAsset
             descs[i].TextureSequencePtr = writer.GetPositionAsPointer();
             writer.Write(gxTextures[i].Data);
         }
-        // Go back to start, writer desc data again to update pointers
+        // Go back to start, write description data again to update pointers to textures.
         writer.SeekBegin();
         tplFile.Serialize(writer);
         // Done! B)
@@ -421,7 +422,7 @@ public static class ActionsAsset
 
         // Get path to gma models
         OSPath assetLibDir = string.IsNullOrWhiteSpace(options.AssetLibraryRoot)
-            ? new(inputPath.Directories)     // use folder we are in
+            ? new(inputPath.Directories)               // use folder we are in
             : new(options.AssetLibraryRoot + "/mdl/"); // use specified directory
 
         // Record textures used for model.
@@ -452,12 +453,10 @@ public static class ActionsAsset
                 // Only add if not present -- no duplicates
                 if (!textures.Contains(textureName))
                 {
-                    // New texture's index
+                    // Assign new texture index and add to list
                     int newIndex = textures.Count;
-                    // Add tex to list
-                    textures.Add(textureName);
-                    // Assign texture index
                     model.Gcmf.TevLayers[texIndex].TplTextureIndex = (ushort)newIndex;
+                    textures.Add(textureName);
                 }
                 // Exists, but must assign index to TEV layer
                 else
@@ -474,7 +473,7 @@ public static class ActionsAsset
         // Write GMA file
         GmaFile gmaFile = new();
         gmaFile.Value = gma;
-        gmaFile.WriteFile(outputPath, GmaFile.endianness);
+        gmaFile.WriteFile(outputPath);
 
         // Convert texture list to TplRef to reuse function and generate final TPL
         TplRef tplRef = new();

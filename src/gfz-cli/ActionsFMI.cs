@@ -85,10 +85,7 @@ public static class ActionsFMI
         if (doWriteFile)
         {
             // Read data
-            FmiFile fmiFile = new();
-            using EndianBinaryReader reader = new(File.OpenRead(inputFile), FmiFile.endianness);
-            fmiFile.Deserialize(reader);
-
+            FmiFile fmiFile = new(inputFile);
             // Write to file
             using PlainTextWriter writer = new(outputFile);
             fmiFile.Value.Serialize(writer);
@@ -116,11 +113,8 @@ public static class ActionsFMI
             FmiFile fmiFile = new();
             using PlainTextReader reader = new(inputFile);
             fmiFile.Value.Deserialize(reader);
-
             // Write to file
-            using EndianBinaryWriter writer = new(File.Create(outputFile), FmiFile.endianness);
-            fmiFile.Value.Serialize(writer);
-            writer.Flush();
+            fmiFile.WriteFile(outputFile);
         }
     }
 
