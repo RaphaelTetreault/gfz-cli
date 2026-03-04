@@ -1,5 +1,6 @@
 ﻿namespace Manifold.GFZCLI;
 
+using GameCube.GFZ.Asset;
 using GameCube.GFZ.GMA;
 using GameCube.GFZ.Stage;
 using Manifold.IO;

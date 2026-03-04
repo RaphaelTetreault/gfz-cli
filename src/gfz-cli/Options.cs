@@ -242,6 +242,12 @@ public class Options :
             SearchPattern = overrideSearchPattern;
     }
 
+    public bool IsOutputSpecified()
+    {
+        bool isOutputSpecified = string.IsNullOrEmpty(OutputPath);
+        return isOutputSpecified;
+    }
+
     // Forward
     public string[] GetInputFiles() => GfzCliUtilities.GetInputFiles(this);
 

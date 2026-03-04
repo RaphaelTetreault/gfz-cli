@@ -52,13 +52,7 @@ public static class ActionsARC
         }
 
         // Force checking for any file if there is no defined search pattern
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-        {
-            options.SearchPattern = "*";
-            string message = $"{options.ActionStr}: {nameof(options.SearchPattern)} is null, now set to \"{options.SearchPattern}\".";
-            Terminal.WriteLine(message);
-        }
+        options.OverrideSearchPatternIfUnset("*");
 
         // Get files in directory with search pattern
         string[] inputFilePaths = GetInputFiles(options);
@@ -72,8 +66,7 @@ public static class ActionsARC
         outputFile.SetFileName(fileName);
         outputFile.PushExtension(ArchiveFile.fileExtension);
         // drop down 1 directory so to have ARC beside folder if no output path specified
-        bool doesNotHaveOutputSpecified = string.IsNullOrEmpty(options.OutputPath);
-        if (doesNotHaveOutputSpecified)
+        if (!options.IsOutputSpecified())
             outputFile.PopDirectory();
 
         bool canWrite = CheckWillFileWrite(options, outputFile, out ActionTaskResult _);
