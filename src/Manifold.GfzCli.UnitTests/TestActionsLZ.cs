@@ -14,10 +14,10 @@ public class TestActionsLZ
         GameCodes = AllGameCodes,
         CopySubdirectory = ProcessedDir + "bg/",
         TestSubdirectory = "",
-        DstCleanDirectory = true,
+        DstCleanDirectory = false,
         DstCopyOverwrite = false,
         SrcCopyLimit = 3,
-        SrcCopyRandom = true,
+        SrcCopyRandom = false,
         SrcCopySearchOption = SearchOption.TopDirectoryOnly,
         SrcCopySearchPattern = "*.tpl",
     }.PrepareAndGenerateTestCliArgs());
@@ -29,7 +29,7 @@ public class TestActionsLZ
         GameCodes = AllGameCodes,
         CopySubdirectory = FilesDir + "bg/",
         TestSubdirectory = "", // subdir in generated test folder
-        DstCleanDirectory = true,
+        DstCleanDirectory = false,
         DstCopyOverwrite = false,
         SrcCopyLimit = 3, // Max amount of files to copy
         SrcCopyRandom = false,
