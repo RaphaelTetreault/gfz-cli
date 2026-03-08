@@ -13,11 +13,13 @@ public class TestActionsLZ
         CliArg = $"<ACTION> <TESTDIR> -p *.tpl -o",
         GameCodes = AllGameCodes,
         CopySubdirectory = ProcessedDir + "bg/",
-        TestSubdirectory = "", // subdir in generated test folder
-        SrcCopySearchPattern = "*.tpl",
-        SrcCopySearchOption = SearchOption.TopDirectoryOnly,
+        TestSubdirectory = "",
+        DstCleanDirectory = true,
         DstCopyOverwrite = false,
         SrcCopyLimit = 3,
+        SrcCopyRandom = true,
+        SrcCopySearchOption = SearchOption.TopDirectoryOnly,
+        SrcCopySearchPattern = "*.tpl",
     }.PrepareAndGenerateTestCliArgs());
 
     [Test] public void LzDecompressFile() => RunArgsAssertPass(new CliDebugParams()
@@ -27,9 +29,11 @@ public class TestActionsLZ
         GameCodes = AllGameCodes,
         CopySubdirectory = FilesDir + "bg/",
         TestSubdirectory = "", // subdir in generated test folder
-        SrcCopySearchPattern = "*.lz",
-        SrcCopySearchOption = SearchOption.TopDirectoryOnly,
+        DstCleanDirectory = true,
         DstCopyOverwrite = false,
-        SrcCopyLimit = 3,
+        SrcCopyLimit = 3, // Max amount of files to copy
+        SrcCopyRandom = false,
+        SrcCopySearchOption = SearchOption.TopDirectoryOnly,
+        SrcCopySearchPattern = "*.lz",
     }.PrepareAndGenerateTestCliArgs());
 }

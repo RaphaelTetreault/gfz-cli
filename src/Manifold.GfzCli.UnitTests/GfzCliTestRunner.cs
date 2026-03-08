@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace Manifold.GfzCli.UnitTests;
 
+/// <summary>
+///     Main UnitTest file ("Program.cs").
+/// </summary>
 public static class GfzCliTestRunner
 {
     public static readonly string[] AllGameCodes = ["gfze01", "gfzj01", "gfzp01", "gfzj8p"];

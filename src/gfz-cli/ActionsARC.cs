@@ -5,7 +5,7 @@ using static Manifold.GFZCLI.GfzCliUtilities;
 namespace Manifold.GFZCLI;
 
 /// <summary>
-///     Actions for packing and unpoacking <see cref="Archive"/> .arc archive files.
+///     Actions for packing and unpacking <see cref="Archive"/> .arc archive files.
 /// </summary>
 public static class ActionsARC
 {
