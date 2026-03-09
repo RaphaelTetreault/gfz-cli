@@ -28,8 +28,8 @@ public class TestActionsAsset
         string value =
         /* Action, Input, Output */
         $"<ACTION> " +
-        $" <TESTDIR>aqua_check.png " +
-        $" <TESTDIR>mipmap-count({mipmapCount})-mode({mipmapGenerationMode})-size({width},{height}).png " +
+        $" \"<TESTDIR>aqua_check.png\" " +
+        $" \"<TESTDIR>mipmap count({mipmapCount}) mode({mipmapGenerationMode}) size({width},{height}).png\" " +
         /* Mipmap  */
         $" --{IOptionsAssets.Args.MipmapFiles}=\"<TESTDIR>blue_light_check.png;<TESTDIR>green_light_check.png;;;\"" + // ;;; intentional edge case
         $" --{IOptionsAssets.Args.MipmapCount}={mipmapCount}" +
@@ -50,10 +50,8 @@ public class TestActionsAsset
         return value;
     }
 
-    [Test] public void TestAssetCustomMipMapGxtex_Last() => RunArgsAssertPass((AssetCustomMipmapGxtex with { CliArg = MipmapGxtexCliArg(100, MipmapGenerationMode.Last), }).AsCliArgs());
-
-    [Test] public void TestAssetCustomMipMapGxtex_Wrap() => RunArgsAssertPass((AssetCustomMipmapGxtex with { CliArg = MipmapGxtexCliArg(100, MipmapGenerationMode.Wrap), }).AsCliArgs());
-
-    [Test] public void TestAssetCustomMipMapGxtex_PingPong() => RunArgsAssertPass((AssetCustomMipmapGxtex with { CliArg = MipmapGxtexCliArg(100, MipmapGenerationMode.PingPong), }).AsCliArgs());
+    [Test] public void TestAssetCustomMipmapGxtex_Last() => RunArgsAssertPass((AssetCustomMipmapGxtex with { CliArg = MipmapGxtexCliArg(100, MipmapGenerationMode.Last), }).AsCliArgs());
+    [Test] public void TestAssetCustomMipmapGxtex_Wrap() => RunArgsAssertPass((AssetCustomMipmapGxtex with { CliArg = MipmapGxtexCliArg(100, MipmapGenerationMode.Wrap), }).AsCliArgs());
+    [Test] public void TestAssetCustomMipmapGxtex_PingPong() => RunArgsAssertPass((AssetCustomMipmapGxtex with { CliArg = MipmapGxtexCliArg(100, MipmapGenerationMode.PingPong), }).AsCliArgs());
 
 }

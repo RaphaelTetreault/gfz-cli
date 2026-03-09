@@ -34,8 +34,10 @@ public class Options :
     // IGfzCliOptions
     public string ActionStr { get; set; } = string.Empty;
     public CliActionID Action => GfzCliParser.EnumParseUnderscoreToDash<CliActionID>(ActionStr);
-    public string InputPath { get; set; } = string.Empty;
-    public string OutputPath { get; set; } = string.Empty;
+    public string InputPath => GfzCliUtilities.Sanitize(InputPathRaw);
+    public string InputPathRaw { get; set; } = string.Empty;
+    public string OutputPath => GfzCliUtilities.Sanitize(OutputPathRaw);
+    public string OutputPathRaw { get; set; } = string.Empty;
     public bool OverwriteFiles { get; set; } = false;
     public string SearchPattern { get; set; } = string.Empty;
     public bool SearchSubdirectories { get; set; } = false;

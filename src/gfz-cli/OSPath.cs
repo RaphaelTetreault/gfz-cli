@@ -72,8 +72,17 @@ public class OSPath
         {
             return;
         }
+
+        // Sanitize: remove whitespace
+        filePath = filePath.Trim();
+        // Sanitize: remove surrounding quotes
+        if (filePath.StartsWith('"') && filePath.EndsWith('"'))
+        {
+            filePath = filePath.Trim('"');
+        }
+
         // Handle relative paths
-        else if (filePath.StartsWith("../"))
+        if (filePath.StartsWith("../"))
         {
             string baseDir = Directory.GetCurrentDirectory();
             OSPath fullPath = new();

@@ -484,7 +484,6 @@ public static class ActionsAsset
 
     public static void ImagesToCustomMipmapGxtex(Options options)
     {
-        string x = Directory.GetCurrentDirectory();
         Terminal.WriteLine($"{options.ActionStr}: converting image(s) to GameCube GX texture.");
         int taskCount = ParallelizeFileInFileOutTasks(options, ImageToGxTexture);
         Terminal.WriteLine($"{options.ActionStr}: done.");
