@@ -23,18 +23,18 @@ public class TestActionsAsset
         SrcCopySearchPattern = "*",
     };
 
-    private static string MipmapGxtexCliArg(int mipmapCount, MipmapGenerationMode mipmapGenerationMode, int width = 0, int height = 0)
+    private static string MipmapGxtexCliArg(int mipmapCount, MipmapGenerationMode mipmapGenerationMode,TextureFormat textureFormat = TextureFormat.CMPR, int width = 0, int height = 0)
     {
         string value =
         /* Action, Input, Output */
         $"<ACTION> " +
         $" \"<TESTDIR>aqua_check.png\" " +
-        $" \"<TESTDIR>mipmap count({mipmapCount}) mode({mipmapGenerationMode}) size({width},{height}).png\" " +
+        $" \"<TESTDIR>mipmap {textureFormat} mmcount({mipmapCount}) mode({mipmapGenerationMode}) size({width},{height}).png\" " +
         /* Mipmap  */
         $" --{IOptionsAssets.Args.MipmapFiles}=\"<TESTDIR>blue_light_check.png;<TESTDIR>green_light_check.png;;;\"" + // ;;; intentional edge case
         $" --{IOptionsAssets.Args.MipmapCount}={mipmapCount}" +
         $" --{IOptionsAssets.Args.MipmapMode}={mipmapGenerationMode}" +
-        $" --{IOptionsAssets.Args.TextureFormat}={TextureFormat.CMPR}" +
+        $" --{IOptionsAssets.Args.TextureFormat}={textureFormat}" +
         /* Image Sharp */
         $" --{IOptionsImageSharp.Args.Width}={width}" +
         $" --{IOptionsImageSharp.Args.Height}={height}" +
@@ -50,8 +50,38 @@ public class TestActionsAsset
         return value;
     }
 
-    [Test] public void TestAssetCustomMipmapGxtex_Last() => RunArgsAssertPass((AssetCustomMipmapGxtex with { CliArg = MipmapGxtexCliArg(100, MipmapGenerationMode.Last), }).AsCliArgs());
-    [Test] public void TestAssetCustomMipmapGxtex_Wrap() => RunArgsAssertPass((AssetCustomMipmapGxtex with { CliArg = MipmapGxtexCliArg(100, MipmapGenerationMode.Wrap), }).AsCliArgs());
-    [Test] public void TestAssetCustomMipmapGxtex_PingPong() => RunArgsAssertPass((AssetCustomMipmapGxtex with { CliArg = MipmapGxtexCliArg(100, MipmapGenerationMode.PingPong), }).AsCliArgs());
+    [Test]
+    public void TestAssetCustomMipmapGxtex_MipmapGenerationModes()
+    {
+        // Go through all modes
+        foreach (var @enum in Enum.GetValues< MipmapGenerationMode>())
+        {
+            RunArgs((AssetCustomMipmapGxtex with
+            {
+                CliArg = MipmapGxtexCliArg(100, @enum),
+            }).AsCliArgs());
+        }
+        Assert.Pass();
+    }
+
+    [Test]
+    public void TestAssetCustomMipmapGxtex_TextureFormats()
+    {
+        // Go through all modes
+        foreach (var format in Enum.GetValues<TextureFormat>())
+        {
+            // Skip these for now. Not really implemented.
+            if (format == TextureFormat.CI4 ||
+                format == TextureFormat.CI8 ||
+                format == TextureFormat.CI14X2)
+                continue;
+
+            RunArgs((AssetCustomMipmapGxtex with
+            {
+                CliArg = MipmapGxtexCliArg(100, MipmapGenerationMode.Last, format),
+            }).AsCliArgs());
+        }
+        Assert.Pass();
+    }
 
 }

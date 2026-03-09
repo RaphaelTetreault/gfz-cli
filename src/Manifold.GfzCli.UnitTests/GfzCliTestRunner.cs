@@ -36,6 +36,15 @@ public static class GfzCliTestRunner
         string[] argsSplit = InputStringToArgsStringArray(args);
         GFZCLI.GfzCli.RunCliParseArgs(argsSplit);
     }
+    public static void RunArgs(ReadOnlySpan<string> args)
+    {
+        foreach (string arg in args)
+        {
+            RunArgs(arg);
+            Console.WriteLine();
+        }
+    }
+
     public static void RunArgsAssertPass(string args)
     {
         RunArgs(args);
