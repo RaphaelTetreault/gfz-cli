@@ -484,8 +484,9 @@ public static class ActionsAsset
 
     public static void ImagesToCustomMipmapGxtex(Options options)
     {
-        Terminal.WriteLine($"{options.ActionStr}: converting image to GameCube GX texture.");
-        ParallelizeFileInFileOutTasks(options, ImageToGxTexture);
+        string x = Directory.GetCurrentDirectory();
+        Terminal.WriteLine($"{options.ActionStr}: converting image(s) to GameCube GX texture.");
+        int taskCount = ParallelizeFileInFileOutTasks(options, ImageToGxTexture);
         Terminal.WriteLine($"{options.ActionStr}: done.");
     }
 
@@ -551,12 +552,18 @@ public static class ActionsAsset
     }
     private static OSPath[] GetMipmapPaths(Options options)
     {
-        string[] mipmapPaths = options.MipmapFiles.Split(';');
+        string[] mipmapPaths = options.MipmapFiles
+            .Trim('\"') // remove any quotes
+            .Split(';');// split on semicolon
         List<OSPath> validPaths = [];
         for (int i = 0; i < mipmapPaths.Length; i++)
         {
+            // Skip any empty/whitespace strings
             if (string.IsNullOrWhiteSpace(mipmapPaths[i]))
                 continue;
+            // Remove any whitespace at either end
+            mipmapPaths[i] = mipmapPaths[i].Trim();
+            // Should be done...?
             validPaths.Add(new(mipmapPaths[i]));
         }
         return [.. validPaths];
@@ -571,7 +578,8 @@ public static class ActionsAsset
         images[0] = (Image<Rgba32>)Image.Load(inputPath);
         for (int i = 1; i < images.Length; i++)
         {
-            images[i] = (Image<Rgba32>)Image.Load(mipmapPaths[i - 1]);
+            OSPath mipmapPath = mipmapPaths[i - 1];
+            images[i] = (Image<Rgba32>)Image.Load(mipmapPath);
         }
         return images;
     }

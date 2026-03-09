@@ -12,12 +12,12 @@ public readonly record struct CliDebugParams
     /// <summary>
     ///     Where to copy test files from.
     /// </summary>
-    public readonly string CopyDirectory = $"./res/{TagGameCode}/";
+    public readonly string CopyDirectory = $"./res/{TagRootDir}/";
 
     /// <summary>
     ///     Where to dump copy files to, and where to run test from.
     /// </summary>
-    public const string TestDirectory = $"./tests-{TagGameCode}/{TagActionPrefix}/{TagAction}/";
+    public const string TestDirectory = $"./tests-{TagRootDir}/{TagActionPrefix}/{TagAction}/";
 
     /// <summary>
     ///     Tag placeholder for <see cref="CliActionID"/>.
@@ -31,9 +31,9 @@ public readonly record struct CliDebugParams
     public const string TagActionPrefix = "<ACTION-PREFIX>";
 
     /// <summary>
-    ///     Tag placeholder for <see cref="GameCodes"/>.
+    ///     Tag placeholder for <see cref="RootDir"/>.
     /// </summary>
-    public const string TagGameCode = "<GAMECODE>";
+    public const string TagRootDir = "<ROOTDIR>";
 
     /// <summary>
     ///     Tag placeholder for <see cref="TestDirectory"/>.
@@ -56,9 +56,9 @@ public readonly record struct CliDebugParams
     public readonly required string CliArg { get; init; }
 
     /// <summary>
-    ///     Which game codes to run the argument on.
+    ///     Root directory to run the the argument on.
     /// </summary>
-    public readonly required string[] GameCodes { get; init; }
+    public readonly required string[] RootDir { get; init; }
 
     /// <summary>
     ///     Which subdirectory to copy from current working directory.
@@ -109,14 +109,14 @@ public readonly record struct CliDebugParams
     /// <summary>
     ///     Replace <TAGS> with proper data.
     /// </summary>
-    /// <param name="gameCode"></param>
+    /// <param name="rootDir"></param>
     /// <returns>
     ///     
     /// </returns>
-    private string GetCopyDir(string gameCode)
+    private string GetCopyDir(string rootDir)
     {
         // Patch root copy directory tags
-        string copyDirectory = CopyDirectory.Replace(TagGameCode, gameCode);
+        string copyDirectory = CopyDirectory.Replace(TagRootDir, rootDir);
         // Find directories that match pattern
         if (CopySubdirectory.Contains('*') || CopySubdirectory.Contains('?'))
         {
@@ -134,17 +134,17 @@ public readonly record struct CliDebugParams
     /// <summary>
     ///     Replace <TAGS> with proper data.
     /// </summary>
-    /// <param name="gameCode"></param>
+    /// <param name="rootDirs"></param>
     /// <returns>
     ///     
     /// </returns>
-    private string GetTestDir(string gameCode)
+    private string GetTestDir(string rootDirs)
     {
         string dir = TestDirectory + TestSubdirectory;
         dir = dir
             .Replace(TagActionPrefix, CliActionID.ToString().Split('_')[0])
             .Replace(TagAction, CliActionID.ToString().Replace('_', '-'))
-            .Replace(TagGameCode, gameCode);
+            .Replace(TagRootDir, rootDirs);
         return dir;
     }
 
@@ -160,15 +160,15 @@ public readonly record struct CliDebugParams
     public string[] GetCliArgs()
     {
         // One CLI arg per game code
-        string[] cliArgs = new string[GameCodes.Length];
+        string[] cliArgs = new string[RootDir.Length];
         for (int i = 0; i < cliArgs.Length; i++)
         {
-            string gameCode = GameCodes[i];
-            string testDirectory = GetTestDir(gameCode);
+            string rootDir = RootDir[i];
+            string testDirectory = GetTestDir(rootDir);
             cliArgs[i] = CliArg
                 .Replace(TagTestDir, testDirectory)
                 .Replace(TagAction, CliActionID.ToString().Replace('_', '-'))
-                .Replace(TagGameCode, gameCode);
+                .Replace(TagRootDir, rootDir);
 
             // Sanity check. All tags should have been removed.
             if (cliArgs[i].Contains('<') || cliArgs[i].Contains('>'))
@@ -189,14 +189,14 @@ public readonly record struct CliDebugParams
         cwd.SetDirectories(Directory.GetCurrentDirectory());
 
         // For each game / game code
-        for (int i = 0; i < GameCodes.Length; i++)
+        for (int i = 0; i < RootDir.Length; i++)
         {
             // Create full paths
             OSPath src = cwd.Copy();
             OSPath dst = cwd.Copy();
-            string gameCode = GameCodes[i];
-            string srcDir = GetCopyDir(gameCode);
-            string dstDir = GetTestDir(gameCode);
+            string rootDir = RootDir[i];
+            string srcDir = GetCopyDir(rootDir);
+            string dstDir = GetTestDir(rootDir);
             src.AppendRelativePathToDirectories(srcDir);
             dst.AppendRelativePathToDirectories(dstDir);
             // Delete all files in directory if requested.
@@ -234,7 +234,7 @@ public readonly record struct CliDebugParams
     /// <returns>
     ///     
     /// </returns>
-    public string[] PrepareAndGenerateTestCliArgs()
+    public string[] AsCliArgs()
     {
         CopyFilesFromSrcToDst();
         string[] cliArgs = GetCliArgs();

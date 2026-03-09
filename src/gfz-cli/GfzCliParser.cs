@@ -280,7 +280,7 @@ public static class GfzCliParser
         Color value = GetColorFromHexString(color);
 
         // If not defined, then build color from individual components.
-        if (value == new Color())
+        if (string.IsNullOrEmpty(color) && value == new Color())
             value = GetColorFromOptionComponents(r, g, b, a);
 
         return value;

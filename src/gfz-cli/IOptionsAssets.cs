@@ -5,7 +5,7 @@ namespace Manifold.GFZCLI;
 
 public interface IOptionsAssets
 {
-    internal static class Args
+    public static class Args
     {
         public const string TextureFormat = "texture-format";
         public const string MipmapCount = "mipmap-count";

@@ -11,7 +11,7 @@ public class TestActionsLZ
     {
         CliActionID = CliActionID.lz_compress,
         CliArg = $"<ACTION> <TESTDIR> -p *.tpl -o",
-        GameCodes = AllGameCodes,
+        RootDir = DirAllGames,
         CopySubdirectory = ProcessedDir + "bg/",
         TestSubdirectory = "",
         DstCleanDirectory = false,
@@ -20,13 +20,13 @@ public class TestActionsLZ
         SrcCopyRandom = false,
         SrcCopySearchOption = SearchOption.TopDirectoryOnly,
         SrcCopySearchPattern = "*.tpl",
-    }.PrepareAndGenerateTestCliArgs());
+    }.AsCliArgs());
 
     [Test] public void LzDecompressFile() => RunArgsAssertPass(new CliDebugParams()
     {
         CliActionID = CliActionID.lz_decompress,
         CliArg = $"<ACTION> <TESTDIR> -p *.lz -o",
-        GameCodes = AllGameCodes,
+        RootDir = DirAllGames,
         CopySubdirectory = FilesDir + "bg/",
         TestSubdirectory = "", // subdir in generated test folder
         DstCleanDirectory = false,
@@ -35,5 +35,5 @@ public class TestActionsLZ
         SrcCopyRandom = false,
         SrcCopySearchOption = SearchOption.TopDirectoryOnly,
         SrcCopySearchPattern = "*.lz",
-    }.PrepareAndGenerateTestCliArgs());
+    }.AsCliArgs());
 }

@@ -8,8 +8,10 @@ namespace Manifold.GfzCli.UnitTests;
 /// </summary>
 public static class GfzCliTestRunner
 {
-    public static readonly string[] AllGameCodes = ["gfze01", "gfzj01", "gfzp01", "gfzj8p"];
-    public static readonly string[] GCGameCodes = ["gfze01", "gfzj01", "gfzp01"];
+    public static readonly string[] DirAllGames = ["gfze01", "gfzj01", "gfzp01", "gfzj8p"];
+    public static readonly string[] DirGameCubeGames = ["gfze01", "gfzj01", "gfzp01"];
+    public static readonly string[] DirArcadeGames = ["gfzj8p"];
+    public static readonly string[] DirAssets = ["assets"];
     public const string FilesDir = "files/";
     public const string ProcessedDir = "processed/";
     public const string SystemDir = "sys/";

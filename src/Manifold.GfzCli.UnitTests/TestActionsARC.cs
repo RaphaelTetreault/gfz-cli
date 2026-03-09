@@ -11,8 +11,8 @@ public class TestActionsARC
     public readonly CliDebugParams ArcPack = new()
     {
         CliActionID = CliActionID.arc_pack,
-        CliArg = $"<ACTION> <TESTDIR> -p -o",
-        GameCodes = AllGameCodes,
+        CliArg = $"<ACTION> <TESTDIR> -o",
+        RootDir = DirAllGames,
         CopySubdirectory = string.Empty,
         TestSubdirectory = string.Empty,
         SrcCopySearchOption = SearchOption.TopDirectoryOnly,
@@ -23,20 +23,20 @@ public class TestActionsARC
     {
         CopySubdirectory = FilesDir + "game/",
         TestSubdirectory = "pack-game/",
-    }).PrepareAndGenerateTestCliArgs());
+    }).AsCliArgs());
 
     [Test] public void ArcPackInit() => RunArgsAssertPass((ArcPack with
     {
         CopySubdirectory = FilesDir + "init/",
         TestSubdirectory = "pack-init/",
-    }).PrepareAndGenerateTestCliArgs());
+    }).AsCliArgs());
 
 
     public readonly CliDebugParams ArcUnpack = new()
     {
         CliActionID = CliActionID.arc_unpack,
         CliArg = $"<ACTION> <TESTDIR> -p -o",
-        GameCodes = AllGameCodes,
+        RootDir = DirAllGames,
         CopySubdirectory = string.Empty,
         TestSubdirectory = string.Empty,
         SrcCopySearchOption = SearchOption.TopDirectoryOnly,
@@ -47,12 +47,12 @@ public class TestActionsARC
     {
         CopySubdirectory = FilesDir + "bmp*",
         TestSubdirectory = "unpack-bmp/",
-    }).PrepareAndGenerateTestCliArgs());
+    }).AsCliArgs());
 
     [Test] public void ArcUnpackLip() => RunArgsAssertPass((ArcUnpack with
     {
-        GameCodes = GCGameCodes, // AX does not have "./lip"
+        RootDir = DirGameCubeGames, // AX does not have "./lip"
         CopySubdirectory = FilesDir + "lip",
         TestSubdirectory = "unpack-lip/",
-    }).PrepareAndGenerateTestCliArgs());
+    }).AsCliArgs());
 }
