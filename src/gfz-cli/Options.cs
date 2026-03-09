@@ -244,7 +244,7 @@ public class Options :
 
     public bool IsOutputSpecified()
     {
-        bool isOutputSpecified = string.IsNullOrEmpty(OutputPath);
+        bool isOutputSpecified = !string.IsNullOrEmpty(OutputPath);
         return isOutputSpecified;
     }
 

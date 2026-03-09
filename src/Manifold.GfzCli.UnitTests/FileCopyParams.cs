@@ -115,10 +115,20 @@ public readonly record struct CliDebugParams
     /// </returns>
     private string GetCopyDir(string gameCode)
     {
-        string dir = CopyDirectory + CopySubdirectory;
-        dir = dir
-            .Replace(TagGameCode, gameCode);
-        return dir;
+        // Patch root copy directory tags
+        string copyDirectory = CopyDirectory.Replace(TagGameCode, gameCode);
+        // Find directories that match pattern
+        if (CopySubdirectory.Contains('*') || CopySubdirectory.Contains('?'))
+        {
+            string[] dirs = Directory.GetDirectories(copyDirectory, CopySubdirectory, SearchOption.TopDirectoryOnly);
+            copyDirectory = dirs[0];
+        }
+        else // just append directory
+        {
+            copyDirectory += CopySubdirectory;
+        }
+
+        return copyDirectory;
     }
 
     /// <summary>
@@ -190,8 +200,11 @@ public readonly record struct CliDebugParams
             src.AppendRelativePathToDirectories(srcDir);
             dst.AppendRelativePathToDirectories(dstDir);
             // Delete all files in directory if requested.
-            if (DstCleanDirectory)
+            if (DstCleanDirectory && Directory.Exists(dst))
+            {
                 Directory.Delete(dst, true);
+                Console.WriteLine($"Clean destination directory: {dst}");
+            }
             // Get files in source directory to copy.
             string[] files = Directory.GetFiles(src, SrcCopySearchPattern, SrcCopySearchOption);
             // Select random files if requested.
@@ -216,7 +229,7 @@ public readonly record struct CliDebugParams
     }
 
     /// <summary>
-    ///     Prepares source files and constructs CLI arguments for testing.
+    ///     Prepares source files and constructs CLI arguments string for testing.
     /// </summary>
     /// <returns>
     ///     

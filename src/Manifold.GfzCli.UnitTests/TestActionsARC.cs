@@ -7,16 +7,52 @@ public class TestActionsARC
 {
     [SetUp] public void Setup() => InitSetup();
 
-    //[Test] public void LzCompressFile() => RunArgsAssertPass(new CliDebugParams()
-    //{
-    //    CliActionID = CliActionID.lz_compress,
-    //    CliArg = $"<ACTION> <TESTDIR> -p *.tpl -o",
-    //    GameCodes = AllGameCodes,
-    //    CopySubdirectory = ProcessedDir + "bg/",
-    //    TestSubdirectory = "", // subdir in generated test folder
-    //    SrcCopySearchPattern = "*.tpl",
-    //    SrcCopySearchOption = SearchOption.TopDirectoryOnly,
-    //    DstCopyOverwrite = false,
-    //    SrcCopyLimit = 3,
-    //}.PrepareAndGenerateTestCliArgs());
+
+    public readonly CliDebugParams ArcPack = new()
+    {
+        CliActionID = CliActionID.arc_pack,
+        CliArg = $"<ACTION> <TESTDIR> -p -o",
+        GameCodes = AllGameCodes,
+        CopySubdirectory = string.Empty,
+        TestSubdirectory = string.Empty,
+        SrcCopySearchOption = SearchOption.TopDirectoryOnly,
+        SrcCopySearchPattern = "*",
+    };
+
+    [Test] public void ArcPackGame() => RunArgsAssertPass((ArcPack with
+    {
+        CopySubdirectory = FilesDir + "game/",
+        TestSubdirectory = "pack-game/",
+    }).PrepareAndGenerateTestCliArgs());
+
+    [Test] public void ArcPackInit() => RunArgsAssertPass((ArcPack with
+    {
+        CopySubdirectory = FilesDir + "init/",
+        TestSubdirectory = "pack-init/",
+    }).PrepareAndGenerateTestCliArgs());
+
+
+    public readonly CliDebugParams ArcUnpack = new()
+    {
+        CliActionID = CliActionID.arc_unpack,
+        CliArg = $"<ACTION> <TESTDIR> -p -o",
+        GameCodes = AllGameCodes,
+        CopySubdirectory = string.Empty,
+        TestSubdirectory = string.Empty,
+        SrcCopySearchOption = SearchOption.TopDirectoryOnly,
+        SrcCopySearchPattern = "*.arc",
+    };
+
+    [Test] public void ArcUnpackBmp() => RunArgsAssertPass((ArcUnpack with
+    {
+        CopySubdirectory = FilesDir + "bmp*",
+        TestSubdirectory = "unpack-bmp/",
+    }).PrepareAndGenerateTestCliArgs());
+
+    [Test] public void ArcUnpackLip() => RunArgsAssertPass((ArcUnpack with
+    {
+        GameCodes = GCGameCodes, // AX does not have "./lip"
+        CopySubdirectory = FilesDir + "lip",
+        TestSubdirectory = "unpack-lip/",
+    }).PrepareAndGenerateTestCliArgs());
 }

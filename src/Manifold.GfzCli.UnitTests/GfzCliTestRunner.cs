@@ -12,6 +12,7 @@ public static class GfzCliTestRunner
     public static readonly string[] GCGameCodes = ["gfze01", "gfzj01", "gfzp01"];
     public const string FilesDir = "files/";
     public const string ProcessedDir = "processed/";
+    public const string SystemDir = "sys/";
 
     private static bool hasSetCWD = false;
 
