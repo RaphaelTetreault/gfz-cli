@@ -59,6 +59,22 @@ public class TestActionsAsset
             RunArgs((AssetCustomMipmapGxtex with
             {
                 CliArg = MipmapGxtexCliArg(100, @enum),
+                TestSubdirectory = "custom mipmaps/mipmap generation modes/",
+            }).AsCliArgs());
+        }
+        Assert.Pass();
+    }
+
+    [Test]
+    public void TestAssetCustomMipmapGxtex_MipmapCount()
+    {
+        // Iterate through various mipmap counts
+        for (int i = 0; i < 10; i++)
+        {
+            RunArgs((AssetCustomMipmapGxtex with
+            {
+                CliArg = MipmapGxtexCliArg(i, MipmapGenerationMode.Last),
+                TestSubdirectory = "custom mipmaps/mipmap counts/",
             }).AsCliArgs());
         }
         Assert.Pass();
@@ -67,7 +83,7 @@ public class TestActionsAsset
     [Test]
     public void TestAssetCustomMipmapGxtex_TextureFormats()
     {
-        // Go through all modes
+        // Go through many texture formats
         foreach (var format in Enum.GetValues<TextureFormat>())
         {
             // Skip these for now. Not really implemented.
@@ -79,6 +95,8 @@ public class TestActionsAsset
             RunArgs((AssetCustomMipmapGxtex with
             {
                 CliArg = MipmapGxtexCliArg(100, MipmapGenerationMode.Last, format),
+                TestSubdirectory = "custom mipmaps/direct texture formats/",
+
             }).AsCliArgs());
         }
         Assert.Pass();

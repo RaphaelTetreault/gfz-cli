@@ -20,11 +20,25 @@ public static class GfzCliTestRunner
 
     public static string[] InputStringToArgsStringArray(string input)
     {
-        // https://stackoverflow.com/questions/14655023/split-a-string-that-has-white-spaces-unless-they-are-enclosed-within-quotes
-        var parts = Regex.Matches(input, @"[\""].+?[\""]|[^ ]+")
-                        .Cast<Match>()
-                        .Select(m => m.Value)
-                        .ToArray();
+        // Explanation. Indents indicate conjunction eg. \S*
+        // https://regex101.com/r/3uuUSd/1
+        // 1st Alternative \S*"".+?""
+        // \S matches any kind of visible character (equivalent to [^\f\n\r\t\v])
+        //      * matches the previous token between zero and unlimited times, as many times as possible, giving back as needed (greedy)
+        // "" matches the character " with index 3410 (428 or 2216) literally (case sensitive)
+        // .  matches any character, including unicode (except for line terminators)
+        //      +? matches the previous token between one and unlimited times, as few times as possible, expanding as needed (lazy)
+        // "" matches the character " with index 3410 (428 or 2216) literally (case sensitive)
+        // |  OR
+        // 2nd Alternative [^\s""]+
+        // [^\s""] match a single character not present in the list below
+        // +  matches the previous token between one and unlimited times, as many times as possible, giving back as needed (greedy)
+        // \s matches any kind of invisible character (equivalent to [\f\n\r\t\v\p{Z}])
+        // "" matches the character " with index 3410 (428 or 2216) literally (case sensitive)
+        var parts = Regex.Matches(input, @"\S*"".+?""|[^\s""]+")
+            .Cast<Match>()
+            .Select(m => m.Value)
+            .ToArray();
         return parts;
     }
 
@@ -34,6 +48,9 @@ public static class GfzCliTestRunner
         Console.WriteLine($"CWD: {cwd}");
         Console.WriteLine($"ARG: {args}");
         string[] argsSplit = InputStringToArgsStringArray(args);
+        // UNCOMMENT to see how args are split up
+        //for (int i = 0; i < argsSplit.Length; i++)
+        //    Console.WriteLine($"Arg{i}: {argsSplit[i]}");
         GFZCLI.GfzCli.RunCliParseArgs(argsSplit);
     }
     public static void RunArgs(ReadOnlySpan<string> args)
@@ -69,7 +86,7 @@ public static class GfzCliTestRunner
         cwd.AppendRelativePathToDirectories(@"..\..\..\..\unit-tests\");
         Directory.SetCurrentDirectory(cwd);
         //Console.WriteLine($"CWD: {cwd}");
-        
+
         hasSetCWD = true;
     }
 }
