@@ -118,7 +118,8 @@ public readonly record struct CliDebugParams
         // Patch root copy directory tags
         string copyDirectory = CopyDirectory.Replace(TagRootDir, rootDir);
         // Find directories that match pattern
-        if (CopySubdirectory.Contains('*') || CopySubdirectory.Contains('?'))
+        bool hasWildcard = CopySubdirectory.Contains('*') || CopySubdirectory.Contains('?');
+        if (hasWildcard)
         {
             string[] dirs = Directory.GetDirectories(copyDirectory, CopySubdirectory, SearchOption.TopDirectoryOnly);
             copyDirectory = dirs[0];
@@ -134,17 +135,17 @@ public readonly record struct CliDebugParams
     /// <summary>
     ///     Replace <TAGS> with proper data.
     /// </summary>
-    /// <param name="rootDirs"></param>
+    /// <param name="rootDir"></param>
     /// <returns>
     ///     
     /// </returns>
-    private string GetTestDir(string rootDirs)
+    private string GetTestDir(string rootDir)
     {
         string dir = TestDirectory + TestSubdirectory;
         dir = dir
             .Replace(TagActionPrefix, CliActionID.ToString().Split('_')[0])
             .Replace(TagAction, CliActionID.ToString().Replace('_', '-'))
-            .Replace(TagRootDir, rootDirs);
+            .Replace(TagRootDir, rootDir);
         return dir;
     }
 
@@ -159,7 +160,7 @@ public readonly record struct CliDebugParams
     /// </exception>
     public string[] GetCliArgs()
     {
-        // One CLI arg per game code
+        // One CLI arg per folder (often per game code)
         string[] cliArgs = new string[RootDir.Length];
         for (int i = 0; i < cliArgs.Length; i++)
         {

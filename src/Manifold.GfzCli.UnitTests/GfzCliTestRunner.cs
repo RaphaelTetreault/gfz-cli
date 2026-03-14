@@ -32,14 +32,16 @@ public static class GfzCliTestRunner
         // |  OR
         // 2nd Alternative [^\s""]+
         // [^\s""] match a single character not present in the list below
+        //      [] capture group
+        //      ^  logical NOT for proceeding characters
+        //      \s matches any kind of invisible character (equivalent to [\f\n\r\t\v\p{Z}])
+        //      "" matches the character " with index 3410 (428 or 2216) literally (case sensitive)
         // +  matches the previous token between one and unlimited times, as many times as possible, giving back as needed (greedy)
-        // \s matches any kind of invisible character (equivalent to [\f\n\r\t\v\p{Z}])
-        // "" matches the character " with index 3410 (428 or 2216) literally (case sensitive)
-        var parts = Regex.Matches(input, @"\S*"".+?""|[^\s""]+")
+        var matches = Regex.Matches(input, @"\S*"".+?""|[^\s""]+")
             .Cast<Match>()
             .Select(m => m.Value)
             .ToArray();
-        return parts;
+        return matches;
     }
 
     private static void RunArgs(string args)
