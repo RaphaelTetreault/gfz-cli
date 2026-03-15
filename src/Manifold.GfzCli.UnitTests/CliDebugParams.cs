@@ -222,10 +222,8 @@ public readonly record struct CliDebugParams
                 OSPath dstFile = dst.Copy();
                 dstFile.SetFileNameAndExtensions(srcFile.FileNameAndExtensions);
                 // Preserve subdirectories
-                OSPath cwdSrc = cwd.Copy();
-                cwdSrc.PushDirectories(srcDir);
-                string srcSubDirs = srcFile.Directories[cwdSrc.FullPath.Length..];
-                dstFile.PushDirectories(srcSubDirs);
+                if (src.GetSubdirectoriesOfOther(srcFile.Directories, out string srcSubdirs))
+                    dstFile.PushDirectories(srcSubdirs);
                 // Create if able
                 if (!File.Exists(dstFile) || DstCopyOverwrite)
                 {

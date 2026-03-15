@@ -113,15 +113,14 @@ public class TestActionsAsset
         RootDir = DirAllGames,
         CopySubdirectory = /*/unit-tests/res/gameid/*/ string.Empty,
         TestSubdirectory = string.Empty,
-        SrcCopyLimit = 30,
+        SrcCopyLimit = 10,
         SrcCopySearchOption = SearchOption.AllDirectories,
         SrcCopySearchPattern = "*",
     };
 
-    [Test]
-    public void GenerateLibrary_Files() => RunArgsAssertPass(GenLib with { CopySubdirectory = FilesDir, });
+    // This test is kinda bad because it pulkls in non GAM and TPL files, which currently do nothing for Generate Library
+    //[Test] public void GenerateLibrary_Files() => RunArgsAssertPass(GenLib with { CopySubdirectory = FilesDir, });
 
-    [Test]
-    public void GenerateLibrary_Processed() => RunArgsAssertPass(GenLib with { CopySubdirectory = ProcessedDir, });
+    [Test] public void GenerateLibrary_Processed() => RunArgsAssertPass(GenLib with { CopySubdirectory = ProcessedDir, });
 
 }

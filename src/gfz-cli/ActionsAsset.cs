@@ -964,18 +964,17 @@ public static class ActionsAsset
         // GMAREF
         // Create GMA ref file (plaintext)
         {
-            OSPath gmarefOutputPath = outputPath.Copy();
+            // GMA file
             string fileName = Path.GetFileNameWithoutExtension(gmaFile.FileName);
+            string fileDirectories = Path.GetDirectoryName(inputPath)!;
+            // Construct path for GAMREF
+            OSPath gmarefOutputPath = outputPath.Copy();
             gmarefOutputPath.SetFileName(fileName);
             gmarefOutputPath.SetExtensions(GmaRef.Extension);
-            string directories = Path.GetDirectoryName(inputPath)!;
-            // Compute how much of string to trim to get to directories to copy
-            int strLength = options.InputPath.Length;
-            int trimLength = options.InputPath[0..Math.Min(strLength, 2)] == "./" ? strLength - 2 : strLength;
-            directories = directories[trimLength..];
-            //
-            gmarefOutputPath.PushDirectories(directories);
-
+            // Preserve subdirectories
+            if (OSPath.MatchExclusiveSubdirectories(options.InputPath, fileDirectories, out string subdirectories))
+                gmarefOutputPath.PushDirectories(subdirectories);
+            // Write file if able
             bool doWriteWrite = CheckWillFileWrite(options, gmarefOutputPath, out ActionTaskResult result);
             PrintFileWriteResult(result, gmarefOutputPath, options.ActionStr);
             if (doWriteWrite)

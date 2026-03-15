@@ -314,6 +314,40 @@ public class OSPath
         foreach (var directory in directories)
             PushDirectory(directory);
     }
+    
+    public string DequeueDirectory()
+    {
+        if (directoriesList.Count == 0)
+            return string.Empty;
+
+        string dir = directoriesList[0];
+        directoriesList.RemoveAt(0);
+        return dir;
+    }
+    public void EnqueueDirectory(string directory)
+    {
+        // Converts \\ to /
+        directory = EnforceUnixPath(directory);
+
+        // Split directories into individual components
+        string[] directories = directory.Split('/');
+        foreach (string dir in directories)
+        {
+            bool isInvalid = string.IsNullOrWhiteSpace(dir) || dir == ".." || dir == ".";
+            if (isInvalid)
+                continue;
+
+            directoriesList.Insert(0, dir);
+        }
+    }
+    public void EnqueueDirectories(string directories)
+        => EnqueueDirectory(directories);
+    public void EnqueueDirectories(params string[] directories)
+    { 
+        foreach (var directory in directories)
+            PushDirectory(directory);
+    }
+
 
     // NAME
     /// <summary>
@@ -684,10 +718,45 @@ public class OSPath
         return hash;
     }
 
+
+    #region EXPERIMENTAL
+
     public static OSPath FromDirectory(string path)
     {
         // Hack, but forces path to be treated as dir
         var osPath = new OSPath(path + "/");
         return osPath;
     }
+
+    /// <summary>
+    ///     Get <paramref name="otherDirectory"/> subdirectories after matching <paramref name="thisDirectory"/>.
+    /// </summary>
+    /// <param name="thisDirectory"></param>
+    /// <param name="otherDirectory"></param>
+    /// <param name="otherSubdirectories"></param>
+    /// <returns>
+    ///     True if the subdirectories of <paramref name="otherDirectory"/> match <paramref name="thisDirectory"/>,
+    /// </returns>
+    public static bool MatchExclusiveSubdirectories(string thisDirectory, string otherDirectory, out string otherSubdirectories)
+    {
+        string dirA = FromDirectory(thisDirectory).Directories;
+        string dirB = FromDirectory(otherDirectory).Directories;
+
+        // Technically can fail if B contains A more than once
+        if (dirB.Contains(dirA))
+        {
+            // Split path around common directories
+            string[] pathEnds = dirB.Split(dirA);
+            // Select last index set of directories
+            otherSubdirectories = pathEnds[^1];
+            return true;
+        }
+        otherSubdirectories = string.Empty;
+        return false;
+    }
+
+    public bool GetSubdirectoriesOfOther(string otherDirectory, out string otherSubdirectories)
+        => MatchExclusiveSubdirectories(Directories, otherDirectory, out otherSubdirectories);
+
+    #endregion
 }
