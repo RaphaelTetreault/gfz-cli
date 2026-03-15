@@ -19,17 +19,19 @@ public class TestActionsARC
         SrcCopySearchPattern = "*",
     };
 
-    [Test] public void ArcPackGame() => RunArgsAssertPass((ArcPack with
+    [Test]
+    public void ArcPackGame() => RunArgsAssertPass(ArcPack with
     {
         CopySubdirectory = FilesDir + "game/",
         TestSubdirectory = "pack-game/",
-    }).AsCliArgs());
+    });
 
-    [Test] public void ArcPackInit() => RunArgsAssertPass((ArcPack with
+    [Test]
+    public void ArcPackInit() => RunArgsAssertPass(ArcPack with
     {
         CopySubdirectory = FilesDir + "init/",
         TestSubdirectory = "pack-init/",
-    }).AsCliArgs());
+    });
 
 
     public readonly CliDebugParams ArcUnpack = new()
@@ -43,16 +45,18 @@ public class TestActionsARC
         SrcCopySearchPattern = "*.arc",
     };
 
-    [Test] public void ArcUnpackBmp() => RunArgsAssertPass((ArcUnpack with
+    [Test]
+    public void ArcUnpackBmp() => RunArgsAssertPass(ArcUnpack with
     {
-        CopySubdirectory = FilesDir + "bmp*",
+        CopySubdirectory = FilesDir + "bmp*", // GFZJ bmp and GFZE bmp_e
         TestSubdirectory = "unpack-bmp/",
-    }).AsCliArgs());
+    });
 
-    [Test] public void ArcUnpackLip() => RunArgsAssertPass((ArcUnpack with
+    [Test]
+    public void ArcUnpackLip() => RunArgsAssertPass(ArcUnpack with
     {
         RootDir = DirGameCubeGames, // AX does not have "./lip"
         CopySubdirectory = FilesDir + "lip",
         TestSubdirectory = "unpack-lip/",
-    }).AsCliArgs());
+    });
 }

@@ -17,13 +17,13 @@ public class TestActionsAsset
         CliActionID = CliActionID.asset_custom_mipmap_gxtex,
         CliArg = string.Empty,
         RootDir = DirAssets,
-        CopySubdirectory = "tex/custom-mipmaps/",
+        CopySubdirectory = /*/unit-tests/res/assets/*/"tex/custom-mipmaps/",
         TestSubdirectory = "custom-mipmaps/",
         SrcCopySearchOption = SearchOption.TopDirectoryOnly,
         SrcCopySearchPattern = "*",
     };
 
-    private static string MipmapGxtexCliArg(int mipmapCount, MipmapGenerationMode mipmapGenerationMode,TextureFormat textureFormat = TextureFormat.CMPR, int width = 0, int height = 0)
+    private static string CliArgCustomMipmapGxtex(int mipmapCount, MipmapGenerationMode mipmapGenerationMode, TextureFormat textureFormat = TextureFormat.CMPR, int width = 0, int height = 0)
     {
         string value =
         /* Action, Input, Output */
@@ -51,37 +51,37 @@ public class TestActionsAsset
     }
 
     [Test]
-    public void TestAssetCustomMipmapGxtex_MipmapGenerationModes()
+    public void CustomMipmapGxtex_MipmapGenerationModes()
     {
         // Go through all modes
-        foreach (var @enum in Enum.GetValues< MipmapGenerationMode>())
+        foreach (var @enum in Enum.GetValues<MipmapGenerationMode>())
         {
-            RunArgs((AssetCustomMipmapGxtex with
+            RunArgs(AssetCustomMipmapGxtex with
             {
-                CliArg = MipmapGxtexCliArg(100, @enum),
+                CliArg = CliArgCustomMipmapGxtex(100, @enum),
                 TestSubdirectory = "custom mipmaps/mipmap generation modes/",
-            }).AsCliArgs());
+            });
         }
         Assert.Pass();
     }
 
     [Test]
-    public void TestAssetCustomMipmapGxtex_MipmapCount()
+    public void CustomMipmapGxtex_MipmapCount()
     {
         // Iterate through various mipmap counts
         for (int i = 0; i < 10; i++)
         {
-            RunArgs((AssetCustomMipmapGxtex with
+            RunArgs(AssetCustomMipmapGxtex with
             {
-                CliArg = MipmapGxtexCliArg(i, MipmapGenerationMode.Last),
+                CliArg = CliArgCustomMipmapGxtex(i, MipmapGenerationMode.Last),
                 TestSubdirectory = "custom mipmaps/mipmap counts/",
-            }).AsCliArgs());
+            });
         }
         Assert.Pass();
     }
 
     [Test]
-    public void TestAssetCustomMipmapGxtex_TextureFormats()
+    public void CustomMipmapGxtex_TextureFormats()
     {
         // Go through many texture formats
         foreach (var format in Enum.GetValues<TextureFormat>())
@@ -92,14 +92,36 @@ public class TestActionsAsset
                 format == TextureFormat.CI14X2)
                 continue;
 
-            RunArgs((AssetCustomMipmapGxtex with
+            RunArgs(AssetCustomMipmapGxtex with
             {
-                CliArg = MipmapGxtexCliArg(100, MipmapGenerationMode.Last, format),
+                CliArg = CliArgCustomMipmapGxtex(100, MipmapGenerationMode.Last, format),
                 TestSubdirectory = "custom mipmaps/direct texture formats/",
 
-            }).AsCliArgs());
+            });
         }
         Assert.Pass();
     }
+
+
+    /// <summary>
+    ///     See <see cref="ActionsAsset.ActionAssetGenerateLibrary"/> for more details.
+    /// </summary>
+    public CliDebugParams GenLib = new CliDebugParams()
+    {
+        CliActionID = CliActionID.asset_generate_library,
+        CliArg = "<ACTION> <TESTDIR> <TESTDIR>library/ -s",
+        RootDir = DirAllGames,
+        CopySubdirectory = /*/unit-tests/res/gameid/*/ string.Empty,
+        TestSubdirectory = string.Empty,
+        SrcCopyLimit = 30,
+        SrcCopySearchOption = SearchOption.AllDirectories,
+        SrcCopySearchPattern = "*",
+    };
+
+    [Test]
+    public void GenerateLibrary_Files() => RunArgsAssertPass(GenLib with { CopySubdirectory = FilesDir, });
+
+    [Test]
+    public void GenerateLibrary_Processed() => RunArgsAssertPass(GenLib with { CopySubdirectory = ProcessedDir, });
 
 }

@@ -11,10 +11,10 @@ public enum CliActionID
 
     arc_unpack,
     arc_pack,
-    asset_generate_library,
-    asset_image_to_gxtex,
     asset_custom_mipmap_gxtex,
+    asset_generate_library,
     asset_gmaref_to_gma,
+    asset_image_to_gxtex,
     asset_tpl_unpack,
     asset_tplref_pack,
     auto_rename_gci, // UNIMPLEMENTED

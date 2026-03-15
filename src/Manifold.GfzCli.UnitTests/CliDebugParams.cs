@@ -96,7 +96,7 @@ public readonly record struct CliDebugParams
     public readonly bool SrcCopyRandom { get; init; } = false;
 
     /// <summary>
-    ///     Search option to find files to copy form source.
+    ///     Search option to find files to copy from source.
     /// </summary>
     public readonly SearchOption SrcCopySearchOption { get; init; } = SearchOption.TopDirectoryOnly;
 
@@ -113,7 +113,7 @@ public readonly record struct CliDebugParams
     /// <returns>
     ///     
     /// </returns>
-    private string GetCopyDir(string rootDir)
+    public string GetCopyDir(string rootDir)
     {
         // Patch root copy directory tags
         string copyDirectory = CopyDirectory.Replace(TagRootDir, rootDir);
@@ -139,7 +139,7 @@ public readonly record struct CliDebugParams
     /// <returns>
     ///     
     /// </returns>
-    private string GetTestDir(string rootDir)
+    public string GetTestDir(string rootDir)
     {
         string dir = TestDirectory + TestSubdirectory;
         dir = dir
@@ -216,10 +216,17 @@ public readonly record struct CliDebugParams
             // Copy files to destination
             for (int j = 0; j < copyFileCount; j++)
             {
+                // Get base paths
                 string file = files[j];
                 OSPath srcFile = new(file);
                 OSPath dstFile = dst.Copy();
                 dstFile.SetFileNameAndExtensions(srcFile.FileNameAndExtensions);
+                // Preserve subdirectories
+                OSPath cwdSrc = cwd.Copy();
+                cwdSrc.PushDirectories(srcDir);
+                string srcSubDirs = srcFile.Directories[cwdSrc.FullPath.Length..];
+                dstFile.PushDirectories(srcSubDirs);
+                // Create if able
                 if (!File.Exists(dstFile) || DstCopyOverwrite)
                 {
                     Directory.CreateDirectory(dstFile.Directories);
@@ -235,11 +242,28 @@ public readonly record struct CliDebugParams
     /// <returns>
     ///     
     /// </returns>
-    public string[] AsCliArgs()
+    public string[] AsCliArgsWithFilesPrepared()
     {
         CopyFilesFromSrcToDst();
         string[] cliArgs = GetCliArgs();
         return cliArgs;
+    }
+
+    public override string ToString()
+    {
+        string value =
+            $"{nameof(CliActionID)}: {CliActionID}\n" +
+            $"{nameof(CliArg)}: {CliArg}\n" +
+            $"{nameof(RootDir)}: {RootDir}\n" +
+            $"{nameof(CopySubdirectory)}: {CopySubdirectory}\n" +
+            $"{nameof(TestSubdirectory)}: {TestSubdirectory}\n" +
+            $"{nameof(DstCleanDirectory)}: {DstCleanDirectory}\n" +
+            $"{nameof(DstCopyOverwrite)}: {DstCopyOverwrite}\n" +
+            $"{nameof(SrcCopyLimit)}: {SrcCopyLimit}\n" +
+            $"{nameof(SrcCopyRandom)}: {SrcCopyRandom}\n" +
+            $"{nameof(SrcCopySearchOption)}: {SrcCopySearchOption}\n" +
+            $"{nameof(SrcCopySearchPattern)}: {SrcCopySearchPattern}";
+        return value;
     }
 
     /// <summary>

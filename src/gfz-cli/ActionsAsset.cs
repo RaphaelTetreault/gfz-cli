@@ -242,11 +242,13 @@ public static class ActionsAsset
                 string[] textureNames = tplEntryInfos.GetCrc32Names();
                 // Write out models with texture references :)
                 WriteModels(options, gmaPath, gmaOutputPath, textureNames);
+                // Write out texture info
+                SaveGxtexAndPng(options, tplEntryInfos, tplOutputPath);
             }
             else
             {
                 // TODO
-                // GMA uses common TPL, write it out without texture references
+                // Some GMA use common TPL (eg. custom machines), write it out without texture references
                 WriteModels(options, gmaPath, gmaOutputPath, []);
             }
         }
@@ -258,7 +260,8 @@ public static class ActionsAsset
             OSPath tplFilePath = new(tplFile);
             tplFilePath.SetExtensions("tpl");
             // Write out textures
-            GetTplEntryInfos(options, tplFilePath, tplOutputPath, resampler);
+            TplEntryInfo[] tplEntryInfos = GetTplEntryInfos(options, tplFilePath, tplOutputPath, resampler);
+            SaveGxtexAndPng(options, tplEntryInfos, tplOutputPath);
         }
     }
 
@@ -626,7 +629,7 @@ public static class ActionsAsset
     private static TplEntryInfo[] GetTplEntryInfos(Options options, OSPath inputPath, OSPath outputPath, IResampler resampler)
     {
         // Load TPL file
-        Tpl tpl = new TplFile(inputPath).Value;
+        Tpl tpl = new TplFile(inputPath);
 
         // Iterate over all texture sequence (each sequence is main texture + optional mipmaps)
         int numTextures = tpl.TextureSequences.Length;
@@ -965,7 +968,12 @@ public static class ActionsAsset
             string fileName = Path.GetFileNameWithoutExtension(gmaFile.FileName);
             gmarefOutputPath.SetFileName(fileName);
             gmarefOutputPath.SetExtensions(GmaRef.Extension);
-            string directories = Path.GetDirectoryName(inputPath)![options.InputPath.Length..];
+            string directories = Path.GetDirectoryName(inputPath)!;
+            // Compute how much of string to trim to get to directories to copy
+            int strLength = options.InputPath.Length;
+            int trimLength = options.InputPath[0..Math.Min(strLength, 2)] == "./" ? strLength - 2 : strLength;
+            directories = directories[trimLength..];
+            //
             gmarefOutputPath.PushDirectories(directories);
 
             bool doWriteWrite = CheckWillFileWrite(options, gmarefOutputPath, out ActionTaskResult result);

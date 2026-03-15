@@ -8,16 +8,52 @@ namespace Manifold.GfzCli.UnitTests;
 /// </summary>
 public static class GfzCliTestRunner
 {
+    private static bool DebugCliArgsSplit { get; } = true;
+    private static bool DebugCliArgsStruct { get; } = true;
+
+
+    /// <summary>
+    ///     Name of all game directories after extracting game ISOs for unit tests.
+    /// </summary>
     public static readonly string[] DirAllGames = ["gfze01", "gfzj01", "gfzp01", "gfzj8p"];
+    /// <summary>
+    ///     Name of GameCube-only game directories after extracting game ISOs for unit tests.
+    /// </summary>
     public static readonly string[] DirGameCubeGames = ["gfze01", "gfzj01", "gfzp01"];
+    /// <summary>
+    ///     Name of AX game directory after extracting game ISO for unit tests.
+    /// </summary>
     public static readonly string[] DirArcadeGames = ["gfzj8p"];
+    /// <summary>
+    ///     Name of asset directory for unit tests.
+    /// </summary>
     public static readonly string[] DirAssets = ["assets"];
+    /// <summary>
+    ///     Pressumed files directory generated after extracting files from GFZ game ISO.
+    /// </summary>
     public const string FilesDir = "files/";
+    /// <summary>
+    ///     Pressumed processed directory generated after extracting files from GFZ ARC and LZ files.
+    /// </summary>
     public const string ProcessedDir = "processed/";
+    /// <summary>
+    ///     Pressumed system directory generated after extracting files from GFZ game ISO.
+    /// </summary>
     public const string SystemDir = "sys/";
 
+    /// <summary>
+    ///     Internal satte flag indicating Current Working Directory has been set.
+    /// </summary>
     private static bool hasSetCWD = false;
 
+    /// <summary>
+    ///     Splits input string into its constituant string[] args same as
+    ///     when a string is passed to Main(string[] args) via command line.
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns>
+    ///     <see cref="string[]"/> version of <paramref name="input"/>.
+    /// </returns>
     public static string[] InputStringToArgsStringArray(string input)
     {
         // Explanation. Indents indicate conjunction eg. \S*
@@ -44,15 +80,54 @@ public static class GfzCliTestRunner
         return matches;
     }
 
-    private static void RunArgs(string args)
+    public static void RunArgs(CliDebugParams cliDebugParams)
+    {
+        if (DebugCliArgsStruct)
+        {
+            Console.WriteLine($"{nameof(CliDebugParams)}");
+            Console.WriteLine($"{cliDebugParams}");
+            Console.WriteLine($"");
+            Console.WriteLine($"Copy Directories:");
+            foreach (var rootDir in cliDebugParams.RootDir)
+                Console.WriteLine(cliDebugParams.GetCopyDir(rootDir));
+            Console.WriteLine($"");
+        }
+
+        string[] args = cliDebugParams.AsCliArgsWithFilesPrepared();
+        RunArgs(args);
+    }
+    public static void RunArgs(ReadOnlySpan<CliDebugParams> cliDebugParams)
+    {
+        foreach (CliDebugParams cliDebugParam in cliDebugParams)
+        {
+            RunArgs(cliDebugParam);
+        }
+    }
+    public static void RunArgsAssertPass(CliDebugParams cliDebugParams)
+    {
+        RunArgs(cliDebugParams);
+        Assert.Pass();
+    }
+    public static void RunArgsAssertPass(ReadOnlySpan<CliDebugParams> cliDebugParams)
+    {
+        foreach (CliDebugParams cliDebugParam in cliDebugParams)
+        {
+            RunArgs(cliDebugParam);
+        }
+        Assert.Pass();
+    }
+
+    public static void RunArgs(string args)
     {
         string cwd = Directory.GetCurrentDirectory();
         Console.WriteLine($"CWD: {cwd}");
         Console.WriteLine($"ARG: {args}");
         string[] argsSplit = InputStringToArgsStringArray(args);
-        // UNCOMMENT to see how args are split up
-        //for (int i = 0; i < argsSplit.Length; i++)
-        //    Console.WriteLine($"Arg{i}: {argsSplit[i]}");
+
+        if (DebugCliArgsSplit)
+            for (int i = 0; i < argsSplit.Length; i++)
+                Console.WriteLine($"Arg{i}: {argsSplit[i]}");
+
         GFZCLI.GfzCli.RunCliParseArgs(argsSplit);
     }
     public static void RunArgs(ReadOnlySpan<string> args)
@@ -63,7 +138,6 @@ public static class GfzCliTestRunner
             Console.WriteLine();
         }
     }
-
     public static void RunArgsAssertPass(string args)
     {
         RunArgs(args);

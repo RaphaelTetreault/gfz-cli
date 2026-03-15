@@ -7,7 +7,8 @@ public class TestActionsLZ
 {
     [SetUp] public void Setup() => InitSetup();
 
-    [Test] public void LzCompressFile() => RunArgsAssertPass(new CliDebugParams()
+    [Test]
+    public void LzCompressFile() => RunArgsAssertPass(new CliDebugParams()
     {
         CliActionID = CliActionID.lz_compress,
         CliArg = $"<ACTION> <TESTDIR> -p *.tpl -o",
@@ -20,9 +21,10 @@ public class TestActionsLZ
         SrcCopyRandom = false,
         SrcCopySearchOption = SearchOption.TopDirectoryOnly,
         SrcCopySearchPattern = "*.tpl",
-    }.AsCliArgs());
+    });
 
-    [Test] public void LzDecompressFile() => RunArgsAssertPass(new CliDebugParams()
+    [Test]
+    public void LzDecompressFile() => RunArgsAssertPass(new CliDebugParams()
     {
         CliActionID = CliActionID.lz_decompress,
         CliArg = $"<ACTION> <TESTDIR> -p *.lz -o",
@@ -35,5 +37,5 @@ public class TestActionsLZ
         SrcCopyRandom = false,
         SrcCopySearchOption = SearchOption.TopDirectoryOnly,
         SrcCopySearchPattern = "*.lz",
-    }.AsCliArgs());
+    });
 }

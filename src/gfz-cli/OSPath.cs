@@ -63,6 +63,7 @@ public class OSPath
     /// </summary>
     public string FullPath => $"{Directories}{FileName}{GetExtensions()}";
 
+
     // CONSTRUCTORS
     public OSPath() { }
     public OSPath(string filePath)
@@ -377,7 +378,7 @@ public class OSPath
     }
     /// <summary>
     ///     Appends <paramref name="path"/> to this <see cref="FilePath"/>. 
-    ///     <paramref name="path"/>'s directoires are appended, and the
+    ///     <paramref name="path"/>'s directories are appended, and the
     ///     file name and extensions of this <see cref="FilePath"/> are set to
     ///     that specified in <paramref name="path"/>.
     /// </summary>
