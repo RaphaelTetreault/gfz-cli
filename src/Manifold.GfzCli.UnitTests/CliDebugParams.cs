@@ -198,8 +198,8 @@ public readonly record struct CliDebugParams
             string rootDir = RootDir[i];
             string srcDir = GetCopyDir(rootDir);
             string dstDir = GetTestDir(rootDir);
-            src.AppendRelativePathToDirectories(srcDir);
-            dst.AppendRelativePathToDirectories(dstDir);
+            src.PushDirectories(srcDir);
+            dst.PushDirectories(dstDir);
             // Delete all files in directory if requested.
             if (DstCleanDirectory && Directory.Exists(dst))
             {
