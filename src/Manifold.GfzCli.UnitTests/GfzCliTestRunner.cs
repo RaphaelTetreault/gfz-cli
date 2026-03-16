@@ -8,8 +8,8 @@ namespace Manifold.GfzCli.UnitTests;
 /// </summary>
 public static class GfzCliTestRunner
 {
-    private static bool DebugCliArgsSplit { get; } = true;
-    private static bool DebugCliArgsStruct { get; } = true;
+    private static bool DebugCliArgsSplit { get; } = false;
+    private static bool DebugCliArgsStruct { get; } = false;
 
 
     /// <summary>
@@ -93,7 +93,8 @@ public static class GfzCliTestRunner
             Console.WriteLine($"");
         }
 
-        string[] args = cliDebugParams.AsCliArgsWithFilesPrepared();
+        cliDebugParams.CopyFilesFromSrcToDst();
+        string[] args = cliDebugParams.GetCliArgs();
         RunArgs(args);
     }
     public static void RunArgs(ReadOnlySpan<CliDebugParams> cliDebugParams)
@@ -117,7 +118,7 @@ public static class GfzCliTestRunner
         Assert.Pass();
     }
 
-    public static void RunArgs(string args)
+    private static void RunArgs(string args)
     {
         string cwd = Directory.GetCurrentDirectory();
         Console.WriteLine($"CWD: {cwd}");
@@ -130,27 +131,13 @@ public static class GfzCliTestRunner
 
         GFZCLI.GfzCli.RunCliParseArgs(argsSplit);
     }
-    public static void RunArgs(ReadOnlySpan<string> args)
+    private static void RunArgs(ReadOnlySpan<string> args)
     {
         foreach (string arg in args)
         {
             RunArgs(arg);
             Console.WriteLine();
         }
-    }
-    public static void RunArgsAssertPass(string args)
-    {
-        RunArgs(args);
-        Assert.Pass();
-    }
-    public static void RunArgsAssertPass(ReadOnlySpan<string> args)
-    {
-        foreach (string arg in args)
-        {
-            RunArgs(arg);
-            Console.WriteLine();
-        }
-        Assert.Pass();
     }
 
     public static void InitSetup()

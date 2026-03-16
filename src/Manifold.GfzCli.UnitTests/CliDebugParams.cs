@@ -234,19 +234,6 @@ public readonly record struct CliDebugParams
         }
     }
 
-    /// <summary>
-    ///     Prepares source files and constructs CLI arguments string for testing.
-    /// </summary>
-    /// <returns>
-    ///     
-    /// </returns>
-    public string[] AsCliArgsWithFilesPrepared()
-    {
-        CopyFilesFromSrcToDst();
-        string[] cliArgs = GetCliArgs();
-        return cliArgs;
-    }
-
     public override string ToString()
     {
         string value =
