@@ -9,6 +9,8 @@ public class TestActionsAsset
 {
     [SetUp] public void Setup() => InitSetup();
 
+    #region Custom Mipmap Gxtex
+
     /// <summary>
     ///     See <see cref="ActionsAsset.ActionAssetCustomMipmapGxtex"/> for more details.
     /// </summary>
@@ -102,11 +104,14 @@ public class TestActionsAsset
         Assert.Pass();
     }
 
+    #endregion
+
+    #region Generate Library
 
     /// <summary>
     ///     See <see cref="ActionsAsset.ActionAssetGenerateLibrary"/> for more details.
     /// </summary>
-    public CliDebugParams GenLib = new CliDebugParams()
+    public CliDebugParams GenerateLibrary = new()
     {
         CliActionID = CliActionID.asset_generate_library,
         CliArg = "<ACTION> <TESTDIR> <TESTDIR>library/ -s",
@@ -118,9 +123,35 @@ public class TestActionsAsset
         SrcCopySearchPattern = "*",
     };
 
-    // This test is kinda bad because it pulkls in non GAM and TPL files, which currently do nothing for Generate Library
-    //[Test] public void GenerateLibrary_Files() => RunArgsAssertPass(GenLib with { CopySubdirectory = FilesDir, });
+    // This test is kinda bad because it pulkls in non GMA and TPL files, which currently do nothing for Generate Library
+    //[Test]
+    //public void GenerateLibrary_Files() => RunArgsAssertPass(GenLib with { CopySubdirectory = FilesDir, });
 
-    [Test] public void GenerateLibrary_Processed() => RunArgsAssertPass(GenLib with { CopySubdirectory = ProcessedDir, });
+    [Test]
+    public void GenerateLibrary_Processed() => RunArgsAssertPass(GenerateLibrary with { CopySubdirectory = ProcessedDir, });
+
+    #endregion
+
+    #region TPL Unpack
+
+    /// <summary>
+    ///     See <see cref="ActionsAsset.ActionAssetTplUnpack"/> for more details.
+    /// </summary>
+    [Test]
+    public void UnpackTpl() => RunArgsAssertPass(new CliDebugParams()
+    {
+        CliActionID = CliActionID.asset_tpl_unpack,
+        CliArg =
+            $"<ACTION> <TESTDIR> <TESTDIR>unpack/ -s " +
+            $"--{IOptionsAssets.Args.DirFormat}=\"unpacked_tpl {IOptionsAssets.Arguments.DirFormat.Default<string>()}\"",
+        RootDir = DirAllGames,
+        CopySubdirectory = /*/unit-tests/res/gameid/*/ string.Empty,
+        TestSubdirectory = string.Empty,
+        SrcCopyLimit = 10,
+        SrcCopySearchOption = SearchOption.AllDirectories,
+        SrcCopySearchPattern = "*.tpl",
+    });
+
+    #endregion
 
 }

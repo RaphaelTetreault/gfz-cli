@@ -371,16 +371,4 @@ public static class GfzCliUtilities
             return string.Empty;
     }
 
-    public static string Sanitize(string filePath)
-    {
-        // Sanitize: remove whitespace
-        filePath = filePath.Trim();
-        // Sanitize: remove surrounding quotes
-        if (filePath.StartsWith('"') && filePath.EndsWith('"'))
-        {
-            filePath = filePath.Trim('"');
-        }
-
-        return filePath;
-    }
 }

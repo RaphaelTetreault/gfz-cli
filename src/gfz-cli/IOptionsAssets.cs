@@ -12,11 +12,12 @@ public interface IOptionsAssets
         public const string MipmapFiles = "mipmap-files";
         public const string MipmapMode = "mipmap-mode";
         public const string AssetLibraryRoot = "asset-library";
+        public const string DirFormat = "dir-format";
     }
 
     public static class Arguments
     {
-        internal static readonly GfzCliArgument TextureFormat = new()
+        public static readonly GfzCliArgument TextureFormat = new()
         {
             ArgumentName = Args.TextureFormat,
             ArgumentType = typeof(TextureFormat).Name,
@@ -25,7 +26,7 @@ public interface IOptionsAssets
                    "(I4, I8, IA4, IA8, RGB565, RGB5A3, RGBA8, CMPR)",
         };
 
-        internal static readonly GfzCliArgument MipmapCount = new()
+        public static readonly GfzCliArgument MipmapCount = new()
         {
             ArgumentName = Args.MipmapCount,
             ArgumentType = typeof(int).Name,
@@ -33,7 +34,7 @@ public interface IOptionsAssets
             Help = "The number of mipmaps to generate. -1 means max mipmaps generated.",
         };
 
-        internal static readonly GfzCliArgument MipmapFiles = new()
+        public static readonly GfzCliArgument MipmapFiles = new()
         {
             ArgumentName = Args.MipmapFiles,
             ArgumentType = typeof(string).Name,
@@ -41,7 +42,7 @@ public interface IOptionsAssets
             Help = "The mipmaps image(s) to use. Separate values with ; semicolon.",
         };
 
-        internal static readonly GfzCliArgument MipmapMode = new()
+        public static readonly GfzCliArgument MipmapMode = new()
         {
             ArgumentName = Args.MipmapMode,
             ArgumentType = typeof(MipmapGenerationMode).Name,
@@ -49,12 +50,20 @@ public interface IOptionsAssets
             Help = "How missing mipmaps are generated.",
         };
 
-        internal static readonly GfzCliArgument AssetLibraryRoot = new()
+        public static readonly GfzCliArgument AssetLibraryRoot = new()
         {
             ArgumentName = Args.AssetLibraryRoot,
             ArgumentType = typeof(string).Name,
             ArgumentDefault = null,
             Help = "The asset library root path.",
+        };
+
+        public static readonly GfzCliArgument DirFormat = new()
+        {
+            ArgumentName = Args.DirFormat,
+            ArgumentType = typeof(string).Name,
+            ArgumentDefault = "<DIR>",
+            Help = "String format for output directory. Use <DIR> for default folder name.",
         };
     }
 
@@ -78,4 +87,7 @@ public interface IOptionsAssets
 
     [Option(Args.TextureFormat, Hidden = true)]
     public TextureFormat TextureFormat { get; set; }
+
+    [Option(Args.DirFormat, Hidden = true)]
+    public string DirFormat { get; set; }
 }

@@ -101,7 +101,9 @@ public static class ActionsAsset
         IsOutputOptional = true,
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
-        OptionalArguments = [],
+        OptionalArguments = [
+            IOptionsAssets.Arguments.DirFormat,
+            ],
     };
 
     public static readonly GfzCliAction ActionAssetTplPack = new()
@@ -276,43 +278,43 @@ public static class ActionsAsset
     public static void TplUnpack(Options options, OSPath inputPath, OSPath outputPath)
     {
         TplEntryInfo[] tplEntryInfosNumbered;
+
+        // input path is file
+        // output path is file, convert to folder
+        string outputDir = options.FormatOutputDirectory(outputPath.FileName);
+        OSPath tplTextureOutputDir = outputPath.Copy();
+        tplTextureOutputDir.PushDirectory(outputDir);
+        tplTextureOutputDir.ClearFileName();
+        tplTextureOutputDir.ClearExtensions();
+        // Get tpl entry info
+        TplEntryInfo[] tplEntryInfos = GetTplEntryInfos(options, inputPath, tplTextureOutputDir, options.Resampler);
+        tplEntryInfosNumbered = new TplEntryInfo[tplEntryInfos.Length];
+        // Mutate names of all entries
+        int padLength = tplEntryInfos.Length.ToString().Length;
+        for (int i = 0; i < tplEntryInfos.Length; i++)
         {
-            // input path is file
-            // output path is file, convert to folder
-            OSPath tplTextureOutputDir = outputPath.Copy();
-            tplTextureOutputDir.PushDirectory(outputPath.FileName);
-            tplTextureOutputDir.ClearFileName();
-            tplTextureOutputDir.ClearExtensions();
-            // Get tpl entry info
-            TplEntryInfo[] tplEntryInfos = GetTplEntryInfos(options, inputPath, tplTextureOutputDir, options.Resampler);
-            tplEntryInfosNumbered = new TplEntryInfo[tplEntryInfos.Length];
-            // Mutate names of all entries
-            int padLength = tplEntryInfos.Length.ToString().Length;
-            for (int i = 0; i < tplEntryInfos.Length; i++)
+            // Extract data
+            string crc32Name = tplEntryInfos[i].Crc32Name;
+            TextureSequence textureSequence = tplEntryInfos[i].TextureSequence;
+
+            // Skip if texture is null
+            if (string.IsNullOrWhiteSpace(crc32Name) || textureSequence is null)
+                continue;
+
+            // Add prefix to texture name
+            string indexPrefix = i.PadLeft(padLength, '0');
+            tplEntryInfosNumbered[i] = new TplEntryInfo
             {
-                // Extract data
-                string crc32Name = tplEntryInfos[i].Crc32Name;
-                TextureSequence textureSequence = tplEntryInfos[i].TextureSequence;
-
-                // Skip if texture is null
-                if (string.IsNullOrWhiteSpace(crc32Name) || textureSequence is null)
-                    continue;
-
-                // Add prefix to texture name
-                string indexPrefix = i.PadLeft(padLength, '0');
-                tplEntryInfosNumbered[i] = new TplEntryInfo
-                {
-                    Crc32Name = $"{indexPrefix}-{crc32Name}",
-                    TextureSequence = textureSequence,
-                };
-            }
-            // Save out data with mutated name
-            SaveGxtexAndPng(options, tplEntryInfosNumbered, tplTextureOutputDir);
+                Crc32Name = $"{indexPrefix}-{crc32Name}",
+                TextureSequence = textureSequence,
+            };
         }
+        // Save out data with mutated name
+        SaveGxtexAndPng(options, tplEntryInfosNumbered, tplTextureOutputDir);
 
         // output path is file but instead of
         OSPath tplrefOutputFile = outputPath.Copy();
-        tplrefOutputFile.PushDirectory(outputPath.FileName);
+        tplrefOutputFile.PushDirectory(outputDir);
         tplrefOutputFile.SetExtensions(TplRef.Extension);
         // Save out .TPLREF
         if (CanWriteFileAndPrintResult(options, tplrefOutputFile, out Stream fs))

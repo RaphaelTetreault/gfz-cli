@@ -80,15 +80,13 @@ public interface IOptionsGfzCli
     ///     Input path for action.
     /// </summary>
     [Value(1, MetaName = Args.InputPath, HelpText = Help.InputPath, Required = false)]
-    public string InputPathRaw { get; internal set; }
-    public string InputPath { get;  }
+    public string InputPath { get; set;  }
 
     /// <summary>
     ///     Output path for action.
     /// </summary>
     [Value(2, MetaName = Args.OutputPath, HelpText = Help.OutputPath, Required = false)]
-    public string OutputPathRaw { get; internal set; }
-    public string OutputPath { get;  }
+    public string OutputPath { get; set; }
 
     /// <summary>
     ///     Whether overwriting files is allowed.

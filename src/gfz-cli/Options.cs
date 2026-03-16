@@ -32,37 +32,35 @@ public class Options :
     }
 
     // IGfzCliOptions
-    public string ActionStr { get; set; } = string.Empty;
+    public string ActionStr { get => WithoutQuotes(field); set; } = string.Empty;
     public CliActionID Action => GfzCliParser.EnumParseUnderscoreToDash<CliActionID>(ActionStr);
-    public string InputPath => GfzCliUtilities.Sanitize(InputPathRaw);
-    public string InputPathRaw { get; set; } = string.Empty;
-    public string OutputPath => GfzCliUtilities.Sanitize(OutputPathRaw);
-    public string OutputPathRaw { get; set; } = string.Empty;
+    public string InputPath { get => WithoutQuotes(field); set; } = string.Empty;
+    public string OutputPath { get => WithoutQuotes(field); set; } = string.Empty;
     public bool OverwriteFiles { get; set; } = false;
-    public string SearchPattern { get; set; } = string.Empty;
+    public string SearchPattern { get => WithoutQuotes(field); set; } = string.Empty;
     public bool SearchSubdirectories { get; set; } = false;
     public SearchOption SearchOption => SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-    public string SerializationFormat { get; set; } = "gx";
+    public string SerializationFormat { get => WithoutQuotes(field); set; } = "gx";
     public SerializeFormat SerializeFormat => Enum.Parse<SerializeFormat>(SerializationFormat, true);
     public AvGame AvGame => GetAvFormat(SerializeFormat);
-    public string SerializationRegionStr { get; set; } = "J";
+    public string SerializationRegionStr { get => WithoutQuotes(field); set; } = "J";
     public Region SerializationRegion => GetRegion(SerializationRegionStr);
 
     // IAssetsOptions
-    public string AssetLibraryRoot { get; set; } = string.Empty;
+    public string AssetLibraryRoot { get => WithoutQuotes(field); set; } = string.Empty;
     public int MipmapCount { get; set; } = IOptionsAssets.Arguments.MipmapCount.Default<int>();
-    public string MipmapFiles { get; set; } = string.Empty;
-    public string MipmapModeStr { get; set; } = IOptionsAssets.Arguments.MipmapMode.AsText();
+    public string MipmapFiles { get => WithoutQuotes(field); set; } = string.Empty;
+    public string MipmapModeStr { get => WithoutQuotes(field); set; } = IOptionsAssets.Arguments.MipmapMode.AsText();
     public MipmapGenerationMode MipmapMode => GfzCliParser.EnumParseDashRemoved<MipmapGenerationMode>(MipmapModeStr);
     public TextureFormat TextureFormat { get; set; } = IOptionsAssets.Arguments.TextureFormat.Default<TextureFormat>();
-
+    public string DirFormat { get => WithoutQuotes(field); set; } = IOptionsAssets.Arguments.DirFormat.Default<string>();
 
     // IOptionsColor, implemented by at least IOptionsImageSharp (resize) and IOptionsStage (fog).
-    public string ColorStr { get; set; } = "00000000";
-    public string ColorRStr { get; set; } = string.Empty;
-    public string ColorGStr { get; set; } = string.Empty;
-    public string ColorBStr { get; set; } = string.Empty;
-    public string ColorAStr { get; set; } = string.Empty;
+    public string ColorStr { get => WithoutQuotes(field); set; } = "00000000";
+    public string ColorRStr { get => WithoutQuotes(field); set; } = string.Empty;
+    public string ColorGStr { get => WithoutQuotes(field); set; } = string.Empty;
+    public string ColorBStr { get => WithoutQuotes(field); set; } = string.Empty;
+    public string ColorAStr { get => WithoutQuotes(field); set; } = string.Empty;
     public Color Color => GfzCliParser.GetColorFromHexString(ColorStr);
     public byte ColorR => GfzCliParser.GetColorComponent(ColorRStr);
     public byte ColorG => GfzCliParser.GetColorComponent(ColorGStr);
@@ -77,12 +75,12 @@ public class Options :
 
     // IImageSharpOptions. NOTE: ColorStr defined in multiple interfaces.
     public bool Compand { get; set; } = IOptionsImageSharp.Arguments.Compand.Default<bool>();
-    public string ResizeModeStr { get; set; } = IOptionsImageSharp.Arguments.ResizeMode.AsText();
+    public string ResizeModeStr { get => WithoutQuotes(field); set; } = IOptionsImageSharp.Arguments.ResizeMode.AsText();
     public ResizeMode ResizeMode => GfzCliParser.EnumParseDashRemoved<ResizeMode>(ResizeModeStr);
-    public string PositionStr { get; set; } = IOptionsImageSharp.Arguments.Position.AsText();
+    public string PositionStr { get => WithoutQuotes(field); set; } = IOptionsImageSharp.Arguments.Position.AsText();
     public AnchorPositionMode Position => GfzCliParser.EnumParseDashRemoved<AnchorPositionMode>(PositionStr);
     public bool PremultiplyAlpha { get; set; } = IOptionsImageSharp.Arguments.PremultiplyAlpha.Default<bool>();
-    public string ResamplerTypeStr { get; set; } = IOptionsImageSharp.Arguments.ResamplerType.AsText();
+    public string ResamplerTypeStr { get => WithoutQuotes(field); set; } = IOptionsImageSharp.Arguments.ResamplerType.AsText();
     public ResamplerType ResamplerType => GfzCliParser.EnumParseDashRemoved<ResamplerType>(ResamplerTypeStr);
     public IResampler Resampler => IOptionsImageSharp.GetResampler(ResamplerType);
     public int Width { get; set; }
@@ -94,7 +92,7 @@ public class Options :
     public bool RequestingResize => Width > 0 || Height > 0;
 
     // Other
-    public string ImageFormatStr { get; set; } = IOptionsImageSharp.Arguments.ImageFormat.AsText();
+    public string ImageFormatStr { get => WithoutQuotes(field); set; } = IOptionsImageSharp.Arguments.ImageFormat.AsText();
     public ImageFormat ImageFormat => GfzCliParser.EnumParseDashRemoved<ImageFormat>(ImageFormatStr);
     public ImageEncoder ImageEncoder => IOptionsImageSharp.GetImageEncoder(ImageFormat);
     public string ImageExtension => IOptionsImageSharp.GetImageExtension(ImageFormat);
@@ -121,7 +119,7 @@ public class Options :
     // IStageOptions
     public float FogViewRangeNear { get; set; } = IOptionsStage.Arguments.FogViewRangeNear.Default<float>();
     public float FogViewRangeFar { get; set; } = IOptionsStage.Arguments.FogViewRangeFar.Default<float>();
-    public string FogInterpolationModeStr { get; set; } = IOptionsStage.Arguments.FogInterpolationMode.AsText();
+    public string FogInterpolationModeStr { get => WithoutQuotes(field); set; } = IOptionsStage.Arguments.FogInterpolationMode.AsText();
     public FogType FogInterpolationMode => GfzCliParser.EnumParseDashRemoved<FogType>(FogInterpolationModeStr);
     //public string Name { get; set; } = string.Empty;
     public bool SetFlagsOff { get; set; } = IOptionsStage.Arguments.SetFlagsOff.Default<bool>();
@@ -131,13 +129,13 @@ public class Options :
     ///     A generic name parameter.
     /// </summary>
     [Option(Args.Name, Hidden = true)]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get => WithoutQuotes(field); set; } = string.Empty;
 
     /// <summary>
     ///     A generic value parameter.
     /// </summary>
     [Option(Args.Value, Hidden = true)]
-    public string Value { get; set; } = string.Empty;
+    public string Value { get => WithoutQuotes(field); set; } = string.Empty;
 
 
     /// <summary>
@@ -253,4 +251,25 @@ public class Options :
     // Forward
     public string[] GetInputFiles() => GfzCliUtilities.GetInputFiles(this);
 
+    public string FormatOutputDirectory(string value)
+    {
+        // Nothing to format
+        if (string.IsNullOrWhiteSpace(DirFormat))
+            return value;
+
+        string replaceTag = IOptionsAssets.Arguments.DirFormat.Default<string>();
+        string result = DirFormat.Replace(replaceTag, value);
+        return result;
+    }
+
+    public static string WithoutQuotes(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return string.Empty;
+
+        string sanitized = value
+            .Trim()     // remove whitespace
+            .Trim('"'); // remove quotation marks
+        return sanitized;
+    }
 }

@@ -1,4 +1,5 @@
-﻿using Manifold.GFZCLI;
+﻿using CommandLine.Text;
+using Manifold.GFZCLI;
 using System.ComponentModel.Design;
 
 namespace Manifold.GfzCli.UnitTests;
@@ -39,6 +40,8 @@ public readonly record struct CliDebugParams
     ///     Tag placeholder for <see cref="TestDirectory"/>.
     /// </summary>
     public const string TagTestDir = "<TESTDIR>";
+
+    public readonly string[] AllTags = [TagAction, TagActionPrefix, TagRootDir, TagTestDir];
 
     /// <summary>
     ///     Random number generator for <see cref="ShuffleArray{T}(T[])"/>
@@ -172,9 +175,12 @@ public readonly record struct CliDebugParams
                 .Replace(TagRootDir, rootDir);
 
             // Sanity check. All tags should have been removed.
-            if (cliArgs[i].Contains('<') || cliArgs[i].Contains('>'))
-            {
-                throw new Exception();
+            foreach (string tag in AllTags) {
+                if (cliArgs[i].Contains(tag))
+                {
+                    string msg = $"CLI args contain unprocessed tag \"{tag}\"";
+                    throw new Exception();
+                }
             }
         }
         return cliArgs;
