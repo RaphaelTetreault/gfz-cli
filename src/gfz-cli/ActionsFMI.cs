@@ -10,6 +10,8 @@ namespace Manifold.GFZCLI;
 /// </summary>
 public static class ActionsFMI
 {
+    const string prefix = "FMI";
+
     public static readonly GfzCliAction ActionFmiFromPlainText = new()
     {
         Description = "Create a FMI-plaintext file from FMI binary file.",
@@ -42,14 +44,10 @@ public static class ActionsFMI
     /// <param name="options"></param>
     public static void FmiToPlainText(Options options)
     {
-        // Default search
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-            options.SearchPattern = $"*.fmi";
-
-        Terminal.WriteLine("FMI: converting FMI to plain text files.");
+        options.OverrideSearchPatternIfUnset("*.fmi");
+        Terminal.WriteLine($"{prefix}: converting FMI to plain text files.");
         int binCount = ParallelizeFileInFileOutTasks(options, FmiToPlainText);
-        Terminal.WriteLine($"FMI: done converting {binCount} file{Plural(binCount)}.");
+        Terminal.WriteLine($"{prefix}: done converting {binCount} file{Plural(binCount)}.");
     }
 
     /// <summary>
@@ -58,14 +56,10 @@ public static class ActionsFMI
     /// <param name="options"></param>
     public static void FmiFromPlainText(Options options)
     {
-        // Default search
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-            options.SearchPattern = $"*.fmi.txt";
-
-        Terminal.WriteLine("FMI: converting FMI from plain text files.");
+        options.OverrideSearchPatternIfUnset("*.fmi.txt");
+        Terminal.WriteLine($"{prefix}: converting FMI from plain text files.");
         int binCount = ParallelizeFileInFileOutTasks(options, FmiFromPlainText);
-        Terminal.WriteLine($"FMI: done converting {binCount} file{Plural(binCount)}.");
+        Terminal.WriteLine($"{prefix}: done converting {binCount} file{Plural(binCount)}.");
     }
 
     /// <summary>

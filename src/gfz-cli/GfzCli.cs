@@ -73,6 +73,9 @@ public static class GfzCli
         ActionsAsset.ActionAssetImageToGxtex,
         ActionsAsset.ActionAssetTplPack,
         ActionsAsset.ActionAssetTplUnpack,
+        // CAMERA
+        ActionsCamera.ActionCameraLivecamFromTSV,
+        ActionsCamera.ActionCameraLivecamToTSV,
         // CARDATA
         ActionsCarData.ActionCarDataFromTSV,
         ActionsCarData.ActionCarDataToTSV,

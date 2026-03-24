@@ -123,7 +123,7 @@ public class TestActionsAsset
         SrcCopySearchPattern = "*",
     };
 
-    // This test is kinda bad because it pulkls in non GMA and TPL files, which currently do nothing for Generate Library
+    // This test is kinda bad because it pulls in non GMA and TPL files, which currently do nothing for Generate Library
     //[Test]
     //public void GenerateLibrary_Files() => RunArgsAssertPass(GenLib with { CopySubdirectory = FilesDir, });
 

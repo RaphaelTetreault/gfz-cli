@@ -18,6 +18,8 @@ public enum CliActionID
     asset_tpl_unpack,
     asset_tplref_pack,
     auto_rename_gci, // UNIMPLEMENTED
+    cam_livecam_from_tsv,
+    cam_livecam_to_tsv,
     cardata_from_tsv,
     cardata_to_tsv,
     colicourse_patch_fog,
