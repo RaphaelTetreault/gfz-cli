@@ -17,7 +17,7 @@ namespace Manifold.GFZCLI
         {
             Description = "Create livecam BIN file from livecam TSV spreadsheet.",
             Action = LivecamFromTsv,
-            ActionID = CliActionID.cam_livecam_from_tsv,
+            ActionID = CliActionID.cam_livecamstage_from_tsv,
             InputIO = CliActionIO.Path,
             OutputIO = CliActionIO.Path,
             IsOutputOptional = true,
@@ -30,7 +30,7 @@ namespace Manifold.GFZCLI
         {
             Description = "Create TSV from livecam binary.",
             Action = LivecamToTsv,
-            ActionID = CliActionID.cam_livecam_to_tsv,
+            ActionID = CliActionID.cam_livecamstage_to_tsv,
             InputIO = CliActionIO.Path,
             OutputIO = CliActionIO.Path,
             IsOutputOptional = true,
