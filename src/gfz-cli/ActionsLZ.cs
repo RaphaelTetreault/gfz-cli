@@ -66,6 +66,8 @@ public static class ActionsLZ
 
     public static void LzCompressFile(Options options, OSPath inputFile, OSPath outputFile)
     {
+        // Don't mutate incoming reference
+        outputFile = outputFile.Copy();
         outputFile.PushExtension("lz");
         if (CanWriteFileAndPrintResult(options, outputFile))
         {

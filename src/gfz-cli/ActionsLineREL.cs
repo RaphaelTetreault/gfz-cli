@@ -4,6 +4,7 @@ using GameCube.GFZ.CarData;
 using GameCube.GFZ.GameData;
 using GameCube.GFZ.LineREL;
 using GameCube.GFZ.LZ;
+using GameCube.GFZ.Stage;
 using Manifold.IO;
 using System;
 using System.IO;
@@ -14,6 +15,8 @@ namespace Manifold.GFZCLI;
 
 public static class ActionsLineREL
 {
+    const string prefix = "LINEREL";
+
     public static readonly GfzCliAction ActionPatchBgm = new()
     {
         Description = "Set the background music for a specific stage index.",
@@ -306,7 +309,7 @@ public static class ActionsLineREL
 
     private const byte MaxDifficulty = 10;
     private const byte MaxCourseIndex = GameDataConsts.MaxStageIndex;
-    private const byte MaxVenueIndex = 22;
+    private static readonly byte MaxVenueIndex = (byte)Enum.GetValues<GameCube.GFZ.GameData.VenueID>()[^1];
     private const byte MaxCupCourseIndex = 6;
     private const byte MinCupCourseIndex = 1;
 
@@ -327,9 +330,10 @@ public static class ActionsLineREL
         inputFilePath.ThrowIfFileDoesNotExist();
 
         // Give user a little hint as to what is going on. Useful for debuging.
-        Terminal.Write($"LineREL: opening file ");
+        Terminal.Write($"{prefix}: opening file ");
         Terminal.Write(inputFilePath, GfzCli.FileNameColor);
         Terminal.Write($" with region {options.SerializationRegion}. ");
+        Terminal.WriteLine();
 
         // Open file, set up writer, get action to patch file through writer
         GameCode gameCode = options.GetGameCode();
@@ -576,6 +580,8 @@ public static class ActionsLineREL
         Pointer pointer = info.CourseVenueIndex.Address + offset;
         writer.JumpToAddress(pointer);
         writer.Write(options.VenueIndex);
+
+        Terminal.WriteLine($"{prefix}: Patched stage index {options.CourseIndex} to venue {(GameCube.GFZ.GameData.VenueID)options.VenueIndex}.");
     }
     private static void PatchSetVenueName(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
