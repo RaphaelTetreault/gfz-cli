@@ -344,7 +344,7 @@ public static class ActionsEmblem
         // todo: blank banner!
         Texture[] icons = [iconTexture];
         Emblem emblem = new(emblemTexture);
-        EmblemGCI emblemGci = new(options.SerializationRegion);
+        EmblemGCI emblemGci = new(options.Region);
         options.ThrowIfInvalidRegion();
 
         // Get name for output file

@@ -1,4 +1,5 @@
-﻿using GameCube.GFZ.LZ;
+﻿using GameCube.AmusementVision.LZ;
+using GameCube.GFZ.LZ;
 using System.IO;
 using static Manifold.GFZCLI.GfzCliUtilities;
 
@@ -50,7 +51,6 @@ public static class ActionsLZ
         outputFile.PopExtension();
         if (CanWriteFileAndPrintResult(options, outputFile))
         {
-            // TODO: add LZ function in library to read from inputFilePath, decompress, save to outputFilePath
             using var stream = LzUtility.DecompressAvLz(inputFile);
             using var writer = File.Create(outputFile);
             writer.Write(stream.ToArray());
@@ -71,8 +71,8 @@ public static class ActionsLZ
         outputFile.PushExtension("lz");
         if (CanWriteFileAndPrintResult(options, outputFile))
         {
-            // TODO: add LZ function in library to read from inputFile, compress, save to outputFile
-            using var stream = LzUtility.CompressAvLz(inputFile, options.AvGame);
+            LzHeaderType lzHeaderType = Lz.GfzGameCodeToLzHeaderType(options.GameCode);
+            using var stream = LzUtility.CompressAvLz(inputFile, lzHeaderType);
             using var writer = File.Create(outputFile);
             writer.Write(stream.ToArray());
         }

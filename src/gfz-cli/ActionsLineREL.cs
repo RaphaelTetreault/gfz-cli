@@ -308,8 +308,6 @@ public static class ActionsLineREL
     };
 
     private const byte MaxDifficulty = 10;
-    private const byte MaxCourseIndex = GameDataConsts.MaxStageIndex;
-    private static readonly byte MaxVenueIndex = (byte)Enum.GetValues<GameCube.GFZ.GameData.VenueID>()[^1];
     private const byte MaxCupCourseIndex = 6;
     private const byte MinCupCourseIndex = 1;
 
@@ -332,11 +330,11 @@ public static class ActionsLineREL
         // Give user a little hint as to what is going on. Useful for debuging.
         Terminal.Write($"{prefix}: opening file ");
         Terminal.Write(inputFilePath, GfzCli.FileNameColor);
-        Terminal.Write($" with region {options.SerializationRegion}. ");
+        Terminal.Write($" with region {options.Region}. ");
         Terminal.WriteLine();
 
         // Open file, set up writer, get action to patch file through writer
-        GameCode gameCode = options.GetGameCode();
+        GameCode gameCode = options.GameCode;
         LineRelInfo info = LineRelLookup.GetInfo(gameCode);
         // Copy input to output if needed
         string newTempFile = CreateBackupFileIfAble(options, inputFilePath);
@@ -352,8 +350,9 @@ public static class ActionsLineREL
         {
             // Delete temp file if patch fails.
             File.Delete(newTempFile);
+            throw;
         }
-        
+
         Terminal.WriteLine();
     }
 
@@ -382,32 +381,32 @@ public static class ActionsLineREL
     private static void AssertCourseIndex(Options options)
     {
         // Validate index
-        if (options.CourseIndex > MaxCourseIndex)
+        if (options.CourseIndex > GameDataConsts.MaxStageIndex)
         {
-            string msg = $"Argument --{IOptionsLineRel.Args.StageIndex} must be a value in the range 0-{MaxCourseIndex}.";
+            string msg = $"Argument --{IOptionsLineRel.Args.StageIndex} must be a value in the range 0-{GameDataConsts.MaxStageIndex}.";
             throw new ArgumentException(msg);
         }
     }
     private static void AssertCourseIndexAllow0xFF(Options options)
     {
         // Validate index
-        bool isValidIndex = options.CourseIndex <= MaxCourseIndex;
+        bool isValidIndex = options.CourseIndex <= GameDataConsts.MaxStageIndex;
         bool isValidException = options.CourseIndex == 0xFF;
         bool isInvalid = !(isValidIndex || isValidException);
         if (isInvalid)
         {
             string msg =
                 $"Argument --{IOptionsLineRel.Args.StageIndex} " +
-                $"must be a value in the range 0-{MaxCourseIndex} or exactly {0xFF}.";
-            throw new ArgumentException(msg);
+                $"must be a value in the range 0-{GameDataConsts.MaxStageIndex} or exactly {0xFF}.";
+            throw new Exception(msg);
         }
     }
     private static void AssertVenueIndex(Options options)
     {
         // Validate index
-        if (options.VenueIndex > MaxVenueIndex)
+        if (options.VenueIndex > GameDataConsts.MaxVenueIndex)
         {
-            string msg = $"Argument --{IOptionsLineRel.Args.VenueIndex} must be a value in the range 0-{MaxVenueIndex}.";
+            string msg = $"Argument --{IOptionsLineRel.Args.VenueIndex} must be a value in the range 0-{GameDataConsts.MaxVenueIndex}.";
             throw new ArgumentException(msg);
         }
     }
@@ -447,7 +446,7 @@ public static class ActionsLineREL
         // Write file
         if (CanWriteFileAndPrintResult(options, outputFile))
         {
-            GameCode gameCode = options.GetGameCode();
+            GameCode gameCode = options.GameCode;
             var lookup = LineRelLookup.GetInfo(gameCode);
             using var stream = LineUtility.Crypt(inputFile, lookup);
             using var writer = File.Create(outputFile);
@@ -465,7 +464,20 @@ public static class ActionsLineREL
         OSPath lzOutputFile = new(lzInputFile);
 
         // Step 3: Decompress line__.rel.lz into line__.rel
-        ActionsLZ.LzDecompressFile(options, lzInputFile, lzOutputFile);
+        try
+        {
+            ActionsLZ.LzDecompressFile(options, lzInputFile, lzOutputFile);
+        }
+        catch (GameCube.AmusementVision.LZ.InvalidLzFileException)
+        {
+            string msg = $"Could not decompress input file {lzInputFile}. " +
+                $"Did you forget to specify the correct region code? " +
+                $"Consider adding -{IOptionsGfzCli.ArgsShort.Region} [e/j/p] " +
+                $"or --{IOptionsGfzCli.Args.Region} [e/j/p] to arguments. " +
+                $"Current region: {options.Region}.";
+            Terminal.WriteLine(msg, GfzCli.WarningColor);
+            throw;
+        }
     }
     public static void EncryptLine(Options options, OSPath inputFile, OSPath outputFile)
     {
@@ -520,7 +532,7 @@ public static class ActionsLineREL
         ShiftJisCString[] courseNames = GetCourseNames(info, reader);
 
         // Modify course name
-        int baseIndex = GetCourseNameBaseIndexByRegion(options.SerializationRegion);
+        int baseIndex = GetCourseNameBaseIndexByRegion(options.Region);
         int courseIndex = baseIndex + options.CourseIndex * info.CourseNameLanguages;
         // Convert all escape sequences into Unicode characters
         string editedCourseName = Regex.Unescape(options.Value);
@@ -554,7 +566,7 @@ public static class ActionsLineREL
 
         ShiftJisCString[] courseNames = GetCourseNames(info, reader);
 
-        int skipIndex = GetCourseNameBaseIndexByRegion(options.SerializationRegion);
+        int skipIndex = GetCourseNameBaseIndexByRegion(options.Region);
         for (int i = 0; i < courseNames.Length; i++)
         {
             int languageIndex = i % info.CourseNameLanguages;
@@ -581,7 +593,7 @@ public static class ActionsLineREL
         writer.JumpToAddress(pointer);
         writer.Write(options.VenueIndex);
 
-        Terminal.WriteLine($"{prefix}: Patched stage index {options.CourseIndex} to venue {(GameCube.GFZ.GameData.VenueID)options.VenueIndex}.");
+        Terminal.WriteLine($"{prefix}: Patched stage index {options.CourseIndex} to venue {(VenueID)options.VenueIndex}.");
     }
     private static void PatchSetVenueName(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
@@ -646,7 +658,7 @@ public static class ActionsLineREL
         AssertCourseIndexAllow0xFF(options);
 
         // Get needed data
-        Cup cup = options.Cup;
+        CupIndex cup = options.Cup;
         byte cupCourseIndex = (byte)(options.CupCourseIndex - 1);
         ushort courseIndex = options.CourseIndex == 0xFF
             ? (ushort)0xFFFF
@@ -736,7 +748,7 @@ public static class ActionsLineREL
         writer.Write(maxSpeed);
     }
 
-    private static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, Cup cup, byte cupCourseIndex, ushort courseIndex)
+    private static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
     {
         Pointer initialAddress = writer.GetPositionAsPointer();
 
@@ -749,11 +761,11 @@ public static class ActionsLineREL
 
         writer.JumpToAddress(initialAddress);
     }
-    private static void PatchCupCourseIndex(EndianBinaryWriter writer, LineRelInfo info, Cup cup, byte cupCourseIndex, ushort courseIndex)
+    private static void PatchCupCourseIndex(EndianBinaryWriter writer, LineRelInfo info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
         => PatchCupData(writer, info.CupCourseLut.Address, cup, cupCourseIndex, courseIndex);
-    private static void PatchCupCourseGmaTplReference(EndianBinaryWriter writer, LineRelInfo info, Cup cup, byte cupCourseIndex, ushort courseIndex)
+    private static void PatchCupCourseGmaTplReference(EndianBinaryWriter writer, LineRelInfo info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
         => PatchCupData(writer, info.CupCourseLutAssets.Address, cup, cupCourseIndex, courseIndex);
-    private static void PatchCupCourseUnknown(EndianBinaryWriter writer, LineRelInfo info, Cup cup, byte cupCourseIndex, ushort courseIndex)
+    private static void PatchCupCourseUnknown(EndianBinaryWriter writer, LineRelInfo info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
         => PatchCupData(writer, info.CupCourseLutUnk.Address, cup, cupCourseIndex, courseIndex);
 
     private static int ClearStringTable(Options options, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)

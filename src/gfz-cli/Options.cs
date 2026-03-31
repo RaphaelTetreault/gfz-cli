@@ -40,11 +40,39 @@ public class Options :
     public string SearchPattern { get => WithoutQuotes(field); set; } = string.Empty;
     public bool SearchSubdirectories { get; set; } = false;
     public SearchOption SearchOption => SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-    public string SerializationFormat { get => WithoutQuotes(field); set; } = "gx";
-    public SerializeFormat SerializeFormat => Enum.Parse<SerializeFormat>(SerializationFormat, true);
-    public AvGame AvGame => GetAvFormat(SerializeFormat);
-    public string SerializationRegionStr { get => WithoutQuotes(field); set; } = "J";
-    public Region SerializationRegion => GetRegion(SerializationRegionStr);
+
+
+    private const GameCode DefaultGameCode = GameCode.GFZJ01;
+    public string GameCodeStr { get => WithoutQuotes(field); set; } = $"{DefaultGameCode}";
+    public GameCode GameCode => Enum.Parse<GameCode>(GameCodeStr, true);
+    public GameCodeFields GcfRegion => GameCodeUtility.GetRegion(GameCode);
+    public GameCodeFields GcfGame => GameCodeUtility.GetGame(GameCode);
+
+    public SerializeFormat SerializeFormat => GameCodeToSerializeFormat(GameCode);
+    public Region Region => GameCodeToRegion(GameCode);
+    public string SetGameCodeGame
+    {
+        set
+        {
+            GameCodeFields game = StringToGame(value);
+            GameCode gameCode = GameCodeUtility.SetGame(GameCode, game);
+            GameCodeStr = gameCode.ToString();
+        }
+    }
+    public string SetGameCodeRegion
+    {
+        set
+        {
+            GameCodeFields region = StringToRegion(value);
+            GameCode gameCode = GameCodeUtility.SetRegion(GameCode, region);
+            GameCodeStr = gameCode.ToString();
+        }
+    }
+
+    //public string SerializationFormat { get => WithoutQuotes(field); set; } = "gx";
+    //public SerializeFormat SerializeFormat => Enum.Parse<SerializeFormat>(SerializationFormat, true);
+    //public string SerializationRegionStr { get => WithoutQuotes(field); set; } = "J";
+    //public Region SerializationRegion => GetRegion(SerializationRegionStr);
 
     // IAssetsOptions
     public string AssetLibraryRoot { get => WithoutQuotes(field); set; } = string.Empty;
@@ -108,7 +136,7 @@ public class Options :
     public byte BgmIndex { get; set; } = IOptionsLineRel.Arguments.BgmIndex.Default<byte>();
     public byte BgmFinalLapIndex { get; set; } = IOptionsLineRel.Arguments.BgmFinalLapIndex.Default<byte>();
     public byte CourseIndex { get; set; } = IOptionsLineRel.Arguments.StageIndex.Default<byte>();
-    public Cup Cup { get; set; } = IOptionsLineRel.Arguments.Cup.Default<Cup>();
+    public CupIndex Cup { get; set; } = IOptionsLineRel.Arguments.Cup.Default<CupIndex>();
     public byte CupCourseIndex { get; set; } = IOptionsLineRel.Arguments.CupStageIndex.Default<byte>();
     public byte Difficulty { get; set; } = IOptionsLineRel.Arguments.Difficulty.Default<byte>();
     public byte PilotNumber { get; set; } = IOptionsLineRel.Arguments.PilotNumber.Default<byte>();
@@ -137,27 +165,7 @@ public class Options :
     [Option(Args.Value, Hidden = true)]
     public string Value { get => WithoutQuotes(field); set; } = string.Empty;
 
-
-    /// <summary>
-    ///     Converts <paramref name="serializeFormat"/> into appropriate <cref>AvGame</cref> enum.
-    /// </summary>
-    /// <param name="serializeFormat"></param>
-    /// <returns>
-    ///     
-    /// </returns>
-    /// <exception cref="ArgumentException"></exception>
-    private static AvGame GetAvFormat(SerializeFormat serializeFormat)
-    {
-        switch (serializeFormat)
-        {
-            case SerializeFormat.AX: return AvGame.FZeroAX;
-            case SerializeFormat.GX: return AvGame.FZeroGX;
-            default:
-                string msg = $"No {nameof(SerializeFormat)} \"{serializeFormat}\" defined.";
-                throw new ArgumentException(msg);
-        }
-    }
-    private static Region GetRegion(string regionStr)
+    private static GameCodeFields StringToRegion(string regionStr)
     {
         string regionStrClean = regionStr.ToUpper();
 
@@ -166,58 +174,98 @@ public class Options :
             case "J":
             //case "JAPAN":
             case "JP":
-            //case "JPN":
-            //case "NTSCJ":
-            //case "NTSC-J":
-                return Region.Japan;
+                //case "JPN":
+                //case "NTSCJ":
+                //case "NTSC-J":
+                return GameCodeFields.Japan;
 
             case "E":
             case "NA":
-            //case "NTSCE":
-            //case "NTSC-E":
-            //case "US":
-            //case "USA":
-                return Region.NorthAmerica;
+                //case "NTSCE":
+                //case "NTSC-E":
+                //case "US":
+                //case "USA":
+                return GameCodeFields.NorthAmerica;
 
             case "P":
             case "EU":
-            //case "EUROPE":
-            //case "PAL":
-                return Region.Europe;
+                //case "EUROPE":
+                //case "PAL":
+                return GameCodeFields.Europe;
 
             default:
-                string msg = $"Could not parge {nameof(Region)} \"{regionStr}\"";
+                string msg = $"Could not parse {nameof(GameCube.DiskImage.Region)} \"{regionStr}\"";
                 throw new ArgumentException(msg);
         }
     }
-    public static GameCode GetGameCode(AvGame avGame, Region region)
+    private static GameCodeFields StringToGame(string gameStr)
     {
-        GameCode code = 0;
+        string gameStrClean = gameStr.ToUpper();
 
-        // Add region
-        code += region switch
+        switch (gameStrClean)
         {
-            Region.Japan => (int)GameCodeFields.Japan,
-            Region.NorthAmerica => (int)GameCodeFields.NorthAmerica,
-            Region.Europe => (int)GameCodeFields.Europe,
-            Region.RegionFree => throw new ArgumentException(region.ToString()),
-            _ => throw new NotImplementedException(region.ToString()),
-        };
-
-        // Add game
-        code += avGame switch
-        {
-            AvGame.FZeroAX => (int)GameCodeFields.AX,
-            AvGame.FZeroGX => (int)GameCodeFields.GX,
-            AvGame.SuperMonkeyBall or
-            AvGame.SuperMonkeyBallDX => throw new ArgumentException(avGame.ToString()),
-            _ => throw new NotImplementedException(avGame.ToString()),
-        };
-        return code;
+            case "AX": return GameCodeFields.AX;
+            case "GX": return GameCodeFields.GX;
+            default:
+                string msg = $"Expected value \"AX\" or \"GX\". Value provided: \"{gameStrClean}\"";
+                throw new ArgumentException(msg);
+        }
     }
+    private static Region GameCodeToRegion(GameCode gameCode)
+    {
+        return gameCode switch
+        {
+            GameCode.GFZE01 => Region.NorthAmerica,
+            GameCode.GFZJ01 => Region.Japan,
+            GameCode.GFZP01 => Region.Europe,
+            GameCode.GFZJ8P or
+            GameCode.GGGE6E => Region.NorthAmerica,
+            _ => throw new NotImplementedException($"Unhandled {nameof(GameCode)} {gameCode}."),
+        };
+    }
+    private static SerializeFormat GameCodeToSerializeFormat(GameCode gameCode)
+    {
+        return gameCode switch
+        {
+            GameCode.GFZE01 or
+            GameCode.GFZJ01 or
+            GameCode.GFZP01 => SerializeFormat.GX,
+            GameCode.GFZJ8P or
+            GameCode.GGGE6E => SerializeFormat.AX,
+            _ => throw new NotImplementedException($"Unhandled {nameof(GameCode)} {gameCode}."),
+        };
+    }
+
+    //private static GameCode GetGameCode(SerializeFormat format, Region region)
+    //{
+    //    GameCode code = 0;
+    //    // Add region
+    //    code += region switch
+    //    {
+    //        Region.Japan => (int)GameCodeFields.Japan,
+    //        Region.NorthAmerica => (int)GameCodeFields.NorthAmerica,
+    //        Region.Europe => (int)GameCodeFields.Europe,
+    //        Region.RegionFree => throw new ArgumentException($"{region}"),
+    //        _ => throw new NotImplementedException($"{region}"),
+    //    };
+    //    // Add format
+    //    code += format switch
+    //    {
+    //        SerializeFormat.AX => (int)GameCodeFields.AX,
+    //        SerializeFormat.GX => (int)GameCodeFields.GX,
+    //        _ => throw new NotImplementedException($"{format}"),
+    //    };
+    //    return code;
+    //}
+    //public GameCode GetGameCode()
+    //{
+    //    GameCode gameCode = GetGameCode(SerializeFormat, Region);
+    //    return gameCode;
+    //}
+
     public void ThrowIfInvalidRegion()
     {
-        switch (SerializationRegion)
+        switch (Region)
         {
             case Region.Japan:
             case Region.NorthAmerica:
@@ -225,15 +273,11 @@ public class Options :
                 return;
 
             default:
-                string msg = $"Invalid region \"{SerializationRegionStr}\".";
+                string msg = $"Invalid region \"{Region}\".";
                 throw new ArgumentException(msg);
         }
     }
-    public GameCode GetGameCode()
-    {
-        GameCode gameCode = GetGameCode(AvGame, SerializationRegion);
-        return gameCode;
-    }
+
 
     public void OverrideSearchPatternIfUnset(string overrideSearchPattern)
     {

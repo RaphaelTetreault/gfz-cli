@@ -140,7 +140,7 @@ public static class ActionsCarData
             // Create new file (actual output file)
             using var cardataFile = File.Create(outputFile);
             // Compress memory stream into file stream
-            GameCube.AmusementVision.LZ.Lz.Pack(writer.BaseStream, cardataFile, options.AvGame);
+            GameCube.AmusementVision.LZ.Lz.Pack(writer.BaseStream, cardataFile, options.GameCode);
         }
     }
 }

@@ -47,8 +47,8 @@ public interface IOptionsLineRel
         internal static readonly GfzCliArgument Cup = new()
         {
             ArgumentName = Args.Cup,
-            ArgumentType = typeof(Cup).Name,
-            ArgumentDefault = (Cup)255, // default to invalid state
+            ArgumentType = typeof(CupIndex).Name,
+            ArgumentDefault = (CupIndex)255, // default to invalid state
             Help = "Grand prix cup index.",
         };
 
@@ -135,7 +135,7 @@ public interface IOptionsLineRel
     ///     The cup which references a number of stages (typically 5).
     /// </summary>
     [Option(Args.Cup, Hidden = true)]
-    public Cup Cup { get; set; }
+    public CupIndex Cup { get; set; }
 
     /// <summary>
     ///     The cup which references a number of stages (typically 5).

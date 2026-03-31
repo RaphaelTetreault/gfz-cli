@@ -169,7 +169,7 @@ public readonly record struct GfzCliAction()
                 case CliActionOption.P: builder.Append(IOptionsGfzCli.ArgsShort.SearchPattern); break;
                 case CliActionOption.S: builder.Append(IOptionsGfzCli.ArgsShort.SearchSubdirectories); break;
                 case CliActionOption.F: builder.Append(IOptionsGfzCli.ArgsShort.SerializationFormat); break;
-                case CliActionOption.R: builder.Append(IOptionsGfzCli.ArgsShort.SerializationRegion); break;
+                case CliActionOption.R: builder.Append(IOptionsGfzCli.ArgsShort.Region); break;
                 default: throw new NotImplementedException(option.ToString());
             }
         }

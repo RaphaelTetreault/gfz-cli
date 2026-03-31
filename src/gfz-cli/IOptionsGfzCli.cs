@@ -13,7 +13,7 @@ public interface IOptionsGfzCli
         public const char SearchPattern = 'p';
         public const char SearchSubdirectories = 's';
         public const char SerializationFormat = 'f';
-        public const char SerializationRegion = 'r';
+        public const char Region = 'r';
     }
 
     internal static class Args
@@ -27,7 +27,7 @@ public interface IOptionsGfzCli
         public const string SearchPattern = "search-pattern";
         public const string SearchSubdirectories = "search-subdirs";
         public const string SerializationFormat = "format";
-        public const string SerializationRegion = "region";
+        public const string Region = "region";
     }
 
     internal static class Help
@@ -59,7 +59,7 @@ public interface IOptionsGfzCli
         public const string SerializationFormat =
             "The format used when serializing.\n" +
             "Options: \"ax\", \"gx\". Set to \"gx\" by default.";
-        public const string SerializationRegion =
+        public const string Region =
             "The region used when serializing.\n" +
             "Options: \"J\" (JP), \"E\" (NA), \"P\" (EU). Set to \"J\" by default.";
     }
@@ -117,7 +117,7 @@ public interface IOptionsGfzCli
     ///     Which game to serialize.
     /// </summary>
     [Option(ArgsShort.SerializationFormat, Args.SerializationFormat, HelpText = Help.SerializationFormat)]
-    public string SerializationFormat { get; set; }
+    public string SetGameCodeRegion { set; }
 
     /// <summary>
     ///     Which game to serialize.
@@ -128,12 +128,12 @@ public interface IOptionsGfzCli
     ///     Input string for enum.
     ///     Which region to serialize to.
     /// </summary>
-    [Option(ArgsShort.SerializationRegion, Args.SerializationRegion, HelpText = Help.SerializationRegion)]
-    public string SerializationRegionStr { get; set; }
+    [Option(ArgsShort.Region, Args.Region, HelpText = Help.Region)]
+    public string SetGameCodeGame { set; }
 
     /// <summary>
     ///     Which region to serialize to.
     /// </summary>
-    public Region SerializationRegion { get; }
+    public Region Region { get; }
 
 }
