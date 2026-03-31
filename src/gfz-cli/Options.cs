@@ -47,24 +47,23 @@ public class Options :
     public GameCode GameCode => Enum.Parse<GameCode>(GameCodeStr, true);
     public GameCodeFields GcfRegion => GameCodeUtility.GetRegion(GameCode);
     public GameCodeFields GcfGame => GameCodeUtility.GetGame(GameCode);
-
     public SerializeFormat SerializeFormat => GameCodeToSerializeFormat(GameCode);
     public Region Region => GameCodeToRegion(GameCode);
-    public string SetGameCodeGame
-    {
-        set
-        {
-            GameCodeFields game = StringToGame(value);
-            GameCode gameCode = GameCodeUtility.SetGame(GameCode, game);
-            GameCodeStr = gameCode.ToString();
-        }
-    }
     public string SetGameCodeRegion
     {
         set
         {
             GameCodeFields region = StringToRegion(value);
             GameCode gameCode = GameCodeUtility.SetRegion(GameCode, region);
+            GameCodeStr = gameCode.ToString();
+        }
+    }
+    public string SetGameCodeGame
+    {
+        set
+        {
+            GameCodeFields game = StringToGame(value);
+            GameCode gameCode = GameCodeUtility.SetGame(GameCode, game);
             GameCodeStr = gameCode.ToString();
         }
     }
@@ -235,34 +234,6 @@ public class Options :
             _ => throw new NotImplementedException($"Unhandled {nameof(GameCode)} {gameCode}."),
         };
     }
-
-    //private static GameCode GetGameCode(SerializeFormat format, Region region)
-    //{
-    //    GameCode code = 0;
-    //    // Add region
-    //    code += region switch
-    //    {
-    //        Region.Japan => (int)GameCodeFields.Japan,
-    //        Region.NorthAmerica => (int)GameCodeFields.NorthAmerica,
-    //        Region.Europe => (int)GameCodeFields.Europe,
-    //        Region.RegionFree => throw new ArgumentException($"{region}"),
-    //        _ => throw new NotImplementedException($"{region}"),
-    //    };
-    //    // Add format
-    //    code += format switch
-    //    {
-    //        SerializeFormat.AX => (int)GameCodeFields.AX,
-    //        SerializeFormat.GX => (int)GameCodeFields.GX,
-    //        _ => throw new NotImplementedException($"{format}"),
-    //    };
-    //    return code;
-    //}
-    //public GameCode GetGameCode()
-    //{
-    //    GameCode gameCode = GetGameCode(SerializeFormat, Region);
-    //    return gameCode;
-    //}
-
     public void ThrowIfInvalidRegion()
     {
         switch (Region)
@@ -277,7 +248,15 @@ public class Options :
                 throw new ArgumentException(msg);
         }
     }
-
+    public void PrintGameCodeDebugMsg()
+    {
+        Terminal.Write($"{nameof(GameCode)}:", GfzCli.FileNameColor);
+        Terminal.Write($"{GameCode}  ");
+        Terminal.Write($"{nameof(Region)}:", GfzCli.FileNameColor);
+        Terminal.Write($"{Region}  ");
+        Terminal.Write($"{nameof(SerializeFormat)}:", GfzCli.FileNameColor);
+        Terminal.Write($"{SerializeFormat} \n");
+    }
 
     public void OverrideSearchPatternIfUnset(string overrideSearchPattern)
     {

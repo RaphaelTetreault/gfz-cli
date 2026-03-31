@@ -455,6 +455,15 @@ public static class ActionsLineREL
     }
     public static void DecryptLine(Options options, OSPath inputFile, OSPath outputFile)
     {
+        // Skip processing for AX
+        if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFields.AX)
+        {
+            string msg = $"AX does not support {options.ActionStr} action. ";
+            Terminal.WriteLine(msg, GfzCli.WarningColor);
+            options.PrintGameCodeDebugMsg();
+            return;
+        }
+
         // Step 1: Decrypt line__.bin into line__.rel.lz
         CryptLine(options, inputFile, outputFile, "rel.lz");
 
@@ -481,6 +490,15 @@ public static class ActionsLineREL
     }
     public static void EncryptLine(Options options, OSPath inputFile, OSPath outputFile)
     {
+        // Skip processing for AX
+        if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFields.AX)
+        {
+            string msg = $"AX does not support {options.ActionStr} action. ";
+            Terminal.WriteLine(msg, GfzCli.WarningColor);
+            options.PrintGameCodeDebugMsg();
+            return;
+        }
+
         // Step 1: Compress line__.rel to line__.rel.lz
         ActionsLZ.LzCompressFile(options, inputFile, outputFile);
 

@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using GameCube.DiskImage;
+using GameCube.GFZ;
 using GameCube.GFZ.Stage;
 using System.IO;
 
@@ -12,6 +13,7 @@ public interface IOptionsGfzCli
         public const char OverwriteFiles = 'o';
         public const char SearchPattern = 'p';
         public const char SearchSubdirectories = 's';
+        public const char GameCode = 'g';
         public const char SerializationFormat = 'f';
         public const char Region = 'r';
     }
@@ -26,6 +28,7 @@ public interface IOptionsGfzCli
         public const string OverwriteFiles = "overwrite";
         public const string SearchPattern = "search-pattern";
         public const string SearchSubdirectories = "search-subdirs";
+        public const string GameCode = "game";
         public const string SerializationFormat = "format";
         public const string Region = "region";
     }
@@ -37,8 +40,9 @@ public interface IOptionsGfzCli
         //    "\tEnabled only when called.";
         public const string Action =
             "The action to perform.\n" +
-            "Call \"usage\" for a complete list of actions.\n" +
-            "Call \"usage [action]\" for specific action usage.";
+            "Call \"list\" for a simple list of actions.\n" +
+            "Call \"usage\" for a detailed list of actions.\n" +
+            "Call \"usage [action]\" for specific action details.";
         public const string InputPath =
             "The input path to a file or folder for the specified action.\n" +
             "Most actions support both.";
@@ -56,12 +60,18 @@ public interface IOptionsGfzCli
         public const string SearchSubdirectories =
             "Whether or not to search subdirectories for files when using the directory mode.\n" +
             "Enabled only when called.";
+        public const string GameCode =
+            "Which game's files are being managed.\n" +
+            "Options: \"gfzj01\", \"gfze01\", \"gfzp01\", \"ggge6e\".\n" +
+            "Set to \"gfzj01\" by default.";
         public const string SerializationFormat =
             "The format used when serializing.\n" +
-            "Options: \"ax\", \"gx\". Set to \"gx\" by default.";
+            "Options: \"ax\", \"gx\".\n" +
+            "Set to \"gx\" by default.";
         public const string Region =
             "The region used when serializing.\n" +
-            "Options: \"J\" (JP), \"E\" (NA), \"P\" (EU). Set to \"J\" by default.";
+            "Options: \"j\" (jp), \"e\" (na), \"p\" (eu).\n" +
+            "Set to \"p\" by default.";
     }
 
     /// <summary>
@@ -116,8 +126,20 @@ public interface IOptionsGfzCli
     ///     Input string for enum.
     ///     Which game to serialize.
     /// </summary>
+    [Option(ArgsShort.GameCode, Args.GameCode, HelpText = Help.GameCode)]
+    public string GameCodeStr { get;  set; }
+
+    /// <summary>
+    ///     Which game to serialize.
+    /// </summary>
+    public GameCode GameCode { get; }
+
+    /// <summary>
+    ///     Input string for enum.
+    ///     Which game to serialize.
+    /// </summary>
     [Option(ArgsShort.SerializationFormat, Args.SerializationFormat, HelpText = Help.SerializationFormat)]
-    public string SetGameCodeRegion { set; }
+    public string SetGameCodeGame { set; }
 
     /// <summary>
     ///     Which game to serialize.
@@ -129,7 +151,7 @@ public interface IOptionsGfzCli
     ///     Which region to serialize to.
     /// </summary>
     [Option(ArgsShort.Region, Args.Region, HelpText = Help.Region)]
-    public string SetGameCodeGame { set; }
+    public string SetGameCodeRegion { set; }
 
     /// <summary>
     ///     Which region to serialize to.
