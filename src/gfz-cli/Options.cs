@@ -48,7 +48,7 @@ public class Options :
     {
         set
         {
-            GameCodeFields region = StringToRegion(value);
+            GameCodeFlags region = StringToRegion(value);
             GameCode gameCode = GameCodeUtility.SetRegion(GameCode, region);
             GameCodeStr = gameCode.ToString();
         }
@@ -57,14 +57,14 @@ public class Options :
     {
         set
         {
-            GameCodeFields game = StringToGame(value);
+            GameCodeFlags game = StringToGame(value);
             GameCode gameCode = GameCodeUtility.SetGame(GameCode, game);
             GameCodeStr = gameCode.ToString();
         }
     }
     public GameCode GameCode => Enum.Parse<GameCode>(GameCodeStr, true);
-    public GameCodeFields GcfRegion => GameCodeUtility.GetRegion(GameCode);
-    public GameCodeFields GcfGame => GameCodeUtility.GetGame(GameCode);
+    public GameCodeFlags GcfRegion => GameCodeUtility.GetRegion(GameCode);
+    public GameCodeFlags GcfGame => GameCodeUtility.GetGame(GameCode);
     public Region Region => GameCodeToRegion(GameCode);
     public SerializeFormat SerializeFormat => GameCodeToSerializeFormat(GameCode);
 
@@ -160,7 +160,7 @@ public class Options :
     [Option(Args.Value, Hidden = true)]
     public string Value { get => WithoutQuotes(field); set; } = string.Empty;
 
-    private static GameCodeFields StringToRegion(string regionStr)
+    private static GameCodeFlags StringToRegion(string regionStr)
     {
         string regionStrClean = regionStr.ToUpper();
 
@@ -172,7 +172,7 @@ public class Options :
                 //case "JPN":
                 //case "NTSCJ":
                 //case "NTSC-J":
-                return GameCodeFields.Japan;
+                return GameCodeFlags.Japan;
 
             case "E":
             case "NA":
@@ -180,27 +180,27 @@ public class Options :
                 //case "NTSC-E":
                 //case "US":
                 //case "USA":
-                return GameCodeFields.NorthAmerica;
+                return GameCodeFlags.NorthAmerica;
 
             case "P":
             case "EU":
                 //case "EUROPE":
                 //case "PAL":
-                return GameCodeFields.Europe;
+                return GameCodeFlags.Europe;
 
             default:
                 string msg = $"Could not parse {nameof(GameCube.DiskImage.Region)} \"{regionStr}\"";
                 throw new ArgumentException(msg);
         }
     }
-    private static GameCodeFields StringToGame(string gameStr)
+    private static GameCodeFlags StringToGame(string gameStr)
     {
         string gameStrClean = gameStr.ToUpper();
 
         switch (gameStrClean)
         {
-            case "AX": return GameCodeFields.AX;
-            case "GX": return GameCodeFields.GX;
+            case "AX": return GameCodeFlags.AX;
+            case "GX": return GameCodeFlags.GX;
             default:
                 string msg = $"Expected value \"AX\" or \"GX\". Value provided: \"{gameStrClean}\"";
                 throw new ArgumentException(msg);

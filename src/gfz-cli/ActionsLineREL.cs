@@ -456,7 +456,7 @@ public static class ActionsLineREL
     public static void DecryptLine(Options options, OSPath inputFile, OSPath outputFile)
     {
         // Skip processing for AX
-        if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFields.AX)
+        if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFlags.AX)
         {
             string msg = $"AX does not support {options.ActionStr} action. ";
             Terminal.WriteLine(msg, GfzCli.WarningColor);
@@ -491,7 +491,7 @@ public static class ActionsLineREL
     public static void EncryptLine(Options options, OSPath inputFile, OSPath outputFile)
     {
         // Skip processing for AX
-        if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFields.AX)
+        if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFlags.AX)
         {
             string msg = $"AX does not support {options.ActionStr} action. ";
             Terminal.WriteLine(msg, GfzCli.WarningColor);
