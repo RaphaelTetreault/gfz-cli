@@ -139,7 +139,7 @@ public interface IOptionsGfzCli
     ///     Which game to serialize.
     /// </summary>
     [Option(ArgsShort.SerializationFormat, Args.SerializationFormat, HelpText = Help.SerializationFormat)]
-    public string SetGameCodeGame { set; }
+    public string GameCodeGame { set; }
 
     /// <summary>
     ///     Which game to serialize.
@@ -151,7 +151,7 @@ public interface IOptionsGfzCli
     ///     Which region to serialize to.
     /// </summary>
     [Option(ArgsShort.Region, Args.Region, HelpText = Help.Region)]
-    public string SetGameCodeRegion { set; }
+    public string GameCodeRegion { set; }
 
     /// <summary>
     ///     Which region to serialize to.

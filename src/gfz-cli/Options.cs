@@ -44,12 +44,7 @@ public class Options :
 
     private const GameCode DefaultGameCode = GameCode.GFZJ01;
     public string GameCodeStr { get => WithoutQuotes(field); set; } = $"{DefaultGameCode}";
-    public GameCode GameCode => Enum.Parse<GameCode>(GameCodeStr, true);
-    public GameCodeFields GcfRegion => GameCodeUtility.GetRegion(GameCode);
-    public GameCodeFields GcfGame => GameCodeUtility.GetGame(GameCode);
-    public SerializeFormat SerializeFormat => GameCodeToSerializeFormat(GameCode);
-    public Region Region => GameCodeToRegion(GameCode);
-    public string SetGameCodeRegion
+    public string GameCodeRegion
     {
         set
         {
@@ -58,7 +53,7 @@ public class Options :
             GameCodeStr = gameCode.ToString();
         }
     }
-    public string SetGameCodeGame
+    public string GameCodeGame
     {
         set
         {
@@ -67,11 +62,12 @@ public class Options :
             GameCodeStr = gameCode.ToString();
         }
     }
+    public GameCode GameCode => Enum.Parse<GameCode>(GameCodeStr, true);
+    public GameCodeFields GcfRegion => GameCodeUtility.GetRegion(GameCode);
+    public GameCodeFields GcfGame => GameCodeUtility.GetGame(GameCode);
+    public Region Region => GameCodeToRegion(GameCode);
+    public SerializeFormat SerializeFormat => GameCodeToSerializeFormat(GameCode);
 
-    //public string SerializationFormat { get => WithoutQuotes(field); set; } = "gx";
-    //public SerializeFormat SerializeFormat => Enum.Parse<SerializeFormat>(SerializationFormat, true);
-    //public string SerializationRegionStr { get => WithoutQuotes(field); set; } = "J";
-    //public Region SerializationRegion => GetRegion(SerializationRegionStr);
 
     // IAssetsOptions
     public string AssetLibraryRoot { get => WithoutQuotes(field); set; } = string.Empty;
