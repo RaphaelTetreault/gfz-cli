@@ -517,15 +517,21 @@ public static class ActionsLineREL
         byte courseIndex = options.CourseIndex;
         byte bgmIndex = options.BgmIndex;
         LineUtility.PatchCourseBgm(writer, info, courseIndex, bgmIndex);
-        Terminal.Write($"Set course {courseIndex} bgm to {bgmIndex} ({(Bgm)bgmIndex}).");
+        Terminal.Write($"Set course {courseIndex} bgm to {bgmIndex} ({(BgmIndex)bgmIndex}).");
     }
     private static void PatchBgmFinalLap(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        // Patch BGM FL
+        // Prepare BGM FL data
         byte courseIndex = options.CourseIndex;
         byte bgmflIndex = options.BgmFinalLapIndex;
-        LineUtility.PatchCourseBgmFinalLap(writer, info, courseIndex, bgmflIndex);
-        Terminal.Write($"Set course {courseIndex} final lap bgm to {bgmflIndex} ({(Bgm)bgmflIndex}).");
+        BgmFinalLap bgmfl = new()
+        {
+            songIndex = bgmflIndex,
+            loopPointDataOffset = BgmMusicDB.GetBgmLoopPointOffset(bgmflIndex),
+        };
+        // Patch
+        LineUtility.PatchStageBgmFinalLap(writer, info, courseIndex, bgmfl);
+        Terminal.Write($"Set course {courseIndex} final lap bgm to {bgmflIndex} ({(BgmIndex)bgmflIndex}).");
     }
     private static void PatchBgmBoth(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
@@ -611,7 +617,7 @@ public static class ActionsLineREL
         writer.JumpToAddress(pointer);
         writer.Write(options.VenueIndex);
 
-        Terminal.WriteLine($"{prefix}: Patched stage index {options.CourseIndex} to venue {(VenueID)options.VenueIndex}.");
+        Terminal.WriteLine($"{prefix}: Patched stage index {options.CourseIndex} to venue {(VenueIndex)options.VenueIndex}.");
     }
     private static void PatchSetVenueName(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
