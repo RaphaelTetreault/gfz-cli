@@ -1,0 +1,134 @@
+﻿using SixLabors.ImageSharp;
+
+namespace Manifold.GfzCli;
+
+/// <summary>
+///     Simple interface for color type as both 4-component and individual components.
+/// </summary>
+/// <remarks>
+///     Usage: have other dependent interfaces implement this and apply CommandLine
+///     Options attribute as necessary.
+/// </remarks>
+public interface IOptionsColor
+{
+    public static class Arguments
+    {
+        private static readonly string ColorComponentType = $"{typeof(byte).Name}|Hex|{typeof(float).Name}";
+
+        internal static readonly GfzCliArgument Color = new()
+        {
+            ArgumentName = string.Empty,
+            ArgumentType = $"{typeof(Color).Name}",
+            ArgumentDefault = "00000000",
+            Help = "The color's hexadecimal value. Can be defined via each component individually.",
+        };
+        internal static readonly GfzCliArgument ColorR = new()
+        {
+            ArgumentName = string.Empty,
+            ArgumentType = ColorComponentType,
+            ArgumentDefault = null,
+            Help = "The color's red value.",
+        };
+        internal static readonly GfzCliArgument ColorG = new()
+        {
+            ArgumentName = string.Empty,
+            ArgumentType = ColorComponentType,
+            ArgumentDefault = null,
+            Help = "The color's green value.",
+        };
+        internal static readonly GfzCliArgument ColorB = new()
+        {
+            ArgumentName = string.Empty,
+            ArgumentType = ColorComponentType,
+            ArgumentDefault = null,
+            Help = "The color's blue value.",
+        };
+        internal static readonly GfzCliArgument ColorA = new()
+        {
+            ArgumentName = string.Empty,
+            ArgumentType = ColorComponentType,
+            ArgumentDefault = null,
+            Help = "The color's alpha value.",
+        };
+    }
+
+    /// <summary>
+    ///     The color's value.
+    /// </summary>
+    public string ColorStr { get; set; }
+
+    /// <summary>
+    ///     The color's value.
+    /// </summary>
+    public Color Color { get; }
+
+    /// <summary>
+    ///     The color's value either from <see cref="ColorStr"/> or
+    ///     individual color components.
+    /// </summary>
+    public Color UnionColor { get; }
+
+    /// <summary>
+    ///     The color's red value.
+    /// </summary>
+    public string ColorRStr { get; set; }
+
+    /// <summary>
+    ///     The color's red value.
+    /// </summary>
+    public byte ColorR { get; }
+
+    /// <summary>
+    ///     The color's R value either from <see cref="ColorStr"/> or
+    ///     individual color components.
+    /// </summary>
+    public byte UnionColorR { get; }
+
+    /// <summary>
+    ///     The color's green value.
+    /// </summary>
+    public string ColorGStr { get; set; }
+
+    /// <summary>
+    ///     The color's green value.
+    /// </summary>
+    public byte ColorG { get; }
+
+    /// <summary>
+    ///     The color's G value either from <see cref="ColorStr"/> or
+    ///     individual color components.
+    /// </summary>
+    public byte UnionColorG { get; }
+
+    /// <summary>
+    ///     The color's blue value.
+    /// </summary>
+    public string ColorBStr { get; set; }
+
+    /// <summary>
+    ///     The color's blue value.
+    /// </summary>
+    public byte ColorB { get; }
+
+    /// <summary>
+    ///     The color's B value either from <see cref="ColorStr"/> or
+    ///     individual color components.
+    /// </summary>
+    public byte UnionColorB { get; }
+
+    /// <summary>
+    ///     The color's alpha value.
+    /// </summary>
+    public string ColorAStr { get; set; }
+
+    /// <summary>
+    ///     The color's alpha value.
+    /// </summary>
+    public byte ColorA { get; }
+
+    /// <summary>
+    ///     The color's A value either from <see cref="ColorStr"/> or
+    ///     individual color components.
+    /// </summary>
+    public byte UnionColorA { get; }
+}
