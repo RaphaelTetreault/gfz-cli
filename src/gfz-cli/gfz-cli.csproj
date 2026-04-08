@@ -1,13 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-	  <TargetFramework>net10.0</TargetFramework>
-	  <ImplicitUsings>disable</ImplicitUsings>
-	  <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>GfzCliProgram</RootNamespace>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>gfz-temp</AssemblyName>
+    <ApplicationIcon>gfz-cli-icon.ico</ApplicationIcon>
+    <Title>GFZ CLI</Title>
+    <Version>0.5.0</Version>
+    <PackageIcon>gfz-cli-icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/RaphaelTetreault/gfz-cli</RepositoryUrl>
+    <StartupObject>GfzCliProgram.Program</StartupObject>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>$(NoWarn);SYSLIB1045</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>$(NoWarn);SYSLIB1045</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <Content Include="gfz-cli-icon.ico" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\res\icons\gfz-cli-icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\libs\GameCube.AmusementVision\src\GameCube.AmusementVision.ARC\GameCube.AmusementVision.ARC.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.AmusementVision\src\GameCube.AmusementVision.LZ\GameCube.AmusementVision.LZ.csproj" />
@@ -24,6 +55,7 @@
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Emblem\GameCube.GFZ.Emblem.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.FMI\GameCube.GFZ.FMI.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GameData\GameCube.GFZ.GameData.csproj" />
+    <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GCI\GameCube.GFZ.GCI.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.Ghosts\GameCube.GFZ.Ghosts.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.GMA\GameCube.GFZ.GMA.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.LZ\GameCube.GFZ.LZ.csproj" />
@@ -33,7 +65,17 @@
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ.TPL\GameCube.GFZ.TPL.csproj" />
     <ProjectReference Include="..\..\libs\GameCube.GFZ\src\GameCube.GFZ\GameCube.GFZ.csproj" />
     <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.IO\Manifold.IO.csproj" />
+    <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.Spline\Manifold.Spline.csproj" />
     <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold.Text.Tables\Manifold.Text.Tables.csproj" />
     <ProjectReference Include="..\..\libs\Manifold.Core\src\Manifold\Manifold.csproj" />
+    <ProjectReference Include="..\Manifold.GfzCli\Manifold.GfzCli.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="gfz-cli-icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
 </Project>
