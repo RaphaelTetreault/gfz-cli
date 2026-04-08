@@ -6,7 +6,7 @@
     <RootNamespace>GfzCliProgram</RootNamespace>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>gfz-temp</AssemblyName>
+    <AssemblyName>gfz</AssemblyName>
     <ApplicationIcon>gfz-cli-icon.ico</ApplicationIcon>
     <Title>GFZ CLI</Title>
     <Version>0.5.0</Version>
