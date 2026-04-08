@@ -110,14 +110,14 @@ public class ActionsEncodeText
     // Specifically linked to read Options.Value
     public static string ConvertValueBytesToEncoding(Options options, Encoding encoding)
     {
-        ActionsLineREL.AssertValue(options);
+        ActionsREL.AssertValue(options);
         string result = ConvertBytesToEncoding(options.Value, encoding);
         return result;
     }
 
     public static string ConvertValueEncodingToEncoding(Options options, Encoding encodingInput, Encoding encodingOutput)
     {
-        ActionsLineREL.AssertValue(options);
+        ActionsREL.AssertValue(options);
         string result = ConvertEncodingToEncoding(options.Value, encodingInput, encodingOutput);
         return result;
     }

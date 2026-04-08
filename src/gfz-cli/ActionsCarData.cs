@@ -12,7 +12,7 @@ namespace Manifold.GFZCLI;
 ///     Actions for managing GFZ file ./game/cardata.
 /// </summary>
 /// <remarks>
-///     CarData standalone file exists only for F-Zero GX. See <see cref="ActionsLineREL.PatchSetCarData"/>
+///     CarData standalone file exists only for F-Zero GX. See <see cref="ActionsREL.PatchSetCarData"/>
 ///     for applying CarData stats to the Machine Select screen.
 /// </remarks>
 public static class ActionsCarData

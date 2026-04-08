@@ -2,7 +2,7 @@
 using GameCube.GFZ;
 using GameCube.GFZ.CarData;
 using GameCube.GFZ.GameData;
-using GameCube.GFZ.LineREL;
+using GameCube.GFZ.REL;
 using GameCube.GFZ.LZ;
 using GameCube.GFZ.Stage;
 using Manifold.IO;
@@ -13,9 +13,9 @@ using static Manifold.GFZCLI.GfzCliUtilities;
 
 namespace Manifold.GFZCLI;
 
-public static class ActionsLineREL
+public static class ActionsREL
 {
-    const string prefix = "LINEREL";
+    const string prefix = "REL";
 
     public static readonly GfzCliAction ActionPatchBgm = new()
     {
@@ -311,7 +311,7 @@ public static class ActionsLineREL
     private const byte MaxCupCourseIndex = 6;
     private const byte MinCupCourseIndex = 1;
 
-    public delegate void PatchLineREL(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer);
+    public delegate void PatchLineREL(Options options, FzMainRel fzMainRel, EndianBinaryReader reader, EndianBinaryWriter writer);
     public static void Patch(Options options, PatchLineREL patchLineRelAction)
     {
         // Default search
@@ -335,16 +335,16 @@ public static class ActionsLineREL
 
         // Open file, set up writer, get action to patch file through writer
         GameCode gameCode = options.GameCode;
-        LineRelInfo info = LineRelLookup.GetInfo(gameCode);
+        FzMainRel fzMainRel = FzMainRelDB.Get(gameCode);
         // Copy input to output if needed
         string newTempFile = CreateBackupFileIfAble(options, inputFilePath);
         try
         {
             // Do patch action
             using var file = File.Open(inputFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            using var reader = new EndianBinaryReader(file, Line.endianness);
-            using var writer = new EndianBinaryWriter(file, Line.endianness);
-            patchLineRelAction.Invoke(options, info, reader, writer);
+            using var reader = new EndianBinaryReader(file, FzMainRel.Endianness);
+            using var writer = new EndianBinaryWriter(file, FzMainRel.Endianness);
+            patchLineRelAction.Invoke(options, fzMainRel, reader, writer);
         }
         catch
         {
@@ -447,8 +447,8 @@ public static class ActionsLineREL
         if (CanWriteFileAndPrintResult(options, outputFile))
         {
             GameCode gameCode = options.GameCode;
-            var lookup = LineRelLookup.GetInfo(gameCode);
-            using var stream = LineUtility.Crypt(inputFile, lookup);
+            FzMainCrypter fzMainCrypter = FzMainCrypterDB.Get(gameCode);
+            using var stream = fzMainCrypter.Crypt(inputFile);
             using var writer = File.Create(outputFile);
             writer.Write(stream.ToArray());
         }
@@ -512,14 +512,14 @@ public static class ActionsLineREL
     }
 
     // The code that actually patches
-    private static void PatchBgm(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+    private static void PatchBgm(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         byte courseIndex = options.CourseIndex;
         byte bgmIndex = options.BgmIndex;
-        LineUtility.PatchCourseBgm(writer, info, courseIndex, bgmIndex);
+        FzMainRelUtility.PatchCourseBgm(writer, info, courseIndex, bgmIndex);
         Terminal.Write($"Set course {courseIndex} bgm to {bgmIndex} ({(BgmIndex)bgmIndex}).");
     }
-    private static void PatchBgmFinalLap(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+    private static void PatchBgmFinalLap(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         // Prepare BGM FL data
         byte courseIndex = options.CourseIndex;
@@ -530,15 +530,15 @@ public static class ActionsLineREL
             loopPointDataOffset = BgmMusicDB.GetBgmLoopPointOffset(bgmflIndex),
         };
         // Patch
-        LineUtility.PatchStageBgmFinalLap(writer, info, courseIndex, bgmfl);
+        FzMainRelUtility.PatchStageBgmFinalLap(writer, info, courseIndex, bgmfl);
         Terminal.Write($"Set course {courseIndex} final lap bgm to {bgmflIndex} ({(BgmIndex)bgmflIndex}).");
     }
-    private static void PatchBgmBoth(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+    private static void PatchBgmBoth(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         PatchBgm(options, info, _, writer);
         PatchBgmFinalLap(options, info, _, writer);
     }
-    private static void PatchCourseDifficulty(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+    private static void PatchCourseDifficulty(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         AssertDifficulty(options);
         AssertCourseIndex(options);
@@ -548,7 +548,7 @@ public static class ActionsLineREL
         writer.JumpToAddress(pointer);
         writer.Write(options.Difficulty);
     }
-    private static void PatchSetCourseName(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    private static void PatchSetCourseName(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         AssertCourseIndex(options);
 
@@ -571,7 +571,7 @@ public static class ActionsLineREL
         Terminal.Write($"Bytes remaining: {remainingBytes}.");
         Terminal.WriteLine();
     }
-    private static void PatchClearCourseNames(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    private static void PatchClearCourseNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         DataBlock[] dataBlocks =
         [
@@ -584,7 +584,7 @@ public static class ActionsLineREL
         Terminal.Write($"Bytes available: {remainingBytes}.");
         Terminal.WriteLine();
     }
-    private static void PatchClearUnusedCourseNames(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    private static void PatchClearUnusedCourseNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         AssertValue(options);
 
@@ -607,7 +607,7 @@ public static class ActionsLineREL
         Terminal.Write($"Bytes available: {remainingBytes}.");
         Terminal.WriteLine();
     }
-    private static void PatchSetCourseVenueIndex(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+    private static void PatchSetCourseVenueIndex(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         AssertCourseIndex(options);
         AssertVenueIndex(options);
@@ -619,7 +619,7 @@ public static class ActionsLineREL
 
         Terminal.WriteLine($"{prefix}: Patched stage index {options.CourseIndex} to venue {(VenueIndex)options.VenueIndex}.");
     }
-    private static void PatchSetVenueName(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    private static void PatchSetVenueName(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         // Currently using "venue" as index into table, including JP names.
         //AssertVenueIndex(options);
@@ -641,7 +641,7 @@ public static class ActionsLineREL
         Terminal.Write($"Set venue {options.VenueIndex} name to \"{options.Value}\". ");
         Terminal.Write($"Bytes remaining: {remainingBytes}.");
     }
-    private static void PatchClearVenueNames(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    private static void PatchClearVenueNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         DataBlock[] dataBlocks =
         [
@@ -653,7 +653,7 @@ public static class ActionsLineREL
         Terminal.Write($"Cleared all venue names. ");
         Terminal.Write($"Bytes available: {remainingBytes}.");
     }
-    private static void PatchClearUnusedVenueNames(Options options, LineRelInfo info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    private static void PatchClearUnusedVenueNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         //
         ShiftJisCString[] venueNames = GetVenueNames(info, reader);
@@ -674,7 +674,7 @@ public static class ActionsLineREL
         Terminal.Write($"Cleared unused venue names. ");
         Terminal.Write($"Bytes remaining: {remainingBytes}.");
     }
-    private static void PatchSetCupCourse(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+    private static void PatchSetCupCourse(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         // Assertions
         AssertCupCourseIndex(options);
@@ -693,7 +693,7 @@ public static class ActionsLineREL
         PatchCupCourseGmaTplReference(writer, info, cup, cupCourseIndex, courseIndex);
         PatchCupCourseUnknown(writer, info, cup, cupCourseIndex, courseIndex);
     }
-    private static void PatchCarData(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+    private static void PatchCarData(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         // Assert file path is good
         if (string.IsNullOrWhiteSpace(options.Value))
@@ -739,7 +739,7 @@ public static class ActionsLineREL
         writer.Write(carData.Machines);
         Assert.IsTrue(writer.GetPositionAsPointer() == pointer + 0x1CD4);
     }
-    private static void PatchMachineRating(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+    private static void PatchMachineRating(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         AssertValue(options);
 
@@ -759,7 +759,7 @@ public static class ActionsLineREL
     ///     The game' max speed is 9990 km/h. Calling this action without an
     ///     argument will set the max speed cap to positive infinity.
     /// </remarks>
-    private static void PatchMaxSpeed(Options options, LineRelInfo info, EndianBinaryReader _, EndianBinaryWriter writer)
+    private static void PatchMaxSpeed(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         AssertValue(options);
 
@@ -785,11 +785,11 @@ public static class ActionsLineREL
 
         writer.JumpToAddress(initialAddress);
     }
-    private static void PatchCupCourseIndex(EndianBinaryWriter writer, LineRelInfo info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
+    private static void PatchCupCourseIndex(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
         => PatchCupData(writer, info.CupCourseLut.Address, cup, cupCourseIndex, courseIndex);
-    private static void PatchCupCourseGmaTplReference(EndianBinaryWriter writer, LineRelInfo info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
+    private static void PatchCupCourseGmaTplReference(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
         => PatchCupData(writer, info.CupCourseLutAssets.Address, cup, cupCourseIndex, courseIndex);
-    private static void PatchCupCourseUnknown(EndianBinaryWriter writer, LineRelInfo info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
+    private static void PatchCupCourseUnknown(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
         => PatchCupData(writer, info.CupCourseLutUnk.Address, cup, cupCourseIndex, courseIndex);
 
     private static int ClearStringTable(Options options, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)
@@ -841,12 +841,12 @@ public static class ActionsLineREL
 
         return strings;
     }
-    private static ShiftJisCString[] GetCourseNames(LineRelInfo info, EndianBinaryReader reader)
+    private static ShiftJisCString[] GetCourseNames(FzMainRel info, EndianBinaryReader reader)
     {
         var courseNames = GetStrings(reader, info.StringTableBaseAddress, info.CourseNameOffsets);
         return courseNames;
     }
-    private static ShiftJisCString[] GetVenueNames(LineRelInfo info, EndianBinaryReader reader)
+    private static ShiftJisCString[] GetVenueNames(FzMainRel info, EndianBinaryReader reader)
     {
         var venueNames = GetStrings(reader, info.StringTableBaseAddress, info.VenueNameOffsets);
         return venueNames;
@@ -900,7 +900,7 @@ public static class ActionsLineREL
 
         return memoryPool.RemainingMemorySize();
     }
-    private static int SetCourseNames(ShiftJisCString[] courseNames, LineRelInfo info, EndianBinaryWriter writer)
+    private static int SetCourseNames(ShiftJisCString[] courseNames, FzMainRel info, EndianBinaryWriter writer)
     {
         DataBlock[] dataBlocks =
         [
@@ -910,7 +910,7 @@ public static class ActionsLineREL
         int remainingBytes = SetStrings(courseNames, writer, info.StringTableBaseAddress, info.CourseNameOffsets, dataBlocks);
         return remainingBytes;
     }
-    private static int SetVenueNames(ShiftJisCString[] venueNames, LineRelInfo info, EndianBinaryWriter writer)
+    private static int SetVenueNames(ShiftJisCString[] venueNames, FzMainRel info, EndianBinaryWriter writer)
     {
         DataBlock[] dataBlocks =
         [
