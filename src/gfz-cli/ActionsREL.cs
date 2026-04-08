@@ -21,7 +21,7 @@ public static class ActionsREL
     {
         Description = "Set the background music for a specific stage index.",
         Action = PatchSetBgm,
-        ActionID = CliActionID.linerel_set_bgm,
+        ActionID = CliActionID.fzrel_set_bgm,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -37,7 +37,7 @@ public static class ActionsREL
     {
         Description = "Set the final lap background music for a specific stage index.",
         Action = PatchSetBgmFinalLap,
-        ActionID = CliActionID.linerel_set_bgmfl,
+        ActionID = CliActionID.fzrel_set_bgmfl,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -53,7 +53,7 @@ public static class ActionsREL
     {
         Description = "Set both default and final lap background music for a specific stage index.",
         Action = PatchSetBgmAndBgmFinalLap,
-        ActionID = CliActionID.linerel_set_bgm_bgmfl,
+        ActionID = CliActionID.fzrel_set_bgm_bgmfl,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -70,7 +70,7 @@ public static class ActionsREL
     {
         Description = "Set course difficulty star rating for a specific stage.",
         Action = PatchSetCourseDifficulty,
-        ActionID = CliActionID.linerel_set_course_difficulty,
+        ActionID = CliActionID.fzrel_set_course_difficulty,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -94,7 +94,7 @@ public static class ActionsREL
     {
         Description = "Set course name for a specific stage index.",
         Action = PatchSetCourseName,
-        ActionID = CliActionID.linerel_set_course_name,
+        ActionID = CliActionID.fzrel_set_course_name,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -110,7 +110,7 @@ public static class ActionsREL
     {
         Description = "Clear all names in course name table.",
         Action = PatchClearAllCourseNames,
-        ActionID = CliActionID.linerel_clear_all_course_names,
+        ActionID = CliActionID.fzrel_clear_all_course_names,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -123,7 +123,7 @@ public static class ActionsREL
     {
         Description = "Clear all unused course names in course name table.",
         Action = PatchClearUnusedCourseNames,
-        ActionID = CliActionID.linerel_clear_unused_course_names,
+        ActionID = CliActionID.fzrel_clear_unused_course_names,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -136,7 +136,7 @@ public static class ActionsREL
     {
         Description = "Set course venue for a specific stage index.",
         Action = PatchSetVenueIndex,
-        ActionID = CliActionID.linerel_set_course_venue,
+        ActionID = CliActionID.fzrel_set_course_venue,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -160,7 +160,7 @@ public static class ActionsREL
     {
         Description = "Set venue name for a specific venue index.",
         Action = PatchSetVenueName,
-        ActionID = CliActionID.linerel_set_venue_name,
+        ActionID = CliActionID.fzrel_set_venue_name,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -176,7 +176,7 @@ public static class ActionsREL
     {
         Description = "Clear all names in venue name table.",
         Action = PatchClearAllVenueNames,
-        ActionID = CliActionID.linerel_clear_all_venue_names,
+        ActionID = CliActionID.fzrel_clear_all_venue_names,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -189,7 +189,7 @@ public static class ActionsREL
     {
         Description = "Clear all unused course names in course name table.",
         Action = PatchClearUnusedVenueNames,
-        ActionID = CliActionID.linerel_clear_unused_venue_names,
+        ActionID = CliActionID.fzrel_clear_unused_venue_names,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -210,7 +210,7 @@ public static class ActionsREL
     {
         Description = "Set \"graph console performance settings\" machine stats.",
         Action = PatchSetCarData,
-        ActionID = CliActionID.linerel_set_cardata,
+        ActionID = CliActionID.fzrel_set_cardata,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -231,7 +231,7 @@ public static class ActionsREL
     {
         Description = "Set machine letter ratings (SABCDE).",
         Action = PatchMachineRating,
-        ActionID = CliActionID.linerel_set_machine_rating,
+        ActionID = CliActionID.fzrel_set_machine_rating,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -255,7 +255,7 @@ public static class ActionsREL
     {
         Description = "Patch vehicle max speed.",
         Action = PatchMaxSpeed,
-        ActionID = CliActionID.linerel_set_max_speed,
+        ActionID = CliActionID.fzrel_set_max_speed,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -268,7 +268,7 @@ public static class ActionsREL
     {
         Description = "Set an individual stage reference in a cup.",
         Action = PatchSetCupCourse,
-        ActionID = CliActionID.linerel_set_cup_course,
+        ActionID = CliActionID.fzrel_set_cup_course,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -285,7 +285,7 @@ public static class ActionsREL
     {
         Description = "Decrypt line__.bin to line__.rel file.",
         Action = DecryptLineRel,
-        ActionID = CliActionID.linerel_decrypt,
+        ActionID = CliActionID.fzrel_decrypt,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
@@ -298,7 +298,7 @@ public static class ActionsREL
     {
         Description = "Encrypt line__.rel to line__.bin file.",
         Action = EncryptLineRel,
-        ActionID = CliActionID.linerel_encrypt,
+        ActionID = CliActionID.fzrel_encrypt,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
