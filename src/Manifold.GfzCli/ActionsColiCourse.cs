@@ -14,7 +14,7 @@ public static class ActionsColiCourse
 {
     private static readonly GfzCliArgument Value = new()
     {
-        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentName = Args.Value,
         ArgumentType = typeof(ObjectRenderFlags0x00).Name,
         ArgumentDefault = null,
         Help = "The render flag value in decimal to apply.",
@@ -30,16 +30,16 @@ public static class ActionsColiCourse
         IsOutputOptional = true,
         ActionOptions = CliActionOption.FPS,
         RequiredArguments = [
-            IOptionsStage.Arguments.Color,
-            IOptionsStage.Arguments.ColorR,
-            IOptionsStage.Arguments.ColorG,
-            IOptionsStage.Arguments.ColorB,
+            GfzCliArgumentDB.Color,
+            GfzCliArgumentDB.ColorR,
+            GfzCliArgumentDB.ColorG,
+            GfzCliArgumentDB.ColorB,
             ],
         OptionalArguments = [
-            IOptionsLineRel.Arguments.Backup,
-            IOptionsStage.Arguments.FogInterpolationMode,
-            IOptionsStage.Arguments.FogViewRangeNear,
-            IOptionsStage.Arguments.FogViewRangeFar,
+            GfzCliArgumentDB.Backup,
+            GfzCliArgumentDB.FogInterpolationMode,
+            GfzCliArgumentDB.FogViewRangeNear,
+            GfzCliArgumentDB.FogViewRangeFar,
             ],
     };
 
@@ -53,12 +53,12 @@ public static class ActionsColiCourse
         IsOutputOptional = true,
         ActionOptions = CliActionOption.FPS,
         RequiredArguments = [
-            IOptionsStage.Arguments.Name,
+            GfzCliArgumentDB.Name,
             Value,
             ],
         OptionalArguments = [
-            IOptionsLineRel.Arguments.Backup,
-            IOptionsStage.Arguments.SetFlagsOff,
+            GfzCliArgumentDB.Backup,
+            GfzCliArgumentDB.SetFlagsOff,
             ],
     };
 

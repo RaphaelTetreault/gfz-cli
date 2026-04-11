@@ -2,12 +2,21 @@
 using GameCube.AmusementVision;
 using GameCube.DiskImage;
 using GameCube.GFZ;
+using GameCube.GFZ.CarData;
 using GameCube.GFZ.GameData;
 using GameCube.GFZ.Stage;
 using GameCube.GX.Texture;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
-using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Formats.Bmp;
+using SixLabors.ImageSharp.Formats.Gif;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Pbm;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats.Qoi;
+using SixLabors.ImageSharp.Formats.Tga;
+using SixLabors.ImageSharp.Formats.Tiff;
+using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
@@ -16,20 +25,8 @@ using System.IO;
 namespace Manifold.GfzCli;
 
 public class Options :
-    IOptionsGfzCli,
-    IOptionsColor,
-    IOptionsImageSharp,
-    IOptionsLineRel,
-    IOptionsStage,
-    IOptionsAssets
+    IOptionsGfzCli
 {
-    // Args not currently in an organized interface
-    internal static class Args
-    {
-        public const string EmblemHasAlphaBorder = "emblem-border";
-        public const string Name = "name";
-        public const string Value = "value";
-    }
 
     // IGfzCliOptions
     public string ActionStr { get => WithoutQuotes(field); set; } = string.Empty;
@@ -70,83 +67,337 @@ public class Options :
 
 
     // IAssetsOptions
-    public string AssetLibraryRoot { get => WithoutQuotes(field); set; } = string.Empty;
-    public int MipmapCount { get; set; } = IOptionsAssets.Arguments.MipmapCount.Default<int>();
-    public string MipmapFiles { get => WithoutQuotes(field); set; } = string.Empty;
-    public string MipmapModeStr { get => WithoutQuotes(field); set; } = IOptionsAssets.Arguments.MipmapMode.AsText();
-    public MipmapGenerationMode MipmapMode => GfzCliParser.EnumParseDashRemoved<MipmapGenerationMode>(MipmapModeStr);
-    public TextureFormat TextureFormat { get; set; } = IOptionsAssets.Arguments.TextureFormat.Default<TextureFormat>();
-    public string DirFormat { get => WithoutQuotes(field); set; } = IOptionsAssets.Arguments.DirFormat.Default<string>();
 
-    // IOptionsColor, implemented by at least IOptionsImageSharp (resize) and IOptionsStage (fog).
+    #region 
+
+    /// <summary>
+    ///     
+    /// </summary>
+    [Option(Args.AssetLibraryRoot, Hidden = true)]
+    public string AssetLibraryRoot { get => WithoutQuotes(field); set; } = string.Empty;
+
+    /// <summary>
+    ///     
+    /// </summary>
+    [Option(Args.MipmapCount, Hidden = true)]
+    public int MipmapCount { get; set; } = GfzCliArgumentDB.MipmapCount.Default<int>();
+
+    /// <summary>
+    ///     
+    /// </summary>
+    [Option(Args.MipmapFiles, Hidden = true)]
+    public string MipmapFiles { get => WithoutQuotes(field); set; } = string.Empty;
+
+    /// <summary>
+    ///     
+    /// </summary>
+    [Option(Args.MipmapMode, Hidden = true)]
+    public string MipmapModeStr { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.MipmapMode.AsText();
+    public MipmapGenerationMode MipmapMode => GfzCliParser.EnumParseDashRemoved<MipmapGenerationMode>(MipmapModeStr);
+
+    /// <summary>
+    ///     
+    /// </summary>
+    [Option(Args.TextureFormat, Hidden = true)]
+    public TextureFormat TextureFormat { get; set; } = GfzCliArgumentDB.TextureFormat.Default<TextureFormat>();
+
+    /// <summary>
+    ///     
+    /// </summary>
+    [Option(Args.DirFormat, Hidden = true)]
+    public string DirFormat { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.DirFormat.Default<string>();
+
+    #endregion
+
+    #region Color
+
+    /// <summary>
+    ///     The color's value.
+    /// </summary>
+    [Option(Args.PadColor, Hidden = true)] //TODO fog color...
     public string ColorStr { get => WithoutQuotes(field); set; } = "00000000";
-    public string ColorRStr { get => WithoutQuotes(field); set; } = string.Empty;
-    public string ColorGStr { get => WithoutQuotes(field); set; } = string.Empty;
-    public string ColorBStr { get => WithoutQuotes(field); set; } = string.Empty;
-    public string ColorAStr { get => WithoutQuotes(field); set; } = string.Empty;
+
+    /// <summary>
+    ///     The color's value.
+    /// </summary>
     public Color Color => GfzCliParser.GetColorFromHexString(ColorStr);
-    public byte ColorR => GfzCliParser.GetColorComponent(ColorRStr);
-    public byte ColorG => GfzCliParser.GetColorComponent(ColorGStr);
-    public byte ColorB => GfzCliParser.GetColorComponent(ColorBStr);
-    public byte ColorA => GfzCliParser.GetColorComponent(ColorAStr);
+
+    /// <summary>
+    ///     The color's value either from <see cref="ColorStr"/> or
+    ///     individual color components.
+    /// </summary>
     public Color UnionColor => GfzCliParser.GetUnionColor(ColorStr, ColorRStr, ColorGStr, ColorBStr, ColorAStr);
+
+    /// <summary>
+    ///     The color's red value.
+    /// </summary>
+    public string ColorRStr { get => WithoutQuotes(field); set; } = string.Empty;
+
+    /// <summary>
+    ///     The color's red value.
+    /// </summary>
+    public byte ColorR => GfzCliParser.GetColorComponent(ColorRStr);
+
+    /// <summary>
+    ///     The color's R value either from <see cref="ColorStr"/> or
+    ///     individual color components.
+    /// </summary>
     public byte UnionColorR => GfzCliParser.GetUnionColorComponent(ColorRStr, ColorStr, 0..2);
+
+    /// <summary>
+    ///     The color's green value.
+    /// </summary>
+    public string ColorGStr { get => WithoutQuotes(field); set; } = string.Empty;
+
+    /// <summary>
+    ///     The color's green value.
+    /// </summary>
+    public byte ColorG => GfzCliParser.GetColorComponent(ColorGStr);
+
+    /// <summary>
+    ///     The color's G value either from <see cref="ColorStr"/> or
+    ///     individual color components.
+    /// </summary>
     public byte UnionColorG => GfzCliParser.GetUnionColorComponent(ColorGStr, ColorStr, 2..4);
+
+    /// <summary>
+    ///     The color's blue value.
+    /// </summary>
+    public string ColorBStr { get => WithoutQuotes(field); set; } = string.Empty;
+
+    /// <summary>
+    ///     The color's blue value.
+    /// </summary>
+    public byte ColorB => GfzCliParser.GetColorComponent(ColorBStr);
+
+    /// <summary>
+    ///     The color's B value either from <see cref="ColorStr"/> or
+    ///     individual color components.
+    /// </summary>
     public byte UnionColorB => GfzCliParser.GetUnionColorComponent(ColorBStr, ColorStr, 4..6);
+
+    /// <summary>
+    ///     The color's alpha value.
+    /// </summary>
+    public string ColorAStr { get => WithoutQuotes(field); set; } = string.Empty;
+
+    /// <summary>
+    ///     The color's alpha value.
+    /// </summary>
+    public byte ColorA => GfzCliParser.GetColorComponent(ColorAStr);
+
+    /// <summary>
+    ///     The color's A value either from <see cref="ColorStr"/> or
+    ///     individual color components.
+    /// </summary>
     public byte UnionColorA => GfzCliParser.GetUnionColorComponent(ColorAStr, ColorStr, 6..8);
 
 
-    // IImageSharpOptions. NOTE: ColorStr defined in multiple interfaces.
-    public bool Compand { get; set; } = IOptionsImageSharp.Arguments.Compand.Default<bool>();
-    public string ResizeModeStr { get => WithoutQuotes(field); set; } = IOptionsImageSharp.Arguments.ResizeMode.AsText();
+    #endregion
+
+    #region Image Sharp
+
+    /// <summary>
+    ///     Whether to compress or expand individual pixel colors when scaling image.
+    /// </summary>
+    [Option(Args.Compand, Hidden = true)]
+    public bool Compand { get; set; } = GfzCliArgumentDB.Compand.Default<bool>();
+
+    /// <summary>
+    ///     How the image should be resized.
+    /// </summary>
+    [Option(Args.ResizeMode, Hidden = true)]
+    public string ResizeModeStr { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.ResizeMode.AsText();
     public ResizeMode ResizeMode => GfzCliParser.EnumParseDashRemoved<ResizeMode>(ResizeModeStr);
-    public string PositionStr { get => WithoutQuotes(field); set; } = IOptionsImageSharp.Arguments.Position.AsText();
+
+    /// <summary>
+    ///     Anchor positions to apply to resize image.
+    /// </summary>
+    [Option(Args.Position, Hidden = true)]
+    public string PositionStr { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.Position.AsText();
     public AnchorPositionMode Position => GfzCliParser.EnumParseDashRemoved<AnchorPositionMode>(PositionStr);
-    public bool PremultiplyAlpha { get; set; } = IOptionsImageSharp.Arguments.PremultiplyAlpha.Default<bool>();
-    public string ResamplerTypeStr { get => WithoutQuotes(field); set; } = IOptionsImageSharp.Arguments.ResamplerType.AsText();
+
+    /// <summary>
+    ///     Whether to use premultiplied alpha when scaling image.
+    /// </summary>
+    [Option(Args.PremultiplyAlpha, Hidden = true)]
+    public bool PremultiplyAlpha { get; set; } = GfzCliArgumentDB.PremultiplyAlpha.Default<bool>();
+
+    /// <summary>
+    ///     The resampler to use when scaling image.
+    /// </summary>
+    [Option(Args.Resampler, Hidden = true)]
+    public string ResamplerTypeStr { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.ResamplerType.AsText();
     public ResamplerType ResamplerType => GfzCliParser.EnumParseDashRemoved<ResamplerType>(ResamplerTypeStr);
-    public IResampler Resampler => IOptionsImageSharp.GetResampler(ResamplerType);
+    public IResampler Resampler => GetResampler(ResamplerType);
+
+
+    /// <summary>
+    ///     The desired image width. May not be result width depending on 'resize-mode' option.
+    /// </summary>
+    [Option(Args.Width, Hidden = true)]
     public int Width { get; set; }
+
+    /// <summary>
+    ///     The desired image height. May not be result height depending on 'resize-mode' option.
+    /// </summary>
+    [Option(Args.Height, Hidden = true)]
     public int Height { get; set; }
+
     public Size Size => new(Width, Height);
+
     /// <summary>
     ///     Indicates that the user specified <see cref="Width"/> or <see cref="Height"/>.
     /// </summary>
     public bool RequestingResize => Width > 0 || Height > 0;
 
-    // Other
-    public string ImageFormatStr { get => WithoutQuotes(field); set; } = IOptionsImageSharp.Arguments.ImageFormat.AsText();
-    public ImageFormat ImageFormat => GfzCliParser.EnumParseDashRemoved<ImageFormat>(ImageFormatStr);
-    public ImageEncoder ImageEncoder => IOptionsImageSharp.GetImageEncoder(ImageFormat);
-    public string ImageExtension => IOptionsImageSharp.GetImageExtension(ImageFormat);
 
+    // OTHER
+
+    /// <summary>
+    ///     Image format, such as PNG, JPG, TGA, etc.
+    /// </summary>
+    [Option(Args.ImageFormat, Hidden = true)]
+    public string ImageFormatStr { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.ImageFormat.AsText();
+    public ImageFormat ImageFormat => GfzCliParser.EnumParseDashRemoved<ImageFormat>(ImageFormatStr);
+    public ImageEncoder ImageEncoder => GetImageEncoder(ImageFormat);
+    public string ImageExtension => GetImageExtension(ImageFormat);
+
+
+    // UTILITY FUNCTIONS
+
+    // Default Encoders
+    private static readonly BmpEncoder BmpEncoder = new();
+    private static readonly GifEncoder GifEncoder = new();
+    private static readonly JpegEncoder JpegEncoder = new();
+    private static readonly PbmEncoder PbmEncoder = new();
+    private static readonly PngEncoder PngEncoder = new() { CompressionLevel = PngCompressionLevel.BestCompression };
+    private static readonly QoiEncoder QoiEncoder = new();
+    private static readonly TiffEncoder TiffEncoder = new();
+    private static readonly TgaEncoder TgaEncoder = new();
+    private static readonly WebpEncoder WebpEncoder = new();
+
+
+    /// <summary>
+    ///     Get resize options in one structure. Pass to image.Resize()
+    /// </summary>
+    /// <param name="options"></param>
+    /// <returns>
+    ///     
+    /// </returns>
+    public ResizeOptions GetResizeOptions()
+    {
+        return new ResizeOptions()
+        {
+            Compand = this.Compand,
+            Mode = this.ResizeMode,
+            PadColor = this.UnionColor,
+            Position = this.Position,
+            PremultiplyAlpha = this.PremultiplyAlpha,
+            Sampler = this.Resampler,
+            Size = new(this.Width, this.Height),
+            //CenterCoordinates
+            //TargetRectangle
+        };
+    }
+    public  Size GetResizeSize(Image image) => GetResizeSize(image.Width, image.Height);
+    public  Size GetResizeSize(int defaultX, int defaultY)
+    {
+        int x = this.Width > 0 ? this.Width : defaultX;
+        int y = this.Height > 0 ? this.Height : defaultY;
+        var size = new Size(x, y);
+        return size;
+    }
+    public  bool IsSizeTooLarge(int maxX, int maxY)
+    {
+        bool isTooWide = this.Width > maxX;
+        bool isTooTall = this.Height > maxY;
+        bool isTooLarge = isTooWide || isTooTall;
+        return isTooLarge;
+    }
+    public  bool IsSizeTooSmall(int minX, int minY)
+    {
+        bool isTooShort = this.Width < minX;
+        bool isTooSkinny = this.Height < minY;
+        bool isTooSmall = isTooShort || isTooSkinny;
+        return isTooSmall;
+    }
+
+    public static IResampler GetResampler(ResamplerType resampler)
+    {
+        switch (resampler)
+        {
+            case ResamplerType.Bicubic: return KnownResamplers.Bicubic;
+            case ResamplerType.Box: return KnownResamplers.Box;
+            case ResamplerType.CatmullRom: return KnownResamplers.CatmullRom;
+            case ResamplerType.Hermite: return KnownResamplers.Hermite;
+            case ResamplerType.Lanczos2: return KnownResamplers.Lanczos2;
+            case ResamplerType.Lanczos3: return KnownResamplers.Lanczos3;
+            case ResamplerType.Lanczos5: return KnownResamplers.Lanczos5;
+            case ResamplerType.Lanczos8: return KnownResamplers.Lanczos8;
+            case ResamplerType.MitchellNetravali: return KnownResamplers.MitchellNetravali;
+            case ResamplerType.NearestNeighbor: return KnownResamplers.NearestNeighbor;
+            case ResamplerType.Robidoux: return KnownResamplers.Robidoux;
+            case ResamplerType.RobidouxSharp: return KnownResamplers.RobidouxSharp;
+            case ResamplerType.Spline: return KnownResamplers.Spline;
+            case ResamplerType.Triangle: return KnownResamplers.Triangle;
+            case ResamplerType.Welch: return KnownResamplers.Welch;
+
+            default:
+                string msg = $"Unknown resampler '{resampler}'.";
+                throw new ArgumentException(msg);
+        }
+    }
+
+    public static ImageEncoder GetImageEncoder(ImageFormat imageFormat)
+    {
+        return imageFormat switch
+        {
+            ImageFormat.Bmp => BmpEncoder,
+            ImageFormat.Gif => GifEncoder,
+            ImageFormat.Jpeg => JpegEncoder,
+            ImageFormat.Pbm => PbmEncoder,
+            ImageFormat.Png => PngEncoder,
+            ImageFormat.Qoi => QoiEncoder,
+            ImageFormat.Tiff => TiffEncoder,
+            ImageFormat.Tga => TgaEncoder,
+            ImageFormat.WebP => WebpEncoder,
+            _ => throw new NotImplementedException(),
+        };
+    }
+
+    public static string GetImageExtension(ImageFormat imageFormat)
+    {
+        return imageFormat switch
+        {
+            ImageFormat.Bmp => ".bmp",
+            ImageFormat.Gif => ".gif",
+            ImageFormat.Jpeg => ".jpeg",
+            ImageFormat.Pbm => ".pbm",
+            ImageFormat.Png => ".png",
+            ImageFormat.Qoi => ".qoi",
+            ImageFormat.Tiff => ".tiff",
+            ImageFormat.Tga => ".tga",
+            ImageFormat.WebP => ".webp",
+            _ => throw new NotImplementedException(),
+        };
+    }
+
+    #endregion
 
     // UNSORTED IN INTERFACES
     [Option(Args.EmblemHasAlphaBorder, Hidden = true)]
     public bool EmblemHasAlphaBorder { get; set; } = true;
 
 
-    // fz.main.rel (line__.rel)
-    public bool BackupPatchFile { get; set; } = IOptionsLineRel.Arguments.Backup.Default<bool>();
-    public byte BgmIndex { get; set; } = IOptionsLineRel.Arguments.BgmIndex.Default<byte>();
-    public byte BgmFinalLapIndex { get; set; } = IOptionsLineRel.Arguments.BgmFinalLapIndex.Default<byte>();
-    public byte CourseIndex { get; set; } = IOptionsLineRel.Arguments.StageIndex.Default<byte>();
-    public CupIndex Cup { get; set; } = IOptionsLineRel.Arguments.Cup.Default<CupIndex>();
-    public byte CupCourseIndex { get; set; } = IOptionsLineRel.Arguments.CupStageIndex.Default<byte>();
-    public byte Difficulty { get; set; } = IOptionsLineRel.Arguments.Difficulty.Default<byte>();
-    public byte PilotNumber { get; set; } = IOptionsLineRel.Arguments.PilotNumber.Default<byte>();
-    public byte VenueIndex { get; set; } = IOptionsLineRel.Arguments.VenueIndex.Default<byte>();
-    //public string Value { get; set; } = string.Empty;
 
+    #region General
 
-    // IStageOptions
-    public float FogViewRangeNear { get; set; } = IOptionsStage.Arguments.FogViewRangeNear.Default<float>();
-    public float FogViewRangeFar { get; set; } = IOptionsStage.Arguments.FogViewRangeFar.Default<float>();
-    public string FogInterpolationModeStr { get => WithoutQuotes(field); set; } = IOptionsStage.Arguments.FogInterpolationMode.AsText();
-    public FogType FogInterpolationMode => GfzCliParser.EnumParseDashRemoved<FogType>(FogInterpolationModeStr);
-    //public string Name { get; set; } = string.Empty;
-    public bool SetFlagsOff { get; set; } = IOptionsStage.Arguments.SetFlagsOff.Default<bool>();
-
+    /// <summary>
+    ///     Create backup of patched file.
+    /// </summary>
+    [Option(Args.Backup, Hidden = true)]
+    public bool BackupPatchFile { get; set; } = GfzCliArgumentDB.Backup.Default<bool>();
 
     /// <summary>
     ///     A generic name parameter.
@@ -159,6 +410,114 @@ public class Options :
     /// </summary>
     [Option(Args.Value, Hidden = true)]
     public string Value { get => WithoutQuotes(field); set; } = string.Empty;
+
+    #endregion
+
+    #region REL
+
+    /// <summary>
+    ///     The numeric index of a background music (BGM) song, used for stage bgm.
+    /// </summary>
+    [Option(Args.BgmIndex, Hidden = true)]
+    public byte BgmIndex { get; set; } = GfzCliArgumentDB.BgmIndex.Default<byte>();
+
+    /// <summary>
+    ///     The numeric index of a background music (BGM) song, used for stage final lap bgm.
+    /// </summary>
+    [Option(Args.BgmFinalLapIndex, Hidden = true)]
+    public byte BgmFinalLapIndex { get; set; } = GfzCliArgumentDB.BgmFinalLapIndex.Default<byte>();
+
+    /// <summary>
+    ///     The numeric index of a stage.
+    /// </summary>
+    [Option(Args.StageIndex, Hidden = true)]
+    public byte CourseIndex { get; set; } = GfzCliArgumentDB.StageIndex.Default<byte>();
+
+    /// <summary>
+    ///     The cup which references a number of stages (up to 6).
+    /// </summary>
+    [Option(Args.Cup, Hidden = true)]
+    public CupIndex Cup { get; set; } = GfzCliArgumentDB.Cup.Default<CupIndex>();
+
+    /// <summary>
+    ///     The course index in a cup slot (0-110, unset 0xFFFF).
+    /// </summary>
+    [Option(Args.CupStageIndex, Hidden = true)]
+    public ushort CupCourseIndex { get; set; } = GfzCliArgumentDB.CupStageIndex.Default<ushort>();
+
+    /// <summary>
+    ///     The stage's star difficulty rating.
+    /// </summary>
+    [Option(Args.Difficulty, Hidden = true)]
+    public byte Difficulty { get; set; } = GfzCliArgumentDB.Difficulty.Default<byte>();
+
+    /// <summary>
+    ///     A pilot's racing number.
+    /// </summary>
+    [Option(Args.PilotNumber, Hidden = true)]
+    public PilotName PilotNumber { get; set; } = GfzCliArgumentDB.PilotNumber.Default<PilotName>();
+
+    /// <summary>
+    ///     A stage's venue index.
+    /// </summary>
+    [Option(Args.VenueIndex, Hidden = true)]
+    public VenueIndex VenueIndex { get; set; } = GfzCliArgumentDB.VenueIndex.Default<VenueIndex>();
+
+    #endregion
+
+    #region Stage
+
+    /// <summary>
+    ///     The fog's view range near plane.
+    /// </summary>
+    [Option(Args.FogViewRangeNear, Hidden = true)]
+    public float FogViewRangeNear { get; set; } = GfzCliArgumentDB.FogViewRangeNear.Default<float>();
+
+    /// <summary>
+    ///     The fog's view range far plane.
+    /// </summary>
+    [Option(Args.FogViewRangeFar, Hidden = true)]
+    public float FogViewRangeFar { get; set; } = GfzCliArgumentDB.FogViewRangeFar.Default<float>();
+
+    /// <summary>
+    ///     The GX fog interpolation mode.
+    /// </summary>
+    [Option(Args.FogInterpolationMode, Hidden = true)]
+    public string FogInterpolationModeStr { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.FogInterpolationMode.AsText();
+    public FogType FogInterpolationMode => GfzCliParser.EnumParseDashRemoved<FogType>(FogInterpolationModeStr);
+
+    ///// <summary>
+    /////     The fog color.
+    ///// </summary>
+    //[Option(Args.Color, Hidden = true)]
+    //new public string ColorStr { get; set; }
+
+    ///// <summary>
+    /////     The fog color's red value.
+    ///// </summary>
+    //[Option(Args.ColorR, Hidden = true)]
+    //new public string ColorRStr { get; set; }
+
+    ///// <summary>
+    /////     The fog color's green value.
+    ///// </summary>
+    //[Option(Args.ColorG, Hidden = true)]
+    //new public string ColorGStr { get; set; }
+
+    ///// <summary>
+    /////     The fog color's blue value.
+    ///// </summary>
+    //[Option(Args.ColorB, Hidden = true)]
+    //new public string ColorBStr { get; set; }
+
+    /// <summary>
+    ///     Whether to set flags on or off (true or flase).
+    /// </summary>
+    [Option(Args.SetFlagsOff, Hidden = true)]
+    public bool SetFlagsOff { get; set; } = GfzCliArgumentDB.SetFlagsOff.Default<bool>();
+
+    #endregion
+
 
     private static GameCodeFlags StringToRegion(string regionStr)
     {
@@ -276,7 +635,7 @@ public class Options :
         if (string.IsNullOrWhiteSpace(DirFormat))
             return value;
 
-        string replaceTag = IOptionsAssets.Arguments.DirFormat.Default<string>();
+        string replaceTag = GfzCliArgumentDB.DirFormat.Default<string>();
         string result = DirFormat.Replace(replaceTag, value);
         return result;
     }

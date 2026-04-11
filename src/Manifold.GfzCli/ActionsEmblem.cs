@@ -29,7 +29,7 @@ public static class ActionsEmblem
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-        IOptionsImageSharp.Arguments.ImageFormat,
+            GfzCliArgumentDB.ImageFormat,
             ],
     };
 
@@ -43,14 +43,14 @@ public static class ActionsEmblem
         IsOutputOptional = true,
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [
-            IOptionsImageSharp.Arguments.ResamplerType,
+            GfzCliArgumentDB.ResamplerType,
             ],
         OptionalArguments = [
-            IOptionsImageSharp.Arguments.Compand,
-            IOptionsImageSharp.Arguments.ResizeMode,
-            IOptionsImageSharp.Arguments.PadColor,
-            IOptionsImageSharp.Arguments.Position,
-            IOptionsImageSharp.Arguments.PremultiplyAlpha,
+            GfzCliArgumentDB.Compand,
+            GfzCliArgumentDB.ResizeMode,
+            GfzCliArgumentDB.PadColor,
+            GfzCliArgumentDB.Position,
+            GfzCliArgumentDB.PremultiplyAlpha,
             ],
     };
 
@@ -65,7 +65,7 @@ public static class ActionsEmblem
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            IOptionsImageSharp.Arguments.ImageFormat,
+            GfzCliArgumentDB.ImageFormat,
             ],
     };
 
@@ -79,14 +79,14 @@ public static class ActionsEmblem
         IsOutputOptional = false,
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [
-            IOptionsImageSharp.Arguments.ResamplerType,
+            GfzCliArgumentDB.ResamplerType,
             ],
         OptionalArguments = [
-            IOptionsImageSharp.Arguments.Compand,
-            IOptionsImageSharp.Arguments.ResizeMode,
-            IOptionsImageSharp.Arguments.PadColor,
-            IOptionsImageSharp.Arguments.Position,
-            IOptionsImageSharp.Arguments.PremultiplyAlpha,
+            GfzCliArgumentDB.Compand,
+            GfzCliArgumentDB.ResizeMode,
+            GfzCliArgumentDB.PadColor,
+            GfzCliArgumentDB.Position,
+            GfzCliArgumentDB.PremultiplyAlpha,
             ],
     };
 
@@ -160,7 +160,7 @@ public static class ActionsEmblem
     public static Emblem ImageToEmblemBin(Options options, OSPath inputFile)
     {
         // Make sure some option parameters are appropriate
-        bool isTooLarge = IOptionsImageSharp.IsSizeTooLarge(options, Emblem.Width, Emblem.Height);
+        bool isTooLarge = options.IsSizeTooLarge(Emblem.Width, Emblem.Height);
         if (isTooLarge)
         {
             string msg =
@@ -385,7 +385,7 @@ public static class ActionsEmblem
     {
         // Resize image to fit inside bounds of image.
         // eg: emblem is 64x64
-        ResizeOptions resizeOptions = IOptionsImageSharp.GetResizeOptions(options);
+        ResizeOptions resizeOptions = options.GetResizeOptions();
 
         // Emblem size is either 62x62 (1px alpha border, as intended) or 64x64 ("hacker" option)
         if (resizeHasAlphaBorder)
@@ -397,7 +397,7 @@ public static class ActionsEmblem
         int defaultX = Math.Min(resizeWidth, imageWidth);
         int defaultY = Math.Min(resizeHeight, imageHeight);
         // Set size override, then resize image
-        resizeOptions.Size = IOptionsImageSharp.GetResizeSize(options, defaultX, defaultY);
+        resizeOptions.Size = options.GetResizeSize(defaultX, defaultY);
 
         return resizeOptions;
     }

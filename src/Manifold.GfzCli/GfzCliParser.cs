@@ -112,58 +112,6 @@ public static class GfzCliParser
         throw new ArgumentException(msg);
     }
 
-    ///// <summary>
-    /////     
-    ///// </summary>
-    ///// <param name="value"></param>
-    ///// <returns>
-    /////     
-    ///// </returns>
-    ///// <exception cref="ArgumentException">
-    /////     
-    ///// </exception>
-    ///// <exception cref="Exception">
-    /////     
-    ///// </exception>
-    //[System.Obsolete]
-    //public static Color StringToColor(string value)
-    //{
-    //    byte r = 0;
-    //    byte g = 0;
-    //    byte b = 0;
-    //    byte a = 0;
-
-    //    value = value.ToLower();
-    //    string[] components = value.Split(";");
-
-    //    foreach (var component in components)
-    //    {
-    //        string[] data = component.Split("=");
-    //        if (data.Length != 2)
-    //            throw new ArgumentException("Color value formated incorrectly.");
-
-    //        // Use: System.Globalization.NumberStyles
-    //        // with bitwise OR if it doens't automatically except hex and numbers
-
-    //        string componentLabel = data[0];
-    //        byte componentValue = byte.Parse(data[1], System.Globalization.NumberStyles.HexNumber);
-
-    //        switch (componentLabel)
-    //        {
-    //            case "r": r = componentValue; break;
-    //            case "g": g = componentValue; break;
-    //            case "b": b = componentValue; break;
-    //            case "a": a = componentValue; break;
-
-    //            default:
-    //                throw new Exception("Invalid color component label.");
-    //        }
-    //    }
-
-    //    Color color = new(new Rgba32(r, g, b, a));
-    //    return color;
-    //}
-
     /// <summary>
     ///     
     /// </summary>
@@ -296,7 +244,7 @@ public static class GfzCliParser
     public static byte GetUnionColorComponent(string component, string color, Range range)
     {
         byte value;
-        if (color != IOptionsColor.Arguments.Color.Default<string>())
+        if (color != GfzCliArgumentDB.Color.Default<string>())
         {
             // Doing the conversion here sanitizes the value and normilazes the length.
             string hex = GetColorFromHexString(color).ToHex();

@@ -27,8 +27,8 @@ public static class ActionsREL
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
-            IOptionsLineRel.Arguments.BgmIndex,
-            IOptionsLineRel.Arguments.StageIndex,
+            GfzCliArgumentDB.BgmIndex,
+            GfzCliArgumentDB.StageIndex,
             ],
         OptionalArguments = [],
     };
@@ -43,8 +43,8 @@ public static class ActionsREL
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
-            IOptionsLineRel.Arguments.BgmFinalLapIndex,
-            IOptionsLineRel.Arguments.StageIndex,
+            GfzCliArgumentDB.BgmFinalLapIndex,
+            GfzCliArgumentDB.StageIndex,
             ],
         OptionalArguments = [],
     };
@@ -59,9 +59,9 @@ public static class ActionsREL
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
-            IOptionsLineRel.Arguments.BgmIndex,
-            IOptionsLineRel.Arguments.BgmFinalLapIndex,
-            IOptionsLineRel.Arguments.StageIndex,
+            GfzCliArgumentDB.BgmIndex,
+            GfzCliArgumentDB.BgmFinalLapIndex,
+            GfzCliArgumentDB.StageIndex,
             ],
         OptionalArguments = [],
     };
@@ -76,15 +76,15 @@ public static class ActionsREL
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
-            IOptionsLineRel.Arguments.StageIndex,
-            IOptionsLineRel.Arguments.Difficulty,
+            GfzCliArgumentDB.StageIndex,
+            GfzCliArgumentDB.Difficulty,
             ],
         OptionalArguments = [],
     };
 
     internal static readonly GfzCliArgument Value_CourseName = new()
     {
-        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentName = Args.Value,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The name of the course.",
@@ -100,7 +100,7 @@ public static class ActionsREL
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
-            IOptionsLineRel.Arguments.StageIndex,
+            GfzCliArgumentDB.StageIndex,
             Value_CourseName,
             ],
         OptionalArguments = [],
@@ -142,15 +142,15 @@ public static class ActionsREL
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
-            IOptionsLineRel.Arguments.StageIndex,
-            IOptionsLineRel.Arguments.VenueIndex,
+            GfzCliArgumentDB.StageIndex,
+            GfzCliArgumentDB.VenueIndex,
             ],
         OptionalArguments = [],
     };
 
     internal static readonly GfzCliArgument Value_VenueName = new()
     {
-        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentName = Args.Value,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The name of the venue.",
@@ -166,7 +166,7 @@ public static class ActionsREL
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
-            IOptionsLineRel.Arguments.VenueIndex,
+            GfzCliArgumentDB.VenueIndex,
             Value_VenueName,
             ],
         OptionalArguments = [],
@@ -200,7 +200,7 @@ public static class ActionsREL
 
     internal static readonly GfzCliArgument Value_CarData = new()
     {
-        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentName = Args.Value,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The file path to cardata (compressed, decompressed, or tsv).",
@@ -221,7 +221,7 @@ public static class ActionsREL
 
     internal static readonly GfzCliArgument Value_MachineRating = new()
     {
-        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentName = Args.Value,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The machine rating as 3 consecutive numbers. Letters SABCDE maps to 012345. 123 is ABC.",
@@ -237,7 +237,7 @@ public static class ActionsREL
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
-            IOptionsLineRel.Arguments.PilotNumber,
+            GfzCliArgumentDB.PilotNumber,
             Value_MachineRating,
             ],
         OptionalArguments = [],
@@ -245,7 +245,7 @@ public static class ActionsREL
 
     internal static readonly GfzCliArgument Value_MaxSpeed = new()
     {
-        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentName = Args.Value,
         ArgumentType = typeof(float).Name,
         ArgumentDefault = float.PositiveInfinity,
         Help = "Vehicle max speed cap.",
@@ -274,9 +274,9 @@ public static class ActionsREL
         IsOutputOptional = true,
         ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
-            IOptionsLineRel.Arguments.Cup,           // cup to modify
-            IOptionsLineRel.Arguments.CupStageIndex, // stage in cup to modify 0-5 (count: 6)
-            IOptionsLineRel.Arguments.StageIndex,    // stage index to use
+            GfzCliArgumentDB.Cup,           // cup to modify
+            GfzCliArgumentDB.CupStageIndex, // stage in cup to modify 0-5 (count: 6)
+            GfzCliArgumentDB.StageIndex,    // stage index to use
             ],
         OptionalArguments = [],
     };
@@ -362,7 +362,7 @@ public static class ActionsREL
         if (!Enum.IsDefined(options.Cup))
         {
             string msg =
-                $"Argument --{IOptionsLineRel.Args.Cup} " +
+                $"Argument --{Args.Cup} " +
                 $"must be a valid cup value.";
             throw new ArgumentException(msg);
         }
@@ -373,7 +373,7 @@ public static class ActionsREL
         if (options.CupCourseIndex < MinCupCourseIndex || options.CupCourseIndex > MaxCupCourseIndex)
         {
             string msg =
-                $"Argument --{nameof(IOptionsLineRel.Args.CupStageIndex)} " +
+                $"Argument --{nameof(Args.CupStageIndex)} " +
                 $"must be a value in the range 1-{MaxCupCourseIndex}.";
             throw new ArgumentException(msg);
         }
@@ -383,7 +383,7 @@ public static class ActionsREL
         // Validate index
         if (options.CourseIndex > GameDataConsts.MaxStageIndex)
         {
-            string msg = $"Argument --{IOptionsLineRel.Args.StageIndex} must be a value in the range 0-{GameDataConsts.MaxStageIndex}.";
+            string msg = $"Argument --{Args.StageIndex} must be a value in the range 0-{GameDataConsts.MaxStageIndex}.";
             throw new ArgumentException(msg);
         }
     }
@@ -396,7 +396,7 @@ public static class ActionsREL
         if (isInvalid)
         {
             string msg =
-                $"Argument --{IOptionsLineRel.Args.StageIndex} " +
+                $"Argument --{Args.StageIndex} " +
                 $"must be a value in the range 0-{GameDataConsts.MaxStageIndex} or exactly {0xFF}.";
             throw new Exception(msg);
         }
@@ -404,9 +404,9 @@ public static class ActionsREL
     private static void AssertVenueIndex(Options options)
     {
         // Validate index
-        if (options.VenueIndex > GameDataConsts.MaxVenueIndex)
+        if (options.VenueIndex.Byte > GameDataConsts.MaxVenueIndex)
         {
-            string msg = $"Argument --{IOptionsLineRel.Args.VenueIndex} must be a value in the range 0-{GameDataConsts.MaxVenueIndex}.";
+            string msg = $"Argument --{Args.VenueIndex} must be a value in the range 0-{GameDataConsts.MaxVenueIndex}.";
             throw new ArgumentException(msg);
         }
     }
@@ -414,7 +414,7 @@ public static class ActionsREL
     {
         if (options.Difficulty > MaxDifficulty)
         {
-            string msg = $"Argument --{IOptionsLineRel.Args.Difficulty} must a value in the range 0-{MaxDifficulty}.";
+            string msg = $"Argument --{Args.Difficulty} must a value in the range 0-{MaxDifficulty}.";
             throw new ArgumentException(msg);
         }
     }
@@ -422,7 +422,7 @@ public static class ActionsREL
     {
         if (string.IsNullOrEmpty(options.Value))
         {
-            string msg = $"Argument --{IOptionsLineRel.Args.Value} must be set.";
+            string msg = $"Argument --{Args.Value} must be set.";
             throw new ArgumentException(msg);
         }
     }
@@ -628,7 +628,7 @@ public static class ActionsREL
         ShiftJisCString[] venueNames = GetVenueNames(info, reader);
 
         //
-        int venueIndex = options.VenueIndex;
+        int venueIndex = options.VenueIndex.Byte;
         // Convert all escape sequences into Unicode characters
         string editedVenueName = Regex.Unescape(options.Value);
         // Convert Unicode into Shift-JIS
@@ -698,7 +698,7 @@ public static class ActionsREL
         // Assert file path is good
         if (string.IsNullOrWhiteSpace(options.Value))
         {
-            string msg = $"Argument --{IOptionsLineRel.Args.Value} must be set to a file path!";
+            string msg = $"Argument --{Args.Value} must be set to a file path!";
             throw new ArgumentException(msg);
         }
         OSPath carDataPath = new(options.Value);
@@ -728,7 +728,7 @@ public static class ActionsREL
         else
         {
             string msg =
-                $"Argument --{IOptionsLineRel.Args.Value} file " +
+                $"Argument --{Args.Value} file " +
                 $"cannot be inferred to be a valid cardata file.";
             throw new ArgumentException(msg);
         }
@@ -746,7 +746,7 @@ public static class ActionsREL
         string rating = options.Value;
         VehicleRating vehicleRating = VehicleRating.FromString(rating);
 
-        int pilotIndex = GameDataMap.GetPilotIndexFromPilotNumber(options.PilotNumber);
+        int pilotIndex = GameDataMap.GetPilotIndexFromPilotNumber(options.PilotNumber.Byte);
         Pointer address = info.MachineLetterRatingsPtr + VehicleRating.Size * pilotIndex;
         writer.JumpToAddress(address);
         writer.Write(vehicleRating);

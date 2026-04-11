@@ -33,7 +33,7 @@ public static class ActionsAsset
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            IOptionsImageSharp.Arguments.ResamplerType,
+            GfzCliArgumentDB.ResamplerType,
             ],
     };
 
@@ -48,19 +48,19 @@ public static class ActionsAsset
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            IOptionsAssets.Arguments.MipmapFiles,
-            IOptionsAssets.Arguments.MipmapCount,
-            IOptionsAssets.Arguments.MipmapMode,
-            IOptionsAssets.Arguments.TextureFormat,
+            GfzCliArgumentDB.MipmapFiles,
+            GfzCliArgumentDB.MipmapCount,
+            GfzCliArgumentDB.MipmapMode,
+            GfzCliArgumentDB.TextureFormat,
             // Resize
-            IOptionsImageSharp.Arguments.Width, // Size.X
-            IOptionsImageSharp.Arguments.Height, // Size.Y
-            IOptionsImageSharp.Arguments.Compand,
-            IOptionsImageSharp.Arguments.PadColor,
-            IOptionsImageSharp.Arguments.Position,
-            IOptionsImageSharp.Arguments.PremultiplyAlpha,
-            IOptionsImageSharp.Arguments.ResamplerType,
-            IOptionsImageSharp.Arguments.ResizeMode, // Mode
+            GfzCliArgumentDB.Width, // Size.X
+            GfzCliArgumentDB.Height, // Size.Y
+            GfzCliArgumentDB.Compand,
+            GfzCliArgumentDB.PadColor,
+            GfzCliArgumentDB.Position,
+            GfzCliArgumentDB.PremultiplyAlpha,
+            GfzCliArgumentDB.ResamplerType,
+            GfzCliArgumentDB.ResizeMode, // Mode
             ],
     };
 
@@ -75,19 +75,19 @@ public static class ActionsAsset
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            IOptionsAssets.Arguments.MipmapFiles,
-            IOptionsAssets.Arguments.MipmapCount,
-            IOptionsAssets.Arguments.MipmapMode,
-            IOptionsAssets.Arguments.TextureFormat,
+            GfzCliArgumentDB.MipmapFiles,
+            GfzCliArgumentDB.MipmapCount,
+            GfzCliArgumentDB.MipmapMode,
+            GfzCliArgumentDB.TextureFormat,
             // Resize
-            IOptionsImageSharp.Arguments.Width, // Size.X
-            IOptionsImageSharp.Arguments.Height, // Size.Y
-            IOptionsImageSharp.Arguments.Compand,
-            IOptionsImageSharp.Arguments.PadColor,
-            IOptionsImageSharp.Arguments.Position,
-            IOptionsImageSharp.Arguments.PremultiplyAlpha,
-            IOptionsImageSharp.Arguments.ResamplerType,
-            IOptionsImageSharp.Arguments.ResizeMode, // Mode
+            GfzCliArgumentDB.Width, // Size.X
+            GfzCliArgumentDB.Height, // Size.Y
+            GfzCliArgumentDB.Compand,
+            GfzCliArgumentDB.PadColor,
+            GfzCliArgumentDB.Position,
+            GfzCliArgumentDB.PremultiplyAlpha,
+            GfzCliArgumentDB.ResamplerType,
+            GfzCliArgumentDB.ResizeMode, // Mode
             ],
     };
 
@@ -102,7 +102,7 @@ public static class ActionsAsset
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            IOptionsAssets.Arguments.DirFormat,
+            GfzCliArgumentDB.DirFormat,
             ],
     };
 
@@ -117,7 +117,7 @@ public static class ActionsAsset
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            IOptionsAssets.Arguments.AssetLibraryRoot,
+            GfzCliArgumentDB.AssetLibraryRoot,
             ],
     };
 
@@ -132,7 +132,7 @@ public static class ActionsAsset
         ActionOptions = CliActionOption.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            IOptionsAssets.Arguments.AssetLibraryRoot,
+            GfzCliArgumentDB.AssetLibraryRoot,
             ],
     };
 
@@ -518,8 +518,8 @@ public static class ActionsAsset
         var mainImage = images[0];
 
         // Get output texture size for main texture
-        var resizeOptions = IOptionsImageSharp.GetResizeOptions(options);
-        resizeOptions.Size = IOptionsImageSharp.GetResizeSize(options, mainImage);
+        var resizeOptions = options.GetResizeOptions();
+        resizeOptions.Size = options.GetResizeSize(mainImage);
 
         // Create texture + texture sequence
         int texCount = 1 + GetMipmapCount(options, resizeOptions.Size.Width, resizeOptions.Size.Height);

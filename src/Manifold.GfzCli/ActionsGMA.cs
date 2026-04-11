@@ -12,7 +12,7 @@ public static class ActionsGMA
 {
     private static readonly GfzCliArgument Name = new()
     {
-        ArgumentName = IOptionsStage.Args.Name,
+        ArgumentName = Args.Name,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The model to modify.",
@@ -20,7 +20,7 @@ public static class ActionsGMA
 
     private static readonly GfzCliArgument Value = new()
     {
-        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentName = Args.Value,
         ArgumentType = typeof(RenderFlags).Name,
         ArgumentDefault = null,
         Help = "The model render flags to set.",
@@ -37,7 +37,7 @@ public static class ActionsGMA
         ActionOptions = CliActionOption.PS,
         RequiredArguments = [ Name, Value ],
         OptionalArguments = [
-            IOptionsStage.Arguments.SetFlagsOff,
+            GfzCliArgumentDB.SetFlagsOff,
             ],
     };
 

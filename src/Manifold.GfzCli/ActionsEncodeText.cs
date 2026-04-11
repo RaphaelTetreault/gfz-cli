@@ -8,7 +8,7 @@ public class ActionsEncodeText
 {
     private static readonly GfzCliArgument Value = new()
     {
-        ArgumentName = IOptionsLineRel.Args.Value,
+        ArgumentName = Args.Value,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The text to encode.",
@@ -61,7 +61,7 @@ public class ActionsEncodeText
         // Assert
         if (isInvalid)
         {
-            string msg = $"Argument --{IOptionsLineRel.Args.Value} must be only hexadecimal characters.";
+            string msg = $"Argument --{Args.Value} must be only hexadecimal characters.";
             throw new ArgumentException(msg);
         }
     }
