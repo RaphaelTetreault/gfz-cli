@@ -17,120 +17,7 @@ public static class GfzCli
     public const ConsoleColor NotificationColor = ConsoleColor.DarkYellow;
     public static readonly string[] HelpArg = ["--help"];
 
-    private static readonly GfzCliAction ActionUsage = new()
-    {
-        Description = "Call to print out actions available and how to use them.",
-        Action = PrintActionUsage,
-        ActionID = CliActionID.usage,
-        InputIO = CliActionIO.None,
-        OutputIO = CliActionIO.None,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.None,
-        RequiredArguments = [],
-        OptionalArguments = [],
-    };
-
-    private static readonly GfzCliAction ActionList = new()
-    {
-        Description = "List all possible actions with description.",
-        Action = PrintActionList,
-        ActionID = CliActionID.list,
-        InputIO = CliActionIO.None,
-        OutputIO = CliActionIO.None,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.None,
-        RequiredArguments = [],
-        OptionalArguments = [],
-    };
-
-    private static readonly GfzCliAction ActionNone = new()
-    {
-        Description = "No action selected.",
-        Action = PrintActionUsage,
-        ActionID = CliActionID.none,
-        InputIO = CliActionIO.None,
-        OutputIO = CliActionIO.None,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.None,
-        RequiredArguments = [],
-        OptionalArguments = [],
-    };
-
     public static readonly Dictionary<CliActionID, GfzCliAction> GfzCliActionsLibrary = [];
-    public static readonly GfzCliAction[] GfzCliActions =
-    [
-        // PROGRAM-SPECIFIC: note actions in this class need to be initialzed before this code runs...
-        ActionNone,
-        ActionList,
-        ActionUsage,
-        // ARC
-        ActionsARC.ActionArcPack,
-        ActionsARC.ActionArcUnpack,
-        // ASSET LIBRARY
-        ActionsAsset.ActionAssetGenerateLibrary,
-        ActionsAsset.ActionAssetCustomMipmapGxtex,
-        ActionsAsset.ActionAssetGmarefPack,
-        ActionsAsset.ActionAssetImageToGxtex,
-        ActionsAsset.ActionAssetTplPack,
-        ActionsAsset.ActionAssetTplUnpack,
-        // CAMERA
-        ActionsCamera.ActionCameraLivecamFromTSV,
-        ActionsCamera.ActionCameraLivecamToTSV,
-        // CARDATA
-        ActionsCarData.ActionCarDataFromTSV,
-        ActionsCarData.ActionCarDataToTSV,
-        // COLICOURSE
-        ActionsColiCourse.ActionColicoursePatchFog,
-        ActionsColiCourse.ActionColicoursePatchObjectRenderFlags,
-        //      TODO: Extract ./files/ only
-        //      TODO: Extract ./sys/ only
-        // ENCODE TEXT
-        ActionsEncodeText.ActionEncodeBytesToShiftJis,
-        ActionsEncodeText.ActionEncodeWindows1252ToShiftJis,
-        // EMBLEM
-        ActionsEmblem.ActionEmblemGciFromImage,
-        ActionsEmblem.ActionEmblemGciToImage,
-        ActionsEmblem.ActionEmblemsBinFromImages,
-        ActionsEmblem.ActionEmblemsBinToImages,
-        // FMI
-        ActionsFMI.ActionFmiFromPlainText,
-        ActionsFMI.ActionFmiToPlainText,
-        // GCI
-        ActionsGhost.ActionGciExtractGhost,
-        //      TODO: ActionsGCI - rename file...
-        // GMA
-        ActionsGMA.ActionGmaPatchSubmeshRenderFlags,
-        // ISO
-        ActionsISO.ActionIsoExtractAll,
-        // IO: IN-OUT TESTS
-        ActionsIO.ActionIOGma,
-        ActionsIO.ActionIOScene,
-        ActionsIO.ActionIOSceneAddComment,
-        ActionsIO.ActionIOTpl,
-        // line__.rel
-        ActionsREL.ActionDecryptLineREL,
-        ActionsREL.ActionEncryptLineREL,
-        ActionsREL.ActionPatchClearAllCourseNames,
-        ActionsREL.ActionPatchClearAllVenueNames,
-        ActionsREL.ActionPatchClearUnusedCourseNames,
-        ActionsREL.ActionPatchClearUnusedVenueNames,
-        ActionsREL.ActionPatchBgm,
-        ActionsREL.ActionPatchBgmFinalLap,
-        ActionsREL.ActionPatchBgmBoth,
-        ActionsREL.ActionPatchSetCarData,
-        ActionsREL.ActionPatchSetCourseName,
-        ActionsREL.ActionPatchSetCupCourse,
-        ActionsREL.ActionPatchMachineRating,
-        ActionsREL.ActionPatchMaxSpeed,
-        ActionsREL.ActionPatchSetCourseVenue,
-        ActionsREL.ActionPatchSetVenueName,
-        // Log
-        ActionsLog.ActionLogStage,
-        ActionsLog.ActionLogGma,
-        // LZ
-        ActionsLZ.ActionLZCompress,
-        ActionsLZ.ActionLZDecompress,
-    ];
 
     private static void InitUsageDictionary()
     {
@@ -138,7 +25,7 @@ public static class GfzCli
         if (GfzCliActionsLibrary.Count != 0)
             return;
 
-        foreach (GfzCliAction value in GfzCliActions)
+        foreach (GfzCliAction value in GfzCliActionDB.GfzCliActions)
         {
             CliActionID key = value.ActionID;
 
@@ -147,7 +34,7 @@ public static class GfzCli
             if (doesContainValue)
             {
                 string message =
-                    $"Duplicate {nameof(GfzCliAction)} value \"{value}\" in {nameof(GfzCliActions)}! " +
+                    $"Duplicate {nameof(GfzCliAction)} value \"{value}\" in {nameof(GfzCliActionDB.GfzCliActions)}! " +
                     $"{nameof(GfzCliAction)}.{nameof(GfzCliAction.ActionID)} is \"{value.ActionID}\".";
                 throw new ArgumentException(message);
             }
@@ -156,14 +43,13 @@ public static class GfzCli
             bool doesContainKey = GfzCliActionsLibrary.ContainsKey(key);
             if (doesContainKey)
             {
-                string message = $"Duplicate {nameof(CliActionID)} key \"{key}\" in {nameof(GfzCliActions)}!";
+                string message = $"Duplicate {nameof(CliActionID)} key \"{key}\" in {nameof(GfzCliActionDB.GfzCliActions)}!";
                 throw new ArgumentException(message);
             }
 
             GfzCliActionsLibrary.Add(key, value);
         }
     }
-
 
     /// <summary>
     ///     Effective Main for this program.

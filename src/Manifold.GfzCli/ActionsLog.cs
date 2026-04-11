@@ -11,48 +11,8 @@ using static Manifold.GfzCli.GfzCliUtilities;
 
 public static class ActionsLog
 {
-    private const string SceneSearchPattern = "COLI_COURSE???";
-    private const string GmaSearchPattern = "*.gma";
-
-    public static readonly GfzCliAction ActionLogStage = new()
-    {
-        Description = "Create all possible analysis .TSVs of COLI_COURSE stage files.",
-        Action = LogStageAll,
-        ActionID = CliActionID.log_stage_all,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.Directory,
-        IsOutputOptional = false,
-        ActionOptions = CliActionOption.OPS,
-        RequiredArguments = [],
-        OptionalArguments = [],
-    };
-
-    public static readonly GfzCliAction ActionLogGma = new()
-    {
-        Description = "Create all possible analysis .TSVs of GMA model files.",
-        Action = LogGmaAll,
-        ActionID = CliActionID.log_gma_all,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.Directory,
-        IsOutputOptional = false,
-        ActionOptions = CliActionOption.OPS,
-        RequiredArguments = [],
-        OptionalArguments = [],
-    };
-
-    // TODO: for each one individually
-    public static readonly GfzCliAction ActionLogStageTrackKeyables = new()
-    {
-        Description = "Create a .tsv log of track keyables from COLI_COURSE stage files.",
-        Action = (Options options) => Log(options, StageTableLogger.LogTrackKeyablesAll, SceneSearchPattern),
-        ActionID = CliActionID.log_stage_track_keyables,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.Directory,
-        IsOutputOptional = false,
-        ActionOptions = CliActionOption.OPS,
-        RequiredArguments = [],
-        OptionalArguments = [],
-    };
+    public const string SceneSearchPattern = "COLI_COURSE???";
+    public const string GmaSearchPattern = "*.gma";
 
     public static void LogStageAll(Options options)
     {
@@ -82,4 +42,8 @@ public static class ActionsLog
             logFuncFile.AnalysisFunction.Invoke(scenes.ToArray(), outputFile);
         }
     }
+
+    public static void LogStageTrackKeyables(Options options)
+        => Log(options, StageTableLogger.LogTrackKeyablesAll, SceneSearchPattern);
+
 }

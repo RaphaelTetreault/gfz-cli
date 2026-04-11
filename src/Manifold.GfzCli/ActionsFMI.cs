@@ -12,32 +12,6 @@ public static class ActionsFMI
 {
     const string prefix = "FMI";
 
-    public static readonly GfzCliAction ActionFmiFromPlainText = new()
-    {
-        Description = "Create a FMI-plaintext file from FMI binary file.",
-        Action = FmiFromPlainText,
-        ActionID = CliActionID.fmi_from_plaintext,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.Path,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.OPS,
-        RequiredArguments = [],
-        OptionalArguments = [],
-    };
-
-    public static readonly GfzCliAction ActionFmiToPlainText = new()
-    {
-        Description = "Create a FMI binary file from FMI-plaintext.",
-        Action = FmiToPlainText,
-        ActionID = CliActionID.fmi_to_plaintext,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.Path,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.OPS,
-        RequiredArguments = [],
-        OptionalArguments = [],
-    };
-
     /// <summary>
     ///     
     /// </summary>

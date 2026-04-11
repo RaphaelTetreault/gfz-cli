@@ -10,19 +10,6 @@ namespace Manifold.GfzCli;
 /// </summary>
 public class ActionsGhost
 {
-    public static readonly GfzCliAction ActionGciExtractGhost = new()
-    {
-        Description = "Extract raw ghost data from GCI save file.",
-        Action = ExtractGhostFromGci,
-        ActionID = CliActionID.gci_extract_ghost,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.Path,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.OPS,
-        RequiredArguments = [],
-        OptionalArguments = [],
-    };
-
     /// <summary>
     /// 
     /// </summary>

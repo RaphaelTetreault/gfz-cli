@@ -6,32 +6,6 @@ namespace Manifold.GfzCli;
 
 public static class ActionsLZ
 {
-    public static readonly GfzCliAction ActionLZCompress = new()
-    {
-        Description = "Compress files into an LZ file.",
-        Action = LzCompress,
-        ActionID = CliActionID.lz_compress,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.Path,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.FOPS,
-        RequiredArguments = [],
-        OptionalArguments = [],
-    };
-
-    public static readonly GfzCliAction ActionLZDecompress = new()
-    {
-        Description = "Decompress an LZ file.",
-        Action = LzDecompress,
-        ActionID = CliActionID.lz_decompress,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.Path,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.OPS,
-        RequiredArguments = [],
-        OptionalArguments = [],
-    };
-
     public static void LzDecompress(Options options)
     {
         // Force checking for .LZ only IF there is no defined search pattern

@@ -6,41 +6,6 @@ namespace Manifold.GfzCli;
 
 public class ActionsEncodeText
 {
-    private static readonly GfzCliArgument Value = new()
-    {
-        ArgumentName = GfzCliArgs.Value,
-        ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
-        Help = "The text to encode.",
-    };
-
-    public static readonly GfzCliAction ActionEncodeBytesToShiftJis = new()
-    {
-        Description = "Takes in hex-string of bytes and prints the Shift-JIS encoded version of the value.",
-        Action = PrintBytesToShiftJis,
-        ActionID = CliActionID.encode_bytes_to_shift_jis,
-        InputIO = CliActionIO.None,
-        OutputIO = CliActionIO.None,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.None,
-        RequiredArguments = [ Value ],
-        OptionalArguments = [],
-    };
-
-    public static readonly GfzCliAction ActionEncodeWindows1252ToShiftJis = new()
-    {
-        Description = "Takes in Windows code page 1252 string and prints the Shift-JIS encoded version of the value.",
-        Action = PrintWindowsToShiftJis,
-        ActionID = CliActionID.encode_windows_to_shift_jis,
-        InputIO = CliActionIO.None,
-        OutputIO = CliActionIO.None,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.None,
-        RequiredArguments = [ Value ],
-        OptionalArguments = [],
-    };
-
-
     // Generic and usable in any context
     public static void AssertOnlyHexCharacters(string value)
     {

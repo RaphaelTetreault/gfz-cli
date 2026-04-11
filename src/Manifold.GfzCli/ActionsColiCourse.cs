@@ -12,56 +12,6 @@ namespace Manifold.GfzCli;
 /// </summary>
 public static class ActionsColiCourse
 {
-    private static readonly GfzCliArgument Value = new()
-    {
-        ArgumentName = GfzCliArgs.Value,
-        ArgumentType = typeof(ObjectRenderFlags0x00).Name,
-        ArgumentDefault = null,
-        Help = "The render flag value in decimal to apply.",
-    };
-
-    public static readonly GfzCliAction ActionColicoursePatchFog = new()
-    {
-        Description = "Patch the fog parameters of scenes.",
-        Action = PatchFog,
-        ActionID = CliActionID.colicourse_patch_fog,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.Path,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.FPS,
-        RequiredArguments = [
-            GfzCliArgumentDB.Color,
-            GfzCliArgumentDB.ColorR,
-            GfzCliArgumentDB.ColorG,
-            GfzCliArgumentDB.ColorB,
-            ],
-        OptionalArguments = [
-            GfzCliArgumentDB.Backup,
-            GfzCliArgumentDB.FogInterpolationMode,
-            GfzCliArgumentDB.FogViewRangeNear,
-            GfzCliArgumentDB.FogViewRangeFar,
-            ],
-    };
-
-    public static readonly GfzCliAction ActionColicoursePatchObjectRenderFlags = new()
-    {
-        Description = "Patch a scene object's render flags by name.",
-        Action = PatchSceneObjectDynamicRenderFlags,
-        ActionID = CliActionID.colicourse_patch_object_render_flags,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.Path,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.FPS,
-        RequiredArguments = [
-            GfzCliArgumentDB.Name,
-            Value,
-            ],
-        OptionalArguments = [
-            GfzCliArgumentDB.Backup,
-            GfzCliArgumentDB.SetFlagsOff,
-            ],
-    };
-
     /// <summary>
     ///     Patch the fog parameters of scenes.
     /// </summary>

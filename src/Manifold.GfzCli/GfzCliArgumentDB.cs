@@ -214,6 +214,14 @@ public static class GfzCliArgumentDB
 
     #region Stage
 
+    internal static readonly GfzCliArgument Value_ColiCourse = new()
+    {
+        ArgumentName = GfzCliArgs.Value,
+        ArgumentType = typeof(ObjectRenderFlags0x00).Name,
+        ArgumentDefault = null,
+        Help = "The render flag value in decimal to apply.",
+    };
+
     internal static readonly GfzCliArgument FogViewRangeNear = new()
     {
         ArgumentName = GfzCliArgs.FogViewRangeNear,
@@ -250,8 +258,6 @@ public static class GfzCliArgumentDB
     };
 
     #endregion
-
-
 
     #region REL
 
@@ -320,5 +326,69 @@ public static class GfzCliArgumentDB
     };
 
     #endregion
+
+    internal static readonly GfzCliArgument Value_EncodeText = new()
+    {
+        ArgumentName = GfzCliArgs.Value,
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = null,
+        Help = "The text to encode.",
+    };
+
+    internal static readonly GfzCliArgument Name_GMA = new()
+    {
+        ArgumentName = GfzCliArgs.Name,
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = null,
+        Help = "The model to modify.",
+    };
+
+    internal static readonly GfzCliArgument Value_GMA = new()
+    {
+        ArgumentName = GfzCliArgs.Value,
+        ArgumentType = typeof(GameCube.GFZ.GMA.RenderFlags).Name,
+        ArgumentDefault = null,
+        Help = "The model render flags to set.",
+    };
+
+    internal static readonly GfzCliArgument Value_CourseName = new()
+    {
+        ArgumentName = GfzCliArgs.Value,
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = null,
+        Help = "The name of the course.",
+    };
+
+    internal static readonly GfzCliArgument Value_VenueName = new()
+    {
+        ArgumentName = GfzCliArgs.Value,
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = null,
+        Help = "The name of the venue.",
+    };
+
+    internal static readonly GfzCliArgument Value_CarData = new()
+    {
+        ArgumentName = GfzCliArgs.Value,
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = null,
+        Help = "The file path to cardata (compressed, decompressed, or tsv).",
+    };
+
+    internal static readonly GfzCliArgument Value_MaxSpeed = new()
+    {
+        ArgumentName = GfzCliArgs.Value,
+        ArgumentType = typeof(float).Name,
+        ArgumentDefault = float.PositiveInfinity,
+        Help = "Vehicle max speed cap.",
+    };
+
+    internal static readonly GfzCliArgument Value_MachineRating = new()
+    {
+        ArgumentName = GfzCliArgs.Value,
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = null,
+        Help = "The machine rating as 3 consecutive numbers. Letters SABCDE maps to 012345. 123 is ABC.",
+    };
 
 }

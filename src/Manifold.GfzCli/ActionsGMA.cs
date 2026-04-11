@@ -10,38 +10,6 @@ namespace Manifold.GfzCli;
 /// </summary>
 public static class ActionsGMA
 {
-    private static readonly GfzCliArgument Name = new()
-    {
-        ArgumentName = GfzCliArgs.Name,
-        ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
-        Help = "The model to modify.",
-    };
-
-    private static readonly GfzCliArgument Value = new()
-    {
-        ArgumentName = GfzCliArgs.Value,
-        ArgumentType = typeof(RenderFlags).Name,
-        ArgumentDefault = null,
-        Help = "The model render flags to set.",
-    };
-
-    public static readonly GfzCliAction ActionGmaPatchSubmeshRenderFlags = new()
-    {
-        Description = "Patch render flags on model submesh.",
-        Action = PatchSubmeshRenderFlags,
-        ActionID = CliActionID.gma_patch_submesh_render_flags,
-        InputIO = CliActionIO.Path,
-        OutputIO = CliActionIO.None,
-        IsOutputOptional = true,
-        ActionOptions = CliActionOption.PS,
-        RequiredArguments = [ Name, Value ],
-        OptionalArguments = [
-            GfzCliArgumentDB.SetFlagsOff,
-            ],
-    };
-
-
     /// <summary>
     /// 
     /// </summary>
