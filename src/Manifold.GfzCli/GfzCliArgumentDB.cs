@@ -7,8 +7,72 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Manifold.GfzCli;
 
+public static class Help
+{
+    //public const string Verbose =
+    //    "Output all messages to console.\n" +
+    //    "\tEnabled only when called.";
+    public const string Action =
+        "The action to perform.\n" +
+        "Call \"list\" for a simple list of actions.\n" +
+        "Call \"usage\" for a detailed list of actions.\n" +
+        "Call \"usage [action]\" for specific action details.";
+    public const string InputPath =
+        "The input path to a file or folder for the specified action.\n" +
+        "Most actions support both.";
+    public const string OutputPath =
+        "Optional. The output path. Can be a full file path (for single file actions)\n" +
+        "or destination directory (for multi file actions).";
+
+    public const string OverwriteFiles =
+        "Allow output files to overwrite existing files.\n" +
+        "Enabled only when called.";
+    public const string SearchPattern =
+        "The search pattern used to find files.\n" +
+        "Ex: \"*.tpl.lz\" (find all compressed TPL files in any directory, if permitted.)\n" +
+        "Ex: \"st??.gma\" (find GMA files with 2 digit stage index in same directory.)";
+    public const string SearchSubdirectories =
+        "Whether or not to search subdirectories for files when using the directory mode.\n" +
+        "Enabled only when called.";
+    public const string GameCode =
+        "Which game's files are being managed.\n" +
+        "Options: \"gfzj01\", \"gfze01\", \"gfzp01\", \"ggge6e\".\n" +
+        "Set to \"gfzj01\" by default.";
+    public const string SerializationFormat =
+        "The format used when serializing.\n" +
+        "Options: \"ax\", \"gx\".\n" +
+        "Set to \"gx\" by default.";
+    public const string Region =
+        "The region used when serializing.\n" +
+        "Options: \"j\" (jp), \"e\" (na), \"p\" (eu).\n" +
+        "Set to \"p\" by default.";
+}
+
+public static class ArgsShort
+{
+    public const char OverwriteFiles = 'o';
+    public const char SearchPattern = 'p';
+    public const char SearchSubdirectories = 's';
+    public const char GameCode = 'g';
+    public const char SerializationFormat = 'f';
+    public const char Region = 'r';
+}
+
 public static class Args
 {
+    // Required
+    public const string Action = "action";
+    public const string InputPath = "input-path";
+    public const string OutputPath = "output-path";
+    // Default
+    public const string OverwriteFiles = "overwrite";
+    public const string SearchPattern = "search-pattern";
+    public const string SearchSubdirectories = "search-subdirs";
+    public const string GameCode = "game";
+    public const string SerializationFormat = "format";
+    public const string Region = "region";
+    //public const string Verbose = "verbose";
+
     // General
     public const string Backup = "backup";
     public const string Name = "name";

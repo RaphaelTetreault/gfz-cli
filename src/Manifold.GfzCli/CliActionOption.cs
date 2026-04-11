@@ -18,35 +18,45 @@ public enum CliActionOption
     F_SerializationFormat = 1 << 0,
 
     /// <summary>
+    ///     <see cref="GameCube.GFZ.GameCode"/>.
+    /// </summary>
+    G_GameCode = 1 << 1,
+
+    /// <summary>
     ///     Overwrite files in output.
     /// </summary>
-    O_OverwriteFiles = 1 << 1,
+    O_OverwriteFiles = 1 << 2,
 
     /// <summary>
     ///     Game region J/E/P or JP/NA/EU.
     /// </summary>
-    R_SerializationRegion = 1 << 2,
+    R_SerializationRegion = 1 << 3,
 
     /// <summary>
     ///     File search pattern (for directories).
     /// </summary>
-    P_SearchPattern = 1 << 3,
+    P_SearchPattern = 1 << 4,
 
     /// <summary>
     ///     Do search subdirectories?
     /// </summary>
-    S_SearchSubdirectories = 1 << 4,
+    S_SearchSubdirectories = 1 << 5,
 
     /// <summary>
     ///     All options on.
     /// </summary>
-    All = F_SerializationFormat | O_OverwriteFiles | P_SearchPattern | R_SerializationRegion | S_SearchSubdirectories,
+    All = F_SerializationFormat | G_GameCode | O_OverwriteFiles | P_SearchPattern | R_SerializationRegion | S_SearchSubdirectories,
 
 
     /// <summary>
     ///     AX/GX format.
     /// </summary>
     F = F_SerializationFormat,
+
+    /// <summary>
+    ///     <see cref="GameCube.GFZ.GameCode"/>.
+    /// </summary>
+    G = G_GameCode,
 
     /// <summary>
     ///     Overwrite files in output.

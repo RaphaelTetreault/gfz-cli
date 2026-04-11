@@ -78,7 +78,7 @@ public static class ActionsLog
         if (CanWriteFileAndPrintResult(options, outputFile))
         {
             EnsureDirectoriesExist(outputFile);
-            IEnumerable<TBinarySerializable> scenes = BinarySerializableIO.LoadFile<TBinarySerializable>(options.GetInputFiles());
+            IEnumerable<TBinarySerializable> scenes = BinarySerializableIO.LoadFile<TBinarySerializable>(GetInputFiles(options));
             logFuncFile.AnalysisFunction.Invoke(scenes.ToArray(), outputFile);
         }
     }

@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-using GameCube.AmusementVision;
 using GameCube.DiskImage;
 using GameCube.GFZ;
 using GameCube.GFZ.CarData;
@@ -24,32 +23,57 @@ using System.IO;
 
 namespace Manifold.GfzCli;
 
-public class Options :
-    IOptionsGfzCli
+public sealed class Options
 {
+    #region Required / Default
 
-    // IGfzCliOptions
+    /// <summary>
+    ///     Input string for enum. GFZ CLI action to perform.
+    /// </summary>
+    [Value(0, MetaName = Args.Action, HelpText = Help.Action, Required = true)]
     public string ActionStr { get => WithoutQuotes(field); set; } = string.Empty;
-    public CliActionID Action => GfzCliParser.EnumParseUnderscoreToDash<CliActionID>(ActionStr);
+
+    /// <summary>
+    ///     Input path for action.
+    /// </summary>
+    [Value(1, MetaName = Args.InputPath, HelpText = Help.InputPath, Required = false)]
     public string InputPath { get => WithoutQuotes(field); set; } = string.Empty;
+
+    /// <summary>
+    ///     Output path for action.
+    /// </summary>
+    [Value(2, MetaName = Args.OutputPath, HelpText = Help.OutputPath, Required = false)]
     public string OutputPath { get => WithoutQuotes(field); set; } = string.Empty;
+
+    /// <summary>
+    ///     Whether overwriting files is allowed.
+    /// </summary>
+    [Option(ArgsShort.OverwriteFiles, Args.OverwriteFiles, HelpText = Help.OverwriteFiles)]
     public bool OverwriteFiles { get; set; } = false;
+
+    /// <summary>
+    ///     File search pattern. Uses * and ? wildcards.
+    /// </summary>
+    [Option(ArgsShort.SearchPattern, Args.SearchPattern, HelpText = Help.SearchPattern)]
     public string SearchPattern { get => WithoutQuotes(field); set; } = string.Empty;
+
+    /// <summary>
+    ///     Input string for enum.
+    ///     Whether search pattern applies to files in subfolders.
+    /// </summary>
+    [Option(ArgsShort.SearchSubdirectories, Args.SearchSubdirectories, HelpText = Help.SearchSubdirectories)]
     public bool SearchSubdirectories { get; set; } = false;
-    public SearchOption SearchOption => SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
+    /// <summary>
+    ///     Input string for enum. Which game to serialize.
+    /// </summary>
+    [Option(ArgsShort.GameCode, Args.GameCode, HelpText = Help.GameCode)]
+    public string GameCodeStr { get => WithoutQuotes(field); set; } = $"{GameCode.GFZJ01}";
 
-    private const GameCode DefaultGameCode = GameCode.GFZJ01;
-    public string GameCodeStr { get => WithoutQuotes(field); set; } = $"{DefaultGameCode}";
-    public string GameCodeRegion
-    {
-        set
-        {
-            GameCodeFlags region = StringToRegion(value);
-            GameCode gameCode = GameCodeUtility.SetRegion(GameCode, region);
-            GameCodeStr = gameCode.ToString();
-        }
-    }
+    /// <summary>
+    ///     Input string for enum. Which game to serialize.
+    /// </summary>
+    [Option(ArgsShort.SerializationFormat, Args.SerializationFormat, HelpText = Help.SerializationFormat)]
     public string GameCodeGame
     {
         set
@@ -59,16 +83,63 @@ public class Options :
             GameCodeStr = gameCode.ToString();
         }
     }
+
+    /// <summary>
+    ///     Input string for enum. Which region to serialize to.
+    /// </summary>
+    [Option(ArgsShort.Region, Args.Region, HelpText = Help.Region)]
+    public string GameCodeRegion
+    {
+        set
+        {
+            GameCodeFlags region = StringToRegion(value);
+            GameCode gameCode = GameCodeUtility.SetRegion(GameCode, region);
+            GameCodeStr = gameCode.ToString();
+        }
+    }
+
+
+    /// <summary>
+    ///     GFZ CLI action to perform.
+    /// </summary>
+    public CliActionID Action => GfzCliParser.EnumParseUnderscoreToDash<CliActionID>(ActionStr);
+
+    /// <summary>
+    ///     Whether search pattern applies to files in subfolders.
+    /// </summary>
+    public SearchOption SearchOption => SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+
+    /// <summary>
+    ///     Which game to serialize.
+    /// </summary>
     public GameCode GameCode => Enum.Parse<GameCode>(GameCodeStr, true);
-    public GameCodeFlags GcfRegion => GameCodeUtility.GetRegion(GameCode);
-    public GameCodeFlags GcfGame => GameCodeUtility.GetGame(GameCode);
+
+    /// <summary>
+    ///     Which region to serialize to.
+    /// </summary>
     public Region Region => GameCodeToRegion(GameCode);
+
+    /// <summary>
+    ///     Which game to serialize.
+    /// </summary>
     public SerializeFormat SerializeFormat => GameCodeToSerializeFormat(GameCode);
 
+    /// <summary>
+    ///     <see cref="GameCodeFlags"/> Region flags.
+    /// </summary>
+    public GameCodeFlags GcfRegion => GameCodeUtility.GetRegion(GameCode);
 
-    // IAssetsOptions
+    /// <summary>
+    ///     <see cref="GameCodeFlags"/> Game (AX/GX) flags.
+    /// </summary>
+    public GameCodeFlags GcfGame => GameCodeUtility.GetGame(GameCode);
 
-    #region 
+
+
+
+    #endregion
+
+    #region Assets
 
     /// <summary>
     ///     
@@ -385,12 +456,6 @@ public class Options :
 
     #endregion
 
-    // UNSORTED IN INTERFACES
-    [Option(Args.EmblemHasAlphaBorder, Hidden = true)]
-    public bool EmblemHasAlphaBorder { get; set; } = true;
-
-
-
     #region General
 
     /// <summary>
@@ -518,6 +583,10 @@ public class Options :
 
     #endregion
 
+    // UNSORTED
+    [Option(Args.EmblemHasAlphaBorder, Hidden = true)]
+    public bool EmblemHasAlphaBorder { get; set; } = true;
+
 
     private static GameCodeFlags StringToRegion(string regionStr)
     {
@@ -613,6 +682,10 @@ public class Options :
         Terminal.Write($"{SerializeFormat} \n");
     }
 
+    /// <summary>
+    ///     Override this <see cref="SearchPattern"/> with <paramref name="overrideSearchPattern"/> if otherwise unset.
+    /// </summary>
+    /// <param name="overrideSearchPattern"></param>
     public void OverrideSearchPatternIfUnset(string overrideSearchPattern)
     {
         bool hasNoSearchPattern = string.IsNullOrEmpty(SearchPattern);
@@ -620,15 +693,23 @@ public class Options :
             SearchPattern = overrideSearchPattern;
     }
 
+    /// <summary>
+    ///     Check to see if <see cref="OutputPath"/> is specified.
+    /// </summary>
+    /// <returns>
+    ///     True if <see cref="OutputPath"/> is not null or whitespace.
+    /// </returns>
     public bool IsOutputSpecified()
     {
-        bool isOutputSpecified = !string.IsNullOrEmpty(OutputPath);
+        bool isOutputSpecified = !string.IsNullOrWhiteSpace(OutputPath);
         return isOutputSpecified;
     }
 
-    // Forward
-    public string[] GetInputFiles() => GfzCliUtilities.GetInputFiles(this);
-
+    /// <summary>
+    ///     For sanitizing <see cref="GfzCliArgumentDB.DirFormat"/>.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
     public string FormatOutputDirectory(string value)
     {
         // Nothing to format
@@ -640,6 +721,14 @@ public class Options :
         return result;
     }
 
+    /// <summary>
+    ///     For sanitizing any string argument inputs.
+    ///     Get string value without "quotes" at either end.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns>
+    ///     
+    /// </returns>
     public static string WithoutQuotes(string value)
     {
         if (string.IsNullOrWhiteSpace(value))

@@ -481,8 +481,8 @@ public static class ActionsREL
         {
             string msg = $"Could not decompress input file {lzInputFile}. " +
                 $"Did you forget to specify the correct region code? " +
-                $"Consider adding -{IOptionsGfzCli.ArgsShort.Region} [e/j/p] " +
-                $"or --{IOptionsGfzCli.Args.Region} [e/j/p] to arguments. " +
+                $"Consider adding -{ArgsShort.Region} [e/j/p] " +
+                $"or --{Args.Region} [e/j/p] to arguments. " +
                 $"Current region: {options.Region}.";
             Terminal.WriteLine(msg, GfzCli.WarningColor);
             throw;
