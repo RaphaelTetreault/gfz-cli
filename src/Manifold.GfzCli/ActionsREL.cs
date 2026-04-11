@@ -84,7 +84,7 @@ public static class ActionsREL
 
     internal static readonly GfzCliArgument Value_CourseName = new()
     {
-        ArgumentName = Args.Value,
+        ArgumentName = GfzCliArgs.Value,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The name of the course.",
@@ -150,7 +150,7 @@ public static class ActionsREL
 
     internal static readonly GfzCliArgument Value_VenueName = new()
     {
-        ArgumentName = Args.Value,
+        ArgumentName = GfzCliArgs.Value,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The name of the venue.",
@@ -200,7 +200,7 @@ public static class ActionsREL
 
     internal static readonly GfzCliArgument Value_CarData = new()
     {
-        ArgumentName = Args.Value,
+        ArgumentName = GfzCliArgs.Value,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The file path to cardata (compressed, decompressed, or tsv).",
@@ -221,7 +221,7 @@ public static class ActionsREL
 
     internal static readonly GfzCliArgument Value_MachineRating = new()
     {
-        ArgumentName = Args.Value,
+        ArgumentName = GfzCliArgs.Value,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The machine rating as 3 consecutive numbers. Letters SABCDE maps to 012345. 123 is ABC.",
@@ -245,7 +245,7 @@ public static class ActionsREL
 
     internal static readonly GfzCliArgument Value_MaxSpeed = new()
     {
-        ArgumentName = Args.Value,
+        ArgumentName = GfzCliArgs.Value,
         ArgumentType = typeof(float).Name,
         ArgumentDefault = float.PositiveInfinity,
         Help = "Vehicle max speed cap.",
@@ -362,7 +362,7 @@ public static class ActionsREL
         if (!Enum.IsDefined(options.Cup))
         {
             string msg =
-                $"Argument --{Args.Cup} " +
+                $"Argument --{GfzCliArgs.Cup} " +
                 $"must be a valid cup value.";
             throw new ArgumentException(msg);
         }
@@ -373,7 +373,7 @@ public static class ActionsREL
         if (options.CupCourseIndex < MinCupCourseIndex || options.CupCourseIndex > MaxCupCourseIndex)
         {
             string msg =
-                $"Argument --{nameof(Args.CupStageIndex)} " +
+                $"Argument --{nameof(GfzCliArgs.CupStageIndex)} " +
                 $"must be a value in the range 1-{MaxCupCourseIndex}.";
             throw new ArgumentException(msg);
         }
@@ -383,7 +383,7 @@ public static class ActionsREL
         // Validate index
         if (options.CourseIndex > GameDataConsts.MaxStageIndex)
         {
-            string msg = $"Argument --{Args.StageIndex} must be a value in the range 0-{GameDataConsts.MaxStageIndex}.";
+            string msg = $"Argument --{GfzCliArgs.StageIndex} must be a value in the range 0-{GameDataConsts.MaxStageIndex}.";
             throw new ArgumentException(msg);
         }
     }
@@ -396,7 +396,7 @@ public static class ActionsREL
         if (isInvalid)
         {
             string msg =
-                $"Argument --{Args.StageIndex} " +
+                $"Argument --{GfzCliArgs.StageIndex} " +
                 $"must be a value in the range 0-{GameDataConsts.MaxStageIndex} or exactly {0xFF}.";
             throw new Exception(msg);
         }
@@ -406,7 +406,7 @@ public static class ActionsREL
         // Validate index
         if (options.VenueIndex.Byte > GameDataConsts.MaxVenueIndex)
         {
-            string msg = $"Argument --{Args.VenueIndex} must be a value in the range 0-{GameDataConsts.MaxVenueIndex}.";
+            string msg = $"Argument --{GfzCliArgs.VenueIndex} must be a value in the range 0-{GameDataConsts.MaxVenueIndex}.";
             throw new ArgumentException(msg);
         }
     }
@@ -414,7 +414,7 @@ public static class ActionsREL
     {
         if (options.Difficulty > MaxDifficulty)
         {
-            string msg = $"Argument --{Args.Difficulty} must a value in the range 0-{MaxDifficulty}.";
+            string msg = $"Argument --{GfzCliArgs.Difficulty} must a value in the range 0-{MaxDifficulty}.";
             throw new ArgumentException(msg);
         }
     }
@@ -422,7 +422,7 @@ public static class ActionsREL
     {
         if (string.IsNullOrEmpty(options.Value))
         {
-            string msg = $"Argument --{Args.Value} must be set.";
+            string msg = $"Argument --{GfzCliArgs.Value} must be set.";
             throw new ArgumentException(msg);
         }
     }
@@ -481,8 +481,8 @@ public static class ActionsREL
         {
             string msg = $"Could not decompress input file {lzInputFile}. " +
                 $"Did you forget to specify the correct region code? " +
-                $"Consider adding -{ArgsShort.Region} [e/j/p] " +
-                $"or --{Args.Region} [e/j/p] to arguments. " +
+                $"Consider adding -{GfzCliArgs.Short.Region} [e/j/p] " +
+                $"or --{GfzCliArgs.Region} [e/j/p] to arguments. " +
                 $"Current region: {options.Region}.";
             Terminal.WriteLine(msg, GfzCli.WarningColor);
             throw;
@@ -698,7 +698,7 @@ public static class ActionsREL
         // Assert file path is good
         if (string.IsNullOrWhiteSpace(options.Value))
         {
-            string msg = $"Argument --{Args.Value} must be set to a file path!";
+            string msg = $"Argument --{GfzCliArgs.Value} must be set to a file path!";
             throw new ArgumentException(msg);
         }
         OSPath carDataPath = new(options.Value);
@@ -728,7 +728,7 @@ public static class ActionsREL
         else
         {
             string msg =
-                $"Argument --{Args.Value} file " +
+                $"Argument --{GfzCliArgs.Value} file " +
                 $"cannot be inferred to be a valid cardata file.";
             throw new ArgumentException(msg);
         }

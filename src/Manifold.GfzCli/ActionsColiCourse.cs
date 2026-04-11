@@ -14,7 +14,7 @@ public static class ActionsColiCourse
 {
     private static readonly GfzCliArgument Value = new()
     {
-        ArgumentName = Args.Value,
+        ArgumentName = GfzCliArgs.Value,
         ArgumentType = typeof(ObjectRenderFlags0x00).Name,
         ArgumentDefault = null,
         Help = "The render flag value in decimal to apply.",

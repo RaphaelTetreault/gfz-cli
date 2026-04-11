@@ -12,7 +12,7 @@ public static class ActionsGMA
 {
     private static readonly GfzCliArgument Name = new()
     {
-        ArgumentName = Args.Name,
+        ArgumentName = GfzCliArgs.Name,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The model to modify.",
@@ -20,7 +20,7 @@ public static class ActionsGMA
 
     private static readonly GfzCliArgument Value = new()
     {
-        ArgumentName = Args.Value,
+        ArgumentName = GfzCliArgs.Value,
         ArgumentType = typeof(RenderFlags).Name,
         ArgumentDefault = null,
         Help = "The model render flags to set.",
