@@ -1,9 +1,9 @@
-﻿using GameCube.DiskImage;
+﻿using GameCube.AmusementVision.LZ;
+using GameCube.DiskImage;
 using GameCube.GFZ;
 using GameCube.GFZ.CarData;
 using GameCube.GFZ.GameData;
 using GameCube.GFZ.REL;
-using GameCube.GFZ.LZ;
 using GameCube.GFZ.Stage;
 using Manifold.IO;
 using System;
@@ -721,7 +721,7 @@ public static class ActionsREL
             bool isLzCompressed = carDataPath.IsOfExtension(".lz");
             // Open the file if decompressed, decompress file stream otherwise
             carData = new CarData();
-            using Stream fileStream = isLzCompressed ? LzUtility.DecompressAvLz(carDataPath) : File.OpenRead(carDataPath);
+            using Stream fileStream = isLzCompressed ? Lz.Decompress(carDataPath) : File.OpenRead(carDataPath);
             using EndianBinaryReader reader = new(fileStream, CarDataFile.endianness);
             carData.Deserialize(reader);
         }
