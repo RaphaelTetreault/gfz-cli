@@ -4,7 +4,6 @@ using GameCube.GFZ;
 using GameCube.GFZ.CarData;
 using GameCube.GFZ.GameData;
 using GameCube.GFZ.REL;
-using GameCube.GFZ.Stage;
 using Manifold.IO;
 using System;
 using System.IO;
@@ -141,11 +140,70 @@ public static class ActionsREL
     {
         options.OverrideSearchPatternIfUnset("*line__.bin");
         ParallelizeFileInFileOutTasks(options, DecryptLine);
+
+        static void DecryptLine(Options options, OSPath inputFile, OSPath outputFile)
+        {
+            // Skip processing for AX
+            if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFlags.AX)
+            {
+                string msg = $"AX does not support {options.ActionStr} action. ";
+                Terminal.WriteLine(msg, GfzCli.WarningColor);
+                options.PrintGameCodeDebugMsg();
+                return;
+            }
+
+            // Step 1: Decrypt line__.bin into line__.rel.lz
+            CryptLine(options, inputFile, outputFile, "rel.lz");
+
+            // Step 2: Get path to line__.rel.lz
+            OSPath lzInputFile = new(outputFile);
+            lzInputFile.SetExtensions("rel.lz");
+            OSPath lzOutputFile = new(lzInputFile);
+
+            // Step 3: Decompress line__.rel.lz into line__.rel
+            try
+            {
+                ActionsLZ.LzDecompressFile(options, lzInputFile, lzOutputFile);
+            }
+            catch (GameCube.AmusementVision.LZ.InvalidLzFileException)
+            {
+                string msg = $"Could not decompress input file {lzInputFile}. " +
+                    $"Did you forget to specify the correct region code? " +
+                    $"Consider adding -{GfzCliArgs.Short.Region} [e/j/p] " +
+                    $"or --{GfzCliArgs.Region} [e/j/p] to arguments. " +
+                    $"Current region: {options.Region}.";
+                Terminal.WriteLine(msg, GfzCli.WarningColor);
+                throw;
+            }
+        }
     }
     public static void EncryptLineRel(Options options)
     {
         options.OverrideSearchPatternIfUnset("*line__.rel");
         ParallelizeFileInFileOutTasks(options, EncryptLine);
+
+        static void EncryptLine(Options options, OSPath inputFile, OSPath outputFile)
+        {
+            // Skip processing for AX
+            if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFlags.AX)
+            {
+                string msg = $"AX does not support {options.ActionStr} action. ";
+                Terminal.WriteLine(msg, GfzCli.WarningColor);
+                options.PrintGameCodeDebugMsg();
+                return;
+            }
+
+            // Step 1: Compress line__.rel to line__.rel.lz
+            ActionsLZ.LzCompressFile(options, inputFile, outputFile);
+
+            // Step 2: Get path to line__.rel.lz
+            OSPath lzInputFile = new(outputFile);
+            lzInputFile.PushExtension("lz");
+            OSPath lzOutputFile = new(lzInputFile);
+
+            // Step 3: Encrypt line_rel.lz into line__.bin
+            CryptLine(options, lzInputFile, lzOutputFile, "bin");
+        }
     }
     public static void CryptLine(Options options, OSPath inputFile, OSPath outputFile, string extension)
     {
@@ -162,63 +220,6 @@ public static class ActionsREL
             using var writer = File.Create(outputFile);
             writer.Write(stream.ToArray());
         }
-    }
-    public static void DecryptLine(Options options, OSPath inputFile, OSPath outputFile)
-    {
-        // Skip processing for AX
-        if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFlags.AX)
-        {
-            string msg = $"AX does not support {options.ActionStr} action. ";
-            Terminal.WriteLine(msg, GfzCli.WarningColor);
-            options.PrintGameCodeDebugMsg();
-            return;
-        }
-
-        // Step 1: Decrypt line__.bin into line__.rel.lz
-        CryptLine(options, inputFile, outputFile, "rel.lz");
-
-        // Step 2: Get path to line__.rel.lz
-        OSPath lzInputFile = new(outputFile);
-        lzInputFile.SetExtensions("rel.lz");
-        OSPath lzOutputFile = new(lzInputFile);
-
-        // Step 3: Decompress line__.rel.lz into line__.rel
-        try
-        {
-            ActionsLZ.LzDecompressFile(options, lzInputFile, lzOutputFile);
-        }
-        catch (GameCube.AmusementVision.LZ.InvalidLzFileException)
-        {
-            string msg = $"Could not decompress input file {lzInputFile}. " +
-                $"Did you forget to specify the correct region code? " +
-                $"Consider adding -{GfzCliArgs.Short.Region} [e/j/p] " +
-                $"or --{GfzCliArgs.Region} [e/j/p] to arguments. " +
-                $"Current region: {options.Region}.";
-            Terminal.WriteLine(msg, GfzCli.WarningColor);
-            throw;
-        }
-    }
-    public static void EncryptLine(Options options, OSPath inputFile, OSPath outputFile)
-    {
-        // Skip processing for AX
-        if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFlags.AX)
-        {
-            string msg = $"AX does not support {options.ActionStr} action. ";
-            Terminal.WriteLine(msg, GfzCli.WarningColor);
-            options.PrintGameCodeDebugMsg();
-            return;
-        }
-
-        // Step 1: Compress line__.rel to line__.rel.lz
-        ActionsLZ.LzCompressFile(options, inputFile, outputFile);
-
-        // Step 2: Get path to line__.rel.lz
-        OSPath lzInputFile = new(outputFile);
-        lzInputFile.PushExtension("lz");
-        OSPath lzOutputFile = new(lzInputFile);
-
-        // Step 3: Encrypt line_rel.lz into line__.bin
-        CryptLine(options, lzInputFile, lzOutputFile, "bin");
     }
 
     // The code that actually patches

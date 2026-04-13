@@ -12,6 +12,14 @@ namespace Manifold.GfzCli;
 /// </summary>
 public static class ActionsISO
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="options"></param>
+    /// <exception cref="DirectoryNotFoundException"></exception>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionIsoExtractAll"/>
+    /// </remarks>
     public static void IsoExtractAll(Options options)
     {
         // Manage input
@@ -51,6 +59,7 @@ public static class ActionsISO
             outputFile.PushDirectory("files");
             outputFile.AppendRelativePathToDirectories(file.GetResolvedPath());
 
+            // Run this for each file in filesystem.
             void ExtractIsoFile()
             {
                 bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);

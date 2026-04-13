@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Manifold.GfzCli;
 
-namespace Manifold.GfzCli;
-
+/// <summary>
+///     DataBase of <see cref="GfzCliAction"/>.
+/// </summary>
 public static class GfzCliActionDB
 {
     #region Program
@@ -161,7 +160,7 @@ public static class GfzCliActionDB
             ],
     };
 
-    public static readonly GfzCliAction ActionAssetTplPack = new()
+    public static readonly GfzCliAction ActionAssetTplrefPack = new()
     {
         Description = "Pack TPL file from TPLREF.",
         Action = ActionsAsset.TplrefPack,
@@ -515,11 +514,11 @@ public static class GfzCliActionDB
     };
 
     // TODO: probably belongs in ActionsColiCourse
-    public static readonly GfzCliAction ActionIOSceneAddComment = new()
+    public static readonly GfzCliAction ActionIOSceneNullComment = new()
     {
-        Description = "Patch COLI_COURSE (scene) auto-generate timestamp comment to help diff-ing.",
-        Action = ActionsIO.PatchSceneComment,
-        ActionID = CliActionID.io_scene_patch,
+        Description = "Patch COLI_COURSE (scene) to null out auto-generate timestamp comment to help diff-ing.",
+        Action = ActionsIO.PatchSceneNullComment,
+        ActionID = CliActionID.io_scene_null_comment,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
@@ -549,7 +548,7 @@ public static class GfzCliActionDB
 
     #region Log
 
-    public static readonly GfzCliAction ActionLogStage = new()
+    public static readonly GfzCliAction ActionLogStageAll = new()
     {
         Description = "Create all possible analysis .TSVs of COLI_COURSE stage files.",
         Action = ActionsLog.LogStageAll,
@@ -562,7 +561,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionLogGma = new()
+    public static readonly GfzCliAction ActionLogGmaAll = new()
     {
         Description = "Create all possible analysis .TSVs of GMA model files.",
         Action = ActionsLog.LogGmaAll,
@@ -576,7 +575,7 @@ public static class GfzCliActionDB
     };
 
     // TODO: for each one individually
-    public static readonly GfzCliAction ActionLogStageTrackKeyables = new()
+    public static readonly GfzCliAction ActionLogStageTrackKeyablesAll = new()
     {
         Description = "Create a .tsv log of track keyables from COLI_COURSE stage files.",
         Action = ActionsLog.LogStageTrackKeyables,
@@ -890,7 +889,7 @@ public static class GfzCliActionDB
         ActionAssetCustomMipmapGxtex,
         ActionAssetGmarefPack,
         ActionAssetImageToGxtex,
-        ActionAssetTplPack,
+        ActionAssetTplrefPack,
         ActionAssetTplUnpack,
         // CAMERA
         ActionCameraLivecamFromTSV,
@@ -924,7 +923,7 @@ public static class GfzCliActionDB
         // IO: IN-OUT TESTS
         ActionIOGma,
         ActionIOScene,
-        ActionIOSceneAddComment,
+        ActionIOSceneNullComment,
         ActionIOTpl,
         // line__.rel
         ActionDecryptLineREL,
@@ -944,8 +943,8 @@ public static class GfzCliActionDB
         ActionPatchSetCourseVenue,
         ActionPatchSetVenueName,
         // Log
-        ActionLogStage,
-        ActionLogGma,
+        ActionLogStageAll,
+        ActionLogGmaAll,
         // LZ
         ActionLZCompress,
         ActionLZDecompress,

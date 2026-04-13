@@ -14,80 +14,69 @@ public static class ActionsGMA
     /// 
     /// </summary>
     /// <param name="options"></param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionGmaPatchSubmeshRenderFlags"/>
+    /// </remarks>
     public static void PatchSubmeshRenderFlags(Options options)
     {
         // Maybe what you need is a function just to get IO paths...?
         int count = ParallelizeFileInFileOutTasks(options, PatchSubmeshRenderFlags);
-    }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="inputPath"></param>
-    /// <param name="_">outputPath, unused but maintains function signature.</param>
-    public static void PatchSubmeshRenderFlags(Options options, OSPath inputPath, OSPath _)
-    {
-        inputPath.ThrowIfFileDoesNotExist();
-
-        // Write file
-        bool doWriteFile = CheckWillFileWrite(options, inputPath, out ActionTaskResult result);
-        PrintFileWriteResult(result, inputPath, options.ActionStr);
-        if (doWriteFile)
+        static void PatchSubmeshRenderFlags(Options options, OSPath inputPath, OSPath _)
         {
-            // Copy input to output if needed
-            CreateBackupFileIfAble(options, inputPath);
+            inputPath.ThrowIfFileDoesNotExist();
 
-            const FileMode fileMode = FileMode.OpenOrCreate;
-            const FileAccess fileAccess = FileAccess.ReadWrite;
-            const FileShare fileShare = FileShare.ReadWrite;
-
-            // Read GMA
-            GmaFile gmaFile = new(inputPath);
-            // Patch GMA
-            using EndianBinaryWriter writer = new(File.Open(inputPath, fileMode, fileAccess, fileShare), GmaFile.endianness);
-            PatchSubmeshRenderFlags(options, gmaFile, writer);
-        }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="gma"></param>
-    /// <param name="writer"></param>
-    public static void PatchSubmeshRenderFlags(Options options, Gma gma, EndianBinaryWriter writer)
-    {
-        string name = options.Name;
-        RenderFlags renderFlags = GfzCliParser.GetEnum<RenderFlags>(options.Value);
-
-        int countMatches = 0;
-        foreach (Model model in gma.Models)
-        {
-            if (model.Name != name)
-                continue;
-
-            countMatches++;
-            Terminal.WriteLine(model.Name);
-
-            foreach (var submesh in model.Gcmf.Submeshes)
+            // Write file
+            bool doWriteFile = CheckWillFileWrite(options, inputPath, out ActionTaskResult result);
+            PrintFileWriteResult(result, inputPath, options.ActionStr);
+            if (doWriteFile)
             {
-                if (options.SetFlagsOff)
-                    submesh.RenderFlags &= ~renderFlags;
-                else // set flags on
-                    submesh.RenderFlags |= renderFlags;
+                // Copy input to output if needed
+                CreateBackupFileIfAble(options, inputPath);
 
-                Pointer ptr = submesh.GetPointer() + 0; // RenderFlags offset is 0 bytes
-                writer.JumpToAddress(ptr);
-                writer.Write(submesh.RenderFlags);
+                const FileMode fileMode = FileMode.OpenOrCreate;
+                const FileAccess fileAccess = FileAccess.ReadWrite;
+                const FileShare fileShare = FileShare.ReadWrite;
+
+                // Read GMA
+                GmaFile gmaFile = new(inputPath);
+                // Patch GMA
+                using EndianBinaryWriter writer = new(File.Open(inputPath, fileMode, fileAccess, fileShare), GmaFile.endianness);
+
+                //
+                Gma gma = gmaFile;
+                string name = options.Name;
+                RenderFlags renderFlags = GfzCliParser.GetEnum<RenderFlags>(options.Value);
+
+                int countMatches = 0;
+                foreach (Model model in gma.Models)
+                {
+                    if (model.Name != name)
+                        continue;
+
+                    countMatches++;
+                    Terminal.WriteLine(model.Name);
+
+                    foreach (var submesh in model.Gcmf.Submeshes)
+                    {
+                        if (options.SetFlagsOff)
+                            submesh.RenderFlags &= ~renderFlags;
+                        else // set flags on
+                            submesh.RenderFlags |= renderFlags;
+
+                        Pointer ptr = submesh.GetPointer() + 0; // RenderFlags offset is 0 bytes
+                        writer.JumpToAddress(ptr);
+                        writer.Write(submesh.RenderFlags);
+                    }
+                }
+
+                // TODO: make a better message, use color.
+                if (countMatches <= 0)
+                    Terminal.WriteLine($"Did not find match for {name}");
+                else
+                    Terminal.WriteLine($"Matches for {name}: {countMatches}");
             }
         }
-
-        // TODO: make a better message, use color.
-        if (countMatches <= 0)
-            Terminal.WriteLine($"Did not find match for {name}");
-        else
-            Terminal.WriteLine($"Matches for {name}: {countMatches}");
-
     }
+
 }

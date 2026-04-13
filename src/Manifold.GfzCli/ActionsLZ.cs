@@ -6,6 +6,13 @@ namespace Manifold.GfzCli;
 
 public static class ActionsLZ
 {
+    /// <summary>
+    ///     
+    /// </summary>
+    /// <param name="options"></param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionLZDecompress"/>
+    /// </remarks>
     public static void LzDecompress(Options options)
     {
         // Force checking for .LZ only IF there is no defined search pattern
@@ -18,6 +25,22 @@ public static class ActionsLZ
         Terminal.WriteLine($"{options.ActionStr}: done decompressing {taskCount} file{Plural(taskCount)}.");
     }
 
+    /// <summary>
+    ///     
+    /// </summary>
+    /// <param name="options"></param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionLZCompress"/>
+    /// </remarks>
+    public static void LzCompress(Options options)
+    {
+        Terminal.WriteLine($"{options.ActionStr}: compressing file(s).");
+        int taskCount = ParallelizeFileInFileOutTasks(options, LzCompressFile);
+        Terminal.WriteLine($"{options.ActionStr}: compressed {taskCount} file{(taskCount != 1 ? 's' : "")}.");
+    }
+
+
+
     public static void LzDecompressFile(Options options, OSPath inputFile, OSPath outputFile)
     {
         // Remove extension
@@ -28,13 +51,6 @@ public static class ActionsLZ
             using var writer = File.Create(outputFile);
             writer.Write(stream.ToArray());
         }
-    }
-
-    public static void LzCompress(Options options)
-    {
-        Terminal.WriteLine($"{options.ActionStr}: compressing file(s).");
-        int taskCount = ParallelizeFileInFileOutTasks(options, LzCompressFile);
-        Terminal.WriteLine($"{options.ActionStr}: compressed {taskCount} file{(taskCount != 1 ? 's' : "")}.");
     }
 
     public static void LzCompressFile(Options options, OSPath inputFile, OSPath outputFile)

@@ -6,6 +6,27 @@ namespace Manifold.GfzCli;
 
 public class ActionsEncodeText
 {
+    /// <summary>
+    ///     Takes in hex-string of bytes and prints the Shift-JIS encoded version of the value.
+    /// </summary>
+    /// <param name="options">The options to parse.</param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionEncodeBytesToShiftJis"/>
+    /// </remarks>
+    public static void PrintBytesToShiftJis(Options options)
+        => Terminal.WriteLine(ConvertBytesToShiftJis(options));
+
+    /// <summary>
+    ///     Takes in Windows code page 1252 string and prints the Shift-JIS encoded version of the value.
+    /// </summary>
+    /// <param name="options">The options to parse.</param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionEncodeWindows1252ToShiftJis"/>
+    /// </remarks>
+    public static void PrintWindowsToShiftJis(Options options)
+        => Terminal.WriteLine(ConvertWindows1252ToShiftJis(options));
+
+
     // Generic and usable in any context
     public static void AssertOnlyHexCharacters(string value)
     {
@@ -102,18 +123,4 @@ public class ActionsEncodeText
     public static string ConvertWindows1252ToShiftJis(Options options)
         => ConvertValueEncodingToEncoding(options, TextEncoding.Windows1252, TextEncoding.ShiftJIS);
 
-
-    /// <summary>
-    ///     Takes in hex-string of bytes and prints the Shift-JIS encoded version of the value.
-    /// </summary>
-    /// <param name="options">The options to parse.</param>
-    public static void PrintBytesToShiftJis(Options options)
-        => Terminal.WriteLine(ConvertBytesToShiftJis(options));
-
-    /// <summary>
-    ///     Takes in Windows code page 1252 string and prints the Shift-JIS encoded version of the value.
-    /// </summary>
-    /// <param name="options">The options to parse.</param>
-    public static void PrintWindowsToShiftJis(Options options)
-        => Terminal.WriteLine(ConvertWindows1252ToShiftJis(options));
 }

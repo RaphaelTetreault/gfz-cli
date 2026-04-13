@@ -18,51 +18,46 @@ namespace Manifold.GfzCli;
 /// </summary>
 public static class ActionsEmblem
 {
-    #region BIN
-
     /// <summary>
     ///     Extract images from emblem binary archives.
     /// </summary>
     /// <param name="options"></param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionEmblemsBinToImages"/>
+    /// </remarks>
     public static void EmblemsBinToImages(Options options)
     {
         Terminal.WriteLine("Emblem: converting emblems from BIN files.");
         int binCount = ParallelizeFileInFileOutTasks(options, EmblemBinToImages);
         Terminal.WriteLine($"Emblem: done converting {binCount} file{Plural(binCount)}.");
-    }
 
-    /// <summary>
-    ///     Extract images from emblem binary archives.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="inputFile"></param>
-    /// <param name="outputFile"></param>
-    private static void EmblemBinToImages(Options options, OSPath inputFile, OSPath outputFile)
-    {
-        // Read BIN Emblem data
-        EmblemBIN emblemBIN = new(inputFile);
-        Emblem[] emblems = emblemBIN.Value.Emblems;
-
-        ImageEncoder encoder = options.ImageEncoder;
-        outputFile.PushDirectory(emblemBIN.FileName);
-        outputFile.SetExtensions(".png");
-
-        // Write out each emblem in file
-        int formatLength = emblems.LengthToFormat();
-        for (int i = 0; i < emblems.Length; i++)
+        static void EmblemBinToImages(Options options, OSPath inputFile, OSPath outputFile)
         {
-            // Prepare emblem name
-            var emblem = emblems[i];
-            int index = i + 1;
-            string indexStr = index.PadLeft(formatLength, '0');
-            outputFile.SetFileName($"{inputFile.FileName}-{indexStr}");
-            // Write file, if able
-            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
-            PrintFileWriteResult(result, outputFile, options.ActionStr);
-            if (doWriteFile)
+            // Read BIN Emblem data
+            EmblemBIN emblemBIN = new(inputFile);
+            Emblem[] emblems = emblemBIN.Value.Emblems;
+
+            ImageEncoder encoder = options.ImageEncoder;
+            outputFile.PushDirectory(emblemBIN.FileName);
+            outputFile.SetExtensions(".png");
+
+            // Write out each emblem in file
+            int formatLength = emblems.LengthToFormat();
+            for (int i = 0; i < emblems.Length; i++)
             {
-                EnsureDirectoriesExist(outputFile);
-                WriteTextureAsImage(options, outputFile, emblem.Texture, encoder);
+                // Prepare emblem name
+                var emblem = emblems[i];
+                int index = i + 1;
+                string indexStr = index.PadLeft(formatLength, '0');
+                outputFile.SetFileName($"{inputFile.FileName}-{indexStr}");
+                // Write file, if able
+                bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+                PrintFileWriteResult(result, outputFile, options.ActionStr);
+                if (doWriteFile)
+                {
+                    EnsureDirectoriesExist(outputFile);
+                    WriteTextureAsImage(options, outputFile, emblem.Texture, encoder);
+                }
             }
         }
     }
@@ -71,92 +66,81 @@ public static class ActionsEmblem
     ///     Compile an emblem binary archive from multiple images.
     /// </summary>
     /// <param name="options"></param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionEmblemsBinFromImages"/>
+    /// </remarks>
     public static void EmblemsBinFromImages(Options options)
     {
         Terminal.WriteLine("Emblem: converting image(s) to emblem.bin.");
-        var emblems = ImageToEmblemBin(options);
+        var emblems = ImageToEmblemsBin(options);
         Terminal.WriteLine($"Emblem: done converting {emblems.Length} image{(emblems.Length != 1 ? 's' : "")}.");
-    }
 
-    /// <summary>
-    ///     Convert single image to emblem.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="inputFile"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException">Thrown if resize is greater than max emblem size.</exception>
-    public static Emblem ImageToEmblemBin(Options options, OSPath inputFile)
-    {
-        // Make sure some option parameters are appropriate
-        bool isTooLarge = options.IsSizeTooLarge(Emblem.Width, Emblem.Height);
-        if (isTooLarge)
+        static Emblem[] ImageToEmblemsBin(Options options)
         {
-            string msg =
-                $"Requested resize ({options.Width},{options.Height}) exceeds the maximum " +
-                $"bounds of an emblem ({Emblem.Width},{Emblem.Height}).";
-            throw new ArgumentException(msg);
+            // Get emblems
+            var emblems = ParallelizeFileInTypeOutTasks(options, ImageToEmblemBin);
+            OSPath outputPath = new(EnforceUnixSeparators(options.OutputPath));
+
+            // Write file, if able
+            bool doWriteFile = CheckWillFileWrite(options, outputPath, out ActionTaskResult result);
+            PrintFileWriteResult(result, outputPath, options.ActionStr);
+            if (doWriteFile)
+            {
+                //using var fileStream = File.Create(outputPath);
+                //using var writer = new EndianBinaryWriter(fileStream, EmblemBIN.endianness);
+                EmblemBIN emblemBin = new();
+                emblemBin.Value.Emblems = emblems;
+                emblemBin.WriteFile(outputPath);
+                //emblemBin.Serialize(writer);
+            }
+
+            // Return emblems to caller
+            return emblems;
         }
-
-        // Load image, get resize parameters, resize image
-        Image<Rgba32> image = Image.Load<Rgba32>(inputFile);
-        ResizeOptions resizeOptions = GetEmblemResizeOptions(options, image.Width, image.Height, Emblem.Width, Emblem.Height, options.EmblemHasAlphaBorder);
-        image.Mutate(ipc => ipc.Resize(resizeOptions));
-        // Create emblem, convert image to texture
-        Emblem emblem = new()
+        static Emblem ImageToEmblemBin(Options options, OSPath inputFile)
         {
-            Texture = ImageAsCenteredTexture(image, Emblem.Width, Emblem.Height)
-        };
+            // Make sure some option parameters are appropriate
+            bool isTooLarge = options.IsSizeTooLarge(Emblem.Width, Emblem.Height);
+            if (isTooLarge)
+            {
+                string msg =
+                    $"Requested resize ({options.Width},{options.Height}) exceeds the maximum " +
+                    $"bounds of an emblem ({Emblem.Width},{Emblem.Height}).";
+                throw new ArgumentException(msg);
+            }
 
-        // Write some useful information to the terminal
-        // TODO: unify with new CheckWillFileWrite method?
-        lock (Terminal.Lock)
-        {
-            Terminal.Write($"Emblem: ");
-            Terminal.Write($"processing image ");
-            Terminal.Write(inputFile, GfzCli.FileNameColor);
-            Terminal.Write($" ({image.Width},{image.Height}).");
-            Terminal.WriteLine();
+            // Load image, get resize parameters, resize image
+            Image<Rgba32> image = Image.Load<Rgba32>(inputFile);
+            ResizeOptions resizeOptions = GetEmblemResizeOptions(options, image.Width, image.Height, Emblem.Width, Emblem.Height, options.EmblemHasAlphaBorder);
+            image.Mutate(ipc => ipc.Resize(resizeOptions));
+            // Create emblem, convert image to texture
+            Emblem emblem = new()
+            {
+                Texture = ImageAsCenteredTexture(image, Emblem.Width, Emblem.Height)
+            };
+
+            // Write some useful information to the terminal
+            // TODO: unify with new CheckWillFileWrite method?
+            lock (Terminal.Lock)
+            {
+                Terminal.Write($"Emblem: ");
+                Terminal.Write($"processing image ");
+                Terminal.Write(inputFile, GfzCli.FileNameColor);
+                Terminal.Write($" ({image.Width},{image.Height}).");
+                Terminal.WriteLine();
+            }
+
+            return emblem;
         }
-
-        return emblem;
     }
-
-    /// <summary>
-    ///     Convert multiple images to emblems.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <returns></returns>
-    public static Emblem[] ImageToEmblemBin(Options options)
-    {
-        // Get emblems
-        var emblems = ParallelizeFileInTypeOutTasks(options, ImageToEmblemBin);
-        OSPath outputPath = new(EnforceUnixSeparators(options.OutputPath));
-
-        // Write file, if able
-        bool doWriteFile = CheckWillFileWrite(options, outputPath, out ActionTaskResult result);
-        PrintFileWriteResult(result, outputPath, options.ActionStr);
-        if (doWriteFile)
-        {
-            //using var fileStream = File.Create(outputPath);
-            //using var writer = new EndianBinaryWriter(fileStream, EmblemBIN.endianness);
-            EmblemBIN emblemBin = new();
-            emblemBin.Value.Emblems = emblems;
-            emblemBin.WriteFile(outputPath);
-            //emblemBin.Serialize(writer);
-        }
-
-        // Return emblems to caller
-        return emblems;
-    }
-
-    #endregion
-
-    #region GCI
 
     /// <summary>
     ///     Extract images from GCI emblem save files.
     /// </summary>
     /// <param name="options"></param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionEmblemGciToImage"/>
+    /// </remarks>
     public static void EmblemGciToImage(Options options)
     {
         // In this case where no search pattern is set, find *FZE*.GCI (emblem) files.
@@ -167,74 +151,72 @@ public static class ActionsEmblem
         Terminal.WriteLine("Emblem: converting emblems from GCI files.");
         int gciCount = ParallelizeFileInFileOutTasks(options, EmblemGciToImage);
         Terminal.WriteLine($"Emblem: done converting {gciCount} file{Plural(gciCount)}.");
-    }
 
-    /// <summary>
-    ///     Extract image from GCI emblem save file.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="inputFile"></param>
-    /// <param name="outputFile"></param>
-    private static void EmblemGciToImage(Options options, OSPath inputFile, OSPath outputFile)
-    {
-        // Read GCI Emblem data
-        var emblemGCI = new EmblemGCI();
-        using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemGCI.endianness))
+        static void EmblemGciToImage(Options options, OSPath inputFile, OSPath outputFile)
         {
-            emblemGCI.Deserialize(reader);
-            emblemGCI.FileName = Path.GetFileNameWithoutExtension(inputFile);
-        }
-
-        // Prepare image encoder
-        ImageEncoder encoder = options.ImageEncoder;
-        // Strip .dat.gci extensions
-        outputFile.SetExtensions("png");
-
-        // BANNER
-        {
-            OSPath texturePath = new(outputFile);
-            texturePath.SetFileName($"{outputFile.FileName}-banner");
-            // Write file, if able
-            bool doWriteFile = CheckWillFileWrite(options, texturePath, out ActionTaskResult result);
-            PrintFileWriteResult(result, texturePath, options.ActionStr);
-            if (doWriteFile)
+            // Read GCI Emblem data
+            var emblemGCI = new EmblemGCI();
+            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemGCI.endianness))
             {
-                WriteTextureAsImage(options, texturePath, emblemGCI.Banner, encoder);
+                emblemGCI.Deserialize(reader);
+                emblemGCI.FileName = Path.GetFileNameWithoutExtension(inputFile);
             }
-        }
 
-        // ICON
-        for (int i = 0; i < emblemGCI.Icons.Length; i++)
-        {
-            var icon = emblemGCI.Icons[i];
-            // Strip original file name, replace with GC game code
-            OSPath texturePath = new(outputFile);
-            texturePath.SetFileName($"{emblemGCI.Header}-icon{i}");
-            // Write file, if able
-            bool doWriteFile = CheckWillFileWrite(options, texturePath, out ActionTaskResult result);
-            PrintFileWriteResult(result, texturePath, options.ActionStr);
-            if (doWriteFile)
+            // Prepare image encoder
+            ImageEncoder encoder = options.ImageEncoder;
+            // Strip .dat.gci extensions
+            outputFile.SetExtensions("png");
+
+            // BANNER
             {
-                WriteTextureAsImage(options, texturePath, icon, encoder);
+                OSPath texturePath = new(outputFile);
+                texturePath.SetFileName($"{outputFile.FileName}-banner");
+                // Write file, if able
+                bool doWriteFile = CheckWillFileWrite(options, texturePath, out ActionTaskResult result);
+                PrintFileWriteResult(result, texturePath, options.ActionStr);
+                if (doWriteFile)
+                {
+                    WriteTextureAsImage(options, texturePath, emblemGCI.Banner, encoder);
+                }
             }
-        }
 
-        // EMBLEM
-        {
-            // Write file, if able
-            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
-            PrintFileWriteResult(result, outputFile, options.ActionStr);
-            if (doWriteFile)
+            // ICON
+            for (int i = 0; i < emblemGCI.Icons.Length; i++)
             {
-                WriteTextureAsImage(options, outputFile, emblemGCI.Emblem.Texture, encoder);
+                var icon = emblemGCI.Icons[i];
+                // Strip original file name, replace with GC game code
+                OSPath texturePath = new(outputFile);
+                texturePath.SetFileName($"{emblemGCI.Header}-icon{i}");
+                // Write file, if able
+                bool doWriteFile = CheckWillFileWrite(options, texturePath, out ActionTaskResult result);
+                PrintFileWriteResult(result, texturePath, options.ActionStr);
+                if (doWriteFile)
+                {
+                    WriteTextureAsImage(options, texturePath, icon, encoder);
+                }
+            }
+
+            // EMBLEM
+            {
+                // Write file, if able
+                bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+                PrintFileWriteResult(result, outputFile, options.ActionStr);
+                if (doWriteFile)
+                {
+                    WriteTextureAsImage(options, outputFile, emblemGCI.Emblem.Texture, encoder);
+                }
             }
         }
     }
+
 
     /// <summary>
     ///     Create a GCI emblem save file from one image.
     /// </summary>
     /// <param name="options"></param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionEmblemGciFromImage"/>
+    /// </remarks>
     public static void EmblemGciFromImage(Options options)
     {
         // In this case where no search pattern is set, find *fze*.dat.gci (emblem) files.
@@ -245,59 +227,52 @@ public static class ActionsEmblem
         Terminal.WriteLine("Emblem: converting image(s) to emblem.dat.gci.");
         int gciCount = ParallelizeFileInFileOutTasks(options, ImageToEmblemGci);
         Terminal.WriteLine($"Emblem: done converting {gciCount} image{Plural(gciCount)}.");
-    }
 
-    /// <summary>
-    ///     Create a GCI emblem save file from one image.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="inputFile"></param>
-    /// <param name="outputFile"></param>
-    public static void ImageToEmblemGci(Options options, OSPath inputFile, OSPath outputFile)
-    {
-        // Load image
-        Image<Rgba32> emblemImage = Image.Load<Rgba32>(inputFile);
-        Image<Rgba32> iconImage = emblemImage.Clone();
-        // Get resize targets
-        ResizeOptions emblemResize = GetEmblemResizeOptions(options, emblemImage.Width, emblemImage.Height, Emblem.Width, Emblem.Height, options.EmblemHasAlphaBorder);
-        ResizeOptions iconResize = GetEmblemResizeOptions(options, emblemImage.Width, emblemImage.Height, EmblemGCI.IconWidth, EmblemGCI.IconHeight, false);
-        // Resize images
-        emblemImage.Mutate(ipc => ipc.Resize(emblemResize));
-        iconImage.Mutate(ipc => ipc.Resize(iconResize));
+        static void ImageToEmblemGci(Options options, OSPath inputFile, OSPath outputFile)
+        {
+            // Load image
+            Image<Rgba32> emblemImage = Image.Load<Rgba32>(inputFile);
+            Image<Rgba32> iconImage = emblemImage.Clone();
+            // Get resize targets
+            ResizeOptions emblemResize = GetEmblemResizeOptions(options, emblemImage.Width, emblemImage.Height, Emblem.Width, Emblem.Height, options.EmblemHasAlphaBorder);
+            ResizeOptions iconResize = GetEmblemResizeOptions(options, emblemImage.Width, emblemImage.Height, EmblemGCI.IconWidth, EmblemGCI.IconHeight, false);
+            // Resize images
+            emblemImage.Mutate(ipc => ipc.Resize(emblemResize));
+            iconImage.Mutate(ipc => ipc.Resize(iconResize));
 
-        // Construct data for GCI
-        Texture emblemTexture = ImageAsCenteredTexture(emblemImage, Emblem.Width, Emblem.Height);
-        Texture iconTexture = ImageAsCenteredTexture(iconImage, EmblemGCI.IconWidth, EmblemGCI.IconHeight);
-        Texture banner = new(EmblemGCI.BannerWidth, EmblemGCI.BannerHeight, EmblemGCI.DirectFormat);
-        // todo: blank banner!
-        Texture[] icons = [iconTexture];
-        Emblem emblem = new(emblemTexture);
-        EmblemGCI emblemGci = new(options.Region);
-        options.ThrowIfInvalidRegion();
+            // Construct data for GCI
+            Texture emblemTexture = ImageAsCenteredTexture(emblemImage, Emblem.Width, Emblem.Height);
+            Texture iconTexture = ImageAsCenteredTexture(iconImage, EmblemGCI.IconWidth, EmblemGCI.IconHeight);
+            Texture banner = new(EmblemGCI.BannerWidth, EmblemGCI.BannerHeight, EmblemGCI.DirectFormat);
+            // todo: blank banner!
+            Texture[] icons = [iconTexture];
+            Emblem emblem = new(emblemTexture);
+            EmblemGCI emblemGci = new(options.Region);
+            options.ThrowIfInvalidRegion();
 
-        // Get name for output file
-        string gciFileName = EmblemGCI.FormatGciFileName(GfzGciFileType.Emblem, emblemGci.Header, outputFile.FileName, out string fileName);
-        outputFile.SetFileName(gciFileName);
+            // Get name for output file
+            string gciFileName = EmblemGCI.FormatGciFileName(GfzGciFileType.Emblem, emblemGci.Header, outputFile.FileName, out string fileName);
+            outputFile.SetFileName(gciFileName);
 
-        // Assign data
-        emblemGci.Emblem = emblem;
-        emblemGci.SetBanner(banner);
-        emblemGci.SetIcons(icons);
-        emblemGci.SetFileName(fileName);
+            // Assign data
+            emblemGci.Emblem = emblem;
+            emblemGci.SetBanner(banner);
+            emblemGci.SetIcons(icons);
+            emblemGci.SetFileName(fileName);
 
-        // Write file
-        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
-        PrintFileWriteResult(result, outputFile, options.ActionStr);
-        if (doWriteFile)
-        {   
-            // Save emblem
-            using var fileStream = File.Create(outputFile);
-            using var writer = new EndianBinaryWriter(fileStream, EmblemGCI.endianness);
-            emblemGci.Serialize(writer);
+            // Write file
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            PrintFileWriteResult(result, outputFile, options.ActionStr);
+            if (doWriteFile)
+            {
+                // Save emblem
+                using var fileStream = File.Create(outputFile);
+                using var writer = new EndianBinaryWriter(fileStream, EmblemGCI.endianness);
+                emblemGci.Serialize(writer);
+            }
         }
     }
 
-    #endregion
 
     /// <summary>
     ///     Create <see cref="ResizeOptions"/> from data within <paramref name="options"/>.

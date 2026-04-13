@@ -22,6 +22,9 @@ public static class ActionsCarData
     /// </summary>
     /// <param name="options"></param>
     /// <exception cref="ArgumentException">Thrown if serialization format is AX.</exception>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionCarDataToTSV"/>
+    /// </remarks>
     public static void CarDataToTsv(Options options)
     {
         // Stop if desired file format is AX
@@ -34,35 +37,29 @@ public static class ActionsCarData
 
         // Perform the action
         ParallelizeFileInFileOutTasks(options, CarDataBinToTsv);
-    }
 
-    /// <summary>
-    ///     Create a TSV from CarData binary (compressed or uncompressed).
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="inputFile"></param>
-    /// <param name="outputFile"></param>
-    public static void CarDataBinToTsv(Options options, OSPath inputFile, OSPath outputFile)
-    {
-        // Read file
-        // Decompress LZ if not decompressed yet
-        bool isLzCompressed = inputFile.IsOfExtension(".lz");
-        // Open the file if decompressed, decompress file stream otherwise
-        var carData = new CarData();
-        using (Stream fileStream = isLzCompressed ? Lz.Decompress(inputFile) : File.OpenRead(inputFile))
-        using (var reader = new EndianBinaryReader(fileStream, CarDataFile.endianness))
-            carData.Deserialize(reader);
-
-        // Write TSV file
-        outputFile.SetExtensions(".tsv");
-        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
-        PrintFileWriteResult(result, outputFile, options.ActionStr);
-        if (doWriteFile)
+        static void CarDataBinToTsv(Options options, OSPath inputFile, OSPath outputFile)
         {
-            TableCollection tableCollection = [];
-            Table[] table = carData.CreateTables();
-            tableCollection.Add(table);
-            tableCollection.ToFile(outputFile, TableEncodingTSV.Encoding);
+            // Read file
+            // Decompress LZ if not decompressed yet
+            bool isLzCompressed = inputFile.IsOfExtension(".lz");
+            // Open the file if decompressed, decompress file stream otherwise
+            var carData = new CarData();
+            using (Stream fileStream = isLzCompressed ? Lz.Decompress(inputFile) : File.OpenRead(inputFile))
+            using (var reader = new EndianBinaryReader(fileStream, CarDataFile.endianness))
+                carData.Deserialize(reader);
+
+            // Write TSV file
+            outputFile.SetExtensions(".tsv");
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            PrintFileWriteResult(result, outputFile, options.ActionStr);
+            if (doWriteFile)
+            {
+                TableCollection tableCollection = [];
+                Table[] table = carData.CreateTables();
+                tableCollection.Add(table);
+                tableCollection.ToFile(outputFile, TableEncodingTSV.Encoding);
+            }
         }
     }
 
@@ -71,6 +68,9 @@ public static class ActionsCarData
     /// </summary>
     /// <param name="options"></param>
     /// <exception cref="ArgumentException">Thrown if serialization format is AX.</exception>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionCarDataToTSV"/>
+    /// </remarks>
     public static void CarDataFromTsv(Options options)
     {
         // Stop if desired file format is AX
@@ -83,38 +83,33 @@ public static class ActionsCarData
 
         // Perform the action
         ParallelizeFileInFileOutTasks(options, CarDataTsvToBin);
-    }
 
-    /// <summary>
-    ///     Create a CarData.lz file from CarData TSV spreadsheet.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="inputFile"></param>
-    /// <param name="outputFile"></param>
-    public static void CarDataTsvToBin(Options options, OSPath inputFile, OSPath outputFile)
-    {
-        // Get CarData TSV
-        var carData = new CarData();
-        using (var reader = new StreamReader(File.OpenRead(inputFile)))
-            carData.Deserialize(reader);
-
-        // Write CarData.lz file
-        outputFile.SetExtensions(".lz");
-        bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
-        PrintFileWriteResult(result, outputFile, options.ActionStr);
-        if (doWriteFile)
+        static void CarDataTsvToBin(Options options, OSPath inputFile, OSPath outputFile)
         {
-            // UNCOMPRESSED
-            // Save out file (this file is not yet compressed)
-            using var writer = new EndianBinaryWriter(new MemoryStream(), CarDataFile.endianness);
-            // Write data to stream in memory
-            carData.Serialize(writer);
+            // Get CarData TSV
+            var carData = new CarData();
+            using (var reader = new StreamReader(File.OpenRead(inputFile)))
+                carData.Deserialize(reader);
 
-            // COMPRESSED
-            // Create new file (actual output file)
-            using var cardataFile = File.Create(outputFile);
-            // Compress memory stream into file stream
-            GameCube.AmusementVision.LZ.Lz.Pack(writer.BaseStream, cardataFile, options.GameCode);
+            // Write CarData.lz file
+            outputFile.SetExtensions(".lz");
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            PrintFileWriteResult(result, outputFile, options.ActionStr);
+            if (doWriteFile)
+            {
+                // UNCOMPRESSED
+                // Save out file (this file is not yet compressed)
+                using var writer = new EndianBinaryWriter(new MemoryStream(), CarDataFile.endianness);
+                // Write data to stream in memory
+                carData.Serialize(writer);
+
+                // COMPRESSED
+                // Create new file (actual output file)
+                using var cardataFile = File.Create(outputFile);
+                // Compress memory stream into file stream
+                Lz.Pack(writer.BaseStream, cardataFile, options.GameCode);
+            }
         }
     }
+
 }

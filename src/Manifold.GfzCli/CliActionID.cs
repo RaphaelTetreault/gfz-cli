@@ -54,7 +54,7 @@ public enum CliActionID
     gma_patch_submesh_render_flags,
     io_gma,
     io_scene,
-    io_scene_patch,
+    io_scene_null_comment,
     io_tpl,
     log_gma_all,
     log_stage_all,

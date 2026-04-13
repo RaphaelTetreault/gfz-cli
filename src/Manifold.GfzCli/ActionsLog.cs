@@ -14,18 +14,32 @@ public static class ActionsLog
     public const string SceneSearchPattern = "COLI_COURSE???";
     public const string GmaSearchPattern = "*.gma";
 
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionLogStageAll"/>
+    /// </remarks>
     public static void LogStageAll(Options options)
     {
         foreach (TableLogger.LogFuncFile<SceneFile> logFuncFile in StageTableLogger.AllLogFunctionFiles)
             Log(options, logFuncFile, SceneSearchPattern);
     }
+
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionLogGmaAll"/>
+    /// </remarks>
     public static void LogGmaAll(Options options)
     {
         foreach (TableLogger.LogFuncFile<GmaFile> logFuncFile in GmaTableLogger.AllLogFunctionFiles)
             Log(options, logFuncFile, GmaSearchPattern);
     }
 
-    public static void Log<TBinarySerializable>(Options options, TableLogger.LogFuncFile<TBinarySerializable> logFuncFile, string searchPattern = "")
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionLogStageTrackKeyablesAll"/>
+    /// </remarks>
+    public static void LogStageTrackKeyables(Options options)
+        => Log(options, StageTableLogger.LogTrackKeyablesAll, SceneSearchPattern);
+
+
+    private static void Log<TBinarySerializable>(Options options, TableLogger.LogFuncFile<TBinarySerializable> logFuncFile, string searchPattern = "")
         where TBinarySerializable : IBinarySerializable, IBinaryFileType, new()
     {
         // Allow search pattern override if requested and unset
@@ -42,8 +56,5 @@ public static class ActionsLog
             logFuncFile.AnalysisFunction.Invoke(scenes.ToArray(), outputFile);
         }
     }
-
-    public static void LogStageTrackKeyables(Options options)
-        => Log(options, StageTableLogger.LogTrackKeyablesAll, SceneSearchPattern);
 
 }

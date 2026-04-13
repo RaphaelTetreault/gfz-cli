@@ -13,6 +13,9 @@ public static class ActionsARC
     ///     Archive a directory into a .arc file.
     /// </summary>
     /// <param name="options"></param>
+    /// <remarks>
+    ///     <see cref="GfzCliActionDB.ActionArcPack"/>
+    /// </remarks>
     public static void ArcPack(Options options)
     {
         // ARC requires directory as input path
@@ -69,48 +72,43 @@ public static class ActionsARC
     ///     Unpack one or more .arc achives into directories of their contents.
     /// </summary>
     /// <param name="options"></param>
+    /// <remarks>
+    ///     <see cref="GfzCliActionDB.ActionArcUnpack"/>
+    /// </remarks>
     public static void ArcUnpack(Options options)
     {
         // Force checking for .ARC only IF there is no defined search pattern
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-            options.SearchPattern = $"*.arc";
-
+        options.OverrideSearchPatternIfUnset($"*.arc");
+        // Break out files into own threads
         Terminal.WriteLine($"{options.ActionStr}: decompressing file(s).");
-        int taskCount = ParallelizeFileInFileOutTasks(options, ArcUnpack);
+        int taskCount = ParallelizeFileInFileOutTasks(options, ArcUnpackIO);
         Terminal.WriteLine($"{options.ActionStr}: done decompressing {taskCount} file{Plural(taskCount)}.");
-    }
-
-    /// <summary>
-    ///     Unpack a .arc achive into a directory of its contents.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="inputFile"></param>
-    /// <param name="outputFile"></param>
-    private static void ArcUnpack(Options options, OSPath inputFile, OSPath outputFile)
-    {
-        // Turn file path into folder path
-        outputFile.PopExtension();
-
-        // Read ARC file
-        Archive arc = new ArchiveFile(inputFile);
-
-        // Write ARC contents
-        foreach (var file in arc.FileSystem.GetFiles())
+        // Function that is iterated per input file
+        static void ArcUnpackIO(Options options, OSPath inputFile, OSPath outputFile)
         {
-            // Create output file path
-            OSPath fileOutputPath = new();
-            fileOutputPath.SetDirectory(outputFile);
-            fileOutputPath.AppendRelativePathToDirectories(file.GetResolvedPath());
+            // Turn file path into folder path
+            outputFile.PopExtension();
 
-            // Write ARC file contents
-            bool doWriteFile = CheckWillFileWrite(options, fileOutputPath, out ActionTaskResult result);
-            PrintFileWriteResult(result, fileOutputPath, options.ActionStr);
-            if (doWriteFile)
+            // Read ARC file
+            Archive arc = new ArchiveFile(inputFile);
+
+            // Write ARC contents
+            foreach (var file in arc.FileSystem.GetFiles())
             {
-                EnsureDirectoriesExist(fileOutputPath);
-                using var writer = File.Create(fileOutputPath);
-                writer.Write(file.Data);
+                // Create output file path
+                OSPath fileOutputPath = new();
+                fileOutputPath.SetDirectory(outputFile);
+                fileOutputPath.AppendRelativePathToDirectories(file.GetResolvedPath());
+
+                // Write ARC file contents
+                bool doWriteFile = CheckWillFileWrite(options, fileOutputPath, out ActionTaskResult result);
+                PrintFileWriteResult(result, fileOutputPath, options.ActionStr);
+                if (doWriteFile)
+                {
+                    EnsureDirectoriesExist(fileOutputPath);
+                    using var writer = File.Create(fileOutputPath);
+                    writer.Write(file.Data);
+                }
             }
         }
     }
