@@ -49,7 +49,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionArcPack = new()
     {
         Description = "Archive a directory into a .arc file.",
-        Action = ActionsARC.ArcPack,
+        Action = CliActions.ArcPack,
         ActionID = CliActionID.arc_pack,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,
@@ -62,7 +62,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionArcUnpack = new()
     {
         Description = "Unpack one or more .arc achives into directories of their contents.",
-        Action = ActionsARC.ArcUnpack,
+        Action = CliActions.ArcUnpack,
         ActionID = CliActionID.arc_unpack,
         InputIO = CliActionIO.Directory,
         OutputIO = CliActionIO.Directory,
@@ -197,7 +197,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionCameraLivecamFromTSV = new()
     {
         Description = "Create livecam BIN file from livecam TSV spreadsheet.",
-        Action = ActionsCamera.LivecamFromTsv,
+        Action = CliActions.LivecamFromTsv,
         ActionID = CliActionID.cam_livecamstage_from_tsv,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -210,7 +210,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionCameraLivecamToTSV = new()
     {
         Description = "Create TSV from livecam binary.",
-        Action = ActionsCamera.LivecamToTsv,
+        Action = CliActions.LivecamToTsv,
         ActionID = CliActionID.cam_livecamstage_to_tsv,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -227,7 +227,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionCarDataFromTSV = new()
     {
         Description = "Create a CarData.lz file from CarData TSV spreadsheet.",
-        Action = ActionsCarData.CarDataFromTsv,
+        Action = CliActions.CarDataFromTsv,
         ActionID = CliActionID.cardata_from_tsv,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -240,7 +240,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionCarDataToTSV = new()
     {
         Description = "Create a TSV from CarData binary (compressed or uncompressed).",
-        Action = ActionsCarData.CarDataToTsv,
+        Action = CliActions.CarDataToTsv,
         ActionID = CliActionID.cardata_to_tsv,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -257,7 +257,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionColicoursePatchFog = new()
     {
         Description = "Patch the fog parameters of scenes.",
-        Action = ActionsColiCourse.PatchFog,
+        Action = CliActions.PatchFog,
         ActionID = CliActionID.colicourse_patch_fog,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -280,7 +280,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionColicoursePatchObjectRenderFlags = new()
     {
         Description = "Patch a scene object's render flags by name.",
-        Action = ActionsColiCourse.PatchSceneObjectDynamicRenderFlags,
+        Action = CliActions.PatchSceneObjectDynamicRenderFlags,
         ActionID = CliActionID.colicourse_patch_object_render_flags,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -409,7 +409,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionFmiFromPlainText = new()
     {
         Description = "Create a FMI-plaintext file from FMI binary file.",
-        Action = ActionsFMI.FmiFromPlainText,
+        Action = CliActions.FmiFromPlainText,
         ActionID = CliActionID.fmi_from_plaintext,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -422,7 +422,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionFmiToPlainText = new()
     {
         Description = "Create a FMI binary file from FMI-plaintext.",
-        Action = ActionsFMI.FmiToPlainText,
+        Action = CliActions.FmiToPlainText,
         ActionID = CliActionID.fmi_to_plaintext,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -439,7 +439,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionGciExtractGhost = new()
     {
         Description = "Extract raw ghost data from GCI save file.",
-        Action = ActionsGhost.ExtractGhostFromGci,
+        Action = CliActions.ExtractGhostFromGci,
         ActionID = CliActionID.gci_extract_ghost,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -456,7 +456,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionGmaPatchSubmeshRenderFlags = new()
     {
         Description = "Patch render flags on model submesh.",
-        Action = ActionsGMA.PatchSubmeshRenderFlags,
+        Action = CliActions.PatchSubmeshRenderFlags,
         ActionID = CliActionID.gma_patch_submesh_render_flags,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
