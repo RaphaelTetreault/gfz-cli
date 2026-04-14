@@ -16,10 +16,6 @@ public static class ActionsREL
 {
     const string prefix = "REL";
 
-    private const byte MaxDifficulty = 10;
-    private const byte MaxCupCourseIndex = 6;
-    private const byte MinCupCourseIndex = 1;
-
     public delegate void PatchLineREL(Options options, FzMainRel fzMainRel, EndianBinaryReader reader, EndianBinaryWriter writer);
     public static void Patch(Options options, PatchLineREL patchLineRelAction)
     {
@@ -79,11 +75,12 @@ public static class ActionsREL
     private static void AssertCupCourseIndex(Options options)
     {
         // Validate index
-        if (options.CupCourseIndex < MinCupCourseIndex || options.CupCourseIndex > MaxCupCourseIndex)
+        const int minCupCourseIndex = 1;
+        if (options.CupCourseIndex < minCupCourseIndex || options.CupCourseIndex > GameDataConsts.MaxCupCourseIndex)
         {
             string msg =
                 $"Argument --{nameof(GfzCliArgs.CupStageIndex)} " +
-                $"must be a value in the range 1-{MaxCupCourseIndex}.";
+                $"must be a value in the range {minCupCourseIndex}-{GameDataConsts.MaxCupCourseIndex}.";
             throw new ArgumentException(msg);
         }
     }
@@ -119,11 +116,11 @@ public static class ActionsREL
             throw new ArgumentException(msg);
         }
     }
-    private static void AssertDifficulty(Options options)
+    private static void AssertDifficultyStars(Options options)
     {
-        if (options.Difficulty > MaxDifficulty)
+        if (options.Difficulty > GameDataConsts.MaxDifficultyStars)
         {
-            string msg = $"Argument --{GfzCliArgs.Difficulty} must a value in the range 0-{MaxDifficulty}.";
+            string msg = $"Argument --{GfzCliArgs.Difficulty} must a value in the range 0-{GameDataConsts.MaxDifficultyStars}.";
             throw new ArgumentException(msg);
         }
     }
@@ -256,7 +253,7 @@ public static class ActionsREL
     }
     private static void PatchCourseDifficulty(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        AssertDifficulty(options);
+        AssertDifficultyStars(options);
         AssertCourseIndex(options);
 
         Offset offset = options.CourseIndex;
