@@ -595,7 +595,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionLZCompress = new()
     {
         Description = "Compress files into an LZ file.",
-        Action = ActionsLZ.LzCompress,
+        Action = CliActions.LzCompress,
         ActionID = CliActionID.lz_compress,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -608,7 +608,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionLZDecompress = new()
     {
         Description = "Decompress an LZ file.",
-        Action = ActionsLZ.LzDecompress,
+        Action = CliActions.LzDecompress,
         ActionID = CliActionID.lz_decompress,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,

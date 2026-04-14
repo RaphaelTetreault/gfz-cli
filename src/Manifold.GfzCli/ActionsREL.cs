@@ -163,14 +163,18 @@ public static class ActionsREL
             // Step 3: Decompress line__.rel.lz into line__.rel
             try
             {
-                ActionsLZ.LzDecompressFile(options, lzInputFile, lzOutputFile);
+                if (CanWriteFileAndPrintResult(options, lzOutputFile))
+                    Lz.DecompressFile(lzInputFile, lzOutputFile, options.OverwriteFiles);
             }
-            catch (GameCube.AmusementVision.LZ.InvalidLzFileException)
+            catch (InvalidLzFileException)
             {
+                // Recall that the "LZ" file is encrypted. If the wrong decryption is run
+                // on it, the resulting LZ file is incorrect. This is a catch for that.
                 string msg = $"Could not decompress input file {lzInputFile}. " +
-                    $"Did you forget to specify the correct region code? " +
-                    $"Consider adding -{GfzCliArgs.Short.Region} [e/j/p] " +
-                    $"or --{GfzCliArgs.Region} [e/j/p] to arguments. " +
+                    $"Was the file previously encrypted with the incorrect region code? " +
+                    $"This is typically the problem. " +
+                    $"Consider adding -{GfzCliArgs.Short.Region} [e/j/p] or " +
+                    $"--{GfzCliArgs.Region} [e/j/p] to arguments previous encryption step. " +
                     $"Current region: {options.Region}.";
                 Terminal.WriteLine(msg, GfzCli.WarningColor);
                 throw;
@@ -194,7 +198,8 @@ public static class ActionsREL
             }
 
             // Step 1: Compress line__.rel to line__.rel.lz
-            ActionsLZ.LzCompressFile(options, inputFile, outputFile);
+            if (CanWriteFileAndPrintResult(options, outputFile))
+                Lz.CompressFile(inputFile, outputFile, Lz.GfzGameCodeToLzHeaderType(options.GameCode), options.OverwriteFiles);
 
             // Step 2: Get path to line__.rel.lz
             OSPath lzInputFile = new(outputFile);
@@ -432,7 +437,7 @@ public static class ActionsREL
             bool isLzCompressed = carDataPath.IsOfExtension(".lz");
             // Open the file if decompressed, decompress file stream otherwise
             carData = new CarData();
-            using Stream fileStream = isLzCompressed ? Lz.Decompress(carDataPath) : File.OpenRead(carDataPath);
+            using Stream fileStream = isLzCompressed ? Lz.DecompressMemoryStream(carDataPath) : File.OpenRead(carDataPath);
             using EndianBinaryReader reader = new(fileStream, CarDataFile.endianness);
             carData.Deserialize(reader);
         }

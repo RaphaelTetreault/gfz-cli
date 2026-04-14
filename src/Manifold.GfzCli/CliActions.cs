@@ -152,7 +152,7 @@ public static class CliActions
             bool isLzCompressed = inputFile.IsOfExtension(".lz");
             // Open the file if decompressed, decompress file stream otherwise
             var carData = new CarData();
-            using (Stream fileStream = isLzCompressed ? Lz.Decompress(inputFile) : File.OpenRead(inputFile))
+            using (Stream fileStream = isLzCompressed ? Lz.DecompressMemoryStream(inputFile) : File.OpenRead(inputFile))
             using (var reader = new EndianBinaryReader(fileStream, CarDataFile.endianness))
                 carData.Deserialize(reader);
 
@@ -514,6 +514,56 @@ public static class CliActions
                 var lcsf = new LiveCameraStageFile() { Value = lcs };
                 lcsf.WriteFile(outputFile);
             }
+        }
+    }
+
+    /// <summary>
+    ///     
+    /// </summary>
+    /// <param name="options"></param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionLZDecompress"/>
+    /// </remarks>
+    public static void LzDecompress(Options options)
+    {
+        // Force checking for .LZ only IF there is no defined search pattern
+        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
+        if (hasNoSearchPattern)
+            options.SearchPattern = $"*.lz";
+
+        Terminal.WriteLine($"{options.ActionStr}: decompressing file(s).");
+        int taskCount = ParallelizeFileInFileOutTasks(options, LzDecompressFile);
+        Terminal.WriteLine($"{options.ActionStr}: done decompressing {taskCount} file{Plural(taskCount)}.");
+
+        static void LzDecompressFile(Options options, OSPath inputFile, OSPath outputFile)
+        {
+            // Remove extension
+            outputFile.PopExtension();
+            if (CanWriteFileAndPrintResult(options, outputFile))
+                Lz.DecompressFile(inputFile, outputFile, options.OverwriteFiles);
+        }
+    }
+
+    /// <summary>
+    ///     
+    /// </summary>
+    /// <param name="options"></param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionLZCompress"/>
+    /// </remarks>
+    public static void LzCompress(Options options)
+    {
+        Terminal.WriteLine($"{options.ActionStr}: compressing file(s).");
+        int taskCount = ParallelizeFileInFileOutTasks(options, LzCompressFile);
+        Terminal.WriteLine($"{options.ActionStr}: compressed {taskCount} file{(taskCount != 1 ? 's' : "")}.");
+
+        static void LzCompressFile(Options options, OSPath inputFile, OSPath outputFile)
+        {
+            // Don't mutate incoming reference
+            outputFile = outputFile.Copy();
+            outputFile.PushExtension("lz");
+            if (CanWriteFileAndPrintResult(options, outputFile))
+                Lz.CompressFile(inputFile, outputFile, Lz.GfzGameCodeToLzHeaderType(options.GameCode), options.OverwriteFiles);
         }
     }
 
