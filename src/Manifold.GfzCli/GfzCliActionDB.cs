@@ -626,7 +626,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchBgm = new()
     {
         Description = "Set the background music for a specific stage index.",
-        Action = ActionsREL.PatchSetBgm,
+        Action = CliActions.PatchSetBgm,
         ActionID = CliActionID.fzrel_set_bgm,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -642,7 +642,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchBgmFinalLap = new()
     {
         Description = "Set the final lap background music for a specific stage index.",
-        Action = ActionsREL.PatchSetBgmFinalLap,
+        Action = CliActions.PatchSetBgmFinalLap,
         ActionID = CliActionID.fzrel_set_bgmfl,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -658,7 +658,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchBgmBoth = new()
     {
         Description = "Set both default and final lap background music for a specific stage index.",
-        Action = ActionsREL.PatchSetBgmAndBgmFinalLap,
+        Action = CliActions.PatchSetBgmAndBgmFinalLap,
         ActionID = CliActionID.fzrel_set_bgm_bgmfl,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -675,7 +675,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchSetCourseDifficulty = new()
     {
         Description = "Set course difficulty star rating for a specific stage.",
-        Action = ActionsREL.PatchSetCourseDifficulty,
+        Action = CliActions.PatchSetCourseDifficulty,
         ActionID = CliActionID.fzrel_set_course_difficulty,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -691,7 +691,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchSetCourseName = new()
     {
         Description = "Set course name for a specific stage index.",
-        Action = ActionsREL.PatchSetCourseName,
+        Action = CliActions.PatchSetCourseName,
         ActionID = CliActionID.fzrel_set_course_name,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -707,7 +707,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchClearAllCourseNames = new()
     {
         Description = "Clear all names in course name table.",
-        Action = ActionsREL.PatchClearAllCourseNames,
+        Action = CliActions.PatchClearAllCourseNames,
         ActionID = CliActionID.fzrel_clear_all_course_names,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -720,7 +720,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchClearUnusedCourseNames = new()
     {
         Description = "Clear all unused course names in course name table.",
-        Action = ActionsREL.PatchClearUnusedCourseNames,
+        Action = CliActions.PatchClearUnusedCourseNames,
         ActionID = CliActionID.fzrel_clear_unused_course_names,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -730,10 +730,10 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchSetCourseVenue = new()
+    public static readonly GfzCliAction ActionPatchSetCourseVenueIndex = new()
     {
         Description = "Set course venue for a specific stage index.",
-        Action = ActionsREL.PatchSetVenueIndex,
+        Action = CliActions.PatchSetCourseVenueIndex,
         ActionID = CliActionID.fzrel_set_course_venue,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -749,7 +749,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchSetVenueName = new()
     {
         Description = "Set venue name for a specific venue index.",
-        Action = ActionsREL.PatchSetVenueName,
+        Action = CliActions.PatchSetVenueName,
         ActionID = CliActionID.fzrel_set_venue_name,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -765,7 +765,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchClearAllVenueNames = new()
     {
         Description = "Clear all names in venue name table.",
-        Action = ActionsREL.PatchClearAllVenueNames,
+        Action = CliActions.PatchClearAllVenueNames,
         ActionID = CliActionID.fzrel_clear_all_venue_names,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -778,7 +778,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchClearUnusedVenueNames = new()
     {
         Description = "Clear all unused course names in course name table.",
-        Action = ActionsREL.PatchClearUnusedVenueNames,
+        Action = CliActions.PatchClearUnusedVenueNames,
         ActionID = CliActionID.fzrel_clear_unused_venue_names,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -791,7 +791,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchSetCarData = new()
     {
         Description = "Set \"graph console performance settings\" machine stats.",
-        Action = ActionsREL.PatchSetCarData,
+        Action = CliActions.PatchSetCarData,
         ActionID = CliActionID.fzrel_set_cardata,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -804,7 +804,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchMachineRating = new()
     {
         Description = "Set machine letter ratings (SABCDE).",
-        Action = ActionsREL.PatchMachineRating,
+        Action = CliActions.PatchMachineRating,
         ActionID = CliActionID.fzrel_set_machine_rating,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -820,7 +820,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchMaxSpeed = new()
     {
         Description = "Patch vehicle max speed.",
-        Action = ActionsREL.PatchMaxSpeed,
+        Action = CliActions.PatchMaxSpeed,
         ActionID = CliActionID.fzrel_set_max_speed,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -833,7 +833,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionPatchSetCupCourse = new()
     {
         Description = "Set an individual stage reference in a cup.",
-        Action = ActionsREL.PatchSetCupCourse,
+        Action = CliActions.PatchSetCupCourse,
         ActionID = CliActionID.fzrel_set_cup_course,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -850,7 +850,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionDecryptLineREL = new()
     {
         Description = "Decrypt line__.bin to line__.rel file.",
-        Action = ActionsREL.DecryptLineRel,
+        Action = CliActions.DecryptLineRel,
         ActionID = CliActionID.fzrel_decrypt,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -863,7 +863,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionEncryptLineREL = new()
     {
         Description = "Encrypt line__.rel to line__.bin file.",
-        Action = ActionsREL.EncryptLineRel,
+        Action = CliActions.EncryptLineRel,
         ActionID = CliActionID.fzrel_encrypt,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -940,7 +940,7 @@ public static class GfzCliActionDB
         ActionPatchSetCupCourse,
         ActionPatchMachineRating,
         ActionPatchMaxSpeed,
-        ActionPatchSetCourseVenue,
+        ActionPatchSetCourseVenueIndex,
         ActionPatchSetVenueName,
         // Log
         ActionLogStageAll,

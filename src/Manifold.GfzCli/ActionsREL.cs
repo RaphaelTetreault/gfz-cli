@@ -14,9 +14,23 @@ namespace Manifold.GfzCli;
 
 public static class ActionsREL
 {
-    const string prefix = "REL";
-
+    /// <summary>
+    ///     Functions signature for these Patch functions.
+    /// </summary>
+    /// <param name="options">CLI options.</param>
+    /// <param name="fzMainRel">The information needed to patch the relevant fz.main.rel file.</param>
+    /// <param name="reader">Reader around the file to patch.</param>
+    /// <param name="writer">Writer around the file to patch.</param>
     public delegate void PatchLineREL(Options options, FzMainRel fzMainRel, EndianBinaryReader reader, EndianBinaryWriter writer);
+
+    /// <summary>
+    ///     Base function which wraps around specific patch. Deals with boilerplate stuff.
+    /// </summary>
+    /// <param name="options">CLI options.</param>
+    /// <param name="patchLineRelAction">Function to run inside this one.</param>
+    /// <exception cref="ArgumentException">
+    ///     Thrown if input files are greater than 1.
+    /// </exception>
     public static void Patch(Options options, PatchLineREL patchLineRelAction)
     {
         // Default search
@@ -26,14 +40,14 @@ public static class ActionsREL
         string[] inputFiles = GetInputFiles(options);
         if (inputFiles.Length != 1)
         {
-            string msg = $"Input arguments found {inputFiles.Length} files, must only be 1 file.";
+            string msg = $"Input arguments found {inputFiles.Length} files but must only be 1 file.";
             throw new ArgumentException(msg);
         }
         OSPath inputFilePath = new(inputFiles[0]);
         inputFilePath.ThrowIfFileDoesNotExist();
 
         // Give user a little hint as to what is going on. Useful for debuging.
-        Terminal.Write($"{prefix}: opening file ");
+        Terminal.Write($"{options.ActionStr}: opening file ");
         Terminal.Write(inputFilePath, GfzCli.FileNameColor);
         Terminal.Write($" with region {options.Region}. ");
         Terminal.WriteLine();
@@ -61,6 +75,7 @@ public static class ActionsREL
         Terminal.WriteLine();
     }
 
+    // The below probably belongs inside Options somewhere. Good to have a general "Assert" for all args / inputs?
     private static void AssertCup(Options options)
     {
         // Validate index
@@ -124,7 +139,7 @@ public static class ActionsREL
             throw new ArgumentException(msg);
         }
     }
-    internal static void AssertValue(Options options)
+    internal static void AssertValueExists(Options options)
     {
         if (string.IsNullOrEmpty(options.Value))
         {
@@ -133,81 +148,7 @@ public static class ActionsREL
         }
     }
 
-    public static void DecryptLineRel(Options options)
-    {
-        options.OverrideSearchPatternIfUnset("*line__.bin");
-        ParallelizeFileInFileOutTasks(options, DecryptLine);
-
-        static void DecryptLine(Options options, OSPath inputFile, OSPath outputFile)
-        {
-            // Skip processing for AX
-            if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFlags.AX)
-            {
-                string msg = $"AX does not support {options.ActionStr} action. ";
-                Terminal.WriteLine(msg, GfzCli.WarningColor);
-                options.PrintGameCodeDebugMsg();
-                return;
-            }
-
-            // Step 1: Decrypt line__.bin into line__.rel.lz
-            CryptLine(options, inputFile, outputFile, "rel.lz");
-
-            // Step 2: Get path to line__.rel.lz
-            OSPath lzInputFile = new(outputFile);
-            lzInputFile.SetExtensions("rel.lz");
-            OSPath lzOutputFile = new(lzInputFile);
-
-            // Step 3: Decompress line__.rel.lz into line__.rel
-            try
-            {
-                if (CanWriteFileAndPrintResult(options, lzOutputFile))
-                    Lz.DecompressFile(lzInputFile, lzOutputFile, options.OverwriteFiles);
-            }
-            catch (InvalidLzFileException)
-            {
-                // Recall that the "LZ" file is encrypted. If the wrong decryption is run
-                // on it, the resulting LZ file is incorrect. This is a catch for that.
-                string msg = $"Could not decompress input file {lzInputFile}. " +
-                    $"Was the file previously encrypted with the incorrect region code? " +
-                    $"This is typically the problem. " +
-                    $"Consider adding -{GfzCliArgs.Short.Region} [e/j/p] or " +
-                    $"--{GfzCliArgs.Region} [e/j/p] to arguments previous encryption step. " +
-                    $"Current region: {options.Region}.";
-                Terminal.WriteLine(msg, GfzCli.WarningColor);
-                throw;
-            }
-        }
-    }
-    public static void EncryptLineRel(Options options)
-    {
-        options.OverrideSearchPatternIfUnset("*line__.rel");
-        ParallelizeFileInFileOutTasks(options, EncryptLine);
-
-        static void EncryptLine(Options options, OSPath inputFile, OSPath outputFile)
-        {
-            // Skip processing for AX
-            if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFlags.AX)
-            {
-                string msg = $"AX does not support {options.ActionStr} action. ";
-                Terminal.WriteLine(msg, GfzCli.WarningColor);
-                options.PrintGameCodeDebugMsg();
-                return;
-            }
-
-            // Step 1: Compress line__.rel to line__.rel.lz
-            if (CanWriteFileAndPrintResult(options, outputFile))
-                Lz.CompressFile(inputFile, outputFile, Lz.GfzGameCodeToLzHeaderType(options.GameCode), options.OverwriteFiles);
-
-            // Step 2: Get path to line__.rel.lz
-            OSPath lzInputFile = new(outputFile);
-            lzInputFile.PushExtension("lz");
-            OSPath lzOutputFile = new(lzInputFile);
-
-            // Step 3: Encrypt line_rel.lz into line__.bin
-            CryptLine(options, lzInputFile, lzOutputFile, "bin");
-        }
-    }
-    public static void CryptLine(Options options, OSPath inputFile, OSPath outputFile, string extension)
+    internal static void CryptLine(Options options, OSPath inputFile, OSPath outputFile, string extension)
     {
         // Remove extension
         outputFile.PopExtension();
@@ -225,14 +166,14 @@ public static class ActionsREL
     }
 
     // The code that actually patches
-    private static void PatchBgm(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
+    internal static void PatchBgm(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         int courseIndex = options.CourseIndex;
         byte bgmIndex = options.BgmIndex;
         FzMainRelUtility.PatchCourseBgm(writer, info, courseIndex, bgmIndex);
         Terminal.Write($"Set course {courseIndex} bgm to {bgmIndex} ({(BgmIndex)bgmIndex}).");
     }
-    private static void PatchBgmFinalLap(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
+    internal static void PatchBgmFinalLap(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         // Prepare BGM FL data
         int courseIndex = options.CourseIndex;
@@ -246,12 +187,12 @@ public static class ActionsREL
         FzMainRelUtility.PatchStageBgmFinalLap(writer, info, courseIndex, bgmfl);
         Terminal.Write($"Set course {courseIndex} final lap bgm to {bgmflIndex} ({(BgmIndex)bgmflIndex}).");
     }
-    private static void PatchBgmBoth(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
+    internal static void PatchBgmBoth(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         PatchBgm(options, info, _, writer);
         PatchBgmFinalLap(options, info, _, writer);
     }
-    private static void PatchCourseDifficulty(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
+    internal static void PatchCourseDifficulty(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         AssertDifficultyStars(options);
         AssertCourseIndex(options);
@@ -261,7 +202,7 @@ public static class ActionsREL
         writer.JumpToAddress(pointer);
         writer.Write(options.Difficulty);
     }
-    private static void PatchSetCourseName(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    internal static void PatchSetCourseName(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         AssertCourseIndex(options);
 
@@ -284,7 +225,7 @@ public static class ActionsREL
         Terminal.Write($"Bytes remaining: {remainingBytes}.");
         Terminal.WriteLine();
     }
-    private static void PatchClearCourseNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    internal static void PatchClearCourseNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         DataBlock[] dataBlocks =
         [
@@ -297,9 +238,9 @@ public static class ActionsREL
         Terminal.Write($"Bytes available: {remainingBytes}.");
         Terminal.WriteLine();
     }
-    private static void PatchClearUnusedCourseNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    internal static void PatchClearUnusedCourseNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
-        AssertValue(options);
+        AssertValueExists(options);
 
         ShiftJisCString[] courseNames = GetCourseNames(info, reader);
 
@@ -320,7 +261,7 @@ public static class ActionsREL
         Terminal.Write($"Bytes available: {remainingBytes}.");
         Terminal.WriteLine();
     }
-    private static void PatchSetCourseVenueIndex(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
+    internal static void PatchSetCourseVenueIndex(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         AssertCourseIndex(options);
         AssertVenueIndex(options);
@@ -330,9 +271,9 @@ public static class ActionsREL
         writer.JumpToAddress(pointer);
         writer.Write(options.VenueIndex);
 
-        Terminal.WriteLine($"{prefix}: Patched course index {options.CourseIndex} to venue {options.VenueIndex}.");
+        Terminal.WriteLine($"{options.ActionStr}: Patched course index {options.CourseIndex} to venue {options.VenueIndex}.");
     }
-    private static void PatchSetVenueName(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    internal static void PatchSetVenueName(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         // Currently using "venue" as index into table, including JP names.
         //AssertVenueIndex(options);
@@ -354,7 +295,7 @@ public static class ActionsREL
         Terminal.Write($"Set venue {options.VenueIndex} name to \"{options.Value}\". ");
         Terminal.Write($"Bytes remaining: {remainingBytes}.");
     }
-    private static void PatchClearVenueNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    internal static void PatchClearVenueNames(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         DataBlock[] dataBlocks =
         [
@@ -366,7 +307,7 @@ public static class ActionsREL
         Terminal.Write($"Cleared all venue names. ");
         Terminal.Write($"Bytes available: {remainingBytes}.");
     }
-    private static void PatchClearUnusedVenueNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    internal static void PatchClearUnusedVenueNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         //
         ShiftJisCString[] venueNames = GetVenueNames(info, reader);
@@ -387,7 +328,7 @@ public static class ActionsREL
         Terminal.Write($"Cleared unused venue names. ");
         Terminal.Write($"Bytes remaining: {remainingBytes}.");
     }
-    private static void PatchSetCupCourse(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
+    internal static void PatchSetCupCourse(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         // Assertions
         AssertCupCourseIndex(options);
@@ -404,7 +345,7 @@ public static class ActionsREL
         PatchCupCourseGmaTplReference(writer, info, cup, cupCourseIndex, courseIndex);
         PatchCupCourseUnknown(writer, info, cup, cupCourseIndex, courseIndex);
     }
-    private static void PatchCarData(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
+    internal static void PatchCarData(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         // Assert file path is good
         if (string.IsNullOrWhiteSpace(options.Value))
@@ -450,9 +391,9 @@ public static class ActionsREL
         writer.Write(carData.Machines);
         Assert.IsTrue(writer.GetPositionAsPointer() == pointer + 0x1CD4);
     }
-    private static void PatchMachineRating(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
+    internal static void PatchMachineRating(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        AssertValue(options);
+        AssertValueExists(options);
 
         string rating = options.Value;
         VehicleRating vehicleRating = VehicleRating.FromString(rating);
@@ -470,9 +411,9 @@ public static class ActionsREL
     ///     The game' max speed is 9990 km/h. Calling this action without an
     ///     argument will set the max speed cap to positive infinity.
     /// </remarks>
-    private static void PatchMaxSpeed(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
+    internal static void PatchMaxSpeed(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        AssertValue(options);
+        AssertValueExists(options);
 
         double maxSpeed = string.IsNullOrEmpty(options.Value)
             ? GfzCliArgumentDB.Value_MaxSpeed.Default<float>() // default max value (should be positive infinity)
@@ -483,7 +424,7 @@ public static class ActionsREL
         writer.Write(maxSpeed);
     }
 
-    private static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
+    internal static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
     {
         Pointer initialAddress = writer.GetPositionAsPointer();
 
@@ -496,16 +437,16 @@ public static class ActionsREL
 
         writer.JumpToAddress(initialAddress);
     }
-    private static void PatchCupCourseIndex(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
+    internal static void PatchCupCourseIndex(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
         => PatchCupData(writer, info.CupCourseLut.Address, cup, cupCourseIndex, courseIndex);
-    private static void PatchCupCourseGmaTplReference(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
+    internal static void PatchCupCourseGmaTplReference(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
         => PatchCupData(writer, info.CupCourseLutAssets.Address, cup, cupCourseIndex, courseIndex);
-    private static void PatchCupCourseUnknown(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
+    internal static void PatchCupCourseUnknown(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
         => PatchCupData(writer, info.CupCourseLutUnk.Address, cup, cupCourseIndex, courseIndex);
 
     private static int ClearStringTable(Options options, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)
     {
-        AssertValue(options);
+        AssertValueExists(options);
 
         // Set all strings to same value
         int stringCount = strArrPtr.length;
@@ -631,23 +572,5 @@ public static class ActionsREL
         int remainingBytes = SetStrings(venueNames, writer, info.StringTableBaseAddress, info.VenueNameOffsets, dataBlocks);
         return remainingBytes;
     }
-
-
-    // The same code but wrapped in a function that prepares the file streams, line__.rel info, etc.
-    public static void PatchSetBgm(Options options) => Patch(options, PatchBgm);
-    public static void PatchSetBgmFinalLap(Options options) => Patch(options, PatchBgmFinalLap);
-    public static void PatchSetBgmAndBgmFinalLap(Options options) => Patch(options, PatchBgmBoth);
-    public static void PatchSetCourseDifficulty(Options options) => Patch(options, PatchCourseDifficulty);
-    public static void PatchSetCourseName(Options options) => Patch(options, PatchSetCourseName);
-    public static void PatchSetCupCourse(Options options) => Patch(options, PatchSetCupCourse);
-    public static void PatchClearAllCourseNames(Options options) => Patch(options, PatchClearCourseNames);
-    public static void PatchClearUnusedCourseNames(Options options) => Patch(options, PatchClearUnusedCourseNames);
-    public static void PatchClearAllVenueNames(Options options) => Patch(options, PatchClearVenueNames);
-    public static void PatchClearUnusedVenueNames(Options options) => Patch(options, PatchClearUnusedVenueNames);
-    public static void PatchSetVenueIndex(Options options) => Patch(options, PatchSetCourseVenueIndex);
-    public static void PatchSetVenueName(Options options) => Patch(options, PatchSetVenueName);
-    public static void PatchSetCarData(Options options) => Patch(options, PatchCarData);
-    public static void PatchMachineRating(Options options) => Patch(options, PatchMachineRating);
-    public static void PatchMaxSpeed(Options options) => Patch(options, PatchMaxSpeed);
 
 }

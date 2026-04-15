@@ -1,8 +1,10 @@
 ﻿using GameCube.AmusementVision.ARC;
 using GameCube.AmusementVision.LZ;
+using GameCube.GFZ;
 using GameCube.GFZ.Camera;
 using GameCube.GFZ.CarData;
 using GameCube.GFZ.FMI;
+using GameCube.GFZ.GameData;
 using GameCube.GFZ.Ghosts;
 using GameCube.GFZ.GMA;
 using GameCube.GFZ.Stage;
@@ -23,7 +25,6 @@ public static class CliActions
     /// <summary>
     ///     Archive a directory into a .arc file.
     /// </summary>
-    /// <param name="options"></param>
     /// <remarks>
     ///     <see cref="GfzCliActionDB.ActionArcPack"/>
     /// </remarks>
@@ -82,7 +83,6 @@ public static class CliActions
     /// <summary>
     ///     Unpack one or more .arc achives into directories of their contents.
     /// </summary>
-    /// <param name="options"></param>
     /// <remarks>
     ///     <see cref="GfzCliActionDB.ActionArcUnpack"/>
     /// </remarks>
@@ -127,7 +127,6 @@ public static class CliActions
     /// <summary>
     ///     Create a TSV from CarData binary (compressed or uncompressed).
     /// </summary>
-    /// <param name="options"></param>
     /// <exception cref="ArgumentException">Thrown if serialization format is AX.</exception>
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionCarDataToTSV"/>
@@ -173,7 +172,6 @@ public static class CliActions
     /// <summary>
     ///     Create a CarData.lz file from CarData TSV spreadsheet.
     /// </summary>
-    /// <param name="options"></param>
     /// <exception cref="ArgumentException">Thrown if serialization format is AX.</exception>
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionCarDataToTSV"/>
@@ -222,7 +220,6 @@ public static class CliActions
     /// <summary>
     ///     
     /// </summary>
-    /// <param name="options"></param>
     public static void DumpHex32(Options options)
     {
         var inputFilePaths = GetInputFiles(options);
@@ -285,7 +282,6 @@ public static class CliActions
     /// <summary>
     ///     
     /// </summary>
-    /// <param name="options"></param>
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionFmiToPlainText"/>
     /// </remarks>
@@ -319,7 +315,6 @@ public static class CliActions
     /// <summary>
     ///     
     /// </summary>
-    /// <param name="options"></param>
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionFmiFromPlainText"/>
     /// </remarks>
@@ -353,7 +348,6 @@ public static class CliActions
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="options"></param>
     public static void ExtractGhostFromGci(Options options)
     {
         //string[] files = GetInputFiles(options);
@@ -389,7 +383,6 @@ public static class CliActions
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="options"></param>
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionGmaPatchSubmeshRenderFlags"/>
     /// </remarks>
@@ -458,7 +451,6 @@ public static class CliActions
     /// <summary>
     ///     Create TSV from livecam binary.
     /// </summary>
-    /// <param name="options"></param>
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionCameraLivecamToTSV"/>
     /// </remarks>
@@ -488,7 +480,6 @@ public static class CliActions
     /// <summary>
     ///     Create livecam BIN file from livecam TSV spreadsheet.
     /// </summary>
-    /// <param name="options"></param>
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionCameraLivecamFromTSV"/>
     /// </remarks>
@@ -520,7 +511,6 @@ public static class CliActions
     /// <summary>
     ///     
     /// </summary>
-    /// <param name="options"></param>
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionLZDecompress"/>
     /// </remarks>
@@ -547,7 +537,6 @@ public static class CliActions
     /// <summary>
     ///     
     /// </summary>
-    /// <param name="options"></param>
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionLZCompress"/>
     /// </remarks>
@@ -570,7 +559,6 @@ public static class CliActions
     /// <summary>
     ///     Patch the fog parameters of scenes.
     /// </summary>
-    /// <param name="options"></param>
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionColicoursePatchFog"/>
     /// </remarks>
@@ -662,7 +650,6 @@ public static class CliActions
     ///     Patch the <see cref="SceneObjectDynamic.ObjectRenderFlags0x00"/> of a an object named
     ///     <see cref="Options.Name"/> in a scene.
     /// </summary>
-    /// <param name="options"></param>
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionColicoursePatchObjectRenderFlags"/>
     /// </remarks>
@@ -721,4 +708,229 @@ public static class CliActions
             }
         }
     }
+
+    /// <summary>
+    ///     Set <see cref="BgmMusic"/> in fz.main.rel
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchBgm"/>
+    /// </remarks>
+    public static void PatchSetBgm(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchBgm);
+
+    /// <summary>
+    ///     Set <see cref="BgmFinalLap"/> in fz.main.rel
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchBgmFinalLap"/>
+    /// </remarks>
+    public static void PatchSetBgmFinalLap(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchBgmFinalLap);
+
+    /// <summary>
+    ///     Set both <see cref="BgmMusic"/> and 
+    ///     <see cref="BgmFinalLap"/> in fz.main.rel
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchBgmBoth"/>
+    /// </remarks>
+    public static void PatchSetBgmAndBgmFinalLap(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchBgmBoth);
+
+    /// <summary>
+    ///     Set individual course star difficulty rating in fz.main.rel
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCourseDifficulty"/>
+    /// </remarks>
+    public static void PatchSetCourseDifficulty(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchCourseDifficulty);
+
+    /// <summary>
+    ///     Set individual course name in fz.main.rel
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCourseName"/>
+    /// </remarks>
+    public static void PatchSetCourseName(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchSetCourseName);
+
+    /// <summary>
+    ///     Set individual cup index course reference in fz.main.rel
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCupCourse"/>
+    /// </remarks>
+    public static void PatchSetCupCourse(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchSetCupCourse);
+
+    /// <summary>
+    ///     Clear all course names in fz.main.rel to free up string table memory.
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchClearAllCourseNames"/>
+    /// </remarks>
+    public static void PatchClearAllCourseNames(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchClearCourseNames);
+
+    /// <summary>
+    ///     Clear unused course names in fz.main.rel to free up string table memory.
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchClearUnusedCourseNames"/>
+    /// </remarks>
+    public static void PatchClearUnusedCourseNames(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchClearUnusedCourseNames);
+
+    /// <summary>
+    ///     Clear all venue names in fz.main.rel to free up string table memory.
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchClearAllVenueNames"/>
+    /// </remarks>
+    public static void PatchClearAllVenueNames(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchClearVenueNames);
+
+    /// <summary>
+    ///     Clear unused venue names in fz.main.rel to free up string table memory.
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchClearUnusedVenueNames"/>
+    /// </remarks>
+    public static void PatchClearUnusedVenueNames(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchClearUnusedVenueNames);
+
+    /// <summary>
+    ///     Clear all venue names in fz.main.rel to free up string table memory.
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCourseVenueIndex"/>
+    /// </remarks>
+    public static void PatchSetCourseVenueIndex(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchSetCourseVenueIndex);
+
+    /// <summary>
+    ///     Set individual cup index venue reference in fz.main.rel
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchSetVenueName"/>
+    /// </remarks>
+    public static void PatchSetVenueName(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchSetVenueName);
+
+    /// <summary>
+    ///     Set <see cref="CarData"/> in fz.main.rel
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCarData"/>
+    /// </remarks>
+    public static void PatchSetCarData(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchCarData);
+
+    /// <summary>
+    ///     Set individual machine letter rating in fz.main.rel
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchMachineRating"/>
+    /// </remarks>
+    public static void PatchMachineRating(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchMachineRating);
+
+    /// <summary>
+    ///     Set max speed cap in fz.main.rel
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionPatchMaxSpeed"/>
+    /// </remarks>
+    public static void PatchMaxSpeed(Options options)
+        => ActionsREL.Patch(options, ActionsREL.PatchMaxSpeed);
+
+    /// <summary>
+    ///     Decrypt ./enemy/line__.bin into ./fz.main.rel
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionDecryptLineREL"/>
+    /// </remarks>
+    public static void DecryptLineRel(Options options)
+    {
+        options.OverrideSearchPatternIfUnset("*line__.bin");
+        ParallelizeFileInFileOutTasks(options, DecryptLine);
+
+        static void DecryptLine(Options options, OSPath inputFile, OSPath outputFile)
+        {
+            // Skip processing for AX
+            if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFlags.AX)
+            {
+                string msg = $"AX does not support {options.ActionStr} action. ";
+                Terminal.WriteLine(msg, GfzCli.WarningColor);
+                options.PrintGameCodeDebugMsg();
+                return;
+            }
+
+            // Step 1: Decrypt line__.bin into line__.rel.lz
+            ActionsREL.CryptLine(options, inputFile, outputFile, "rel.lz");
+
+            // Step 2: Get path to line__.rel.lz
+            OSPath lzInputFile = new(outputFile);
+            lzInputFile.SetExtensions("rel.lz");
+            OSPath lzOutputFile = new(lzInputFile);
+
+            // Step 3: Decompress line__.rel.lz into line__.rel
+            try
+            {
+                if (CanWriteFileAndPrintResult(options, lzOutputFile))
+                    Lz.DecompressFile(lzInputFile, lzOutputFile, options.OverwriteFiles);
+            }
+            catch (InvalidLzFileException)
+            {
+                // Recall that the "LZ" file is encrypted. If the wrong decryption is run
+                // on it, the resulting LZ file is incorrect. This is a catch for that.
+                string msg = $"Could not decompress input file {lzInputFile}. " +
+                    $"Was the file previously encrypted with the incorrect region code? " +
+                    $"This is typically the problem. " +
+                    $"Consider adding -{GfzCliArgs.Short.Region} [e/j/p] or " +
+                    $"--{GfzCliArgs.Region} [e/j/p] to arguments previous encryption step. " +
+                    $"Current region: {options.Region}.";
+                Terminal.WriteLine(msg, GfzCli.WarningColor);
+                throw;
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Encrypt ./fz.main.rel into ./enemy/line__.bin into 
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionEncryptLineREL"/>
+    /// </remarks>
+    public static void EncryptLineRel(Options options)
+    {
+        options.OverrideSearchPatternIfUnset("*line__.rel");
+        ParallelizeFileInFileOutTasks(options, EncryptLine);
+
+        static void EncryptLine(Options options, OSPath inputFile, OSPath outputFile)
+        {
+            // Skip processing for AX
+            if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFlags.AX)
+            {
+                string msg = $"AX does not support {options.ActionStr} action. ";
+                Terminal.WriteLine(msg, GfzCli.WarningColor);
+                options.PrintGameCodeDebugMsg();
+                return;
+            }
+
+            // Step 1: Compress line__.rel to line__.rel.lz
+            if (CanWriteFileAndPrintResult(options, outputFile))
+                Lz.CompressFile(inputFile, outputFile, Lz.GfzGameCodeToLzHeaderType(options.GameCode), options.OverwriteFiles);
+
+            // Step 2: Get path to line__.rel.lz
+            OSPath lzInputFile = new(outputFile);
+            lzInputFile.PushExtension("lz");
+            OSPath lzOutputFile = new(lzInputFile);
+
+            // Step 3: Encrypt line_rel.lz into line__.bin
+            ActionsREL.CryptLine(options, lzInputFile, lzOutputFile, "bin");
+        }
+    }
+
 }
