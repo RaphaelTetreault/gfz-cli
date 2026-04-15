@@ -841,7 +841,7 @@ public static class GfzCliActionDB
         ActionOptions = CliActionOption.PRS,
         RequiredArguments = [
             GfzCliArgumentDB.Cup,           // cup to modify
-            GfzCliArgumentDB.CupStageIndex, // stage in cup to modify 0-5 (count: 6)
+            GfzCliArgumentDB.CupCourseIndex, // stage in cup to modify 0-5 (count: 6)
             GfzCliArgumentDB.StageIndex,    // stage index to use
             ],
         OptionalArguments = [],

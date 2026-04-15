@@ -56,8 +56,8 @@ public static class GfzCliArgs
     public const string BgmIndex = "bgm";
     public const string BgmFinalLapIndex = "bgmfl";
     public const string Cup = "cup";
-    public const string CupStageIndex = "cup-course";
-    public const string StageIndex = "course";
+    public const string CupCourseIndex = "cup-course";
+    public const string CourseIndex = "course";
     public const string Difficulty = "difficulty";
     public const string PilotNumber = "pilot";
     public const string VenueIndex = "venue";

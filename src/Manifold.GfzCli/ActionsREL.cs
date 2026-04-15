@@ -79,7 +79,7 @@ public static class ActionsREL
         if (options.CupCourseIndex < minCupCourseIndex || options.CupCourseIndex > GameDataConsts.MaxCupCourseIndex)
         {
             string msg =
-                $"Argument --{nameof(GfzCliArgs.CupStageIndex)} " +
+                $"Argument --{nameof(GfzCliArgs.CupCourseIndex)} " +
                 $"must be a value in the range {minCupCourseIndex}-{GameDataConsts.MaxCupCourseIndex}.";
             throw new ArgumentException(msg);
         }
@@ -87,23 +87,23 @@ public static class ActionsREL
     private static void AssertCourseIndex(Options options)
     {
         // Validate index
-        if (options.CourseIndex > GameDataConsts.MaxStageIndex)
+        if (options.CourseIndex > GameDataConsts.MaxCourseIndex)
         {
-            string msg = $"Argument --{GfzCliArgs.StageIndex} must be a value in the range 0-{GameDataConsts.MaxStageIndex}.";
+            string msg = $"Argument --{GfzCliArgs.CourseIndex} must be a value in the range 0-{GameDataConsts.MaxCourseIndex}.";
             throw new ArgumentException(msg);
         }
     }
-    private static void AssertCourseIndexAllow0xFF(Options options)
+    private static void AssertCourseIndexAllow0xFFFF(Options options)
     {
         // Validate index
-        bool isValidIndex = options.CourseIndex <= GameDataConsts.MaxStageIndex;
-        bool isValidException = options.CourseIndex == 0xFF;
+        bool isValidIndex = options.CourseIndex <= GameDataConsts.MaxCourseIndex;
+        bool isValidException = options.CourseIndex == Course.UnassignedCourseIndex;
         bool isInvalid = !(isValidIndex || isValidException);
         if (isInvalid)
         {
             string msg =
-                $"Argument --{GfzCliArgs.StageIndex} " +
-                $"must be a value in the range 0-{GameDataConsts.MaxStageIndex} or exactly {0xFF}.";
+                $"Argument --{GfzCliArgs.CourseIndex} " +
+                $"must be a value in the range 0-{GameDataConsts.MaxCourseIndex} or exactly {Course.UnassignedCourseIndex}.";
             throw new Exception(msg);
         }
     }
@@ -227,7 +227,7 @@ public static class ActionsREL
     // The code that actually patches
     private static void PatchBgm(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        byte courseIndex = options.CourseIndex;
+        int courseIndex = options.CourseIndex;
         byte bgmIndex = options.BgmIndex;
         FzMainRelUtility.PatchCourseBgm(writer, info, courseIndex, bgmIndex);
         Terminal.Write($"Set course {courseIndex} bgm to {bgmIndex} ({(BgmIndex)bgmIndex}).");
@@ -235,7 +235,7 @@ public static class ActionsREL
     private static void PatchBgmFinalLap(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         // Prepare BGM FL data
-        byte courseIndex = options.CourseIndex;
+        int courseIndex = options.CourseIndex;
         byte bgmflIndex = options.BgmFinalLapIndex;
         BgmFinalLap bgmfl = new()
         {
@@ -330,7 +330,7 @@ public static class ActionsREL
         writer.JumpToAddress(pointer);
         writer.Write(options.VenueIndex);
 
-        Terminal.WriteLine($"{prefix}: Patched stage index {options.CourseIndex} to venue {(VenueIndex)options.VenueIndex}.");
+        Terminal.WriteLine($"{prefix}: Patched course index {options.CourseIndex} to venue {options.VenueIndex}.");
     }
     private static void PatchSetVenueName(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
@@ -392,14 +392,12 @@ public static class ActionsREL
         // Assertions
         AssertCupCourseIndex(options);
         AssertCup(options);
-        AssertCourseIndexAllow0xFF(options);
+        AssertCourseIndexAllow0xFFFF(options);
 
         // Get needed data
-        CupIndex cup = options.Cup;
-        byte cupCourseIndex = (byte)(options.CupCourseIndex - 1);
-        ushort courseIndex = options.CourseIndex == 0xFF
-            ? (ushort)0xFFFF
-            : options.CourseIndex;
+        CupIndex cup = options.Cup;                               // Which cup?
+        byte cupCourseIndex = (byte)(options.CupCourseIndex - 1); // What "slot" in cup?
+        ushort courseIndex = options.CourseIndex;                 // What stage does that slot point to?
 
         // Patch
         PatchCupCourseIndex(writer, info, cup, cupCourseIndex, courseIndex);

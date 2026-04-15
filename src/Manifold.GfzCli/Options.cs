@@ -134,9 +134,6 @@ public sealed class Options
     /// </summary>
     public GameCodeFlags GcfGame => GameCodeUtility.GetGame(GameCode);
 
-
-
-
     #endregion
 
     #region Assets
@@ -495,8 +492,8 @@ public sealed class Options
     /// <summary>
     ///     The numeric index of a stage.
     /// </summary>
-    [Option(GfzCliArgs.StageIndex, Hidden = true)]
-    public byte CourseIndex { get; set; } = GfzCliArgumentDB.StageIndex.Default<byte>();
+    [Option(GfzCliArgs.CourseIndex, Hidden = true)]
+    public ushort CourseIndex { get; set; } = GfzCliArgumentDB.StageIndex.Default<ushort>();
 
     /// <summary>
     ///     The cup which references a number of stages (up to 6).
@@ -507,8 +504,8 @@ public sealed class Options
     /// <summary>
     ///     The course index in a cup slot (0-110, unset 0xFFFF).
     /// </summary>
-    [Option(GfzCliArgs.CupStageIndex, Hidden = true)]
-    public ushort CupCourseIndex { get; set; } = GfzCliArgumentDB.CupStageIndex.Default<ushort>();
+    [Option(GfzCliArgs.CupCourseIndex, Hidden = true)]
+    public ushort CupCourseIndex { get; set; } = GfzCliArgumentDB.CupCourseIndex.Default<ushort>();
 
     /// <summary>
     ///     The stage's star difficulty rating.
@@ -588,6 +585,13 @@ public sealed class Options
     public bool EmblemHasAlphaBorder { get; set; } = true;
 
 
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="regionStr"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
     private static GameCodeFlags StringToRegion(string regionStr)
     {
         string regionStrClean = regionStr.ToUpper();
@@ -621,6 +625,13 @@ public sealed class Options
                 throw new ArgumentException(msg);
         }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="gameStr"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
     private static GameCodeFlags StringToGame(string gameStr)
     {
         string gameStrClean = gameStr.ToUpper();
@@ -634,6 +645,13 @@ public sealed class Options
                 throw new ArgumentException(msg);
         }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="gameCode"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     private static Region GameCodeToRegion(GameCode gameCode)
     {
         return gameCode switch
@@ -646,6 +664,13 @@ public sealed class Options
             _ => throw new NotImplementedException($"Unhandled {nameof(GameCode)} {gameCode}."),
         };
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="gameCode"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     private static SerializeFormat GameCodeToSerializeFormat(GameCode gameCode)
     {
         return gameCode switch
@@ -658,6 +683,11 @@ public sealed class Options
             _ => throw new NotImplementedException($"Unhandled {nameof(GameCode)} {gameCode}."),
         };
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <exception cref="ArgumentException"></exception>
     public void ThrowIfInvalidRegion()
     {
         switch (Region)
@@ -672,6 +702,10 @@ public sealed class Options
                 throw new ArgumentException(msg);
         }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public void PrintGameCodeDebugMsg()
     {
         Terminal.Write($"{nameof(GameCode)}:", GfzCli.FileNameColor);

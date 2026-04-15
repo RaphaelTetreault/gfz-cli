@@ -279,9 +279,9 @@ public static class GfzCliArgumentDB
 
     internal static readonly GfzCliArgument StageIndex = new()
     {
-        ArgumentName = GfzCliArgs.StageIndex,
+        ArgumentName = GfzCliArgs.CourseIndex,
         ArgumentType = typeof(ushort).Name,
-        ArgumentDefault = 0xFFFF, // 0xFFFF is unassigned stage index
+        ArgumentDefault = (ushort)0xFFFF, // 0xFFFF is unassigned stage index
         Help = "The index of the stage (0-110).",
     };
 
@@ -293,11 +293,11 @@ public static class GfzCliArgumentDB
         Help = "Grand prix cup index (0-10).",
     };
 
-    internal static readonly GfzCliArgument CupStageIndex = new()
+    internal static readonly GfzCliArgument CupCourseIndex = new()
     {
-        ArgumentName = GfzCliArgs.CupStageIndex,
-        ArgumentType = typeof(byte).Name,
-        ArgumentDefault = 0xFF, // default to invalid state
+        ArgumentName = GfzCliArgs.CupCourseIndex,
+        ArgumentType = typeof(ushort).Name,
+        ArgumentDefault = Course.UnassignedCourseIndex,
         Help = "The index of the cup course to modify (0-5).",
     };
 
@@ -305,7 +305,7 @@ public static class GfzCliArgumentDB
     {
         ArgumentName = GfzCliArgs.Difficulty,
         ArgumentType = typeof(byte).Name,
-        ArgumentDefault = 0xFF, // default to invalid state
+        ArgumentDefault = (byte)0xFF, // default to invalid state
         Help = "Stage difficulty rating in number of stars ★. Max 24 visible.",
     };
 
@@ -313,7 +313,7 @@ public static class GfzCliArgumentDB
     {
         ArgumentName = GfzCliArgs.PilotNumber,
         ArgumentType = $"{typeof(byte).Name}|{typeof(PilotName).Name}",
-        ArgumentDefault = 0xFF, // default to invalid state
+        ArgumentDefault = (PilotName)0xFF, // default to invalid state
         Help = "Vehicle pilot number (0-40).", // face-value, not internal
     };
 
@@ -321,7 +321,7 @@ public static class GfzCliArgumentDB
     {
         ArgumentName = GfzCliArgs.VenueIndex,
         ArgumentType = $"{typeof(byte).Name}|{typeof(VenueIndex).Name}",
-        ArgumentDefault = 0xFF, // default to invalid state
+        ArgumentDefault = (VenueIndex)0xFF, // default to invalid state
         Help = "A stage's venue index (0-20).",
     };
 
