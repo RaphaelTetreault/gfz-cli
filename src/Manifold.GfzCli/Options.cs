@@ -773,4 +773,36 @@ public sealed class Options
             .Trim('"'); // remove quotation marks
         return sanitized;
     }
+
+    /// <summary>
+    ///     Create <see cref="ResizeOptions"/> from data within <paramref name="options"/>.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="imageWidth"></param>
+    /// <param name="imageHeight"></param>
+    /// <param name="resizeWidth"></param>
+    /// <param name="resizeHeight"></param>
+    /// <param name="resizeHasAlphaBorder"></param>
+    /// <returns></returns>
+    public ResizeOptions GetEmblemResizeOptions(int imageWidth, int imageHeight, int resizeWidth, int resizeHeight, bool resizeHasAlphaBorder)
+    {
+        // Resize image to fit inside bounds of image.
+        // eg: emblem is 64x64
+        ResizeOptions resizeOptions = GetResizeOptions();
+
+        // Emblem size is either 62x62 (1px alpha border, as intended) or 64x64 ("hacker" option)
+        if (resizeHasAlphaBorder)
+        {
+            resizeWidth -= 2;
+            resizeHeight -= 2;
+        }
+        // Choose lowest dimensions as the default size (ie: preserve pixel-perfect if possible)
+        int defaultX = Math.Min(resizeWidth, imageWidth);
+        int defaultY = Math.Min(resizeHeight, imageHeight);
+        // Set size override, then resize image
+        resizeOptions.Size = GetResizeSize(defaultX, defaultY);
+
+        return resizeOptions;
+    }
+
 }

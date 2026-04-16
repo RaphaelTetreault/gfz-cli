@@ -2,6 +2,7 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
+using System;
 using static Manifold.GfzCli.GfzCliUtilities;
 
 namespace Manifold.GfzCli;
@@ -73,5 +74,37 @@ public static class GfzCliImageUtilities
             Image<Rgba32> image = TextureToImage(texture);
             image.Save(outputPath, encoder);
         }
+    }
+
+    /// <summary>
+    ///     Move <paramref name="image"/> texture to be centered inside
+    ///     <paramref name="boundsX"/> and <paramref name="boundsY"/>.
+    /// </summary>
+    /// <param name="image"></param>
+    /// <param name="boundsX"></param>
+    /// <param name="boundsY"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">Thrown if image size is greater than bounds.</exception>
+    public static Texture ImageAsCenteredTexture(Image<Rgba32> image, int boundsX, int boundsY)
+    {
+        bool isInvalidSize = image.Width > boundsX || image.Height > boundsY;
+        if (isInvalidSize)
+        {
+            string msg =
+                $"Image size ({image.Width}, {image.Height}) cannot be " +
+                $"larger than bounds ({boundsX}, {boundsY}).";
+            throw new ArgumentException(msg);
+        }
+
+        Texture imageAsTexture = ImageToTexture(image, TextureFormat.RGB5A3);
+        Texture centeredTexture = new(boundsX, boundsY, TextureColor.Clear, TextureFormat.RGB5A3);
+
+        // Copy image texture to emblem center
+        // Only works if image is less than bounds!
+        int offsetX = (boundsX - image.Width) / 2;
+        int offsetY = (boundsX - image.Height) / 2;
+        Texture.Copy(imageAsTexture, centeredTexture, offsetX, offsetY);
+
+        return centeredTexture;
     }
 }
