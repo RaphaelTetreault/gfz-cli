@@ -17,7 +17,6 @@ public enum CliActionID
     asset_image_to_gxtex,
     asset_tpl_unpack,
     asset_tplref_pack,
-    auto_rename_gci, // UNIMPLEMENTED
     cam_livecamstage_from_tsv,
     cam_livecamstage_to_tsv,
     cardata_from_tsv,
