@@ -882,6 +882,7 @@ public static class CliActions
             OSPath lzInputFile = new(outputFile);
             lzInputFile.SetExtensions("rel.lz");
             OSPath lzOutputFile = new(lzInputFile);
+            lzOutputFile.SetExtensions("rel");
 
             // Step 3: Decompress line__.rel.lz into line__.rel
             try
@@ -928,16 +929,17 @@ public static class CliActions
             }
 
             // Step 1: Compress line__.rel to line__.rel.lz
+            outputFile.PushExtension("lz");
             if (CanWriteFileAndPrintResult(options, outputFile))
                 Lz.CompressFile(inputFile, outputFile, Lz.GfzGameCodeToLzHeaderType(options.GameCode), options.OverwriteFiles);
 
             // Step 2: Get path to line__.rel.lz
             OSPath lzInputFile = new(outputFile);
-            lzInputFile.PushExtension("lz");
-            OSPath lzOutputFile = new(lzInputFile);
+            OSPath binOutputFile = new(lzInputFile);
+            binOutputFile.SetExtensions("bin");
 
             // Step 3: Encrypt line_rel.lz into line__.bin
-            ActionsREL.CryptLine(options, lzInputFile, lzOutputFile, "bin");
+            ActionsREL.CryptLine(options, lzInputFile, binOutputFile, "bin");
         }
     }
 
