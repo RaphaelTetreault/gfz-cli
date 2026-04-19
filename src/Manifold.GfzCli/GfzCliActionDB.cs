@@ -303,7 +303,7 @@ public static class GfzCliActionDB
     internal static GfzCliAction ActionEmblemGciToImage = new()
     {
         Description = "Extract images from GCI emblem save files.",
-        Action = ActionsEmblem.EmblemGciToImage,
+        Action = CliActions.EmblemGciToImage,
         ActionID = CliActionID.emblem_gci_to_image,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -318,7 +318,7 @@ public static class GfzCliActionDB
     internal static GfzCliAction ActionEmblemGciFromImage = new()
     {
         Description = "Create a GCI emblem save file from one image.",
-        Action = ActionsEmblem.EmblemGciFromImage,
+        Action = CliActions.EmblemGciFromImage,
         ActionID = CliActionID.emblem_gci_from_image,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -339,7 +339,7 @@ public static class GfzCliActionDB
     internal static GfzCliAction ActionEmblemsBinToImages = new()
     {
         Description = "Extract images from emblem binary archives.",
-        Action = ActionsEmblem.EmblemsBinToImages,
+        Action = CliActions.EmblemsBinToImages,
         ActionID = CliActionID.emblems_bin_to_images,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -354,7 +354,7 @@ public static class GfzCliActionDB
     internal static GfzCliAction ActionEmblemsBinFromImages = new()
     {
         Description = "Compile an emblem binary archive from multiple images.",
-        Action = ActionsEmblem.EmblemsBinFromImages,
+        Action = CliActions.EmblemsBinFromImages,
         ActionID = CliActionID.emblems_bin_from_images,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.File,
