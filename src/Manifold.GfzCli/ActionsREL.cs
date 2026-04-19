@@ -151,7 +151,6 @@ public static class ActionsREL
     internal static void CryptLine(Options options, OSPath inputFile, OSPath outputFile, string extension)
     {
         // Remove extension
-        outputFile.PopExtension();
         outputFile.SetExtensions(extension);
 
         // Write file
@@ -206,7 +205,7 @@ public static class ActionsREL
     {
         AssertCourseIndex(options);
 
-        // Get course names from file
+        // Get course names from file. Yes, Shift-JIS only, no Windows1252 support.
         ShiftJisCString[] courseNames = GetCourseNames(info, reader);
 
         // Modify course name
@@ -474,7 +473,6 @@ public static class ActionsREL
         int count = strArrPtr.length;
         RelocationEntry[] stringOffsets = new RelocationEntry[count];
         ShiftJisCString[] strings = new ShiftJisCString[count];
-
         // Get all RelocationEntries, only partially get us to strings
         Pointer baseAddress = strArrPtr.address;
         reader.JumpToAddress(baseAddress);
