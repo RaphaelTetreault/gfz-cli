@@ -17,7 +17,6 @@
   <Project Path="../../libs/GameCube.GFZ/src/GameCube.GFZ.GCI/GameCube.GFZ.GCI.csproj" />
   <Project Path="../../libs/GameCube.GFZ/src/GameCube.GFZ.Ghosts/GameCube.GFZ.Ghosts.csproj" />
   <Project Path="../../libs/GameCube.GFZ/src/GameCube.GFZ.GMA/GameCube.GFZ.GMA.csproj" />
-  <Project Path="../../libs/GameCube.GFZ/src/GameCube.GFZ.LZ/GameCube.GFZ.LZ.csproj" />
   <Project Path="../../libs/GameCube.GFZ/src/GameCube.GFZ.REL/GameCube.GFZ.REL.csproj" />
   <Project Path="../../libs/GameCube.GFZ/src/GameCube.GFZ.Replay/GameCube.GFZ.Replay.csproj" />
   <Project Path="../../libs/GameCube.GFZ/src/GameCube.GFZ.Stage/GameCube.GFZ.Stage.csproj" />
