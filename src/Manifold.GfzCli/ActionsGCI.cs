@@ -1,5 +1,7 @@
-﻿using GameCube.GFZ.Replay;
+﻿using GameCube.GCI;
+using GameCube.GFZ.Replay;
 using Manifold.IO;
+using System.IO;
 using static Manifold.GfzCli.GfzCliUtilities;
 
 namespace Manifold.GfzCli;
@@ -8,35 +10,35 @@ public class ActionsGCI
 {
     public static void RenameGCI(Options options)
     {
-        Terminal.WriteLine("GCI: converting emblems from BIN files.");
+        Terminal.WriteLine($"{options.ActionStr}: converting emblems from BIN files.");
         int fileCount = ParallelizeFileInFileOutTasks(options, RenameGciFile);
-        Terminal.WriteLine($"GCI: done renaming {fileCount} file{Plural(fileCount)}.");
+        Terminal.WriteLine($"{options.ActionStr}: done renaming {fileCount} file{Plural(fileCount)}.");
 
-        static void RenameGciFile(Options options, OSPath inputFilePath, OSPath outputFilePath)
+        static void RenameGciFile(Options options, OSPath inputFile, OSPath outputFile)
         {
-            // Can no longer do generic renaming due to changes in structures
-            throw new System.NotImplementedException();
+            inputFile.ThrowIfFileDoesNotExist();
 
-            //inputFilePath.ThrowIfDoesNotExist();
-            //using var reader = new EndianBinaryReader(File.OpenRead(inputFilePath), Gci.endianness);
-            //gci.Deserialize(reader);
-            //reader.SeekBegin();
+            // TODO: Used to be able to use generic GCI type, cannot anymore because
+            //       typing is generic. Maybe this func can be generic???
+            ReplayGCI gci = new();
+            // TODO: would really benefit from helper func like with binaryfile wrapper, new(input)
+            //       to read and then something to save file
+            using var reader = new EndianBinaryReader(File.OpenRead(inputFile), ReplayGCI.endianness);
+            gci.Deserialize(reader);
+            reader.JumpToZero();
 
-            //string name = GetName(gci.header.UniqueID, reader);
-            //outputFilePath.SetName(name);
+            // Get file name...?
+            string name = GetName(gci.UniqueID, reader);
+            outputFile.SetFileName(name);
 
-            //var fileWrite = () =>
-            //{
-            //    File.Copy(inputFilePath, outputFilePath, options.OverwriteFiles);
-            //};
-            //var info = new FileWriteInfo()
-            //{
-            //    InputFilePath = inputFilePath,
-            //    OutputFilePath = outputFilePath,
-            //    PrintDesignator = "GCI",
-            //    PrintActionDescription = "renaming file",
-            //};
-            //FileWriteOverwriteHandler(options, fileWrite, info);
+            // Write file
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            PrintFileWriteResult(result, outputFile, options.ActionStr);
+            if (doWriteFile)
+            {
+
+                Terminal.WriteLine($"Renaming {inputFile} to {outputFile}.");
+            }
         }
     }
 
