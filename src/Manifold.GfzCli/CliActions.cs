@@ -1,5 +1,6 @@
 ﻿using GameCube.AmusementVision.ARC;
 using GameCube.AmusementVision.LZ;
+using GameCube.DiskImage;
 using GameCube.GFZ;
 using GameCube.GFZ.Camera;
 using GameCube.GFZ.CarData;
@@ -18,8 +19,10 @@ using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using System.Threading.Tasks;
 using static Manifold.GfzCli.GfzCliUtilities;
 using static Manifold.GfzCli.GfzCliImageUtilities;
 
@@ -1196,5 +1199,188 @@ public static class CliActions
             }
         }
     }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="options"></param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionAssetGenerateLibrary"/>
+    /// </remarks>
+    public static void GenerateLibrary(Options options) => ActionsAsset.CreateGmaTplLibrary(options);
+
+
+    /// <summary>
+    ///     Takes in hex-string of bytes and prints the Shift-JIS encoded version of the value.
+    /// </summary>
+    /// <param name="options">The options to parse.</param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionEncodeBytesToShiftJis"/>
+    /// </remarks>
+    public static void PrintBytesToShiftJis(Options options)
+        => Terminal.WriteLine(ActionsEncodeText.ConvertBytesToShiftJis(options));
+
+    /// <summary>
+    ///     Takes in Windows code page 1252 string and prints the Shift-JIS encoded version of the value.
+    /// </summary>
+    /// <param name="options">The options to parse.</param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionEncodeWindows1252ToShiftJis"/>
+    /// </remarks>
+    public static void PrintWindowsToShiftJis(Options options)
+        => Terminal.WriteLine(ActionsEncodeText.ConvertWindows1252ToShiftJis(options));
+
+    /// <summary>
+    ///     
+    /// </summary>
+    /// <param name="options"></param>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionIOSceneNullComment"/>
+    /// </remarks>
+    public static void PatchSceneNullComment(Options options)
+    {
+        options.OverrideSearchPatternIfUnset("COLI_COURSE???");
+        Terminal.WriteLine($"PATCH: patch scene file(s).");
+        int taskCount = ParallelizeFileInFileOutTasks(options, PatchSceneComment);
+        Terminal.WriteLine($"PATCH: patch {taskCount} scene file{Plural(taskCount)}.");
+
+        static void PatchSceneComment(Options options, OSPath inputFile, OSPath _)
+        {
+            // Read in file, edit
+            bool doWriteFile = CheckWillFileWrite(options, inputFile, out ActionTaskResult result);
+            PrintFileWriteResult(result, inputFile, options.ActionStr);
+            if (doWriteFile)
+            {
+                using EndianBinaryWriter writer = new(File.OpenWrite(inputFile), SceneFile.endianness);
+                writer.JumpToAddress(0x130);
+                writer.WritePadding(0xF0, 0x20);
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Extract files and/or system from GameCube ISO.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <exception cref="DirectoryNotFoundException"></exception>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionIsoExtract"/>
+    /// </remarks>
+    public static void IsoExtract(Options options)
+    {
+        // Manage input
+        var inputFile = new OSPath(options.InputPath);
+        inputFile.ThrowIfFileDoesNotExist();
+        // Manage output
+        if (string.IsNullOrWhiteSpace(options.OutputPath))
+        {
+            string msg =
+                $"Output path (directory) is not defined. " +
+                $"{nameof(options.OutputPath)}: \"{options.OutputPath}\".";
+            throw new DirectoryNotFoundException(msg);
+        }
+
+        // Read ISO
+        string isoPath = options.InputPath;
+        DiskImage iso = new DiskImageFile(isoPath);
+
+        CliActionID action = options.Action;
+        bool doGetFiles = action == CliActionID.iso_extract || action == CliActionID.iso_extract_files;
+        bool doGetSystem = action == CliActionID.iso_extract || action == CliActionID.iso_extract_system;
+
+        // Run tasks and wait for completion
+        var task0 = doGetFiles ? IsoExtractFiles(options, iso) : Task.CompletedTask;
+        var task1 = doGetSystem ? IsoExtractSystem(options, iso) : Task.CompletedTask;
+        task0.Wait();
+        task1.Wait();
+
+        static Task IsoExtractFiles(Options options, DiskImage iso)
+        {
+            // Prepare files for writing
+            FileNode[] files = iso.FileSystem.GetFiles();
+            List<Task> tasks = new(files.Length);
+            for (int i = 0; i < files.Length; i++)
+            {
+                // Get output path
+                FileNode file = files[i];
+                OSPath outputFile = new();
+                outputFile.SetDirectory(options.OutputPath);
+                outputFile.PushDirectory("files");
+                outputFile.AppendRelativePathToDirectories(file.GetResolvedPath());
+
+                // Run this for each file in filesystem.
+                void ExtractIsoFile()
+                {
+                    bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+                    PrintFileWriteResult(result, outputFile, options.ActionStr);
+                    if (doWriteFile)
+                    {
+                        EnsureDirectoriesExist(outputFile);
+                        using var writer = new BinaryWriter(File.Open(outputFile, FileMode.Create));
+                        writer.Write(file.Data);
+                    }
+                }
+
+                // Run tasks
+                var task = Task.Factory.StartNew(ExtractIsoFile);
+                tasks.Add(task);
+            }
+
+            // Wait for tasks to finish before returning
+            var tasksFinished = Task.WhenAll(tasks);
+            return tasksFinished;
+        }
+
+        static Task IsoExtractSystem(Options options, DiskImage iso)
+        {
+            // Prepare functions
+            var makeBootBin = IsoExtractSystemFile(options, "boot", "bin", iso.DiskHeader.BootBinRaw);
+            var makeBi2Bin = IsoExtractSystemFile(options, "bi2", "bin", iso.DiskHeaderInformation.Bi2BinRaw);
+            var makeApploader = IsoExtractSystemFile(options, "apploader", "img", iso.Apploader.Raw);
+            var makeFilesystem = IsoExtractSystemFile(options, "fst", "bin", iso.FileSystem.Raw);
+            var makeMainDol = IsoExtractSystemFile(options, "main", "dol", iso.MainExecutableRaw);
+
+            // Create tasks
+            List<Task> tasks =
+            [
+                Task.Factory.StartNew(makeBootBin),
+            Task.Factory.StartNew(makeBi2Bin),
+            Task.Factory.StartNew(makeApploader),
+            Task.Factory.StartNew(makeFilesystem),
+            Task.Factory.StartNew(makeMainDol),
+        ];
+
+            // Wait for tasks to finish before returning
+            var tasksFinished = Task.WhenAll(tasks);
+            return tasksFinished;
+        }
+
+        static Action IsoExtractSystemFile(Options options, string outputName, string outputExtension, byte[] data)
+        {
+            // Get output path
+            OSPath outputFile = new();
+            outputFile.SetDirectory(options.OutputPath);
+            outputFile.PushDirectory("sys");
+            outputFile.SetFileName(outputName);
+            outputFile.SetExtensions(outputExtension);
+
+            void ExtractIsoSystemFile()
+            {
+                // Write file
+                bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+                PrintFileWriteResult(result, outputFile, options.ActionStr);
+                if (doWriteFile)
+                {
+                    EnsureDirectoriesExist(outputFile);
+                    using var writer = new BinaryWriter(File.Create(outputFile));
+                    writer.Write(data);
+                }
+            }
+
+            return ExtractIsoSystemFile;
+        }
+    }
+
 
 }

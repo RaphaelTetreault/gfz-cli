@@ -79,7 +79,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionAssetGenerateLibrary = new()
     {
         Description = "Create a text-reference-linked GMA and TPL library.",
-        Action = ActionsAsset.CreateGmaTplLibrary,
+        Action = CliActions.GenerateLibrary,
         ActionID = CliActionID.asset_generate_library,
         InputIO = CliActionIO.Directory,
         OutputIO = CliActionIO.Directory,
@@ -379,7 +379,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionEncodeBytesToShiftJis = new()
     {
         Description = "Takes in hex-string of bytes and prints the Shift-JIS encoded version of the value.",
-        Action = ActionsEncodeText.PrintBytesToShiftJis,
+        Action = CliActions.PrintBytesToShiftJis,
         ActionID = CliActionID.encode_bytes_to_shift_jis,
         InputIO = CliActionIO.None,
         OutputIO = CliActionIO.None,
@@ -392,7 +392,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionEncodeWindows1252ToShiftJis = new()
     {
         Description = "Takes in Windows code page 1252 string and prints the Shift-JIS encoded version of the value.",
-        Action = ActionsEncodeText.PrintWindowsToShiftJis,
+        Action = CliActions.PrintWindowsToShiftJis,
         ActionID = CliActionID.encode_windows_to_shift_jis,
         InputIO = CliActionIO.None,
         OutputIO = CliActionIO.None,
@@ -517,7 +517,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionIOSceneNullComment = new()
     {
         Description = "Patch COLI_COURSE (scene) to null out auto-generate timestamp comment to help diff-ing.",
-        Action = ActionsIO.PatchSceneNullComment,
+        Action = CliActions.PatchSceneNullComment,
         ActionID = CliActionID.io_scene_null_comment,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -531,11 +531,37 @@ public static class GfzCliActionDB
 
     #region ISO
 
-    public static readonly GfzCliAction ActionIsoExtractAll = new()
+    public static readonly GfzCliAction ActionIsoExtract = new()
     {
         Description = "Extract system data and files from GameCube ISO file.",
-        Action = ActionsISO.IsoExtractAll,
-        ActionID = CliActionID.extract_iso,
+        Action = CliActions.IsoExtract,
+        ActionID = CliActionID.iso_extract,
+        InputIO = CliActionIO.File,
+        OutputIO = CliActionIO.Directory,
+        IsOutputOptional = false,
+        ActionOptions = CliActionOption.O,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionIsoExtractFiles = new()
+    {
+        Description = "Extract files from GameCube ISO file.",
+        Action = CliActions.IsoExtract,
+        ActionID = CliActionID.iso_extract_files,
+        InputIO = CliActionIO.File,
+        OutputIO = CliActionIO.Directory,
+        IsOutputOptional = false,
+        ActionOptions = CliActionOption.O,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly GfzCliAction ActionIsoExtractSystem = new()
+    {
+        Description = "Extract system data from GameCube ISO file.",
+        Action = CliActions.IsoExtract,
+        ActionID = CliActionID.iso_extract_system,
         InputIO = CliActionIO.File,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = false,
@@ -900,8 +926,6 @@ public static class GfzCliActionDB
         // COLICOURSE
         ActionColicoursePatchFog,
         ActionColicoursePatchObjectRenderFlags,
-        //      TODO: Extract ./files/ only
-        //      TODO: Extract ./sys/ only
         // ENCODE TEXT
         ActionEncodeBytesToShiftJis,
         ActionEncodeWindows1252ToShiftJis,
@@ -915,11 +939,12 @@ public static class GfzCliActionDB
         ActionFmiToPlainText,
         // GCI
         ActionGciExtractGhost,
-        //      TODO: ActionsGCI - rename file...
         // GMA
         ActionGmaPatchSubmeshRenderFlags,
         // ISO
-        ActionIsoExtractAll,
+        ActionIsoExtract,
+        ActionIsoExtractFiles,
+        ActionIsoExtractSystem,
         // IO: IN-OUT TESTS
         ActionIOGma,
         ActionIOScene,

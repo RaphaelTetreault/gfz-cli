@@ -47,7 +47,6 @@ public static class ActionsAsset
     ///             </description>
     ///         </item>
     ///     </list>
-    ///     Action: <see cref="GfzCliActionDB.ActionAssetGenerateLibrary"/>
     /// </remarks>
     public static void CreateGmaTplLibrary(Options options)
     {
