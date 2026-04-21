@@ -39,6 +39,7 @@ public static class ActionsLog
         => Log(options, StageTableLogger.LogTrackKeyablesAll, SceneSearchPattern);
 
 
+    // TODO: probably put in options (functions/extensions) file
     private static void Log<TBinarySerializable>(Options options, TableLogger.LogFuncFile<TBinarySerializable> logFuncFile, string searchPattern = "")
         where TBinarySerializable : IBinarySerializable, IBinaryFileType, new()
     {

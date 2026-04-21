@@ -27,6 +27,7 @@ public static class ActionsIO
     /// </remarks>
     public static void InOutScene(Options options) => InOutFiles<SceneFile>(options, "COLI_COURSE???");
 
+    // TODO: probably put in options (functions/extensions) file
 
     public static void InOutFiles<TFile>(Options options, string searchPattern)
         where TFile : IBinaryFileType, IBinarySerializable, new()

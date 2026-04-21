@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using GameCube.Common;
 using GameCube.DiskImage;
 using GameCube.GFZ;
 using GameCube.GFZ.CarData;
@@ -805,4 +806,13 @@ public sealed class Options
         return resizeOptions;
     }
 
+
+    internal void AssertValueExists()
+    {
+        if (string.IsNullOrEmpty(Value))
+        {
+            string msg = $"Argument --{GfzCliArgs.Value} must be set.";
+            throw new ArgumentException(msg);
+        }
+    }
 }

@@ -753,7 +753,7 @@ public static class ActionsAsset
     {
         // Break outy some data
         var description = textureSequence.Description;
-        var textureEncoding = GameCube.GX.Texture.Encoding.GetEncoding(description.TextureFormat);
+        var textureEncoding = GameCube.GX.Texture.TextureEncoding.GetEncoding(description.TextureFormat);
 
         // Get main texture if CMPR, will need to fix texture
         bool isCMPR = description.TextureFormat == TextureFormat.CMPR;

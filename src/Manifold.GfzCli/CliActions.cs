@@ -22,9 +22,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using System.Text;
 using System.Threading.Tasks;
 using static Manifold.GfzCli.GfzCliUtilities;
 using static Manifold.GfzCli.GfzCliImageUtilities;
+using GameCube.Common;
 
 namespace Manifold.GfzCli;
 
@@ -1210,7 +1212,6 @@ public static class CliActions
     /// </remarks>
     public static void GenerateLibrary(Options options) => ActionsAsset.CreateGmaTplLibrary(options);
 
-
     /// <summary>
     ///     Takes in hex-string of bytes and prints the Shift-JIS encoded version of the value.
     /// </summary>
@@ -1219,8 +1220,12 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionEncodeBytesToShiftJis"/>
     /// </remarks>
     public static void PrintBytesToShiftJis(Options options)
-        => Terminal.WriteLine(ActionsEncodeText.ConvertBytesToShiftJis(options));
-
+    {
+        options.AssertValueExists();
+        string result = TextEncoding.ConvertBytesToEncoding(options.Value, TextEncoding.ShiftJIS);
+        Terminal.WriteLine(result);
+    }
+    
     /// <summary>
     ///     Takes in Windows code page 1252 string and prints the Shift-JIS encoded version of the value.
     /// </summary>
@@ -1229,7 +1234,11 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionEncodeWindows1252ToShiftJis"/>
     /// </remarks>
     public static void PrintWindowsToShiftJis(Options options)
-        => Terminal.WriteLine(ActionsEncodeText.ConvertWindows1252ToShiftJis(options));
+    {
+        options.AssertValueExists();
+        string result = TextEncoding.ConvertEncodingToEncoding(options.Value, TextEncoding.Windows1252, TextEncoding.ShiftJIS);
+        Terminal.WriteLine(result);
+    }
 
     /// <summary>
     ///     

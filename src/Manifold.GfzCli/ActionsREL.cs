@@ -139,14 +139,7 @@ public static class ActionsREL
             throw new ArgumentException(msg);
         }
     }
-    internal static void AssertValueExists(Options options)
-    {
-        if (string.IsNullOrEmpty(options.Value))
-        {
-            string msg = $"Argument --{GfzCliArgs.Value} must be set.";
-            throw new ArgumentException(msg);
-        }
-    }
+
 
     internal static void CryptLine(Options options, OSPath inputFile, OSPath outputFile, string extension)
     {
@@ -239,7 +232,7 @@ public static class ActionsREL
     }
     internal static void PatchClearUnusedCourseNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
-        AssertValueExists(options);
+        options.AssertValueExists();
 
         ShiftJisCString[] courseNames = GetCourseNames(info, reader);
 
@@ -392,7 +385,7 @@ public static class ActionsREL
     }
     internal static void PatchMachineRating(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        AssertValueExists(options);
+        options.AssertValueExists();
 
         string rating = options.Value;
         VehicleRating vehicleRating = VehicleRating.FromString(rating);
@@ -412,7 +405,7 @@ public static class ActionsREL
     /// </remarks>
     internal static void PatchMaxSpeed(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        AssertValueExists(options);
+        options.AssertValueExists();
 
         double maxSpeed = string.IsNullOrEmpty(options.Value)
             ? GfzCliArgumentDB.Value_MaxSpeed.Default<float>() // default max value (should be positive infinity)
@@ -445,7 +438,7 @@ public static class ActionsREL
 
     private static int ClearStringTable(Options options, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)
     {
-        AssertValueExists(options);
+        options.AssertValueExists();
 
         // Set all strings to same value
         int stringCount = strArrPtr.length;
