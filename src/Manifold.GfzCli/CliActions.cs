@@ -11,6 +11,7 @@ using GameCube.GFZ.GameData;
 using GameCube.GFZ.Ghosts;
 using GameCube.GFZ.GMA;
 using GameCube.GFZ.Stage;
+using GameCube.GFZ.TPL;
 using GameCube.GX.Texture;
 using Manifold.IO;
 using Manifold.Text.Tables;
@@ -35,6 +36,8 @@ namespace Manifold.GfzCli;
 /// </summary>
 public static class CliActions
 {
+    // TODO: Make const for search patterns.
+
     /// <summary>
     ///     Archive a directory into a .arc file.
     /// </summary>
@@ -1225,7 +1228,7 @@ public static class CliActions
         string result = TextEncoding.ConvertBytesToEncoding(options.Value, TextEncoding.ShiftJIS);
         Terminal.WriteLine(result);
     }
-    
+
     /// <summary>
     ///     Takes in Windows code page 1252 string and prints the Shift-JIS encoded version of the value.
     /// </summary>
@@ -1391,5 +1394,28 @@ public static class CliActions
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionIOGma"/>
+    /// </remarks>
+    public static void InOutGMA(Options options) => options.InOutFiles<GmaFile>("*.gma");
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionIOTpl"/>
+    /// </remarks>
+    public static void InOutTPL(Options options) => options.InOutFiles<TplFile>("*.tpl");
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionIOScene"/>
+    /// </remarks>
+    public static void InOutScene(Options options) => options.InOutFiles<SceneFile>("COLI_COURSE???");
 
 }

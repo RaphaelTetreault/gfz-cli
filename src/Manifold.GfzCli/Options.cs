@@ -6,6 +6,7 @@ using GameCube.GFZ.CarData;
 using GameCube.GFZ.GameData;
 using GameCube.GFZ.Stage;
 using GameCube.GX.Texture;
+using Manifold.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
@@ -21,6 +22,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
 using System.IO;
+using static Manifold.GfzCli.GfzCliUtilities;
 
 namespace Manifold.GfzCli;
 
@@ -813,6 +815,39 @@ public sealed class Options
         {
             string msg = $"Argument --{GfzCliArgs.Value} must be set.";
             throw new ArgumentException(msg);
+        }
+    }
+
+    public void InOutFiles<TFile>(string searchPattern)
+        where TFile : IBinaryFileType, IBinarySerializable, new()
+    {
+        OverrideSearchPatternIfUnset(searchPattern);
+
+        string typeName = typeof(TFile).Name;
+        Terminal.WriteLine($"IO {typeName}: in-out re-serialization of file(s).");
+        int taskCount = ParallelizeFileInFileOutTasks(this, InOutFile);
+        Terminal.WriteLine($"IO {typeName}: in-out re-serialization of {taskCount} file{Plural(taskCount)}.");
+
+        static void InOutFile(Options options, OSPath inputFile, OSPath outputFile)
+        {
+            // Mutate name
+            outputFile.SetFileName(outputFile.FileName + "_copy");
+
+            // Read in file, write out file
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            PrintFileWriteResult(result, outputFile, options.ActionStr);
+            if (doWriteFile)
+            {
+                // In
+                TFile source = new();
+                source.FileName = inputFile.FileName;
+                using EndianBinaryReader reader = new(File.OpenRead(inputFile), source.Endianness);
+                reader.Read(ref source);
+
+                // Out
+                using EndianBinaryWriter writer = new(File.OpenWrite(outputFile), source.Endianness);
+                writer.Write(source);
+            }
         }
     }
 }
