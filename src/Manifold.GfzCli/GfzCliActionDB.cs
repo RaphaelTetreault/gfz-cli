@@ -477,7 +477,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionIOGma = new()
     {
         Description = "Round-trip serialize GMA files.",
-        Action = ActionsIO.InOutGMA,
+        Action = CliActions.InOutGMA,
         ActionID = CliActionID.io_gma,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -490,7 +490,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionIOTpl = new()
     {
         Description = "Round-trip serialize TPL files.",
-        Action = ActionsIO.InOutTPL,
+        Action = CliActions.InOutTPL,
         ActionID = CliActionID.io_tpl,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -503,7 +503,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionIOScene = new()
     {
         Description = "Round-trip serialize COLI_COURSE (scene) files.",
-        Action = ActionsIO.InOutScene,
+        Action = CliActions.InOutScene,
         ActionID = CliActionID.io_scene,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -577,7 +577,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionLogStageAll = new()
     {
         Description = "Create all possible analysis .TSVs of COLI_COURSE stage files.",
-        Action = ActionsLog.LogStageAll,
+        Action = CliActions.LogStageAll,
         ActionID = CliActionID.log_stage_all,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,
@@ -590,7 +590,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionLogGmaAll = new()
     {
         Description = "Create all possible analysis .TSVs of GMA model files.",
-        Action = ActionsLog.LogGmaAll,
+        Action = CliActions.LogGmaAll,
         ActionID = CliActionID.log_gma_all,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,
@@ -604,7 +604,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionLogStageTrackKeyablesAll = new()
     {
         Description = "Create a .tsv log of track keyables from COLI_COURSE stage files.",
-        Action = ActionsLog.LogStageTrackKeyables,
+        Action = CliActions.LogStageTrackKeyables,
         ActionID = CliActionID.log_stage_track_keyables,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,

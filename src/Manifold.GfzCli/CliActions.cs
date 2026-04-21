@@ -2,6 +2,7 @@
 using GameCube.AmusementVision.LZ;
 using GameCube.DiskImage;
 using GameCube.GFZ;
+using GameCube.GFZ.Asset;
 using GameCube.GFZ.Camera;
 using GameCube.GFZ.CarData;
 using GameCube.GFZ.Emblem;
@@ -37,6 +38,10 @@ namespace Manifold.GfzCli;
 public static class CliActions
 {
     // TODO: Make const for search patterns.
+    public const string SearchPattern_Scene = "COLI_COURSE???";
+    public const string SearchPattern_GMA = "*.gma";
+    public const string SearchPattern_TPL = "*.tpl";
+
 
     /// <summary>
     ///     Archive a directory into a .arc file.
@@ -1400,7 +1405,7 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionIOGma"/>
     /// </remarks>
-    public static void InOutGMA(Options options) => options.InOutFiles<GmaFile>("*.gma");
+    public static void InOutGMA(Options options) => options.InOutFiles<GmaFile>(SearchPattern_GMA);
 
     /// <summary>
     /// 
@@ -1408,7 +1413,7 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionIOTpl"/>
     /// </remarks>
-    public static void InOutTPL(Options options) => options.InOutFiles<TplFile>("*.tpl");
+    public static void InOutTPL(Options options) => options.InOutFiles<TplFile>(SearchPattern_TPL);
 
     /// <summary>
     /// 
@@ -1416,6 +1421,29 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionIOScene"/>
     /// </remarks>
-    public static void InOutScene(Options options) => options.InOutFiles<SceneFile>("COLI_COURSE???");
+    public static void InOutScene(Options options) => options.InOutFiles<SceneFile>(SearchPattern_Scene);
 
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionLogStageAll"/>
+    /// </remarks>
+    public static void LogStageAll(Options options)
+    {
+        foreach (TableLogger.LogFuncFile<SceneFile> logFuncFile in StageTableLogger.AllLogFunctionFiles)
+            options.Log(logFuncFile, SearchPattern_Scene);
+    }
+
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionLogGmaAll"/>
+    /// </remarks>
+    public static void LogGmaAll(Options options)
+    {
+        foreach (TableLogger.LogFuncFile<GmaFile> logFuncFile in GmaTableLogger.AllLogFunctionFiles)
+            options.Log(logFuncFile, SearchPattern_GMA);
+    }
+
+    /// <remarks>
+    ///     Action: <see cref="GfzCliActionDB.ActionLogStageTrackKeyablesAll"/>
+    /// </remarks>
+    public static void LogStageTrackKeyables(Options options)
+        => options.Log(StageTableLogger.LogTrackKeyablesAll, SearchPattern_Scene);
 }

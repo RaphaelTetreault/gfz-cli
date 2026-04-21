@@ -21,7 +21,9 @@ using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using static Manifold.GfzCli.GfzCliUtilities;
 
 namespace Manifold.GfzCli;
@@ -850,4 +852,23 @@ public sealed class Options
             }
         }
     }
+
+    public void Log<TBinarySerializable>(TableLogger.LogFuncFile<TBinarySerializable> logFuncFile, string searchPattern = "")
+        where TBinarySerializable : IBinarySerializable, IBinaryFileType, new()
+    {
+        // Allow search pattern override if requested and unset
+        if (!string.IsNullOrWhiteSpace(searchPattern))
+            OverrideSearchPatternIfUnset(searchPattern);
+
+        // Create output path for analysis
+        OSPath outputFile = new(OutputPath);
+        outputFile.SetFileNameAndExtensions(logFuncFile.FileName);
+        if (CanWriteFileAndPrintResult(this, outputFile))
+        {
+            EnsureDirectoriesExist(outputFile);
+            IEnumerable<TBinarySerializable> scenes = BinarySerializableIO.LoadFile<TBinarySerializable>(GetInputFiles(this));
+            logFuncFile.AnalysisFunction.Invoke(scenes.ToArray(), outputFile);
+        }
+    }
+
 }
