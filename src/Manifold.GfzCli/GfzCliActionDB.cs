@@ -646,7 +646,6 @@ public static class GfzCliActionDB
 
     #endregion
 
-
     #region REL
 
     public static readonly GfzCliAction ActionPatchBgm = new()
@@ -965,11 +964,13 @@ public static class GfzCliActionDB
         ActionPatchSetCupCourse,
         ActionPatchMachineRating,
         ActionPatchMaxSpeed,
+        ActionPatchSetCourseDifficulty,
         ActionPatchSetCourseVenueIndex,
         ActionPatchSetVenueName,
         // Log
-        ActionLogStageAll,
         ActionLogGmaAll,
+        ActionLogStageAll,
+        ActionLogStageTrackKeyablesAll,
         // LZ
         ActionLZCompress,
         ActionLZDecompress,

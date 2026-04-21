@@ -3,11 +3,8 @@
 /// <summary>
 ///     Indicates the result state of each action task.
 /// </summary>
-public enum ActionTaskResult
+public enum FileResult
 {
-    Success,
-    Failure,
-
     FileWriteSuccess,
     FileOverwriteSuccess,
     FileOverwriteSkip,

@@ -836,7 +836,7 @@ public sealed class Options
             outputFile.SetFileName(outputFile.FileName + "_copy");
 
             // Read in file, write out file
-            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
             PrintFileWriteResult(result, outputFile, options.ActionStr);
             if (doWriteFile)
             {

@@ -18,7 +18,7 @@ using static Manifold.GfzCli.GfzCliImageUtilities;
 namespace Manifold.GfzCli;
 
 /// <summary>
-///     Actions for creating a litghtly-managed GFZ asset library.
+///     Actions for creating a lightly-managed GFZ asset library.
 /// </summary>
 public static class ActionsAsset
 {
@@ -620,7 +620,7 @@ public static class ActionsAsset
 
         // PNG
         {
-            bool doWriteWrite = CheckWillFileWrite(options, imageOutputPath, out ActionTaskResult result);
+            bool doWriteWrite = CheckWillFileWrite(options, imageOutputPath, out FileResult result);
             PrintFileWriteResult(result, imageOutputPath, options.ActionStr);
             if (doWriteWrite)
             {
@@ -630,7 +630,7 @@ public static class ActionsAsset
 
         // GXTEX
         {
-            bool doWriteWrite = CheckWillFileWrite(options, gxtexOutputPath, out ActionTaskResult result);
+            bool doWriteWrite = CheckWillFileWrite(options, gxtexOutputPath, out FileResult result);
             PrintFileWriteResult(result, gxtexOutputPath, options.ActionStr);
             if (doWriteWrite)
             {
@@ -861,7 +861,7 @@ public static class ActionsAsset
             // GCMFX
             // Create standalone GCMF with reference to textures!
             {
-                bool doWriteWrite = CheckWillFileWrite(options, modelOutputPath, out ActionTaskResult result);
+                bool doWriteWrite = CheckWillFileWrite(options, modelOutputPath, out FileResult result);
                 PrintFileWriteResult(result, modelOutputPath, options.ActionStr);
                 if (doWriteWrite)
                 {
@@ -894,7 +894,7 @@ public static class ActionsAsset
             if (OSPath.MatchExclusiveSubdirectories(options.InputPath, fileDirectories, out string subdirectories))
                 gmarefOutputPath.PushDirectories(subdirectories);
             // Write file if able
-            bool doWriteWrite = CheckWillFileWrite(options, gmarefOutputPath, out ActionTaskResult result);
+            bool doWriteWrite = CheckWillFileWrite(options, gmarefOutputPath, out FileResult result);
             PrintFileWriteResult(result, gmarefOutputPath, options.ActionStr);
             if (doWriteWrite)
             {

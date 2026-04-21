@@ -12,6 +12,9 @@ using static Manifold.GfzCli.GfzCliUtilities;
 
 namespace Manifold.GfzCli;
 
+/// <summary>
+///     Actions for patching .REL files.
+/// </summary>
 public static class ActionsREL
 {
     /// <summary>

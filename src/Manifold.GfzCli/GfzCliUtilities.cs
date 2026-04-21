@@ -69,7 +69,7 @@ public static class GfzCliUtilities
     }
 
     // NEW STUFF 2024/12/04
-    public static bool CheckWillFileWrite(Options options, OSPath outputFilePath, out ActionTaskResult result)
+    public static bool CheckWillFileWrite(Options options, OSPath outputFilePath, out FileResult result)
     {
         // Check: does output file exist?
         bool outputFileExists = File.Exists(outputFilePath);
@@ -77,25 +77,25 @@ public static class GfzCliUtilities
         {
             bool willOverwriteFile = options.OverwriteFiles;
             result = willOverwriteFile
-                ? ActionTaskResult.FileOverwriteSuccess
-                : ActionTaskResult.FileOverwriteSkip;
+                ? FileResult.FileOverwriteSuccess
+                : FileResult.FileOverwriteSkip;
 
             return willOverwriteFile;
         }
         else // file does not exist
         {
-            result = ActionTaskResult.FileWriteSuccess;
+            result = FileResult.FileWriteSuccess;
             return true;
         }
     }
-    public static void PrintFileWriteResult(ActionTaskResult result, OSPath filePath, string prefix = "")
+    public static void PrintFileWriteResult(FileResult result, OSPath filePath, string prefix = "")
     {
         // Format prefix if it exists
         prefix = string.IsNullOrWhiteSpace(prefix) ? "" : $"{prefix}: ";
 
         switch (result)
         {
-            case ActionTaskResult.FileWriteSuccess:
+            case FileResult.FileWriteSuccess:
                 lock (Terminal.Lock)
                 {
                     Terminal.Write(prefix);
@@ -104,7 +104,7 @@ public static class GfzCliUtilities
                     Terminal.WriteLine();
                 }
                 break;
-            case ActionTaskResult.FileOverwriteSkip:
+            case FileResult.FileOverwriteSkip:
                 lock (Terminal.Lock)
                 {
                     Terminal.Write(prefix);
@@ -113,7 +113,7 @@ public static class GfzCliUtilities
                     Terminal.WriteLine();
                 }
                 break;
-            case ActionTaskResult.FileOverwriteSuccess:
+            case FileResult.FileOverwriteSuccess:
                 lock (Terminal.Lock)
                 {
                     Terminal.Write(prefix);
@@ -122,7 +122,7 @@ public static class GfzCliUtilities
                     Terminal.WriteLine();
                 }
                 break;
-            case ActionTaskResult.FilePatchSuccess:
+            case FileResult.FilePatchSuccess:
                 lock (Terminal.Lock)
                 {
                     Terminal.Write(prefix);
@@ -138,7 +138,7 @@ public static class GfzCliUtilities
     }
     public static bool CanWriteFileAndPrintResult(Options options, OSPath outputPath)
     {
-        bool success = CheckWillFileWrite(options, outputPath, out ActionTaskResult result);
+        bool success = CheckWillFileWrite(options, outputPath, out FileResult result);
         PrintFileWriteResult(result, outputPath, options.ActionStr);
         return success;
     }

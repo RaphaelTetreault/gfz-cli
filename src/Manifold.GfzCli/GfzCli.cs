@@ -8,6 +8,7 @@ namespace Manifold.GfzCli;
 
 public static class GfzCli
 {
+    // TODO: rewrite Terminal to use 
     public const ConsoleColor FileNameColor = ConsoleColor.Cyan;
     public const ConsoleColor FileWriteColor = ConsoleColor.Green;
     public const ConsoleColor FileOverwriteColor = ConsoleColor.DarkYellow;
@@ -48,6 +49,16 @@ public static class GfzCli
             }
 
             GfzCliActionsLibrary.Add(key, value);
+        }
+
+        foreach (CliActionID cliActionID in Enum.GetValues<CliActionID>())
+        {
+            bool doesCLiMapEnum = GfzCliActionsLibrary.ContainsKey(cliActionID);
+            if (!doesCLiMapEnum)
+            {
+                string msg = $"WARNING: {nameof(GfzCliActionDB.GfzCliActions)} missing map to enum {cliActionID}.";
+                Terminal.WriteLine(msg, WarningColor);
+            }
         }
     }
 

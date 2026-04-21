@@ -78,7 +78,7 @@ public static class CliActions
         if (!options.IsOutputSpecified())
             outputFile.PopDirectory();
 
-        bool canWrite = CheckWillFileWrite(options, outputFile, out ActionTaskResult _);
+        bool canWrite = CheckWillFileWrite(options, outputFile, out FileResult _);
         if (canWrite)
         {
             // Display files being compilled into ARC
@@ -133,7 +133,7 @@ public static class CliActions
                 fileOutputPath.AppendRelativePathToDirectories(file.GetResolvedPath());
 
                 // Write ARC file contents
-                bool doWriteFile = CheckWillFileWrite(options, fileOutputPath, out ActionTaskResult result);
+                bool doWriteFile = CheckWillFileWrite(options, fileOutputPath, out FileResult result);
                 PrintFileWriteResult(result, fileOutputPath, options.ActionStr);
                 if (doWriteFile)
                 {
@@ -178,7 +178,7 @@ public static class CliActions
 
             // Write TSV file
             outputFile.SetExtensions(".tsv");
-            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
             PrintFileWriteResult(result, outputFile, options.ActionStr);
             if (doWriteFile)
             {
@@ -219,7 +219,7 @@ public static class CliActions
 
             // Write CarData.lz file
             outputFile.SetExtensions(".lz");
-            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
             PrintFileWriteResult(result, outputFile, options.ActionStr);
             if (doWriteFile)
             {
@@ -319,7 +319,7 @@ public static class CliActions
             outputFile.SetExtensions(".fmi.txt");
 
             // Write file
-            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
             PrintFileWriteResult(result, outputFile, options.ActionStr);
             if (doWriteFile)
             {
@@ -352,7 +352,7 @@ public static class CliActions
             outputFile.SetExtensions(".fmi");
 
             // Write file
-            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
             PrintFileWriteResult(result, outputFile, options.ActionStr);
             if (doWriteFile)
             {
@@ -392,7 +392,7 @@ public static class CliActions
             outputFile.SetExtensions(GhostDataBIN.extension);
 
             // Write file
-            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
             PrintFileWriteResult(result, outputFile, options.ActionStr);
             if (doWriteFile)
             {
@@ -417,7 +417,7 @@ public static class CliActions
             inputPath.ThrowIfFileDoesNotExist();
 
             // Write file
-            bool doWriteFile = CheckWillFileWrite(options, inputPath, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, inputPath, out FileResult result);
             PrintFileWriteResult(result, inputPath, options.ActionStr);
             if (doWriteFile)
             {
@@ -488,7 +488,7 @@ public static class CliActions
             LiveCameraStage lcs = new LiveCameraStageFile(inputFile);
             // Write TSV file
             outputFile.SetExtensions(".tsv");
-            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
             PrintFileWriteResult(result, outputFile, options.ActionStr);
             if (doWriteFile)
             {
@@ -519,7 +519,7 @@ public static class CliActions
             lcs.Deserialize(sr);
             // Write BIN file
             outputFile.SetExtensions(".bin");
-            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
             PrintFileWriteResult(result, outputFile, options.ActionStr);
             if (doWriteFile)
             {
@@ -592,7 +592,7 @@ public static class CliActions
 
             // Patch COLI_COURSE file
             options.OverwriteFiles = true;
-            bool doWriteFile = CheckWillFileWrite(options, inputPath, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, inputPath, out FileResult result);
             PrintFileWriteResult(result, inputPath, options.ActionStr);
             if (doWriteFile)
             {
@@ -682,7 +682,7 @@ public static class CliActions
             inputPath.ThrowIfFileDoesNotExist();
 
             // Patch COLI_COURSE file
-            bool doWriteFile = CheckWillFileWrite(options, inputPath, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, inputPath, out FileResult result);
             PrintFileWriteResult(result, inputPath, options.ActionStr);
             if (doWriteFile)
             {
@@ -989,7 +989,7 @@ public static class CliActions
                 string indexStr = index.PadLeft(formatLength, '0');
                 outputFile.SetFileName($"{inputFile.FileName}-{indexStr}");
                 // Write file, if able
-                bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+                bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
                 PrintFileWriteResult(result, outputFile, options.ActionStr);
                 if (doWriteFile)
                 {
@@ -1020,7 +1020,7 @@ public static class CliActions
             OSPath outputPath = new(EnforceUnixSeparators(options.OutputPath));
 
             // Write file, if able
-            bool doWriteFile = CheckWillFileWrite(options, outputPath, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, outputPath, out FileResult result);
             PrintFileWriteResult(result, outputPath, options.ActionStr);
             if (doWriteFile)
             {
@@ -1110,7 +1110,7 @@ public static class CliActions
                 OSPath texturePath = new(outputFile);
                 texturePath.SetFileName($"{outputFile.FileName}-banner");
                 // Write file, if able
-                bool doWriteFile = CheckWillFileWrite(options, texturePath, out ActionTaskResult result);
+                bool doWriteFile = CheckWillFileWrite(options, texturePath, out FileResult result);
                 PrintFileWriteResult(result, texturePath, options.ActionStr);
                 if (doWriteFile)
                 {
@@ -1126,7 +1126,7 @@ public static class CliActions
                 OSPath texturePath = new(outputFile);
                 texturePath.SetFileName($"{emblemGCI.Header}-icon{i}");
                 // Write file, if able
-                bool doWriteFile = CheckWillFileWrite(options, texturePath, out ActionTaskResult result);
+                bool doWriteFile = CheckWillFileWrite(options, texturePath, out FileResult result);
                 PrintFileWriteResult(result, texturePath, options.ActionStr);
                 if (doWriteFile)
                 {
@@ -1137,7 +1137,7 @@ public static class CliActions
             // EMBLEM
             {
                 // Write file, if able
-                bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+                bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
                 PrintFileWriteResult(result, outputFile, options.ActionStr);
                 if (doWriteFile)
                 {
@@ -1198,7 +1198,7 @@ public static class CliActions
             emblemGci.SetFileName(fileName);
 
             // Write file
-            bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
             PrintFileWriteResult(result, outputFile, options.ActionStr);
             if (doWriteFile)
             {
@@ -1265,7 +1265,7 @@ public static class CliActions
         static void PatchSceneComment(Options options, OSPath inputFile, OSPath _)
         {
             // Read in file, edit
-            bool doWriteFile = CheckWillFileWrite(options, inputFile, out ActionTaskResult result);
+            bool doWriteFile = CheckWillFileWrite(options, inputFile, out FileResult result);
             PrintFileWriteResult(result, inputFile, options.ActionStr);
             if (doWriteFile)
             {
@@ -1329,7 +1329,7 @@ public static class CliActions
                 // Run this for each file in filesystem.
                 void ExtractIsoFile()
                 {
-                    bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+                    bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
                     PrintFileWriteResult(result, outputFile, options.ActionStr);
                     if (doWriteFile)
                     {
@@ -1385,7 +1385,7 @@ public static class CliActions
             void ExtractIsoSystemFile()
             {
                 // Write file
-                bool doWriteFile = CheckWillFileWrite(options, outputFile, out ActionTaskResult result);
+                bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
                 PrintFileWriteResult(result, outputFile, options.ActionStr);
                 if (doWriteFile)
                 {
