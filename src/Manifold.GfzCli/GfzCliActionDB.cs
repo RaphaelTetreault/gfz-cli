@@ -287,7 +287,7 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         ActionOptions = CliActionOption.FPS,
         RequiredArguments = [
-            GfzCliArgumentDB.Name,
+            GfzCliArgumentDB.Name_ColiCourse,
             GfzCliArgumentDB.Value_ColiCourse,
             ],
         OptionalArguments = [

@@ -19,20 +19,20 @@ public static class GfzCliArgumentDB
         Help = "Create backup of patched file.",
     };
 
-    internal static readonly GfzCliArgument Name = new()
+    private static readonly GfzCliArgument Name = new()
     {
         ArgumentName = GfzCliArgs.Name,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
-        Help = "The name of the target.",
+        Help = "OVERRIDE NOT SET.",
     };
 
-    internal static readonly GfzCliArgument Value = new()
+    private static readonly GfzCliArgument Value = new()
     {
         ArgumentName = GfzCliArgs.Value,
-        ArgumentType = "variable",
+        ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
-        Help = "A generic value as parameter.",
+        Help = "OVERRIDE NOT SET.",
     };
 
     #endregion
@@ -214,12 +214,16 @@ public static class GfzCliArgumentDB
 
     #region Stage
 
-    internal static readonly GfzCliArgument Value_ColiCourse = new()
+    internal static readonly GfzCliArgument Value_ColiCourse = Value with
     {
-        ArgumentName = GfzCliArgs.Value,
         ArgumentType = typeof(ObjectRenderFlags0x00).Name,
         ArgumentDefault = null,
         Help = "The render flag value in decimal to apply.",
+    };
+
+    internal static readonly GfzCliArgument Name_ColiCourse = Name with
+    {
+        Help = "The name of the target.",
     };
 
     internal static readonly GfzCliArgument FogViewRangeNear = new()
@@ -327,67 +331,46 @@ public static class GfzCliArgumentDB
 
     #endregion
 
-    internal static readonly GfzCliArgument Value_EncodeText = new()
+    internal static readonly GfzCliArgument Value_EncodeText = Value with
     {
-        ArgumentName = GfzCliArgs.Value,
-        ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
         Help = "The text to encode.",
     };
 
-    internal static readonly GfzCliArgument Name_GMA = new()
+    internal static readonly GfzCliArgument Name_GMA = Name with
     {
-        ArgumentName = GfzCliArgs.Name,
-        ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
         Help = "The model to modify.",
     };
 
-    internal static readonly GfzCliArgument Value_GMA = new()
+    internal static readonly GfzCliArgument Value_GMA = Value with
     {
-        ArgumentName = GfzCliArgs.Value,
         ArgumentType = typeof(GameCube.GFZ.GMA.RenderFlags).Name,
-        ArgumentDefault = null,
         Help = "The model render flags to set.",
     };
 
-    internal static readonly GfzCliArgument Value_CourseName = new()
+    internal static readonly GfzCliArgument Value_CourseName = Value with
     {
-        ArgumentName = GfzCliArgs.Value,
-        ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
         Help = "The name of the course.",
     };
 
-    internal static readonly GfzCliArgument Value_VenueName = new()
+    internal static readonly GfzCliArgument Value_VenueName = Value with
     {
-        ArgumentName = GfzCliArgs.Value,
-        ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
         Help = "The name of the venue.",
     };
 
-    internal static readonly GfzCliArgument Value_CarData = new()
+    internal static readonly GfzCliArgument Value_CarData = Value with
     {
-        ArgumentName = GfzCliArgs.Value,
-        ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
         Help = "The file path to cardata (compressed, decompressed, or tsv).",
     };
 
-    internal static readonly GfzCliArgument Value_MaxSpeed = new()
+    internal static readonly GfzCliArgument Value_MaxSpeed = Value with
     {
-        ArgumentName = GfzCliArgs.Value,
         ArgumentType = typeof(float).Name,
         ArgumentDefault = float.PositiveInfinity,
         Help = "Vehicle max speed cap.",
     };
 
-    internal static readonly GfzCliArgument Value_MachineRating = new()
+    internal static readonly GfzCliArgument Value_MachineRating = Value with
     {
-        ArgumentName = GfzCliArgs.Value,
-        ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
         Help = "The machine rating as 3 consecutive numbers. Letters SABCDE maps to 012345. 123 is ABC.",
     };
 
