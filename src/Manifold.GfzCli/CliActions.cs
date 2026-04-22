@@ -737,7 +737,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchBgm"/>
     /// </remarks>
     public static void PatchSetBgm(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchBgm);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchBgm);
 
     /// <summary>
     ///     Set <see cref="BgmFinalLap"/> in fz.main.rel
@@ -746,7 +746,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchBgmFinalLap"/>
     /// </remarks>
     public static void PatchSetBgmFinalLap(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchBgmFinalLap);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchBgmFinalLap);
 
     /// <summary>
     ///     Set both <see cref="BgmMusic"/> and 
@@ -756,7 +756,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchBgmBoth"/>
     /// </remarks>
     public static void PatchSetBgmAndBgmFinalLap(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchBgmBoth);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchBgmBoth);
 
     /// <summary>
     ///     Set individual course star difficulty rating in fz.main.rel
@@ -765,7 +765,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCourseDifficulty"/>
     /// </remarks>
     public static void PatchSetCourseDifficulty(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchCourseDifficulty);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchCourseDifficulty);
 
     /// <summary>
     ///     Set individual course name in fz.main.rel
@@ -774,7 +774,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCourseName"/>
     /// </remarks>
     public static void PatchSetCourseName(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchSetCourseName);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchSetCourseName);
 
     /// <summary>
     ///     Set individual cup index course reference in fz.main.rel
@@ -783,7 +783,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCupCourse"/>
     /// </remarks>
     public static void PatchSetCupCourse(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchSetCupCourse);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchSetCupCourse);
 
     /// <summary>
     ///     Clear all course names in fz.main.rel to free up string table memory.
@@ -792,7 +792,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchClearAllCourseNames"/>
     /// </remarks>
     public static void PatchClearAllCourseNames(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchClearCourseNames);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchClearCourseNames);
 
     /// <summary>
     ///     Clear unused course names in fz.main.rel to free up string table memory.
@@ -801,7 +801,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchClearUnusedCourseNames"/>
     /// </remarks>
     public static void PatchClearUnusedCourseNames(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchClearUnusedCourseNames);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchClearUnusedCourseNames);
 
     /// <summary>
     ///     Clear all venue names in fz.main.rel to free up string table memory.
@@ -810,7 +810,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchClearAllVenueNames"/>
     /// </remarks>
     public static void PatchClearAllVenueNames(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchClearVenueNames);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchClearVenueNames);
 
     /// <summary>
     ///     Clear unused venue names in fz.main.rel to free up string table memory.
@@ -819,7 +819,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchClearUnusedVenueNames"/>
     /// </remarks>
     public static void PatchClearUnusedVenueNames(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchClearUnusedVenueNames);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchClearUnusedVenueNames);
 
     /// <summary>
     ///     Clear all venue names in fz.main.rel to free up string table memory.
@@ -828,7 +828,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCourseVenueIndex"/>
     /// </remarks>
     public static void PatchSetCourseVenueIndex(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchSetCourseVenueIndex);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchSetCourseVenueIndex);
 
     /// <summary>
     ///     Set individual cup index venue reference in fz.main.rel
@@ -837,7 +837,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchSetVenueName"/>
     /// </remarks>
     public static void PatchSetVenueName(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchSetVenueName);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchSetVenueName);
 
     /// <summary>
     ///     Set <see cref="CarData"/> in fz.main.rel
@@ -846,7 +846,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCarData"/>
     /// </remarks>
     public static void PatchSetCarData(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchCarData);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchCarData);
 
     /// <summary>
     ///     Set individual machine letter rating in fz.main.rel
@@ -855,7 +855,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchMachineRating"/>
     /// </remarks>
     public static void PatchMachineRating(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchMachineRating);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchMachineRating);
 
     /// <summary>
     ///     Set max speed cap in fz.main.rel
@@ -864,7 +864,7 @@ public static class CliActions
     ///     Action: <see cref="GfzCliActionDB.ActionPatchMaxSpeed"/>
     /// </remarks>
     public static void PatchMaxSpeed(Options options)
-        => ActionsREL.Patch(options, ActionsREL.PatchMaxSpeed);
+        => CliActionsREL.Patch(options, CliActionsREL.PatchMaxSpeed);
 
     /// <summary>
     ///     Decrypt ./enemy/line__.bin into ./fz.main.rel
@@ -889,7 +889,7 @@ public static class CliActions
             }
 
             // Step 1: Decrypt line__.bin into line__.rel.lz
-            ActionsREL.CryptLine(options, inputFile, outputFile, "rel.lz");
+            CliActionsREL.CryptLine(options, inputFile, outputFile, "rel.lz");
 
             // Step 2: Get path to line__.rel.lz
             OSPath lzInputFile = new(outputFile);
@@ -952,7 +952,7 @@ public static class CliActions
             binOutputFile.SetExtensions("bin");
 
             // Step 3: Encrypt line_rel.lz into line__.bin
-            ActionsREL.CryptLine(options, lzInputFile, binOutputFile, "bin");
+            CliActionsREL.CryptLine(options, lzInputFile, binOutputFile, "bin");
         }
     }
 
@@ -1218,7 +1218,7 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="GfzCliActionDB.ActionAssetGenerateLibrary"/>
     /// </remarks>
-    public static void GenerateLibrary(Options options) => ActionsAsset.CreateGmaTplLibrary(options);
+    public static void GenerateLibrary(Options options) => CliActionsAsset.CreateGmaTplLibrary(options);
 
     /// <summary>
     ///     Takes in hex-string of bytes and prints the Shift-JIS encoded version of the value.

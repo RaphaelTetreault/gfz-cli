@@ -15,7 +15,7 @@ namespace Manifold.GfzCli;
 /// <summary>
 ///     Actions for patching .REL files.
 /// </summary>
-public static class ActionsREL
+public static class CliActionsREL
 {
     /// <summary>
     ///     Functions signature for these Patch functions.

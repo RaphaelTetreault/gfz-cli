@@ -20,7 +20,7 @@ namespace Manifold.GfzCli;
 /// <summary>
 ///     Actions for creating a lightly-managed GFZ asset library.
 /// </summary>
-public static class ActionsAsset
+public static class CliActionsAsset
 {
     /// <summary>
     ///     Create library of individual textures and models from TPLs and GMAs, respectively.

@@ -94,7 +94,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionAssetImageToGxtex = new()
     {
         Description = "Convert image to a raw GameCube GX texture.",
-        Action = ActionsAsset.ImageToGxTexture,
+        Action = CliActionsAsset.ImageToGxTexture,
         ActionID = CliActionID.asset_image_to_gxtex,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -121,7 +121,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionAssetCustomMipmapGxtex = new()
     {
         Description = "Convert images (main texture and mipmaps) to a raw GameCube GX texture.",
-        Action = ActionsAsset.ImagesToCustomMipmapGxtex,
+        Action = CliActionsAsset.ImagesToCustomMipmapGxtex,
         ActionID = CliActionID.asset_custom_mipmap_gxtex,
         InputIO = CliActionIO.File,
         OutputIO = CliActionIO.File,
@@ -148,7 +148,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionAssetTplUnpack = new()
     {
         Description = "Unpack TPL files into TPLREFs.",
-        Action = ActionsAsset.TplUnpack,
+        Action = CliActionsAsset.TplUnpack,
         ActionID = CliActionID.asset_tpl_unpack,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -163,7 +163,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionAssetTplrefPack = new()
     {
         Description = "Pack TPL file from TPLREF.",
-        Action = ActionsAsset.TplrefPack,
+        Action = CliActionsAsset.TplrefPack,
         ActionID = CliActionID.asset_tplref_pack,
         InputIO = CliActionIO.File,
         OutputIO = CliActionIO.File,
@@ -178,7 +178,7 @@ public static class GfzCliActionDB
     public static readonly GfzCliAction ActionAssetGmarefPack = new()
     {
         Description = "Pack GMA file from GMAREF.",
-        Action = ActionsAsset.GmarefPack,
+        Action = CliActionsAsset.GmarefPack,
         ActionID = CliActionID.asset_gmaref_to_gma,
         InputIO = CliActionIO.File,
         OutputIO = CliActionIO.File,
