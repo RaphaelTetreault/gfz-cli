@@ -15,7 +15,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.None,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.None,
+        FileProcessArgs = CliFileProcessArg.None,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -28,7 +28,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.None,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.None,
+        FileProcessArgs = CliFileProcessArg.None,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -41,7 +41,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.None,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.None,
+        FileProcessArgs = CliFileProcessArg.None,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -54,7 +54,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -67,7 +67,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Directory,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -84,7 +84,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Directory,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = false,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
         GfzCliArgumentDB.ResamplerType,
@@ -99,7 +99,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = false,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
             GfzCliArgumentDB.MipmapFiles,
@@ -126,7 +126,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.File,
         OutputIO = CliActionIO.File,
         IsOutputOptional = false,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
             GfzCliArgumentDB.MipmapFiles,
@@ -153,7 +153,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
             GfzCliArgumentDB.DirFormat,
@@ -168,7 +168,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.File,
         OutputIO = CliActionIO.File,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
             GfzCliArgumentDB.AssetLibraryRoot,
@@ -183,7 +183,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.File,
         OutputIO = CliActionIO.File,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
             GfzCliArgumentDB.AssetLibraryRoot,
@@ -202,7 +202,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.FOPS,
+        FileProcessArgs = CliFileProcessArg.FOPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -215,7 +215,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.FOPS,
+        FileProcessArgs = CliFileProcessArg.FOPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -232,7 +232,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.FOPS,
+        FileProcessArgs = CliFileProcessArg.FOPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -245,7 +245,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.FOPS,
+        FileProcessArgs = CliFileProcessArg.FOPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -262,7 +262,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.FPS,
+        FileProcessArgs = CliFileProcessArg.FPS,
         RequiredArguments = [
             GfzCliArgumentDB.Color,
             GfzCliArgumentDB.ColorR,
@@ -285,7 +285,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.FPS,
+        FileProcessArgs = CliFileProcessArg.FPS,
         RequiredArguments = [
             GfzCliArgumentDB.Name_ColiCourse,
             GfzCliArgumentDB.Value_ColiCourse,
@@ -308,7 +308,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
         GfzCliArgumentDB.ImageFormat,
@@ -323,7 +323,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [
             GfzCliArgumentDB.ResamplerType,
             ],
@@ -344,7 +344,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
             GfzCliArgumentDB.ImageFormat,
@@ -359,7 +359,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.File,
         IsOutputOptional = false,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [
             GfzCliArgumentDB.ResamplerType,
             ],
@@ -384,7 +384,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.None,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.None,
+        FileProcessArgs = CliFileProcessArg.None,
         RequiredArguments = [GfzCliArgumentDB.Value_EncodeText],
         OptionalArguments = [],
     };
@@ -397,7 +397,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.None,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.None,
+        FileProcessArgs = CliFileProcessArg.None,
         RequiredArguments = [GfzCliArgumentDB.Value_EncodeText],
         OptionalArguments = [],
     };
@@ -414,7 +414,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -427,7 +427,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -444,7 +444,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -461,7 +461,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PS,
+        FileProcessArgs = CliFileProcessArg.PS,
         RequiredArguments = [
             GfzCliArgumentDB.Name_GMA,
             GfzCliArgumentDB.Value_GMA],
@@ -482,7 +482,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -495,7 +495,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -508,7 +508,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPRS,
+        FileProcessArgs = CliFileProcessArg.OPRS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -522,7 +522,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PS,
+        FileProcessArgs = CliFileProcessArg.PS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -539,7 +539,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.File,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = false,
-        ActionOptions = CliFileProcessArg.O,
+        FileProcessArgs = CliFileProcessArg.O,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -552,7 +552,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.File,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = false,
-        ActionOptions = CliFileProcessArg.O,
+        FileProcessArgs = CliFileProcessArg.O,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -565,7 +565,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.File,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = false,
-        ActionOptions = CliFileProcessArg.O,
+        FileProcessArgs = CliFileProcessArg.O,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -582,7 +582,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = false,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -595,7 +595,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = false,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -609,7 +609,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = false,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -626,7 +626,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.FOPS,
+        FileProcessArgs = CliFileProcessArg.FOPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -639,7 +639,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -656,7 +656,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             GfzCliArgumentDB.BgmIndex,
             GfzCliArgumentDB.StageIndex,
@@ -672,7 +672,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             GfzCliArgumentDB.BgmFinalLapIndex,
             GfzCliArgumentDB.StageIndex,
@@ -688,7 +688,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             GfzCliArgumentDB.BgmIndex,
             GfzCliArgumentDB.BgmFinalLapIndex,
@@ -705,7 +705,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             GfzCliArgumentDB.StageIndex,
             GfzCliArgumentDB.Difficulty,
@@ -721,7 +721,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             GfzCliArgumentDB.StageIndex,
             GfzCliArgumentDB.Value_CourseName,
@@ -737,7 +737,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -750,7 +750,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [GfzCliArgumentDB.Value_CourseName],
         OptionalArguments = [],
     };
@@ -763,7 +763,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             GfzCliArgumentDB.StageIndex,
             GfzCliArgumentDB.VenueIndex,
@@ -779,7 +779,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             GfzCliArgumentDB.VenueIndex,
             GfzCliArgumentDB.Value_VenueName,
@@ -795,7 +795,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -808,7 +808,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [GfzCliArgumentDB.Value_VenueName],
         OptionalArguments = [],
     };
@@ -821,7 +821,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [GfzCliArgumentDB.Value_CarData],
         OptionalArguments = [],
     };
@@ -834,7 +834,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             GfzCliArgumentDB.PilotNumber,
             GfzCliArgumentDB.Value_MachineRating,
@@ -850,7 +850,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [],
         OptionalArguments = [GfzCliArgumentDB.Value_MaxSpeed],
     };
@@ -863,7 +863,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.PRS,
+        FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             GfzCliArgumentDB.Cup,           // cup to modify
             GfzCliArgumentDB.CupCourseIndex, // stage in cup to modify 0-5 (count: 6)
@@ -880,7 +880,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPRS,
+        FileProcessArgs = CliFileProcessArg.OPRS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -893,7 +893,7 @@ public static class GfzCliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        ActionOptions = CliFileProcessArg.OPRS,
+        FileProcessArgs = CliFileProcessArg.OPRS,
         RequiredArguments = [],
         OptionalArguments = [],
     };

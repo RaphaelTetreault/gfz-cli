@@ -19,7 +19,7 @@ public readonly record struct GfzCliAction()
     public required CliActionID ActionID { get; init; }
     public required CliActionIO InputIO { get; init; }
     public required CliActionIO OutputIO { get; init; }
-    public required CliFileProcessArg ActionOptions { get; init; }
+    public required CliFileProcessArg FileProcessArgs { get; init; }
     public required bool IsOutputOptional { get; init; } = true;
     public required GfzCliArgument[] RequiredArguments { get; init; }
     public required GfzCliArgument[] OptionalArguments { get; init; }
@@ -142,7 +142,7 @@ public readonly record struct GfzCliAction()
 
     private string GetActionOptionsMessage()
     {
-        if (ActionOptions == CliFileProcessArg.None)
+        if (FileProcessArgs == CliFileProcessArg.None)
             return string.Empty;
 
         // Prepare string
@@ -152,7 +152,7 @@ public readonly record struct GfzCliAction()
         // Iterate over all possible values
         for (int i = 0; i < 32; i++)
         {
-            CliFileProcessArg option = (CliFileProcessArg)((uint)ActionOptions & (1 << i));
+            CliFileProcessArg option = (CliFileProcessArg)((uint)FileProcessArgs & (1 << i));
             if (option == CliFileProcessArg.None)
                 continue;
 
