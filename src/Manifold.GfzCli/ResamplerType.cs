@@ -1,8 +1,9 @@
 ﻿namespace Manifold.GfzCli;
 
 /// <summary>
-/// https://github.com/SixLabors/ImageSharp/blob/main/src/ImageSharp/Processing/KnownResamplers.cs
+///     SixLabours.ImageSharp resampler types.
 /// </summary>
+/// <seealso cref="https://github.com/SixLabors/ImageSharp/blob/main/src/ImageSharp/Processing/KnownResamplers.cs"/>
 public enum ResamplerType
 {
     Bicubic,
