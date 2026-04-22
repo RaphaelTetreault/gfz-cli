@@ -4,7 +4,7 @@
 ///     Describes the general options for <see cref="CliActionID"/>.
 /// </summary>
 [System.Flags]
-public enum CliActionOption
+public enum CliFileProcessArg
 {
     /// <summary>
     ///     No generic parameters

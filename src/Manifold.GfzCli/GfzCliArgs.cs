@@ -21,43 +21,43 @@ public static class GfzCliArgs
     public const string Value = "value";
 
     // Assets
-    public const string TextureFormat = "texture-format";
+    public const string AssetLibraryRoot = "asset-library";
+    public const string DirFormat = "dir-format";
     public const string MipmapCount = "mipmap-count";
     public const string MipmapFiles = "mipmap-files";
     public const string MipmapMode = "mipmap-mode";
-    public const string AssetLibraryRoot = "asset-library";
-    public const string DirFormat = "dir-format";
+    public const string TextureFormat = "texture-format";
 
     // IMAGE SHARP
     // Resize
     public const string Compand = "compand";
-    public const string ResizeMode = "resize-mode";
     public const string PadColor = "pad-color";
     public const string Position = "position";
     public const string PremultiplyAlpha = "premultiply-alpha";
     public const string Resampler = "resampler";
+    public const string ResizeMode = "resize-mode";
     public const string Width = "width";
     public const string Height = "height";
     // Other
-    public const string ImageFormat = "image-format";
+    public const string ImageFormat = "image-format"; // six labors
 
     // Stage
-    public const string FogViewRangeNear = "fog-view-range-near";
-    public const string FogViewRangeFar = "fog-view-range-far";
-    public const string FogInterpolationMode = "fog-interpolation-mode";
     public const string Color = "color";
     public const string ColorR = "color-r";
     public const string ColorG = "color-g";
     public const string ColorB = "color-b";
-    public const string ColorAlpha = "color-a";
+    public const string ColorA = "color-a";
+    public const string FogInterpolationMode = "fog-interpolation-mode";
+    public const string FogViewRangeNear = "fog-view-range-near";
+    public const string FogViewRangeFar = "fog-view-range-far";
     public const string SetFlagsOff = "set-flags-off";
 
     // REL
     public const string BgmIndex = "bgm";
     public const string BgmFinalLapIndex = "bgmfl";
+    public const string CourseIndex = "course";
     public const string Cup = "cup";
     public const string CupCourseIndex = "cup-course";
-    public const string CourseIndex = "course";
     public const string Difficulty = "difficulty";
     public const string PilotNumber = "pilot";
     public const string VenueIndex = "venue";

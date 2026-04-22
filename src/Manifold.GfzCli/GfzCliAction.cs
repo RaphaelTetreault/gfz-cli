@@ -19,7 +19,7 @@ public readonly record struct GfzCliAction()
     public required CliActionID ActionID { get; init; }
     public required CliActionIO InputIO { get; init; }
     public required CliActionIO OutputIO { get; init; }
-    public required CliActionOption ActionOptions { get; init; }
+    public required CliFileProcessArg ActionOptions { get; init; }
     public required bool IsOutputOptional { get; init; } = true;
     public required GfzCliArgument[] RequiredArguments { get; init; }
     public required GfzCliArgument[] OptionalArguments { get; init; }
@@ -142,7 +142,7 @@ public readonly record struct GfzCliAction()
 
     private string GetActionOptionsMessage()
     {
-        if (ActionOptions == CliActionOption.None)
+        if (ActionOptions == CliFileProcessArg.None)
             return string.Empty;
 
         // Prepare string
@@ -152,8 +152,8 @@ public readonly record struct GfzCliAction()
         // Iterate over all possible values
         for (int i = 0; i < 32; i++)
         {
-            CliActionOption option = (CliActionOption)((uint)ActionOptions & (1 << i));
-            if (option == CliActionOption.None)
+            CliFileProcessArg option = (CliFileProcessArg)((uint)ActionOptions & (1 << i));
+            if (option == CliFileProcessArg.None)
                 continue;
 
             // Add pipe if not at start of string
@@ -165,12 +165,12 @@ public readonly record struct GfzCliAction()
             // Add action char
             switch (option)
             {
-                case CliActionOption.O: builder.Append(GfzCliArgs.Short.OverwriteFiles); break;
-                case CliActionOption.P: builder.Append(GfzCliArgs.Short.SearchPattern); break;
-                case CliActionOption.S: builder.Append(GfzCliArgs.Short.SearchSubdirectories); break;
-                case CliActionOption.G: builder.Append(GfzCliArgs.Short.GameCode); break;
-                case CliActionOption.F: builder.Append(GfzCliArgs.Short.SerializationFormat); break;
-                case CliActionOption.R: builder.Append(GfzCliArgs.Short.Region); break;
+                case CliFileProcessArg.O: builder.Append(GfzCliArgs.Short.OverwriteFiles); break;
+                case CliFileProcessArg.P: builder.Append(GfzCliArgs.Short.SearchPattern); break;
+                case CliFileProcessArg.S: builder.Append(GfzCliArgs.Short.SearchSubdirectories); break;
+                case CliFileProcessArg.G: builder.Append(GfzCliArgs.Short.GameCode); break;
+                case CliFileProcessArg.F: builder.Append(GfzCliArgs.Short.SerializationFormat); break;
+                case CliFileProcessArg.R: builder.Append(GfzCliArgs.Short.Region); break;
                 default: throw new NotImplementedException(option.ToString());
             }
         }
