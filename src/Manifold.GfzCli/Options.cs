@@ -35,50 +35,50 @@ public sealed class Options
     /// <summary>
     ///     Input string for enum. GFZ CLI action to perform.
     /// </summary>
-    [Value(0, MetaName = GfzCliArgumentText.Action, HelpText = GfzCliArgumentText.Help.Action, Required = true)]
+    [Value(0, MetaName = CliArgumentText.Action, HelpText = CliArgumentText.Help.Action, Required = true)]
     public string ActionStr { get => WithoutQuotes(field); set; } = string.Empty;
 
     /// <summary>
     ///     Input path for action.
     /// </summary>
-    [Value(1, MetaName = GfzCliArgumentText.InputPath, HelpText = GfzCliArgumentText.Help.InputPath, Required = false)]
+    [Value(1, MetaName = CliArgumentText.InputPath, HelpText = CliArgumentText.Help.InputPath, Required = false)]
     public string InputPath { get => WithoutQuotes(field); set; } = string.Empty;
 
     /// <summary>
     ///     Output path for action.
     /// </summary>
-    [Value(2, MetaName = GfzCliArgumentText.OutputPath, HelpText = GfzCliArgumentText.Help.OutputPath, Required = false)]
+    [Value(2, MetaName = CliArgumentText.OutputPath, HelpText = CliArgumentText.Help.OutputPath, Required = false)]
     public string OutputPath { get => WithoutQuotes(field); set; } = string.Empty;
 
     /// <summary>
     ///     Whether overwriting files is allowed.
     /// </summary>
-    [Option(GfzCliArgumentText.Short.OverwriteFiles, GfzCliArgumentText.OverwriteFiles, HelpText = GfzCliArgumentText.Help.OverwriteFiles)]
+    [Option(CliArgumentText.Short.OverwriteFiles, CliArgumentText.OverwriteFiles, HelpText = CliArgumentText.Help.OverwriteFiles)]
     public bool OverwriteFiles { get; set; } = false;
 
     /// <summary>
     ///     File search pattern. Uses * and ? wildcards.
     /// </summary>
-    [Option(GfzCliArgumentText.Short.SearchPattern, GfzCliArgumentText.SearchPattern, HelpText = GfzCliArgumentText.Help.SearchPattern)]
+    [Option(CliArgumentText.Short.SearchPattern, CliArgumentText.SearchPattern, HelpText = CliArgumentText.Help.SearchPattern)]
     public string SearchPattern { get => WithoutQuotes(field); set; } = string.Empty;
 
     /// <summary>
     ///     Input string for enum.
     ///     Whether search pattern applies to files in subfolders.
     /// </summary>
-    [Option(GfzCliArgumentText.Short.SearchSubdirectories, GfzCliArgumentText.SearchSubdirectories, HelpText = GfzCliArgumentText.Help.SearchSubdirectories)]
+    [Option(CliArgumentText.Short.SearchSubdirectories, CliArgumentText.SearchSubdirectories, HelpText = CliArgumentText.Help.SearchSubdirectories)]
     public bool SearchSubdirectories { get; set; } = false;
 
     /// <summary>
     ///     Input string for enum. Which game to serialize.
     /// </summary>
-    [Option(GfzCliArgumentText.Short.GameCode, GfzCliArgumentText.GameCode, HelpText = GfzCliArgumentText.Help.GameCode)]
+    [Option(CliArgumentText.Short.GameCode, CliArgumentText.GameCode, HelpText = CliArgumentText.Help.GameCode)]
     public string GameCodeStr { get => WithoutQuotes(field); set; } = $"{GameCode.GFZJ01}";
 
     /// <summary>
     ///     Input string for enum. Which game to serialize.
     /// </summary>
-    [Option(GfzCliArgumentText.Short.SerializationFormat, GfzCliArgumentText.SerializationFormat, HelpText = GfzCliArgumentText.Help.SerializationFormat)]
+    [Option(CliArgumentText.Short.SerializationFormat, CliArgumentText.SerializationFormat, HelpText = CliArgumentText.Help.SerializationFormat)]
     public string GameCodeGame
     {
         set
@@ -92,7 +92,7 @@ public sealed class Options
     /// <summary>
     ///     Input string for enum. Which region to serialize to.
     /// </summary>
-    [Option(GfzCliArgumentText.Short.Region, GfzCliArgumentText.Region, HelpText = GfzCliArgumentText.Help.Region)]
+    [Option(CliArgumentText.Short.Region, CliArgumentText.Region, HelpText = CliArgumentText.Help.Region)]
     public string GameCodeRegion
     {
         set
@@ -146,39 +146,39 @@ public sealed class Options
     /// <summary>
     ///     
     /// </summary>
-    [Option(GfzCliArgumentText.AssetLibraryRoot, Hidden = true)]
+    [Option(CliArgumentText.AssetLibraryRoot, Hidden = true)]
     public string AssetLibraryRoot { get => WithoutQuotes(field); set; } = string.Empty;
 
     /// <summary>
     ///     
     /// </summary>
-    [Option(GfzCliArgumentText.MipmapCount, Hidden = true)]
-    public int MipmapCount { get; set; } = GfzCliArgumentDB.MipmapCount.Default<int>();
+    [Option(CliArgumentText.MipmapCount, Hidden = true)]
+    public int MipmapCount { get; set; } = CliArgumentDB.MipmapCount.Default<int>();
 
     /// <summary>
     ///     
     /// </summary>
-    [Option(GfzCliArgumentText.MipmapFiles, Hidden = true)]
+    [Option(CliArgumentText.MipmapFiles, Hidden = true)]
     public string MipmapFiles { get => WithoutQuotes(field); set; } = string.Empty;
 
     /// <summary>
     ///     
     /// </summary>
-    [Option(GfzCliArgumentText.MipmapMode, Hidden = true)]
-    public string MipmapModeStr { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.MipmapMode.AsText();
+    [Option(CliArgumentText.MipmapMode, Hidden = true)]
+    public string MipmapModeStr { get => WithoutQuotes(field); set; } = CliArgumentDB.MipmapMode.AsText();
     public MipmapGenerationMode MipmapMode => GfzCliParser.EnumParseDashRemoved<MipmapGenerationMode>(MipmapModeStr);
 
     /// <summary>
     ///     
     /// </summary>
-    [Option(GfzCliArgumentText.TextureFormat, Hidden = true)]
-    public TextureFormat TextureFormat { get; set; } = GfzCliArgumentDB.TextureFormat.Default<TextureFormat>();
+    [Option(CliArgumentText.TextureFormat, Hidden = true)]
+    public TextureFormat TextureFormat { get; set; } = CliArgumentDB.TextureFormat.Default<TextureFormat>();
 
     /// <summary>
     ///     
     /// </summary>
-    [Option(GfzCliArgumentText.DirFormat, Hidden = true)]
-    public string DirFormat { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.DirFormat.Default<string>();
+    [Option(CliArgumentText.DirFormat, Hidden = true)]
+    public string DirFormat { get => WithoutQuotes(field); set; } = CliArgumentDB.DirFormat.Default<string>();
 
     #endregion
 
@@ -187,7 +187,7 @@ public sealed class Options
     /// <summary>
     ///     The color's value.
     /// </summary>
-    [Option(GfzCliArgumentText.PadColor, Hidden = true)] //TODO fog color...
+    [Option(CliArgumentText.PadColor, Hidden = true)] //TODO fog color...
     public string ColorStr { get => WithoutQuotes(field); set; } = "00000000";
 
     /// <summary>
@@ -273,34 +273,34 @@ public sealed class Options
     /// <summary>
     ///     Whether to compress or expand individual pixel colors when scaling image.
     /// </summary>
-    [Option(GfzCliArgumentText.Compand, Hidden = true)]
-    public bool Compand { get; set; } = GfzCliArgumentDB.Compand.Default<bool>();
+    [Option(CliArgumentText.Compand, Hidden = true)]
+    public bool Compand { get; set; } = CliArgumentDB.Compand.Default<bool>();
 
     /// <summary>
     ///     How the image should be resized.
     /// </summary>
-    [Option(GfzCliArgumentText.ResizeMode, Hidden = true)]
-    public string ResizeModeStr { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.ResizeMode.AsText();
+    [Option(CliArgumentText.ResizeMode, Hidden = true)]
+    public string ResizeModeStr { get => WithoutQuotes(field); set; } = CliArgumentDB.ResizeMode.AsText();
     public ResizeMode ResizeMode => GfzCliParser.EnumParseDashRemoved<ResizeMode>(ResizeModeStr);
 
     /// <summary>
     ///     Anchor positions to apply to resize image.
     /// </summary>
-    [Option(GfzCliArgumentText.Position, Hidden = true)]
-    public string PositionStr { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.Position.AsText();
+    [Option(CliArgumentText.Position, Hidden = true)]
+    public string PositionStr { get => WithoutQuotes(field); set; } = CliArgumentDB.Position.AsText();
     public AnchorPositionMode Position => GfzCliParser.EnumParseDashRemoved<AnchorPositionMode>(PositionStr);
 
     /// <summary>
     ///     Whether to use premultiplied alpha when scaling image.
     /// </summary>
-    [Option(GfzCliArgumentText.PremultiplyAlpha, Hidden = true)]
-    public bool PremultiplyAlpha { get; set; } = GfzCliArgumentDB.PremultiplyAlpha.Default<bool>();
+    [Option(CliArgumentText.PremultiplyAlpha, Hidden = true)]
+    public bool PremultiplyAlpha { get; set; } = CliArgumentDB.PremultiplyAlpha.Default<bool>();
 
     /// <summary>
     ///     The resampler to use when scaling image.
     /// </summary>
-    [Option(GfzCliArgumentText.Resampler, Hidden = true)]
-    public string ResamplerTypeStr { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.ResamplerType.AsText();
+    [Option(CliArgumentText.Resampler, Hidden = true)]
+    public string ResamplerTypeStr { get => WithoutQuotes(field); set; } = CliArgumentDB.ResamplerType.AsText();
     public ResamplerType ResamplerType => GfzCliParser.EnumParseDashRemoved<ResamplerType>(ResamplerTypeStr);
     public IResampler Resampler => GetResampler(ResamplerType);
 
@@ -308,13 +308,13 @@ public sealed class Options
     /// <summary>
     ///     The desired image width. May not be result width depending on 'resize-mode' option.
     /// </summary>
-    [Option(GfzCliArgumentText.Width, Hidden = true)]
+    [Option(CliArgumentText.Width, Hidden = true)]
     public int Width { get; set; }
 
     /// <summary>
     ///     The desired image height. May not be result height depending on 'resize-mode' option.
     /// </summary>
-    [Option(GfzCliArgumentText.Height, Hidden = true)]
+    [Option(CliArgumentText.Height, Hidden = true)]
     public int Height { get; set; }
 
     public Size Size => new(Width, Height);
@@ -330,8 +330,8 @@ public sealed class Options
     /// <summary>
     ///     Image format, such as PNG, JPG, TGA, etc.
     /// </summary>
-    [Option(GfzCliArgumentText.ImageFormat, Hidden = true)]
-    public string ImageFormatStr { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.ImageFormat.AsText();
+    [Option(CliArgumentText.ImageFormat, Hidden = true)]
+    public string ImageFormatStr { get => WithoutQuotes(field); set; } = CliArgumentDB.ImageFormat.AsText();
     public ImageFormat ImageFormat => GfzCliParser.EnumParseDashRemoved<ImageFormat>(ImageFormatStr);
     public ImageEncoder ImageEncoder => GetImageEncoder(ImageFormat);
     public string ImageExtension => GetImageExtension(ImageFormat);
@@ -463,19 +463,19 @@ public sealed class Options
     /// <summary>
     ///     Create backup of patched file.
     /// </summary>
-    [Option(GfzCliArgumentText.Backup, Hidden = true)]
-    public bool BackupPatchFile { get; set; } = GfzCliArgumentDB.Backup.Default<bool>();
+    [Option(CliArgumentText.Backup, Hidden = true)]
+    public bool BackupPatchFile { get; set; } = CliArgumentDB.Backup.Default<bool>();
 
     /// <summary>
     ///     A generic name parameter.
     /// </summary>
-    [Option(GfzCliArgumentText.Name, Hidden = true)]
+    [Option(CliArgumentText.Name, Hidden = true)]
     public string Name { get => WithoutQuotes(field); set; } = string.Empty;
 
     /// <summary>
     ///     A generic value parameter.
     /// </summary>
-    [Option(GfzCliArgumentText.Value, Hidden = true)]
+    [Option(CliArgumentText.Value, Hidden = true)]
     public string Value { get => WithoutQuotes(field); set; } = string.Empty;
 
     #endregion
@@ -485,50 +485,50 @@ public sealed class Options
     /// <summary>
     ///     The numeric index of a background music (BGM) song, used for stage bgm.
     /// </summary>
-    [Option(GfzCliArgumentText.BgmIndex, Hidden = true)]
-    public byte BgmIndex { get; set; } = GfzCliArgumentDB.BgmIndex.Default<byte>();
+    [Option(CliArgumentText.BgmIndex, Hidden = true)]
+    public byte BgmIndex { get; set; } = CliArgumentDB.BgmIndex.Default<byte>();
 
     /// <summary>
     ///     The numeric index of a background music (BGM) song, used for stage final lap bgm.
     /// </summary>
-    [Option(GfzCliArgumentText.BgmFinalLapIndex, Hidden = true)]
-    public byte BgmFinalLapIndex { get; set; } = GfzCliArgumentDB.BgmFinalLapIndex.Default<byte>();
+    [Option(CliArgumentText.BgmFinalLapIndex, Hidden = true)]
+    public byte BgmFinalLapIndex { get; set; } = CliArgumentDB.BgmFinalLapIndex.Default<byte>();
 
     /// <summary>
     ///     The numeric index of a stage.
     /// </summary>
-    [Option(GfzCliArgumentText.CourseIndex, Hidden = true)]
-    public ushort CourseIndex { get; set; } = GfzCliArgumentDB.StageIndex.Default<ushort>();
+    [Option(CliArgumentText.CourseIndex, Hidden = true)]
+    public ushort CourseIndex { get; set; } = CliArgumentDB.StageIndex.Default<ushort>();
 
     /// <summary>
     ///     The cup which references a number of stages (up to 6).
     /// </summary>
-    [Option(GfzCliArgumentText.Cup, Hidden = true)]
-    public CupIndex Cup { get; set; } = GfzCliArgumentDB.Cup.Default<CupIndex>();
+    [Option(CliArgumentText.Cup, Hidden = true)]
+    public CupIndex Cup { get; set; } = CliArgumentDB.Cup.Default<CupIndex>();
 
     /// <summary>
     ///     The course index in a cup slot (0-110, unset 0xFFFF).
     /// </summary>
-    [Option(GfzCliArgumentText.CupCourseIndex, Hidden = true)]
-    public ushort CupCourseIndex { get; set; } = GfzCliArgumentDB.CupCourseIndex.Default<ushort>();
+    [Option(CliArgumentText.CupCourseIndex, Hidden = true)]
+    public ushort CupCourseIndex { get; set; } = CliArgumentDB.CupCourseIndex.Default<ushort>();
 
     /// <summary>
     ///     The stage's star difficulty rating.
     /// </summary>
-    [Option(GfzCliArgumentText.Difficulty, Hidden = true)]
-    public byte Difficulty { get; set; } = GfzCliArgumentDB.Difficulty.Default<byte>();
+    [Option(CliArgumentText.Difficulty, Hidden = true)]
+    public byte Difficulty { get; set; } = CliArgumentDB.Difficulty.Default<byte>();
 
     /// <summary>
     ///     A pilot's racing number.
     /// </summary>
-    [Option(GfzCliArgumentText.PilotNumber, Hidden = true)]
-    public PilotName PilotNumber { get; set; } = GfzCliArgumentDB.PilotNumber.Default<PilotName>();
+    [Option(CliArgumentText.PilotNumber, Hidden = true)]
+    public PilotName PilotNumber { get; set; } = CliArgumentDB.PilotNumber.Default<PilotName>();
 
     /// <summary>
     ///     A stage's venue index.
     /// </summary>
-    [Option(GfzCliArgumentText.VenueIndex, Hidden = true)]
-    public VenueIndex VenueIndex { get; set; } = GfzCliArgumentDB.VenueIndex.Default<VenueIndex>();
+    [Option(CliArgumentText.VenueIndex, Hidden = true)]
+    public VenueIndex VenueIndex { get; set; } = CliArgumentDB.VenueIndex.Default<VenueIndex>();
 
     #endregion
 
@@ -537,20 +537,20 @@ public sealed class Options
     /// <summary>
     ///     The fog's view range near plane.
     /// </summary>
-    [Option(GfzCliArgumentText.FogViewRangeNear, Hidden = true)]
-    public float FogViewRangeNear { get; set; } = GfzCliArgumentDB.FogViewRangeNear.Default<float>();
+    [Option(CliArgumentText.FogViewRangeNear, Hidden = true)]
+    public float FogViewRangeNear { get; set; } = CliArgumentDB.FogViewRangeNear.Default<float>();
 
     /// <summary>
     ///     The fog's view range far plane.
     /// </summary>
-    [Option(GfzCliArgumentText.FogViewRangeFar, Hidden = true)]
-    public float FogViewRangeFar { get; set; } = GfzCliArgumentDB.FogViewRangeFar.Default<float>();
+    [Option(CliArgumentText.FogViewRangeFar, Hidden = true)]
+    public float FogViewRangeFar { get; set; } = CliArgumentDB.FogViewRangeFar.Default<float>();
 
     /// <summary>
     ///     The GX fog interpolation mode.
     /// </summary>
-    [Option(GfzCliArgumentText.FogInterpolationMode, Hidden = true)]
-    public string FogInterpolationModeStr { get => WithoutQuotes(field); set; } = GfzCliArgumentDB.FogInterpolationMode.AsText();
+    [Option(CliArgumentText.FogInterpolationMode, Hidden = true)]
+    public string FogInterpolationModeStr { get => WithoutQuotes(field); set; } = CliArgumentDB.FogInterpolationMode.AsText();
     public FogType FogInterpolationMode => GfzCliParser.EnumParseDashRemoved<FogType>(FogInterpolationModeStr);
 
     ///// <summary>
@@ -580,13 +580,13 @@ public sealed class Options
     /// <summary>
     ///     Whether to set flags on or off (true or flase).
     /// </summary>
-    [Option(GfzCliArgumentText.SetFlagsOff, Hidden = true)]
-    public bool SetFlagsOff { get; set; } = GfzCliArgumentDB.SetFlagsOff.Default<bool>();
+    [Option(CliArgumentText.SetFlagsOff, Hidden = true)]
+    public bool SetFlagsOff { get; set; } = CliArgumentDB.SetFlagsOff.Default<bool>();
 
     #endregion
 
     // UNSORTED
-    [Option(GfzCliArgumentText.EmblemHasAlphaBorder, Hidden = true)]
+    [Option(CliArgumentText.EmblemHasAlphaBorder, Hidden = true)]
     public bool EmblemHasAlphaBorder { get; set; } = true;
 
 
@@ -745,7 +745,7 @@ public sealed class Options
     }
 
     /// <summary>
-    ///     For sanitizing <see cref="GfzCliArgumentDB.DirFormat"/>.
+    ///     For sanitizing <see cref="CliArgumentDB.DirFormat"/>.
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
@@ -755,7 +755,7 @@ public sealed class Options
         if (string.IsNullOrWhiteSpace(DirFormat))
             return value;
 
-        string replaceTag = GfzCliArgumentDB.DirFormat.Default<string>();
+        string replaceTag = CliArgumentDB.DirFormat.Default<string>();
         string result = DirFormat.Replace(replaceTag, value);
         return result;
     }
@@ -815,7 +815,7 @@ public sealed class Options
     {
         if (string.IsNullOrEmpty(Value))
         {
-            string msg = $"Argument --{GfzCliArgumentText.Value} must be set.";
+            string msg = $"Argument --{CliArgumentText.Value} must be set.";
             throw new ArgumentException(msg);
         }
     }

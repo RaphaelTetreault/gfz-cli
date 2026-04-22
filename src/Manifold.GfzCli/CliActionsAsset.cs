@@ -153,7 +153,7 @@ public static class CliActionsAsset
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionAssetTplUnpack"/>
+    ///     Action: <see cref="CliActionDB.ActionAssetTplUnpack"/>
     /// </remarks>
     public static void TplUnpack(Options options)
     {
@@ -219,7 +219,7 @@ public static class CliActionsAsset
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionAssetTplrefPack"/>
+    ///     Action: <see cref="CliActionDB.ActionAssetTplrefPack"/>
     /// </remarks>
     public static void TplrefPack(Options options)
     {
@@ -250,7 +250,7 @@ public static class CliActionsAsset
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionAssetGmarefPack"/>
+    ///     Action: <see cref="CliActionDB.ActionAssetGmarefPack"/>
     /// </remarks>
     public static void GmarefPack(Options options)
     {
@@ -338,7 +338,7 @@ public static class CliActionsAsset
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionAssetCustomMipmapGxtex"/>
+    ///     Action: <see cref="CliActionDB.ActionAssetCustomMipmapGxtex"/>
     /// </remarks>
     public static void ImagesToCustomMipmapGxtex(Options options)
     {
@@ -352,7 +352,7 @@ public static class CliActionsAsset
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionAssetImageToGxtex"/>
+    ///     Action: <see cref="CliActionDB.ActionAssetImageToGxtex"/>
     /// </remarks>
     public static void ImageToGxTexture(Options options)
     {

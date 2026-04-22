@@ -47,7 +47,7 @@ public static class CliActions
     ///     Archive a directory into a .arc file.
     /// </summary>
     /// <remarks>
-    ///     <see cref="GfzCliActionDB.ActionArcPack"/>
+    ///     <see cref="CliActionDB.ActionArcPack"/>
     /// </remarks>
     public static void ArcPack(Options options)
     {
@@ -105,7 +105,7 @@ public static class CliActions
     ///     Unpack one or more .arc achives into directories of their contents.
     /// </summary>
     /// <remarks>
-    ///     <see cref="GfzCliActionDB.ActionArcUnpack"/>
+    ///     <see cref="CliActionDB.ActionArcUnpack"/>
     /// </remarks>
     public static void ArcUnpack(Options options)
     {
@@ -150,7 +150,7 @@ public static class CliActions
     /// </summary>
     /// <exception cref="ArgumentException">Thrown if serialization format is AX.</exception>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionCarDataToTSV"/>
+    ///     Action: <see cref="CliActionDB.ActionCarDataToTSV"/>
     /// </remarks>
     public static void CarDataToTsv(Options options)
     {
@@ -195,7 +195,7 @@ public static class CliActions
     /// </summary>
     /// <exception cref="ArgumentException">Thrown if serialization format is AX.</exception>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionCarDataToTSV"/>
+    ///     Action: <see cref="CliActionDB.ActionCarDataToTSV"/>
     /// </remarks>
     public static void CarDataFromTsv(Options options)
     {
@@ -304,7 +304,7 @@ public static class CliActions
     ///     
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionFmiToPlainText"/>
+    ///     Action: <see cref="CliActionDB.ActionFmiToPlainText"/>
     /// </remarks>
     public static void FmiToPlainText(Options options)
     {
@@ -337,7 +337,7 @@ public static class CliActions
     ///     
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionFmiFromPlainText"/>
+    ///     Action: <see cref="CliActionDB.ActionFmiFromPlainText"/>
     /// </remarks>
     public static void FmiFromPlainText(Options options)
     {
@@ -405,7 +405,7 @@ public static class CliActions
     /// 
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionGmaPatchSubmeshRenderFlags"/>
+    ///     Action: <see cref="CliActionDB.ActionGmaPatchSubmeshRenderFlags"/>
     /// </remarks>
     public static void PatchSubmeshRenderFlags(Options options)
     {
@@ -473,7 +473,7 @@ public static class CliActions
     ///     Create TSV from livecam binary.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionCameraLivecamToTSV"/>
+    ///     Action: <see cref="CliActionDB.ActionCameraLivecamToTSV"/>
     /// </remarks>
     public static void LivecamToTsv(Options options)
     {
@@ -502,7 +502,7 @@ public static class CliActions
     ///     Create livecam BIN file from livecam TSV spreadsheet.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionCameraLivecamFromTSV"/>
+    ///     Action: <see cref="CliActionDB.ActionCameraLivecamFromTSV"/>
     /// </remarks>
     public static void LivecamFromTsv(Options options)
     {
@@ -533,7 +533,7 @@ public static class CliActions
     ///     
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionLZDecompress"/>
+    ///     Action: <see cref="CliActionDB.ActionLZDecompress"/>
     /// </remarks>
     public static void LzDecompress(Options options)
     {
@@ -559,7 +559,7 @@ public static class CliActions
     ///     
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionLZCompress"/>
+    ///     Action: <see cref="CliActionDB.ActionLZCompress"/>
     /// </remarks>
     public static void LzCompress(Options options)
     {
@@ -581,7 +581,7 @@ public static class CliActions
     ///     Patch the fog parameters of scenes.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionColicoursePatchFog"/>
+    ///     Action: <see cref="CliActionDB.ActionColicoursePatchFog"/>
     /// </remarks>
     public static void PatchFog(Options options)
     {
@@ -611,13 +611,13 @@ public static class CliActions
 
                 // Modify existing file (in the future, re-serialize file)
                 // OPTIONAL: Get parameters and defaults
-                FogType fogInterpolationMode = (uint)options.FogInterpolationMode == GfzCliArgumentDB.FogInterpolationMode.Default<uint>()
+                FogType fogInterpolationMode = (uint)options.FogInterpolationMode == CliArgumentDB.FogInterpolationMode.Default<uint>()
                     ? scene.fog.Interpolation
                     : options.FogInterpolationMode;
-                float fogViewRangeNear = options.FogViewRangeNear == GfzCliArgumentDB.FogViewRangeNear.Default<float>()
+                float fogViewRangeNear = options.FogViewRangeNear == CliArgumentDB.FogViewRangeNear.Default<float>()
                     ? scene.fog.FogRange.near
                     : options.FogViewRangeNear;
-                float fogViewRangeFar = options.FogViewRangeFar == GfzCliArgumentDB.FogViewRangeFar.Default<float>()
+                float fogViewRangeFar = options.FogViewRangeFar == CliArgumentDB.FogViewRangeFar.Default<float>()
                     ? scene.fog.FogRange.far
                     : options.FogViewRangeFar;
                 // Get color value from either components or single color
@@ -672,7 +672,7 @@ public static class CliActions
     ///     <see cref="Options.Name"/> in a scene.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionColicoursePatchObjectRenderFlags"/>
+    ///     Action: <see cref="CliActionDB.ActionColicoursePatchObjectRenderFlags"/>
     /// </remarks>
     public static void PatchSceneObjectDynamicRenderFlags(Options options)
     {
@@ -734,7 +734,7 @@ public static class CliActions
     ///     Set <see cref="BgmMusic"/> in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchBgm"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchBgm"/>
     /// </remarks>
     public static void PatchSetBgm(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchBgm);
@@ -743,7 +743,7 @@ public static class CliActions
     ///     Set <see cref="BgmFinalLap"/> in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchBgmFinalLap"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchBgmFinalLap"/>
     /// </remarks>
     public static void PatchSetBgmFinalLap(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchBgmFinalLap);
@@ -753,7 +753,7 @@ public static class CliActions
     ///     <see cref="BgmFinalLap"/> in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchBgmBoth"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchBgmBoth"/>
     /// </remarks>
     public static void PatchSetBgmAndBgmFinalLap(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchBgmBoth);
@@ -762,7 +762,7 @@ public static class CliActions
     ///     Set individual course star difficulty rating in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCourseDifficulty"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchSetCourseDifficulty"/>
     /// </remarks>
     public static void PatchSetCourseDifficulty(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchCourseDifficulty);
@@ -771,7 +771,7 @@ public static class CliActions
     ///     Set individual course name in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCourseName"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchSetCourseName"/>
     /// </remarks>
     public static void PatchSetCourseName(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchSetCourseName);
@@ -780,7 +780,7 @@ public static class CliActions
     ///     Set individual cup index course reference in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCupCourse"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchSetCupCourse"/>
     /// </remarks>
     public static void PatchSetCupCourse(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchSetCupCourse);
@@ -789,7 +789,7 @@ public static class CliActions
     ///     Clear all course names in fz.main.rel to free up string table memory.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchClearAllCourseNames"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchClearAllCourseNames"/>
     /// </remarks>
     public static void PatchClearAllCourseNames(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchClearCourseNames);
@@ -798,7 +798,7 @@ public static class CliActions
     ///     Clear unused course names in fz.main.rel to free up string table memory.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchClearUnusedCourseNames"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchClearUnusedCourseNames"/>
     /// </remarks>
     public static void PatchClearUnusedCourseNames(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchClearUnusedCourseNames);
@@ -807,7 +807,7 @@ public static class CliActions
     ///     Clear all venue names in fz.main.rel to free up string table memory.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchClearAllVenueNames"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchClearAllVenueNames"/>
     /// </remarks>
     public static void PatchClearAllVenueNames(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchClearVenueNames);
@@ -816,7 +816,7 @@ public static class CliActions
     ///     Clear unused venue names in fz.main.rel to free up string table memory.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchClearUnusedVenueNames"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchClearUnusedVenueNames"/>
     /// </remarks>
     public static void PatchClearUnusedVenueNames(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchClearUnusedVenueNames);
@@ -825,7 +825,7 @@ public static class CliActions
     ///     Clear all venue names in fz.main.rel to free up string table memory.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCourseVenueIndex"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchSetCourseVenueIndex"/>
     /// </remarks>
     public static void PatchSetCourseVenueIndex(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchSetCourseVenueIndex);
@@ -834,7 +834,7 @@ public static class CliActions
     ///     Set individual cup index venue reference in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchSetVenueName"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchSetVenueName"/>
     /// </remarks>
     public static void PatchSetVenueName(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchSetVenueName);
@@ -843,7 +843,7 @@ public static class CliActions
     ///     Set <see cref="CarData"/> in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchSetCarData"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchSetCarData"/>
     /// </remarks>
     public static void PatchSetCarData(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchCarData);
@@ -852,7 +852,7 @@ public static class CliActions
     ///     Set individual machine letter rating in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchMachineRating"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchMachineRating"/>
     /// </remarks>
     public static void PatchMachineRating(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchMachineRating);
@@ -861,7 +861,7 @@ public static class CliActions
     ///     Set max speed cap in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionPatchMaxSpeed"/>
+    ///     Action: <see cref="CliActionDB.ActionPatchMaxSpeed"/>
     /// </remarks>
     public static void PatchMaxSpeed(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchMaxSpeed);
@@ -870,7 +870,7 @@ public static class CliActions
     ///     Decrypt ./enemy/line__.bin into ./fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionDecryptLineREL"/>
+    ///     Action: <see cref="CliActionDB.ActionDecryptLineREL"/>
     /// </remarks>
     public static void DecryptLineRel(Options options)
     {
@@ -910,8 +910,8 @@ public static class CliActions
                 string msg = $"Could not decompress input file {lzInputFile}. " +
                     $"Was the file previously encrypted with the incorrect region code? " +
                     $"This is typically the problem. " +
-                    $"Consider adding -{GfzCliArgumentText.Short.Region} [e/j/p] or " +
-                    $"--{GfzCliArgumentText.Region} [e/j/p] to arguments previous encryption step. " +
+                    $"Consider adding -{CliArgumentText.Short.Region} [e/j/p] or " +
+                    $"--{CliArgumentText.Region} [e/j/p] to arguments previous encryption step. " +
                     $"Current region: {options.Region}.";
                 Terminal.WriteLine(msg, GfzCli.WarningColor);
                 throw;
@@ -923,7 +923,7 @@ public static class CliActions
     ///     Encrypt ./fz.main.rel into ./enemy/line__.bin into 
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionEncryptLineREL"/>
+    ///     Action: <see cref="CliActionDB.ActionEncryptLineREL"/>
     /// </remarks>
     public static void EncryptLineRel(Options options)
     {
@@ -961,7 +961,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionEmblemsBinToImages"/>
+    ///     Action: <see cref="CliActionDB.ActionEmblemsBinToImages"/>
     /// </remarks>
     public static void EmblemsBinToImages(Options options)
     {
@@ -1005,7 +1005,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionEmblemsBinFromImages"/>
+    ///     Action: <see cref="CliActionDB.ActionEmblemsBinFromImages"/>
     /// </remarks>
     public static void EmblemsBinFromImages(Options options)
     {
@@ -1077,7 +1077,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionEmblemGciToImage"/>
+    ///     Action: <see cref="CliActionDB.ActionEmblemGciToImage"/>
     /// </remarks>
     public static void EmblemGciToImage(Options options)
     {
@@ -1152,7 +1152,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionEmblemGciFromImage"/>
+    ///     Action: <see cref="CliActionDB.ActionEmblemGciFromImage"/>
     /// </remarks>
     public static void EmblemGciFromImage(Options options)
     {
@@ -1216,7 +1216,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionAssetGenerateLibrary"/>
+    ///     Action: <see cref="CliActionDB.ActionAssetGenerateLibrary"/>
     /// </remarks>
     public static void GenerateLibrary(Options options) => CliActionsAsset.CreateGmaTplLibrary(options);
 
@@ -1225,7 +1225,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options">The options to parse.</param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionEncodeBytesToShiftJis"/>
+    ///     Action: <see cref="CliActionDB.ActionEncodeBytesToShiftJis"/>
     /// </remarks>
     public static void PrintBytesToShiftJis(Options options)
     {
@@ -1239,7 +1239,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options">The options to parse.</param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionEncodeWindows1252ToShiftJis"/>
+    ///     Action: <see cref="CliActionDB.ActionEncodeWindows1252ToShiftJis"/>
     /// </remarks>
     public static void PrintWindowsToShiftJis(Options options)
     {
@@ -1253,7 +1253,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionIOSceneNullComment"/>
+    ///     Action: <see cref="CliActionDB.ActionIOSceneNullComment"/>
     /// </remarks>
     public static void PatchSceneNullComment(Options options)
     {
@@ -1282,7 +1282,7 @@ public static class CliActions
     /// <param name="options"></param>
     /// <exception cref="DirectoryNotFoundException"></exception>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionIsoExtract"/>
+    ///     Action: <see cref="CliActionDB.ActionIsoExtract"/>
     /// </remarks>
     public static void IsoExtract(Options options)
     {
@@ -1403,7 +1403,7 @@ public static class CliActions
     /// 
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionIOGma"/>
+    ///     Action: <see cref="CliActionDB.ActionIOGma"/>
     /// </remarks>
     public static void InOutGMA(Options options) => options.InOutFiles<GmaFile>(SearchPattern_GMA);
 
@@ -1411,7 +1411,7 @@ public static class CliActions
     /// 
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionIOTpl"/>
+    ///     Action: <see cref="CliActionDB.ActionIOTpl"/>
     /// </remarks>
     public static void InOutTPL(Options options) => options.InOutFiles<TplFile>(SearchPattern_TPL);
 
@@ -1419,12 +1419,12 @@ public static class CliActions
     /// 
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionIOScene"/>
+    ///     Action: <see cref="CliActionDB.ActionIOScene"/>
     /// </remarks>
     public static void InOutScene(Options options) => options.InOutFiles<SceneFile>(SearchPattern_Scene);
 
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionLogStageAll"/>
+    ///     Action: <see cref="CliActionDB.ActionLogStageAll"/>
     /// </remarks>
     public static void LogStageAll(Options options)
     {
@@ -1433,7 +1433,7 @@ public static class CliActions
     }
 
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionLogGmaAll"/>
+    ///     Action: <see cref="CliActionDB.ActionLogGmaAll"/>
     /// </remarks>
     public static void LogGmaAll(Options options)
     {
@@ -1442,7 +1442,7 @@ public static class CliActions
     }
 
     /// <remarks>
-    ///     Action: <see cref="GfzCliActionDB.ActionLogStageTrackKeyablesAll"/>
+    ///     Action: <see cref="CliActionDB.ActionLogStageTrackKeyablesAll"/>
     /// </remarks>
     public static void LogStageTrackKeyables(Options options)
         => options.Log(StageTableLogger.LogTrackKeyablesAll, SearchPattern_Scene);

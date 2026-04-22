@@ -18,7 +18,7 @@ public static class GfzCli
     public const ConsoleColor NotificationColor = ConsoleColor.DarkYellow;
     public static readonly string[] HelpArg = ["--help"];
 
-    public static readonly Dictionary<CliActionID, GfzCliAction> GfzCliActionsLibrary = [];
+    public static readonly Dictionary<CliActionID, CliAction> GfzCliActionsLibrary = [];
 
     private static void InitUsageDictionary()
     {
@@ -26,7 +26,7 @@ public static class GfzCli
         if (GfzCliActionsLibrary.Count != 0)
             return;
 
-        foreach (GfzCliAction value in GfzCliActionDB.GfzCliActions)
+        foreach (CliAction value in CliActionDB.GfzCliActions)
         {
             CliActionID key = value.ActionID;
 
@@ -35,8 +35,8 @@ public static class GfzCli
             if (doesContainValue)
             {
                 string message =
-                    $"Duplicate {nameof(GfzCliAction)} value \"{value}\" in {nameof(GfzCliActionDB.GfzCliActions)}! " +
-                    $"{nameof(GfzCliAction)}.{nameof(GfzCliAction.ActionID)} is \"{value.ActionID}\".";
+                    $"Duplicate {nameof(CliAction)} value \"{value}\" in {nameof(CliActionDB.GfzCliActions)}! " +
+                    $"{nameof(CliAction)}.{nameof(CliAction.ActionID)} is \"{value.ActionID}\".";
                 throw new ArgumentException(message);
             }
 
@@ -44,7 +44,7 @@ public static class GfzCli
             bool doesContainKey = GfzCliActionsLibrary.ContainsKey(key);
             if (doesContainKey)
             {
-                string message = $"Duplicate {nameof(CliActionID)} key \"{key}\" in {nameof(GfzCliActionDB.GfzCliActions)}!";
+                string message = $"Duplicate {nameof(CliActionID)} key \"{key}\" in {nameof(CliActionDB.GfzCliActions)}!";
                 throw new ArgumentException(message);
             }
 
@@ -56,7 +56,7 @@ public static class GfzCli
             bool doesCLiMapEnum = GfzCliActionsLibrary.ContainsKey(cliActionID);
             if (!doesCLiMapEnum)
             {
-                string msg = $"WARNING: {nameof(GfzCliActionDB.GfzCliActions)} missing map to enum {cliActionID}.";
+                string msg = $"WARNING: {nameof(CliActionDB.GfzCliActions)} missing map to enum {cliActionID}.";
                 Terminal.WriteLine(msg, WarningColor);
             }
         }
@@ -113,7 +113,7 @@ public static class GfzCli
     /// <param name="options">The action and related arguments.</param>
     public static void ExecuteAction(Options options)
     {
-        GfzCliAction gfzCliAction = GfzCliActionsLibrary[options.Action];
+        CliAction gfzCliAction = GfzCliActionsLibrary[options.Action];
         Assert.IsTrue(gfzCliAction.ActionID == options.Action);
         gfzCliAction.Action.Invoke(options);
     }
@@ -159,7 +159,7 @@ public static class GfzCli
     /// <summary>
     ///     Print list of all actions possible with this program.
     /// </summary>
-    /// <param name="_">Discard; formatted to conform to <see cref="GfzCliAction.Action"/>.</param>
+    /// <param name="_">Discard; formatted to conform to <see cref="CliAction.Action"/>.</param>
     public static void PrintActionList(Options _)
     {
         foreach (var kvp in GfzCliActionsLibrary)

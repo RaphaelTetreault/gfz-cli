@@ -1,13 +1,13 @@
 ﻿namespace Manifold.GfzCli;
 
 /// <summary>
-///     DataBase of <see cref="GfzCliAction"/>.
+///     DataBase of <see cref="CliAction"/>.
 /// </summary>
-public static class GfzCliActionDB
+public static class CliActionDB
 {
     #region Program
 
-    private static readonly GfzCliAction ActionUsage = new()
+    private static readonly CliAction ActionUsage = new()
     {
         Description = "Call to print out actions available and how to use them.",
         Action = GfzCli.PrintActionUsage,
@@ -20,7 +20,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    private static readonly GfzCliAction ActionList = new()
+    private static readonly CliAction ActionList = new()
     {
         Description = "List all possible actions with description.",
         Action = GfzCli.PrintActionList,
@@ -33,7 +33,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    private static readonly GfzCliAction ActionNone = new()
+    private static readonly CliAction ActionNone = new()
     {
         Description = "No action selected.",
         Action = GfzCli.PrintActionUsage,
@@ -46,7 +46,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionArcPack = new()
+    public static readonly CliAction ActionArcPack = new()
     {
         Description = "Archive a directory into a .arc file.",
         Action = CliActions.ArcPack,
@@ -59,7 +59,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionArcUnpack = new()
+    public static readonly CliAction ActionArcUnpack = new()
     {
         Description = "Unpack one or more .arc achives into directories of their contents.",
         Action = CliActions.ArcUnpack,
@@ -76,7 +76,7 @@ public static class GfzCliActionDB
 
     #region Asset
 
-    public static readonly GfzCliAction ActionAssetGenerateLibrary = new()
+    public static readonly CliAction ActionAssetGenerateLibrary = new()
     {
         Description = "Create a text-reference-linked GMA and TPL library.",
         Action = CliActions.GenerateLibrary,
@@ -87,11 +87,11 @@ public static class GfzCliActionDB
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-        GfzCliArgumentDB.ResamplerType,
+        CliArgumentDB.ResamplerType,
             ],
     };
 
-    public static readonly GfzCliAction ActionAssetImageToGxtex = new()
+    public static readonly CliAction ActionAssetImageToGxtex = new()
     {
         Description = "Convert image to a raw GameCube GX texture.",
         Action = CliActionsAsset.ImageToGxTexture,
@@ -102,23 +102,23 @@ public static class GfzCliActionDB
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            GfzCliArgumentDB.MipmapFiles,
-            GfzCliArgumentDB.MipmapCount,
-            GfzCliArgumentDB.MipmapMode,
-            GfzCliArgumentDB.TextureFormat,
+            CliArgumentDB.MipmapFiles,
+            CliArgumentDB.MipmapCount,
+            CliArgumentDB.MipmapMode,
+            CliArgumentDB.TextureFormat,
             // Resize
-            GfzCliArgumentDB.Width, // Size.X
-            GfzCliArgumentDB.Height, // Size.Y
-            GfzCliArgumentDB.Compand,
-            GfzCliArgumentDB.PadColor,
-            GfzCliArgumentDB.Position,
-            GfzCliArgumentDB.PremultiplyAlpha,
-            GfzCliArgumentDB.ResamplerType,
-            GfzCliArgumentDB.ResizeMode, // Mode
+            CliArgumentDB.Width, // Size.X
+            CliArgumentDB.Height, // Size.Y
+            CliArgumentDB.Compand,
+            CliArgumentDB.PadColor,
+            CliArgumentDB.Position,
+            CliArgumentDB.PremultiplyAlpha,
+            CliArgumentDB.ResamplerType,
+            CliArgumentDB.ResizeMode, // Mode
             ],
     };
 
-    public static readonly GfzCliAction ActionAssetCustomMipmapGxtex = new()
+    public static readonly CliAction ActionAssetCustomMipmapGxtex = new()
     {
         Description = "Convert images (main texture and mipmaps) to a raw GameCube GX texture.",
         Action = CliActionsAsset.ImagesToCustomMipmapGxtex,
@@ -129,23 +129,23 @@ public static class GfzCliActionDB
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            GfzCliArgumentDB.MipmapFiles,
-            GfzCliArgumentDB.MipmapCount,
-            GfzCliArgumentDB.MipmapMode,
-            GfzCliArgumentDB.TextureFormat,
+            CliArgumentDB.MipmapFiles,
+            CliArgumentDB.MipmapCount,
+            CliArgumentDB.MipmapMode,
+            CliArgumentDB.TextureFormat,
             // Resize
-            GfzCliArgumentDB.Width, // Size.X
-            GfzCliArgumentDB.Height, // Size.Y
-            GfzCliArgumentDB.Compand,
-            GfzCliArgumentDB.PadColor,
-            GfzCliArgumentDB.Position,
-            GfzCliArgumentDB.PremultiplyAlpha,
-            GfzCliArgumentDB.ResamplerType,
-            GfzCliArgumentDB.ResizeMode, // Mode
+            CliArgumentDB.Width, // Size.X
+            CliArgumentDB.Height, // Size.Y
+            CliArgumentDB.Compand,
+            CliArgumentDB.PadColor,
+            CliArgumentDB.Position,
+            CliArgumentDB.PremultiplyAlpha,
+            CliArgumentDB.ResamplerType,
+            CliArgumentDB.ResizeMode, // Mode
             ],
     };
 
-    public static readonly GfzCliAction ActionAssetTplUnpack = new()
+    public static readonly CliAction ActionAssetTplUnpack = new()
     {
         Description = "Unpack TPL files into TPLREFs.",
         Action = CliActionsAsset.TplUnpack,
@@ -156,11 +156,11 @@ public static class GfzCliActionDB
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            GfzCliArgumentDB.DirFormat,
+            CliArgumentDB.DirFormat,
             ],
     };
 
-    public static readonly GfzCliAction ActionAssetTplrefPack = new()
+    public static readonly CliAction ActionAssetTplrefPack = new()
     {
         Description = "Pack TPL file from TPLREF.",
         Action = CliActionsAsset.TplrefPack,
@@ -171,11 +171,11 @@ public static class GfzCliActionDB
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            GfzCliArgumentDB.AssetLibraryRoot,
+            CliArgumentDB.AssetLibraryRoot,
             ],
     };
 
-    public static readonly GfzCliAction ActionAssetGmarefPack = new()
+    public static readonly CliAction ActionAssetGmarefPack = new()
     {
         Description = "Pack GMA file from GMAREF.",
         Action = CliActionsAsset.GmarefPack,
@@ -186,7 +186,7 @@ public static class GfzCliActionDB
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            GfzCliArgumentDB.AssetLibraryRoot,
+            CliArgumentDB.AssetLibraryRoot,
             ],
     };
 
@@ -194,7 +194,7 @@ public static class GfzCliActionDB
 
     #region Camera
 
-    public static readonly GfzCliAction ActionCameraLivecamFromTSV = new()
+    public static readonly CliAction ActionCameraLivecamFromTSV = new()
     {
         Description = "Create livecam BIN file from livecam TSV spreadsheet.",
         Action = CliActions.LivecamFromTsv,
@@ -207,7 +207,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionCameraLivecamToTSV = new()
+    public static readonly CliAction ActionCameraLivecamToTSV = new()
     {
         Description = "Create TSV from livecam binary.",
         Action = CliActions.LivecamToTsv,
@@ -224,7 +224,7 @@ public static class GfzCliActionDB
 
     #region CarData
 
-    public static readonly GfzCliAction ActionCarDataFromTSV = new()
+    public static readonly CliAction ActionCarDataFromTSV = new()
     {
         Description = "Create a CarData.lz file from CarData TSV spreadsheet.",
         Action = CliActions.CarDataFromTsv,
@@ -237,7 +237,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionCarDataToTSV = new()
+    public static readonly CliAction ActionCarDataToTSV = new()
     {
         Description = "Create a TSV from CarData binary (compressed or uncompressed).",
         Action = CliActions.CarDataToTsv,
@@ -254,7 +254,7 @@ public static class GfzCliActionDB
 
     #region
 
-    public static readonly GfzCliAction ActionColicoursePatchFog = new()
+    public static readonly CliAction ActionColicoursePatchFog = new()
     {
         Description = "Patch the fog parameters of scenes.",
         Action = CliActions.PatchFog,
@@ -264,20 +264,20 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.FPS,
         RequiredArguments = [
-            GfzCliArgumentDB.Color,
-            GfzCliArgumentDB.ColorR,
-            GfzCliArgumentDB.ColorG,
-            GfzCliArgumentDB.ColorB,
+            CliArgumentDB.Color,
+            CliArgumentDB.ColorR,
+            CliArgumentDB.ColorG,
+            CliArgumentDB.ColorB,
             ],
         OptionalArguments = [
-            GfzCliArgumentDB.Backup,
-            GfzCliArgumentDB.FogInterpolationMode,
-            GfzCliArgumentDB.FogViewRangeNear,
-            GfzCliArgumentDB.FogViewRangeFar,
+            CliArgumentDB.Backup,
+            CliArgumentDB.FogInterpolationMode,
+            CliArgumentDB.FogViewRangeNear,
+            CliArgumentDB.FogViewRangeFar,
             ],
     };
 
-    public static readonly GfzCliAction ActionColicoursePatchObjectRenderFlags = new()
+    public static readonly CliAction ActionColicoursePatchObjectRenderFlags = new()
     {
         Description = "Patch a scene object's render flags by name.",
         Action = CliActions.PatchSceneObjectDynamicRenderFlags,
@@ -287,12 +287,12 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.FPS,
         RequiredArguments = [
-            GfzCliArgumentDB.Name_ColiCourse,
-            GfzCliArgumentDB.Value_ColiCourse,
+            CliArgumentDB.Name_ColiCourse,
+            CliArgumentDB.Value_ColiCourse,
             ],
         OptionalArguments = [
-            GfzCliArgumentDB.Backup,
-            GfzCliArgumentDB.SetFlagsOff,
+            CliArgumentDB.Backup,
+            CliArgumentDB.SetFlagsOff,
             ],
     };
 
@@ -300,7 +300,7 @@ public static class GfzCliActionDB
 
     #region Emblem
 
-    internal static GfzCliAction ActionEmblemGciToImage = new()
+    internal static CliAction ActionEmblemGciToImage = new()
     {
         Description = "Extract images from GCI emblem save files.",
         Action = CliActions.EmblemGciToImage,
@@ -311,11 +311,11 @@ public static class GfzCliActionDB
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-        GfzCliArgumentDB.ImageFormat,
+        CliArgumentDB.ImageFormat,
             ],
     };
 
-    internal static GfzCliAction ActionEmblemGciFromImage = new()
+    internal static CliAction ActionEmblemGciFromImage = new()
     {
         Description = "Create a GCI emblem save file from one image.",
         Action = CliActions.EmblemGciFromImage,
@@ -325,18 +325,18 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [
-            GfzCliArgumentDB.ResamplerType,
+            CliArgumentDB.ResamplerType,
             ],
         OptionalArguments = [
-            GfzCliArgumentDB.Compand,
-            GfzCliArgumentDB.ResizeMode,
-            GfzCliArgumentDB.PadColor,
-            GfzCliArgumentDB.Position,
-            GfzCliArgumentDB.PremultiplyAlpha,
+            CliArgumentDB.Compand,
+            CliArgumentDB.ResizeMode,
+            CliArgumentDB.PadColor,
+            CliArgumentDB.Position,
+            CliArgumentDB.PremultiplyAlpha,
             ],
     };
 
-    internal static GfzCliAction ActionEmblemsBinToImages = new()
+    internal static CliAction ActionEmblemsBinToImages = new()
     {
         Description = "Extract images from emblem binary archives.",
         Action = CliActions.EmblemsBinToImages,
@@ -347,11 +347,11 @@ public static class GfzCliActionDB
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
-            GfzCliArgumentDB.ImageFormat,
+            CliArgumentDB.ImageFormat,
             ],
     };
 
-    internal static GfzCliAction ActionEmblemsBinFromImages = new()
+    internal static CliAction ActionEmblemsBinFromImages = new()
     {
         Description = "Compile an emblem binary archive from multiple images.",
         Action = CliActions.EmblemsBinFromImages,
@@ -361,14 +361,14 @@ public static class GfzCliActionDB
         IsOutputOptional = false,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [
-            GfzCliArgumentDB.ResamplerType,
+            CliArgumentDB.ResamplerType,
             ],
         OptionalArguments = [
-            GfzCliArgumentDB.Compand,
-            GfzCliArgumentDB.ResizeMode,
-            GfzCliArgumentDB.PadColor,
-            GfzCliArgumentDB.Position,
-            GfzCliArgumentDB.PremultiplyAlpha,
+            CliArgumentDB.Compand,
+            CliArgumentDB.ResizeMode,
+            CliArgumentDB.PadColor,
+            CliArgumentDB.Position,
+            CliArgumentDB.PremultiplyAlpha,
             ],
     };
 
@@ -376,7 +376,7 @@ public static class GfzCliActionDB
 
     #region Encode Text
 
-    public static readonly GfzCliAction ActionEncodeBytesToShiftJis = new()
+    public static readonly CliAction ActionEncodeBytesToShiftJis = new()
     {
         Description = "Takes in hex-string of bytes and prints the Shift-JIS encoded version of the value.",
         Action = CliActions.PrintBytesToShiftJis,
@@ -385,11 +385,11 @@ public static class GfzCliActionDB
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.None,
-        RequiredArguments = [GfzCliArgumentDB.Value_EncodeText],
+        RequiredArguments = [CliArgumentDB.Value_EncodeText],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionEncodeWindows1252ToShiftJis = new()
+    public static readonly CliAction ActionEncodeWindows1252ToShiftJis = new()
     {
         Description = "Takes in Windows code page 1252 string and prints the Shift-JIS encoded version of the value.",
         Action = CliActions.PrintWindowsToShiftJis,
@@ -398,7 +398,7 @@ public static class GfzCliActionDB
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.None,
-        RequiredArguments = [GfzCliArgumentDB.Value_EncodeText],
+        RequiredArguments = [CliArgumentDB.Value_EncodeText],
         OptionalArguments = [],
     };
 
@@ -406,7 +406,7 @@ public static class GfzCliActionDB
 
     #region FMI
 
-    public static readonly GfzCliAction ActionFmiFromPlainText = new()
+    public static readonly CliAction ActionFmiFromPlainText = new()
     {
         Description = "Create a FMI-plaintext file from FMI binary file.",
         Action = CliActions.FmiFromPlainText,
@@ -419,7 +419,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionFmiToPlainText = new()
+    public static readonly CliAction ActionFmiToPlainText = new()
     {
         Description = "Create a FMI binary file from FMI-plaintext.",
         Action = CliActions.FmiToPlainText,
@@ -436,7 +436,7 @@ public static class GfzCliActionDB
 
     #region Ghost
 
-    public static readonly GfzCliAction ActionGciExtractGhost = new()
+    public static readonly CliAction ActionGciExtractGhost = new()
     {
         Description = "Extract raw ghost data from GCI save file.",
         Action = CliActions.ExtractGhostFromGci,
@@ -453,7 +453,7 @@ public static class GfzCliActionDB
 
     #region GMA
 
-    public static readonly GfzCliAction ActionGmaPatchSubmeshRenderFlags = new()
+    public static readonly CliAction ActionGmaPatchSubmeshRenderFlags = new()
     {
         Description = "Patch render flags on model submesh.",
         Action = CliActions.PatchSubmeshRenderFlags,
@@ -463,10 +463,10 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PS,
         RequiredArguments = [
-            GfzCliArgumentDB.Name_GMA,
-            GfzCliArgumentDB.Value_GMA],
+            CliArgumentDB.Name_GMA,
+            CliArgumentDB.Value_GMA],
         OptionalArguments = [
-            GfzCliArgumentDB.SetFlagsOff,
+            CliArgumentDB.SetFlagsOff,
             ],
     };
 
@@ -474,7 +474,7 @@ public static class GfzCliActionDB
 
     #region
 
-    public static readonly GfzCliAction ActionIOGma = new()
+    public static readonly CliAction ActionIOGma = new()
     {
         Description = "Round-trip serialize GMA files.",
         Action = CliActions.InOutGMA,
@@ -487,7 +487,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionIOTpl = new()
+    public static readonly CliAction ActionIOTpl = new()
     {
         Description = "Round-trip serialize TPL files.",
         Action = CliActions.InOutTPL,
@@ -500,7 +500,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionIOScene = new()
+    public static readonly CliAction ActionIOScene = new()
     {
         Description = "Round-trip serialize COLI_COURSE (scene) files.",
         Action = CliActions.InOutScene,
@@ -514,7 +514,7 @@ public static class GfzCliActionDB
     };
 
     // TODO: probably belongs in ActionsColiCourse
-    public static readonly GfzCliAction ActionIOSceneNullComment = new()
+    public static readonly CliAction ActionIOSceneNullComment = new()
     {
         Description = "Patch COLI_COURSE (scene) to null out auto-generate timestamp comment to help diff-ing.",
         Action = CliActions.PatchSceneNullComment,
@@ -531,7 +531,7 @@ public static class GfzCliActionDB
 
     #region ISO
 
-    public static readonly GfzCliAction ActionIsoExtract = new()
+    public static readonly CliAction ActionIsoExtract = new()
     {
         Description = "Extract system data and files from GameCube ISO file.",
         Action = CliActions.IsoExtract,
@@ -544,7 +544,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionIsoExtractFiles = new()
+    public static readonly CliAction ActionIsoExtractFiles = new()
     {
         Description = "Extract files from GameCube ISO file.",
         Action = CliActions.IsoExtract,
@@ -557,7 +557,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionIsoExtractSystem = new()
+    public static readonly CliAction ActionIsoExtractSystem = new()
     {
         Description = "Extract system data from GameCube ISO file.",
         Action = CliActions.IsoExtract,
@@ -574,7 +574,7 @@ public static class GfzCliActionDB
 
     #region Log
 
-    public static readonly GfzCliAction ActionLogStageAll = new()
+    public static readonly CliAction ActionLogStageAll = new()
     {
         Description = "Create all possible analysis .TSVs of COLI_COURSE stage files.",
         Action = CliActions.LogStageAll,
@@ -587,7 +587,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionLogGmaAll = new()
+    public static readonly CliAction ActionLogGmaAll = new()
     {
         Description = "Create all possible analysis .TSVs of GMA model files.",
         Action = CliActions.LogGmaAll,
@@ -601,7 +601,7 @@ public static class GfzCliActionDB
     };
 
     // TODO: for each one individually
-    public static readonly GfzCliAction ActionLogStageTrackKeyablesAll = new()
+    public static readonly CliAction ActionLogStageTrackKeyablesAll = new()
     {
         Description = "Create a .tsv log of track keyables from COLI_COURSE stage files.",
         Action = CliActions.LogStageTrackKeyables,
@@ -618,7 +618,7 @@ public static class GfzCliActionDB
 
     #region
 
-    public static readonly GfzCliAction ActionLZCompress = new()
+    public static readonly CliAction ActionLZCompress = new()
     {
         Description = "Compress files into an LZ file.",
         Action = CliActions.LzCompress,
@@ -631,7 +631,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionLZDecompress = new()
+    public static readonly CliAction ActionLZDecompress = new()
     {
         Description = "Decompress an LZ file.",
         Action = CliActions.LzDecompress,
@@ -648,7 +648,7 @@ public static class GfzCliActionDB
 
     #region REL
 
-    public static readonly GfzCliAction ActionPatchBgm = new()
+    public static readonly CliAction ActionPatchBgm = new()
     {
         Description = "Set the background music for a specific stage index.",
         Action = CliActions.PatchSetBgm,
@@ -658,13 +658,13 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            GfzCliArgumentDB.BgmIndex,
-            GfzCliArgumentDB.StageIndex,
+            CliArgumentDB.BgmIndex,
+            CliArgumentDB.StageIndex,
             ],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchBgmFinalLap = new()
+    public static readonly CliAction ActionPatchBgmFinalLap = new()
     {
         Description = "Set the final lap background music for a specific stage index.",
         Action = CliActions.PatchSetBgmFinalLap,
@@ -674,13 +674,13 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            GfzCliArgumentDB.BgmFinalLapIndex,
-            GfzCliArgumentDB.StageIndex,
+            CliArgumentDB.BgmFinalLapIndex,
+            CliArgumentDB.StageIndex,
             ],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchBgmBoth = new()
+    public static readonly CliAction ActionPatchBgmBoth = new()
     {
         Description = "Set both default and final lap background music for a specific stage index.",
         Action = CliActions.PatchSetBgmAndBgmFinalLap,
@@ -690,14 +690,14 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            GfzCliArgumentDB.BgmIndex,
-            GfzCliArgumentDB.BgmFinalLapIndex,
-            GfzCliArgumentDB.StageIndex,
+            CliArgumentDB.BgmIndex,
+            CliArgumentDB.BgmFinalLapIndex,
+            CliArgumentDB.StageIndex,
             ],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchSetCourseDifficulty = new()
+    public static readonly CliAction ActionPatchSetCourseDifficulty = new()
     {
         Description = "Set course difficulty star rating for a specific stage.",
         Action = CliActions.PatchSetCourseDifficulty,
@@ -707,13 +707,13 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            GfzCliArgumentDB.StageIndex,
-            GfzCliArgumentDB.Difficulty,
+            CliArgumentDB.StageIndex,
+            CliArgumentDB.Difficulty,
             ],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchSetCourseName = new()
+    public static readonly CliAction ActionPatchSetCourseName = new()
     {
         Description = "Set course name for a specific stage index.",
         Action = CliActions.PatchSetCourseName,
@@ -723,13 +723,13 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            GfzCliArgumentDB.StageIndex,
-            GfzCliArgumentDB.Value_CourseName,
+            CliArgumentDB.StageIndex,
+            CliArgumentDB.Value_CourseName,
             ],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchClearAllCourseNames = new()
+    public static readonly CliAction ActionPatchClearAllCourseNames = new()
     {
         Description = "Clear all names in course name table.",
         Action = CliActions.PatchClearAllCourseNames,
@@ -742,7 +742,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchClearUnusedCourseNames = new()
+    public static readonly CliAction ActionPatchClearUnusedCourseNames = new()
     {
         Description = "Clear all unused course names in course name table.",
         Action = CliActions.PatchClearUnusedCourseNames,
@@ -751,11 +751,11 @@ public static class GfzCliActionDB
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
-        RequiredArguments = [GfzCliArgumentDB.Value_CourseName],
+        RequiredArguments = [CliArgumentDB.Value_CourseName],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchSetCourseVenueIndex = new()
+    public static readonly CliAction ActionPatchSetCourseVenueIndex = new()
     {
         Description = "Set course venue for a specific stage index.",
         Action = CliActions.PatchSetCourseVenueIndex,
@@ -765,13 +765,13 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            GfzCliArgumentDB.StageIndex,
-            GfzCliArgumentDB.VenueIndex,
+            CliArgumentDB.StageIndex,
+            CliArgumentDB.VenueIndex,
             ],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchSetVenueName = new()
+    public static readonly CliAction ActionPatchSetVenueName = new()
     {
         Description = "Set venue name for a specific venue index.",
         Action = CliActions.PatchSetVenueName,
@@ -781,13 +781,13 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            GfzCliArgumentDB.VenueIndex,
-            GfzCliArgumentDB.Value_VenueName,
+            CliArgumentDB.VenueIndex,
+            CliArgumentDB.Value_VenueName,
             ],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchClearAllVenueNames = new()
+    public static readonly CliAction ActionPatchClearAllVenueNames = new()
     {
         Description = "Clear all names in venue name table.",
         Action = CliActions.PatchClearAllVenueNames,
@@ -800,7 +800,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchClearUnusedVenueNames = new()
+    public static readonly CliAction ActionPatchClearUnusedVenueNames = new()
     {
         Description = "Clear all unused course names in course name table.",
         Action = CliActions.PatchClearUnusedVenueNames,
@@ -809,11 +809,11 @@ public static class GfzCliActionDB
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
-        RequiredArguments = [GfzCliArgumentDB.Value_VenueName],
+        RequiredArguments = [CliArgumentDB.Value_VenueName],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchSetCarData = new()
+    public static readonly CliAction ActionPatchSetCarData = new()
     {
         Description = "Set \"graph console performance settings\" machine stats.",
         Action = CliActions.PatchSetCarData,
@@ -822,11 +822,11 @@ public static class GfzCliActionDB
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
-        RequiredArguments = [GfzCliArgumentDB.Value_CarData],
+        RequiredArguments = [CliArgumentDB.Value_CarData],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchMachineRating = new()
+    public static readonly CliAction ActionPatchMachineRating = new()
     {
         Description = "Set machine letter ratings (SABCDE).",
         Action = CliActions.PatchMachineRating,
@@ -836,13 +836,13 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            GfzCliArgumentDB.PilotNumber,
-            GfzCliArgumentDB.Value_MachineRating,
+            CliArgumentDB.PilotNumber,
+            CliArgumentDB.Value_MachineRating,
             ],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionPatchMaxSpeed = new()
+    public static readonly CliAction ActionPatchMaxSpeed = new()
     {
         Description = "Patch vehicle max speed.",
         Action = CliActions.PatchMaxSpeed,
@@ -852,10 +852,10 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [],
-        OptionalArguments = [GfzCliArgumentDB.Value_MaxSpeed],
+        OptionalArguments = [CliArgumentDB.Value_MaxSpeed],
     };
 
-    public static readonly GfzCliAction ActionPatchSetCupCourse = new()
+    public static readonly CliAction ActionPatchSetCupCourse = new()
     {
         Description = "Set an individual stage reference in a cup.",
         Action = CliActions.PatchSetCupCourse,
@@ -865,14 +865,14 @@ public static class GfzCliActionDB
         IsOutputOptional = true,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            GfzCliArgumentDB.Cup,           // cup to modify
-            GfzCliArgumentDB.CupCourseIndex, // stage in cup to modify 0-5 (count: 6)
-            GfzCliArgumentDB.StageIndex,    // stage index to use
+            CliArgumentDB.Cup,           // cup to modify
+            CliArgumentDB.CupCourseIndex, // stage in cup to modify 0-5 (count: 6)
+            CliArgumentDB.StageIndex,    // stage index to use
             ],
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionDecryptLineREL = new()
+    public static readonly CliAction ActionDecryptLineREL = new()
     {
         Description = "Decrypt line__.bin to line__.rel file.",
         Action = CliActions.DecryptLineRel,
@@ -885,7 +885,7 @@ public static class GfzCliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly GfzCliAction ActionEncryptLineREL = new()
+    public static readonly CliAction ActionEncryptLineREL = new()
     {
         Description = "Encrypt line__.rel to line__.bin file.",
         Action = CliActions.EncryptLineRel,
@@ -900,7 +900,7 @@ public static class GfzCliActionDB
 
     #endregion
 
-    public static readonly GfzCliAction[] GfzCliActions =
+    public static readonly CliAction[] GfzCliActions =
     [
         // Program
         ActionNone,

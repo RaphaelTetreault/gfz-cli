@@ -5,7 +5,7 @@ namespace Manifold.GfzCli;
 /// <summary>
 ///     Defines an argument: argument type, default (if any), and help hint.
 /// </summary>
-public readonly record struct GfzCliArgument()
+public readonly record struct CliArgument()
 {
     /// <summary>
     ///     Long name of argument for CLI.
