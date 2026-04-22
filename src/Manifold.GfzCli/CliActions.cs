@@ -910,8 +910,8 @@ public static class CliActions
                 string msg = $"Could not decompress input file {lzInputFile}. " +
                     $"Was the file previously encrypted with the incorrect region code? " +
                     $"This is typically the problem. " +
-                    $"Consider adding -{GfzCliArgs.Short.Region} [e/j/p] or " +
-                    $"--{GfzCliArgs.Region} [e/j/p] to arguments previous encryption step. " +
+                    $"Consider adding -{GfzCliArgumentText.Short.Region} [e/j/p] or " +
+                    $"--{GfzCliArgumentText.Region} [e/j/p] to arguments previous encryption step. " +
                     $"Current region: {options.Region}.";
                 Terminal.WriteLine(msg, GfzCli.WarningColor);
                 throw;

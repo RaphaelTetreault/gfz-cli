@@ -171,7 +171,7 @@ public static class GfzCliUtilities
             {
                 string msg =
                     $"Invalid '{nameof(options.SearchPattern)}' provided for a directory input argument. " +
-                    $"Make sure to use --{GfzCliArgs.SearchPattern} when providing directory paths.";
+                    $"Make sure to use --{GfzCliArgumentText.SearchPattern} when providing directory paths.";
                 throw new ArgumentException(msg);
             }
             files = Directory.GetFiles(options.InputPath, options.SearchPattern, options.SearchOption);

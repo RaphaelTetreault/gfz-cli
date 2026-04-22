@@ -1,6 +1,6 @@
 ﻿namespace Manifold.GfzCli;
 
-public static class GfzCliArgs
+public static class GfzCliArgumentText
 {
     // Required
     public const string Action = "action";

@@ -13,7 +13,7 @@ public static class GfzCliArgumentDB
 
     internal static readonly GfzCliArgument Backup = new()
     {
-        ArgumentName = GfzCliArgs.Backup,
+        ArgumentName = GfzCliArgumentText.Backup,
         ArgumentType = typeof(bool).Name,
         ArgumentDefault = true,
         Help = "Create backup of patched file.",
@@ -21,7 +21,7 @@ public static class GfzCliArgumentDB
 
     private static readonly GfzCliArgument Name = new()
     {
-        ArgumentName = GfzCliArgs.Name,
+        ArgumentName = GfzCliArgumentText.Name,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "OVERRIDE NOT SET.",
@@ -29,7 +29,7 @@ public static class GfzCliArgumentDB
 
     private static readonly GfzCliArgument Value = new()
     {
-        ArgumentName = GfzCliArgs.Value,
+        ArgumentName = GfzCliArgumentText.Value,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "OVERRIDE NOT SET.",
@@ -41,7 +41,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument TextureFormat = new()
     {
-        ArgumentName = GfzCliArgs.TextureFormat,
+        ArgumentName = GfzCliArgumentText.TextureFormat,
         ArgumentType = typeof(TextureFormat).Name,
         ArgumentDefault = GameCube.GX.Texture.TextureFormat.CMPR,
         Help = "GameCube GX direct-color texture format to use. " +
@@ -50,7 +50,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument MipmapCount = new()
     {
-        ArgumentName = GfzCliArgs.MipmapCount,
+        ArgumentName = GfzCliArgumentText.MipmapCount,
         ArgumentType = typeof(int).Name,
         ArgumentDefault = -1,
         Help = "The number of mipmaps to generate. -1 means max mipmaps generated.",
@@ -58,7 +58,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument MipmapFiles = new()
     {
-        ArgumentName = GfzCliArgs.MipmapFiles,
+        ArgumentName = GfzCliArgumentText.MipmapFiles,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The mipmaps image(s) to use. Separate values with ; semicolon.",
@@ -66,7 +66,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument MipmapMode = new()
     {
-        ArgumentName = GfzCliArgs.MipmapMode,
+        ArgumentName = GfzCliArgumentText.MipmapMode,
         ArgumentType = typeof(MipmapGenerationMode).Name,
         ArgumentDefault = MipmapGenerationMode.Last,
         Help = "How missing mipmaps are generated.",
@@ -74,7 +74,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument AssetLibraryRoot = new()
     {
-        ArgumentName = GfzCliArgs.AssetLibraryRoot,
+        ArgumentName = GfzCliArgumentText.AssetLibraryRoot,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "The asset library root path.",
@@ -82,7 +82,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument DirFormat = new()
     {
-        ArgumentName = GfzCliArgs.DirFormat,
+        ArgumentName = GfzCliArgumentText.DirFormat,
         ArgumentType = typeof(string).Name,
         ArgumentDefault = "<DIR>",
         Help = "String format for output directory. Use <DIR> for default folder name.",
@@ -140,7 +140,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument Compand = new()
     {
-        ArgumentName = GfzCliArgs.Compand,
+        ArgumentName = GfzCliArgumentText.Compand,
         ArgumentType = typeof(bool).Name,
         ArgumentDefault = false,
         Help = "Whether to compress and expand the image color-space to gamma correct the image during processing.",
@@ -148,7 +148,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument ResizeMode = new()
     {
-        ArgumentName = GfzCliArgs.ResizeMode,
+        ArgumentName = GfzCliArgumentText.ResizeMode,
         ArgumentType = typeof(ResizeMode).Name,
         ArgumentDefault = SixLabors.ImageSharp.Processing.ResizeMode.Max,
         Help = "How the image should be resized.",
@@ -156,7 +156,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument PadColor = GfzCliArgumentDB.Color with
     {
-        ArgumentName = GfzCliArgs.PadColor,
+        ArgumentName = GfzCliArgumentText.PadColor,
         Help = "The padding color when scaling image.",
     };
 
@@ -164,7 +164,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument Position = new()
     {
-        ArgumentName = GfzCliArgs.Position,
+        ArgumentName = GfzCliArgumentText.Position,
         ArgumentType = typeof(AnchorPositionMode).Name,
         ArgumentDefault = AnchorPositionMode.Center,
         Help = "Anchor positions to apply to resize image.",
@@ -172,7 +172,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument PremultiplyAlpha = new()
     {
-        ArgumentName = GfzCliArgs.PremultiplyAlpha,
+        ArgumentName = GfzCliArgumentText.PremultiplyAlpha,
         ArgumentType = typeof(bool).Name,
         ArgumentDefault = false,
         Help = "Whether to use premultiplied alpha when scaling image.",
@@ -180,7 +180,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument ResamplerType = new()
     {
-        ArgumentName = GfzCliArgs.Resampler,
+        ArgumentName = GfzCliArgumentText.Resampler,
         ArgumentType = typeof(ResamplerType).Name,
         ArgumentDefault = Manifold.GfzCli.ResamplerType.Bicubic,
         Help = "The resampler to use when scaling images.",
@@ -188,7 +188,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument Width = new()
     {
-        ArgumentName = GfzCliArgs.Width,
+        ArgumentName = GfzCliArgumentText.Width,
         ArgumentType = typeof(int).Name,
         ArgumentDefault = null,
         Help = "The desired image width. May not be result width depending on 'resize-mode' option.",
@@ -196,7 +196,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument Height = new()
     {
-        ArgumentName = GfzCliArgs.Height,
+        ArgumentName = GfzCliArgumentText.Height,
         ArgumentType = typeof(int).Name,
         ArgumentDefault = null,
         Help = "The desired image height. May not be result height depending on 'resize-mode' option.",
@@ -204,7 +204,7 @@ public static class GfzCliArgumentDB
 
     public static readonly GfzCliArgument ImageFormat = new()
     {
-        ArgumentName = GfzCliArgs.ImageFormat,
+        ArgumentName = GfzCliArgumentText.ImageFormat,
         ArgumentType = typeof(ImageFormat).Name,
         ArgumentDefault = Manifold.GfzCli.ImageFormat.Png,
         Help = "Supported image formats include BMP, GIF, JPEG, PBM, PNG, QOI, TIFF, TGA, and WebP.",
@@ -228,34 +228,34 @@ public static class GfzCliArgumentDB
 
     internal static readonly GfzCliArgument FogViewRangeNear = new()
     {
-        ArgumentName = GfzCliArgs.FogViewRangeNear,
+        ArgumentName = GfzCliArgumentText.FogViewRangeNear,
         ArgumentType = typeof(float).Name,
         ArgumentDefault = float.MaxValue,
         Help = "Fog view range near plane distance.",
     };
     internal static readonly GfzCliArgument FogViewRangeFar = new()
     {
-        ArgumentName = GfzCliArgs.FogViewRangeFar,
+        ArgumentName = GfzCliArgumentText.FogViewRangeFar,
         ArgumentType = typeof(float).Name,
         ArgumentDefault = float.MinValue,
         Help = "Fog view range far plane distance.",
     };
     internal static readonly GfzCliArgument FogInterpolationMode = new()
     {
-        ArgumentName = GfzCliArgs.FogInterpolationMode,
+        ArgumentName = GfzCliArgumentText.FogInterpolationMode,
         ArgumentType = typeof(FogType).Name,
         ArgumentDefault = FogType.None,
         Help = "The GX fog interpolation mode.",
     };
 
-    internal static readonly GfzCliArgument Color  = _Color  with { ArgumentName = GfzCliArgs.Color };
-    internal static readonly GfzCliArgument ColorR = _ColorR with { ArgumentName = GfzCliArgs.ColorR };
-    internal static readonly GfzCliArgument ColorG = _ColorR with { ArgumentName = GfzCliArgs.ColorG };
-    internal static readonly GfzCliArgument ColorB = _ColorR with { ArgumentName = GfzCliArgs.ColorB };
+    internal static readonly GfzCliArgument Color  = _Color  with { ArgumentName = GfzCliArgumentText.Color };
+    internal static readonly GfzCliArgument ColorR = _ColorR with { ArgumentName = GfzCliArgumentText.ColorR };
+    internal static readonly GfzCliArgument ColorG = _ColorR with { ArgumentName = GfzCliArgumentText.ColorG };
+    internal static readonly GfzCliArgument ColorB = _ColorR with { ArgumentName = GfzCliArgumentText.ColorB };
 
     internal static readonly GfzCliArgument SetFlagsOff = new()
     {
-        ArgumentName = GfzCliArgs.SetFlagsOff,
+        ArgumentName = GfzCliArgumentText.SetFlagsOff,
         ArgumentType = typeof(bool).Name,
         ArgumentDefault = false,
         Help = "Whether to set flags off rather than on.",
@@ -267,7 +267,7 @@ public static class GfzCliArgumentDB
 
     internal static readonly GfzCliArgument BgmIndex = new()
     {
-        ArgumentName = GfzCliArgs.BgmIndex,
+        ArgumentName = GfzCliArgumentText.BgmIndex,
         ArgumentType = typeof(byte).Name,
         ArgumentDefault = (byte)GameCube.GFZ.GameData.BgmIndex.metadata_invalid_id_end, // default to invalid state
         Help = "The background music index.",
@@ -275,7 +275,7 @@ public static class GfzCliArgumentDB
 
     internal static readonly GfzCliArgument BgmFinalLapIndex = new()
     {
-        ArgumentName = GfzCliArgs.BgmFinalLapIndex,
+        ArgumentName = GfzCliArgumentText.BgmFinalLapIndex,
         ArgumentType = typeof(byte).Name,
         ArgumentDefault = (byte)GameCube.GFZ.GameData.BgmIndex.metadata_invalid_id_end, // default to invalid state
         Help = "The final lap background music index.",
@@ -283,7 +283,7 @@ public static class GfzCliArgumentDB
 
     internal static readonly GfzCliArgument StageIndex = new()
     {
-        ArgumentName = GfzCliArgs.CourseIndex,
+        ArgumentName = GfzCliArgumentText.CourseIndex,
         ArgumentType = typeof(ushort).Name,
         ArgumentDefault = (ushort)0xFFFF, // 0xFFFF is unassigned stage index
         Help = "The index of the stage (0-110).",
@@ -291,7 +291,7 @@ public static class GfzCliArgumentDB
 
     internal static readonly GfzCliArgument Cup = new()
     {
-        ArgumentName = GfzCliArgs.Cup,
+        ArgumentName = GfzCliArgumentText.Cup,
         ArgumentType = typeof(CupIndex).Name,
         ArgumentDefault = (CupIndex)255, // default to invalid state
         Help = "Grand prix cup index (0-10).",
@@ -299,7 +299,7 @@ public static class GfzCliArgumentDB
 
     internal static readonly GfzCliArgument CupCourseIndex = new()
     {
-        ArgumentName = GfzCliArgs.CupCourseIndex,
+        ArgumentName = GfzCliArgumentText.CupCourseIndex,
         ArgumentType = typeof(ushort).Name,
         ArgumentDefault = Course.UnassignedCourseIndex,
         Help = "The index of the cup course to modify (0-5).",
@@ -307,7 +307,7 @@ public static class GfzCliArgumentDB
 
     internal static readonly GfzCliArgument Difficulty = new()
     {
-        ArgumentName = GfzCliArgs.Difficulty,
+        ArgumentName = GfzCliArgumentText.Difficulty,
         ArgumentType = typeof(byte).Name,
         ArgumentDefault = (byte)0xFF, // default to invalid state
         Help = "Stage difficulty rating in number of stars ★. Max 24 visible.",
@@ -315,7 +315,7 @@ public static class GfzCliArgumentDB
 
     internal static readonly GfzCliArgument PilotNumber = new()
     {
-        ArgumentName = GfzCliArgs.PilotNumber,
+        ArgumentName = GfzCliArgumentText.PilotNumber,
         ArgumentType = $"{typeof(byte).Name}|{typeof(PilotName).Name}",
         ArgumentDefault = (PilotName)0xFF, // default to invalid state
         Help = "Vehicle pilot number (0-40).", // face-value, not internal
@@ -323,7 +323,7 @@ public static class GfzCliArgumentDB
 
     internal static readonly GfzCliArgument VenueIndex = new()
     {
-        ArgumentName = GfzCliArgs.VenueIndex,
+        ArgumentName = GfzCliArgumentText.VenueIndex,
         ArgumentType = $"{typeof(byte).Name}|{typeof(VenueIndex).Name}",
         ArgumentDefault = (VenueIndex)0xFF, // default to invalid state
         Help = "A stage's venue index (0-20).",

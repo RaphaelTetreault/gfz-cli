@@ -165,12 +165,12 @@ public readonly record struct GfzCliAction()
             // Add action char
             switch (option)
             {
-                case CliFileProcessArg.O: builder.Append(GfzCliArgs.Short.OverwriteFiles); break;
-                case CliFileProcessArg.P: builder.Append(GfzCliArgs.Short.SearchPattern); break;
-                case CliFileProcessArg.S: builder.Append(GfzCliArgs.Short.SearchSubdirectories); break;
-                case CliFileProcessArg.G: builder.Append(GfzCliArgs.Short.GameCode); break;
-                case CliFileProcessArg.F: builder.Append(GfzCliArgs.Short.SerializationFormat); break;
-                case CliFileProcessArg.R: builder.Append(GfzCliArgs.Short.Region); break;
+                case CliFileProcessArg.O: builder.Append(GfzCliArgumentText.Short.OverwriteFiles); break;
+                case CliFileProcessArg.P: builder.Append(GfzCliArgumentText.Short.SearchPattern); break;
+                case CliFileProcessArg.S: builder.Append(GfzCliArgumentText.Short.SearchSubdirectories); break;
+                case CliFileProcessArg.G: builder.Append(GfzCliArgumentText.Short.GameCode); break;
+                case CliFileProcessArg.F: builder.Append(GfzCliArgumentText.Short.SerializationFormat); break;
+                case CliFileProcessArg.R: builder.Append(GfzCliArgumentText.Short.Region); break;
                 default: throw new NotImplementedException(option.ToString());
             }
         }
