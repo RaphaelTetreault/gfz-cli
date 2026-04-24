@@ -434,7 +434,7 @@ public static class CliActionsAsset
 
         // Create texture + texture sequence
         int texCount = 1 + GetMipmapCount(options, resizeOptions.Size.Width, resizeOptions.Size.Height);
-        TextureSquenceElement[] elements = new TextureSquenceElement[texCount];
+        TextureSequenceElement[] elements = new TextureSequenceElement[texCount];
         for (int i = 0; i < texCount; i++)
         {
             // Get correct image for mipmap based on mode
@@ -445,7 +445,7 @@ public static class CliActionsAsset
             // Convert to texture
             Texture texture = ImageToTexture(imageClone);
             byte[] rawData = texture.GetRawBytes(options.TextureFormat);
-            elements[i] = new TextureSquenceElement()
+            elements[i] = new TextureSequenceElement()
             {
                 IsValid = true,
                 Texture = texture,
@@ -708,7 +708,7 @@ public static class CliActionsAsset
         for (int i = 1; i < textureSequence.Length; i++)
         {
             // Get texture data
-            TextureSquenceElement textureData = textureSequence.Elements[i];
+            TextureSequenceElement textureData = textureSequence.Elements[i];
             Image<Rgba32> mipmap;
 
             if (textureData.IsValid)
@@ -753,7 +753,7 @@ public static class CliActionsAsset
     {
         // Break outy some data
         var description = textureSequence.Description;
-        var textureEncoding = GameCube.GX.Texture.TextureEncoding.GetEncoding(description.TextureFormat);
+        var textureEncoding = TextureEncoding.GetEncoding(description.TextureFormat);
 
         // Get main texture if CMPR, will need to fix texture
         bool isCMPR = description.TextureFormat == TextureFormat.CMPR;
@@ -767,7 +767,7 @@ public static class CliActionsAsset
         // Iterate over each texture/mipmap in sequence
         for (int i = 0; i < textureSequence.Length; i++)
         {
-            TextureSquenceElement textureSequenceElement = textureSequence.Elements[i];
+            TextureSequenceElement textureSequenceElement = textureSequence.Elements[i];
             if (textureSequenceElement.IsValid)
             {
                 textureSequenceData.AddRange(textureSequenceElement.RawTextureData);
