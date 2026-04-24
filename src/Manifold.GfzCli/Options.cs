@@ -30,6 +30,8 @@ namespace Manifold.GfzCli;
 
 public sealed class Options
 {
+    #region VARIABLES
+
     #region Required / Default
 
     /// <summary>
@@ -373,22 +375,22 @@ public sealed class Options
             //TargetRectangle
         };
     }
-    public  Size GetResizeSize(Image image) => GetResizeSize(image.Width, image.Height);
-    public  Size GetResizeSize(int defaultX, int defaultY)
+    public Size GetResizeSize(Image image) => GetResizeSize(image.Width, image.Height);
+    public Size GetResizeSize(int defaultX, int defaultY)
     {
         int x = this.Width > 0 ? this.Width : defaultX;
         int y = this.Height > 0 ? this.Height : defaultY;
         var size = new Size(x, y);
         return size;
     }
-    public  bool IsSizeTooLarge(int maxX, int maxY)
+    public bool IsSizeTooLarge(int maxX, int maxY)
     {
         bool isTooWide = this.Width > maxX;
         bool isTooTall = this.Height > maxY;
         bool isTooLarge = isTooWide || isTooTall;
         return isTooLarge;
     }
-    public  bool IsSizeTooSmall(int minX, int minY)
+    public bool IsSizeTooSmall(int minX, int minY)
     {
         bool isTooShort = this.Width < minX;
         bool isTooSkinny = this.Height < minY;
@@ -589,7 +591,10 @@ public sealed class Options
     [Option(CliArgumentText.EmblemHasAlphaBorder, Hidden = true)]
     public bool EmblemHasAlphaBorder { get; set; } = true;
 
+    #endregion
 
+
+    #region FUNCTIONS
 
     /// <summary>
     /// 
@@ -810,12 +815,74 @@ public sealed class Options
         return resizeOptions;
     }
 
-
     internal void AssertValueExists()
     {
         if (string.IsNullOrEmpty(Value))
         {
             string msg = $"Argument --{CliArgumentText.Value} must be set.";
+            throw new ArgumentException(msg);
+        }
+    }
+    internal void AssertCup()
+    {
+        // Validate index
+        if (!Enum.IsDefined(Cup))
+        {
+            string msg =
+                $"Argument --{CliArgumentText.Cup} " +
+                $"must be a valid cup value.";
+            throw new ArgumentException(msg);
+        }
+    }
+    internal void AssertCupCourseIndex()
+    {
+        // Validate index
+        const int minCupCourseIndex = 1;
+        if (CupCourseIndex < minCupCourseIndex || CupCourseIndex > GameDataConsts.MaxCupCourseIndex)
+        {
+            string msg =
+                $"Argument --{nameof(CliArgumentText.CupCourseIndex)} " +
+                $"must be a value in the range {minCupCourseIndex}-{GameDataConsts.MaxCupCourseIndex}.";
+            throw new ArgumentException(msg);
+        }
+    }
+    internal void AssertCourseIndex()
+    {
+        // Validate index
+        if (CourseIndex > GameDataConsts.MaxCourseIndex)
+        {
+            string msg = $"Argument --{CliArgumentText.CourseIndex} must be a value in the range 0-{GameDataConsts.MaxCourseIndex}.";
+            throw new ArgumentException(msg);
+        }
+    }
+    internal void AssertCourseIndexAllow0xFFFF()
+    {
+        // Validate index
+        bool isValidIndex = CourseIndex <= GameDataConsts.MaxCourseIndex;
+        bool isValidException = CourseIndex == Course.UnassignedCourseIndex;
+        bool isInvalid = !(isValidIndex || isValidException);
+        if (isInvalid)
+        {
+            string msg =
+                $"Argument --{CliArgumentText.CourseIndex} " +
+                $"must be a value in the range 0-{GameDataConsts.MaxCourseIndex} or exactly {Course.UnassignedCourseIndex}.";
+            throw new Exception(msg);
+        }
+    }
+    internal void AssertVenueIndex()
+    {
+        // Validate index
+        if (VenueIndex.Byte > GameDataConsts.MaxVenueIndex)
+        {
+            string msg = $"Argument --{CliArgumentText.VenueIndex} must be a value in the range 0-{GameDataConsts.MaxVenueIndex}.";
+            throw new ArgumentException(msg);
+        }
+    }
+    internal void AssertDifficultyStars()
+    {
+        if (Difficulty > GameDataConsts.MaxDifficultyStars)
+        {
+            string msg = $"Argument --{CliArgumentText.Difficulty} must a value in the range 0-{GameDataConsts.MaxDifficultyStars}.";
             throw new ArgumentException(msg);
         }
     }
@@ -870,5 +937,7 @@ public sealed class Options
             logFuncFile.AnalysisFunction.Invoke(scenes.ToArray(), outputFile);
         }
     }
+
+    #endregion
 
 }

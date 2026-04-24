@@ -889,7 +889,7 @@ public static class CliActions
             }
 
             // Step 1: Decrypt line__.bin into line__.rel.lz
-            CliActionsREL.CryptLine(options, inputFile, outputFile, "rel.lz");
+            CliActionsREL.CryptLineRelFzMainRel(options, inputFile, outputFile, "rel.lz");
 
             // Step 2: Get path to line__.rel.lz
             OSPath lzInputFile = new(outputFile);
@@ -952,7 +952,7 @@ public static class CliActions
             binOutputFile.SetExtensions("bin");
 
             // Step 3: Encrypt line_rel.lz into line__.bin
-            CliActionsREL.CryptLine(options, lzInputFile, binOutputFile, "bin");
+            CliActionsREL.CryptLineRelFzMainRel(options, lzInputFile, binOutputFile, "bin");
         }
     }
 

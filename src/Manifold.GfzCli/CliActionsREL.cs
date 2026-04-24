@@ -78,73 +78,14 @@ public static class CliActionsREL
         Terminal.WriteLine();
     }
 
-    // The below probably belongs inside Options somewhere. Good to have a general "Assert" for all args / inputs?
-    private static void AssertCup(Options options)
-    {
-        // Validate index
-        if (!Enum.IsDefined(options.Cup))
-        {
-            string msg =
-                $"Argument --{CliArgumentText.Cup} " +
-                $"must be a valid cup value.";
-            throw new ArgumentException(msg);
-        }
-    }
-    private static void AssertCupCourseIndex(Options options)
-    {
-        // Validate index
-        const int minCupCourseIndex = 1;
-        if (options.CupCourseIndex < minCupCourseIndex || options.CupCourseIndex > GameDataConsts.MaxCupCourseIndex)
-        {
-            string msg =
-                $"Argument --{nameof(CliArgumentText.CupCourseIndex)} " +
-                $"must be a value in the range {minCupCourseIndex}-{GameDataConsts.MaxCupCourseIndex}.";
-            throw new ArgumentException(msg);
-        }
-    }
-    private static void AssertCourseIndex(Options options)
-    {
-        // Validate index
-        if (options.CourseIndex > GameDataConsts.MaxCourseIndex)
-        {
-            string msg = $"Argument --{CliArgumentText.CourseIndex} must be a value in the range 0-{GameDataConsts.MaxCourseIndex}.";
-            throw new ArgumentException(msg);
-        }
-    }
-    private static void AssertCourseIndexAllow0xFFFF(Options options)
-    {
-        // Validate index
-        bool isValidIndex = options.CourseIndex <= GameDataConsts.MaxCourseIndex;
-        bool isValidException = options.CourseIndex == Course.UnassignedCourseIndex;
-        bool isInvalid = !(isValidIndex || isValidException);
-        if (isInvalid)
-        {
-            string msg =
-                $"Argument --{CliArgumentText.CourseIndex} " +
-                $"must be a value in the range 0-{GameDataConsts.MaxCourseIndex} or exactly {Course.UnassignedCourseIndex}.";
-            throw new Exception(msg);
-        }
-    }
-    private static void AssertVenueIndex(Options options)
-    {
-        // Validate index
-        if (options.VenueIndex.Byte > GameDataConsts.MaxVenueIndex)
-        {
-            string msg = $"Argument --{CliArgumentText.VenueIndex} must be a value in the range 0-{GameDataConsts.MaxVenueIndex}.";
-            throw new ArgumentException(msg);
-        }
-    }
-    private static void AssertDifficultyStars(Options options)
-    {
-        if (options.Difficulty > GameDataConsts.MaxDifficultyStars)
-        {
-            string msg = $"Argument --{CliArgumentText.Difficulty} must a value in the range 0-{GameDataConsts.MaxDifficultyStars}.";
-            throw new ArgumentException(msg);
-        }
-    }
-
-
-    internal static void CryptLine(Options options, OSPath inputFile, OSPath outputFile, string extension)
+    /// <summary>
+    ///     
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="inputFile"></param>
+    /// <param name="outputFile"></param>
+    /// <param name="extension"></param>
+    internal static void CryptLineRelFzMainRel(Options options, OSPath inputFile, OSPath outputFile, string extension)
     {
         // Remove extension
         outputFile.SetExtensions(extension);
@@ -189,8 +130,8 @@ public static class CliActionsREL
     }
     internal static void PatchCourseDifficulty(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        AssertDifficultyStars(options);
-        AssertCourseIndex(options);
+        options.AssertDifficultyStars();
+        options.AssertCourseIndex();
 
         Offset offset = options.CourseIndex;
         Pointer pointer = info.CourseDifficulty.Address + offset;
@@ -199,7 +140,7 @@ public static class CliActionsREL
     }
     internal static void PatchSetCourseName(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
-        AssertCourseIndex(options);
+        options.AssertCourseIndex();
 
         // Get course names from file. Yes, Shift-JIS only, no Windows1252 support.
         ShiftJisCString[] courseNames = GetCourseNames(info, reader);
@@ -258,8 +199,8 @@ public static class CliActionsREL
     }
     internal static void PatchSetCourseVenueIndex(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        AssertCourseIndex(options);
-        AssertVenueIndex(options);
+        options.AssertCourseIndex();
+        options.AssertVenueIndex();
 
         Offset offset = options.CourseIndex;
         Pointer pointer = info.CourseVenueIndex.Address + offset;
@@ -326,9 +267,9 @@ public static class CliActionsREL
     internal static void PatchSetCupCourse(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         // Assertions
-        AssertCupCourseIndex(options);
-        AssertCup(options);
-        AssertCourseIndexAllow0xFFFF(options);
+        options.AssertCupCourseIndex();
+        options.AssertCup();
+        options.AssertCourseIndexAllow0xFFFF();
 
         // Get needed data
         CupIndex cup = options.Cup;                               // Which cup?
@@ -398,7 +339,6 @@ public static class CliActionsREL
         writer.JumpToAddress(address);
         writer.Write(vehicleRating);
     }
-
     /// <summary>
     ///     Override the game's internal max speed cap.
     /// </summary>
@@ -418,7 +358,6 @@ public static class CliActionsREL
         writer.JumpToAddress(address);
         writer.Write(maxSpeed);
     }
-
     internal static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
     {
         Pointer initialAddress = writer.GetPositionAsPointer();

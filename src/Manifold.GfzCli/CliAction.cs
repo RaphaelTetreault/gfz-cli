@@ -152,8 +152,8 @@ public readonly record struct CliAction()
         // Iterate over all possible values
         for (int i = 0; i < 32; i++)
         {
-            CliFileProcessArg option = (CliFileProcessArg)((uint)FileProcessArgs & (1 << i));
-            if (option == CliFileProcessArg.None)
+            CliFileProcessArg fileProcessArg = (CliFileProcessArg)((uint)FileProcessArgs & (1 << i));
+            if (fileProcessArg == CliFileProcessArg.None)
                 continue;
 
             // Add pipe if not at start of string
@@ -163,7 +163,7 @@ public readonly record struct CliAction()
             builder.Append('-');
 
             // Add action char
-            switch (option)
+            switch (fileProcessArg)
             {
                 case CliFileProcessArg.O: builder.Append(CliArgumentText.Short.OverwriteFiles); break;
                 case CliFileProcessArg.P: builder.Append(CliArgumentText.Short.SearchPattern); break;
@@ -171,7 +171,7 @@ public readonly record struct CliAction()
                 case CliFileProcessArg.G: builder.Append(CliArgumentText.Short.GameCode); break;
                 case CliFileProcessArg.F: builder.Append(CliArgumentText.Short.SerializationFormat); break;
                 case CliFileProcessArg.R: builder.Append(CliArgumentText.Short.Region); break;
-                default: throw new NotImplementedException(option.ToString());
+                default: throw new NotImplementedException(fileProcessArg.ToString());
             }
         }
         // Close options and finish
