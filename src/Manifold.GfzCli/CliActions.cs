@@ -1202,7 +1202,7 @@ public static class CliActions
             GfzGciMetadata metadata = GfzGciMetadataDB.Emblem;
             metadata.Banner.Texture = banner;
             metadata.Icons.Textures[0] = iconTexture;
-            EmblemGCIv2 emblemGci = new()
+            EmblemGCI emblemGci = new()
             {
                 GciFstEntry = GfzGciFstEntryDB.GetEmblemByRegion(options.Region),
                 GfzGciMetadata = metadata,
@@ -1216,7 +1216,7 @@ public static class CliActions
             // Get name for output file
             string regionChar = emblemGci.GciFstEntry.GetRegionChar().ToString().ToLower();
             outputFile.SetFileName($"fz{regionChar}-{inputFile.FileName}");
-            outputFile.SetExtensions(EmblemGCIv2.extension);
+            outputFile.SetExtensions(EmblemGCI.extension);
 
             // Write file
             bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
@@ -1225,7 +1225,7 @@ public static class CliActions
             {
                 // Save emblem
                 using var fileStream = File.Create(outputFile);
-                using var writer = new EndianBinaryWriter(fileStream, EmblemGCIv2.endianness);
+                using var writer = new EndianBinaryWriter(fileStream, EmblemGCI.endianness);
                 emblemGci.Serialize(writer);
             }
         }
