@@ -1193,7 +1193,7 @@ public static class CliActions
             outputFile.SetExtensions(gciPath.Extensions);
 
             // Assign data
-            emblemGci.Header.BannerAndIconFlags = GameCube.GCI.BannerAndIconFlags.DirectColorRGB5A3;
+            emblemGci.Header.BannerAndIconFlags = GameCube.GCI.GciBannerIconFlags.DirectColorRGB5A3;
             // 2026/04/26: Key insight, internal file name is what hangs up game...
             //              Must be .dat extension in file. Causes file loading hang otherwise.
             //              Must have fze020 for whatever reason. Causes pointer issues.
@@ -1201,9 +1201,9 @@ public static class CliActions
             emblemGci.Header.SafeSetInternalFileName(outputFile.FileNameAndExtensions[8..^4]); // so hack
             emblemGci.Header.ModificationTime = 0x317f79bb;
             emblemGci.Header.ImageDataOffset = 0x60;
-            emblemGci.Header.ImageFormat = GameCube.GCI.ImageFormat.DirectColor;
-            emblemGci.Header.AnimationSpeed = GameCube.GCI.AnimationSpeed.Icon0_FrameCount12;
-            emblemGci.Header.PermissionFlags = GameCube.GCI.PermissionFlags.IsPublic;
+            emblemGci.Header.ImageFormat = GameCube.GCI.GciImageFormat.DirectColor;
+            emblemGci.Header.AnimationSpeed = GameCube.GCI.GciAnimationSpeed.Icon0_FrameCount12;
+            emblemGci.Header.PermissionFlags = GameCube.GCI.GciPermissionFlags.IsPublic;
             emblemGci.Header.CopyCount = 0;
             emblemGci.Header.FirstBlockIndex = 0x0000; // 0xABCD; //gen by patch tool
             emblemGci.Header.BlockCount = 3;
