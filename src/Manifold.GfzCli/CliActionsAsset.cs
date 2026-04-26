@@ -120,7 +120,7 @@ public static class CliActionsAsset
                     tplFiles.Remove(assetFile);
 
                     // Write out textures
-                    TplEntryInfo[] tplEntryInfos = GetTplEntryInfos(tplPath, tplOutputPath, resampler);
+                    TplEntryInfo[] tplEntryInfos = GetTplEntryInfos(tplPath, tplOutputPath);
                     string[] textureNames = tplEntryInfos.GetCrc32Names();
                     // Write out models with texture references :)
                     WriteModels(options, gmaPath, gmaOutputPath, textureNames);
@@ -142,7 +142,7 @@ public static class CliActionsAsset
                 OSPath tplFilePath = new(tplFile);
                 tplFilePath.SetExtensions("tpl");
                 // Write out textures
-                TplEntryInfo[] tplEntryInfos = GetTplEntryInfos(tplFilePath, tplOutputPath, resampler);
+                TplEntryInfo[] tplEntryInfos = GetTplEntryInfos(tplFilePath, tplOutputPath);
                 SaveGxtexAndPng(options, tplEntryInfos, tplOutputPath);
             }
         }
@@ -174,7 +174,7 @@ public static class CliActionsAsset
             tplTextureOutputDir.ClearFileName();
             tplTextureOutputDir.ClearExtensions();
             // Get tpl entry info
-            TplEntryInfo[] tplEntryInfos = GetTplEntryInfos(inputPath, tplTextureOutputDir, options.Resampler);
+            TplEntryInfo[] tplEntryInfos = GetTplEntryInfos(inputPath, tplTextureOutputDir);
             tplEntryInfosNumbered = new TplEntryInfo[tplEntryInfos.Length];
             // Mutate names of all entries
             int padLength = tplEntryInfos.Length.ToString().Length;
@@ -361,6 +361,8 @@ public static class CliActionsAsset
         Terminal.WriteLine($"{options.ActionStr}: done unpacking {taskCount} TPL file{Plural(taskCount)}.");
     }
 
+
+
     private static void TplrefPackValue(Options options, OSPath inputPath, OSPath outputPath, TplRef tplRef)
     {
         // Get path to tpl textures
@@ -386,6 +388,15 @@ public static class CliActionsAsset
             OSPath texturePath = assetLibDir.Copy();
             texturePath.SetFileName(textureName);
             texturePath.SetExtensions(GxTextureAssetFile.extension);
+            // Make sure file exists
+            if (!File.Exists(texturePath))
+            {
+                string msg = $"Could not find {inputPath} file #{i} \"{texturePath}\".";
+                Terminal.WriteLine(msg);
+                continue;
+                // TODO: I suspect a null reference shortly after this
+                // because of continue... did not have time to test.
+            }
             // Load texture
             gxTextures[i] = new GxTextureAssetFile(texturePath);
             // Update texture description
@@ -414,7 +425,6 @@ public static class CliActionsAsset
         tplFile.Serialize(writer);
         // Done! B)
     }
-
 
     /// <summary>
     ///     Create a .GXTEX and preview .PNG from a source image or images.
@@ -544,7 +554,7 @@ public static class CliActionsAsset
     ///     All CRC32 texture names, one for each texture in the TPL, with null strings for null
     ///     entries in TPL (thus, all indexes match those in the TPL).
     /// </returns>
-    private static TplEntryInfo[] GetTplEntryInfos(OSPath inputPath, OSPath outputPath, IResampler resampler)
+    private static TplEntryInfo[] GetTplEntryInfos(OSPath inputPath, OSPath outputPath)
     {
         // Load TPL file
         Tpl tpl = new TplFile(inputPath);
@@ -570,7 +580,7 @@ public static class CliActionsAsset
             string textureCrc32sName = builder.ToString()[..^1]; // removes last dash
 
             // WHEN BUILDING LIBRARY WITH SHARED FOLDER
-            // Many images are the same, but lowers mipmaps are bit-inaccurate, and so duplicates
+            // Many images are the same, but lower mipmaps are bit-inaccurate, and so duplicates
             // of the same image are made due to different CRCs. This function weeds those out.
             // Function mutates name if neighbour exists.
             textureCrc32sName = GetSameCrc32FileNameOrMipmapBitNeighbourFileName(outputPath.Directories, textureCrc32sName);
