@@ -19,7 +19,7 @@ public static class GfzCliUtilities
     public static int ParallelizeFileInFileOutTasks(Options options, FileInFileOutTask fileTask)
     {
         // Get the file or all files at 'path'
-        string[] outputFilePaths = GetOutputFiles(options, out string[] inputFilePaths);
+        GetIOFiles(options, out string[] inputFilePaths, out string[] outputFilePaths);
         EnsureDirectoriesExist(outputFilePaths);
 
         // For each file, queue it as a task - multithreaded
@@ -200,21 +200,19 @@ public static class GfzCliUtilities
         return files;
     }
 
-    public static string[] GetOutputFiles(Options options)
-        => GetOutputFiles(options, out _);
-    private static string[] GetOutputFiles(Options options, out string[] inputFiles)
+    public static void GetIOFiles(Options options, out string[] inputFiles, out string[] outputFiles)
     {
         inputFiles = GetInputFiles(options);
-        string[] outputFiles = new string[inputFiles.Length];
+        outputFiles = new string[inputFiles.Length];
         for (int i = 0; i < inputFiles.Length; i++)
         {
             string inputFilePath = inputFiles[i];
             string outputFilePath = GetOutputFile(options, inputFilePath);
             outputFiles[i] = outputFilePath;
         }
-
-        return outputFiles;
     }
+
+
     private static string GetOutputFile(Options options, string inputFile)
     {
         // Clean separators

@@ -1,6 +1,7 @@
 ﻿using GameCube.AmusementVision.ARC;
 using GameCube.AmusementVision.LZ;
 using GameCube.DiskImage;
+using GameCube.GCI;
 using GameCube.GFZ;
 using GameCube.GFZ.Asset;
 using GameCube.GFZ.Camera;
@@ -378,26 +379,28 @@ public static class CliActions
 
         static void ExtractGhostDataFromGci(Options options, OSPath inputFile, OSPath outputFile)
         {
-            // Copy value over
-            GhostDataGCI ghostGci = new();
-            GhostDataBIN ghostBin = new();
-            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), GhostDataGCI.endianness))
-            {
-                ghostGci.Deserialize(reader);
-                ghostBin.Value = ghostGci.GhostData;
-                ghostBin.FileName = Path.GetFileNameWithoutExtension(inputFile);
-            }
+            throw new NotImplementedException();
 
-            // TODO: parameterize extensions
-            outputFile.SetExtensions(GhostDataBIN.extension);
+            //// Copy value over
+            //GhostDataGCI ghostGci = new();
+            //GhostDataBIN ghostBin = new();
+            //using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), GhostDataGCI.endianness))
+            //{
+            //    ghostGci.Deserialize(reader);
+            //    ghostBin.Value = ghostGci.GhostData;
+            //    ghostBin.FileName = Path.GetFileNameWithoutExtension(inputFile);
+            //}
 
-            // Write file
-            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
-            PrintFileWriteResult(result, outputFile, options.ActionStr);
-            if (doWriteFile)
-            {
-                ghostBin.WriteFile(outputFile);
-            }
+            //// TODO: parameterize extensions
+            //outputFile.SetExtensions(GhostDataBIN.extension);
+
+            //// Write file
+            //bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
+            //PrintFileWriteResult(result, outputFile, options.ActionStr);
+            //if (doWriteFile)
+            //{
+            //    ghostBin.WriteFile(outputFile);
+            //}
         }
     }
 
@@ -1092,58 +1095,60 @@ public static class CliActions
 
         static void EmblemGciToImage(Options options, OSPath inputFile, OSPath outputFile)
         {
-            // Read GCI Emblem data
-            var emblemGCI = new EmblemGCI();
-            using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemGCI.endianness))
-            {
-                emblemGCI.Deserialize(reader);
-                emblemGCI.FileName = Path.GetFileNameWithoutExtension(inputFile);
-            }
+            throw new NotImplementedException();
 
-            // Prepare image encoder
-            ImageEncoder encoder = options.ImageEncoder;
-            // Strip .dat.gci extensions
-            outputFile.SetExtensions("png");
+            //// Read GCI Emblem data
+            //var emblemGCI = new EmblemGCI();
+            //using (var reader = new EndianBinaryReader(File.OpenRead(inputFile), EmblemGCI.endianness))
+            //{
+            //    emblemGCI.Deserialize(reader);
+            //    emblemGCI.FileName = Path.GetFileNameWithoutExtension(inputFile);
+            //}
 
-            // BANNER
-            {
-                OSPath texturePath = new(outputFile);
-                texturePath.SetFileName($"{outputFile.FileName}-banner");
-                // Write file, if able
-                bool doWriteFile = CheckWillFileWrite(options, texturePath, out FileResult result);
-                PrintFileWriteResult(result, texturePath, options.ActionStr);
-                if (doWriteFile)
-                {
-                    WriteTextureAsImage(options, texturePath, emblemGCI.Banner, encoder);
-                }
-            }
+            //// Prepare image encoder
+            //ImageEncoder encoder = options.ImageEncoder;
+            //// Strip .dat.gci extensions
+            //outputFile.SetExtensions("png");
 
-            // ICON
-            for (int i = 0; i < emblemGCI.Icons.Length; i++)
-            {
-                var icon = emblemGCI.Icons[i];
-                // Strip original file name, replace with GC game code
-                OSPath texturePath = new(outputFile);
-                texturePath.SetFileName($"{emblemGCI.Header}-icon{i}");
-                // Write file, if able
-                bool doWriteFile = CheckWillFileWrite(options, texturePath, out FileResult result);
-                PrintFileWriteResult(result, texturePath, options.ActionStr);
-                if (doWriteFile)
-                {
-                    WriteTextureAsImage(options, texturePath, icon, encoder);
-                }
-            }
+            //// BANNER
+            //{
+            //    OSPath texturePath = new(outputFile);
+            //    texturePath.SetFileName($"{outputFile.FileName}-banner");
+            //    // Write file, if able
+            //    bool doWriteFile = CheckWillFileWrite(options, texturePath, out FileResult result);
+            //    PrintFileWriteResult(result, texturePath, options.ActionStr);
+            //    if (doWriteFile)
+            //    {
+            //        WriteTextureAsImage(options, texturePath, emblemGCI.Banner, encoder);
+            //    }
+            //}
 
-            // EMBLEM
-            {
-                // Write file, if able
-                bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
-                PrintFileWriteResult(result, outputFile, options.ActionStr);
-                if (doWriteFile)
-                {
-                    WriteTextureAsImage(options, outputFile, emblemGCI.Emblem.Texture, encoder);
-                }
-            }
+            //// ICON
+            //for (int i = 0; i < emblemGCI.Icons.Length; i++)
+            //{
+            //    var icon = emblemGCI.Icons[i];
+            //    // Strip original file name, replace with GC game code
+            //    OSPath texturePath = new(outputFile);
+            //    texturePath.SetFileName($"{emblemGCI.Header}-icon{i}");
+            //    // Write file, if able
+            //    bool doWriteFile = CheckWillFileWrite(options, texturePath, out FileResult result);
+            //    PrintFileWriteResult(result, texturePath, options.ActionStr);
+            //    if (doWriteFile)
+            //    {
+            //        WriteTextureAsImage(options, texturePath, icon, encoder);
+            //    }
+            //}
+
+            //// EMBLEM
+            //{
+            //    // Write file, if able
+            //    bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
+            //    PrintFileWriteResult(result, outputFile, options.ActionStr);
+            //    if (doWriteFile)
+            //    {
+            //        WriteTextureAsImage(options, outputFile, emblemGCI.Emblem.Texture, encoder);
+            //    }
+            //}
         }
     }
 
@@ -1161,9 +1166,21 @@ public static class CliActions
         if (hasNoSearchPattern)
             options.SearchPattern = "*fze*.dat.gci";
 
-        Terminal.WriteLine("Emblem: converting image(s) to emblem.dat.gci.");
-        int gciCount = ParallelizeFileInFileOutTasks(options, ImageToEmblemGci);
-        Terminal.WriteLine($"Emblem: done converting {gciCount} image{Plural(gciCount)}.");
+        Terminal.WriteLine($"{options.ActionStr}: converting image(s) to emblem.dat.gci.");
+        //int gciCount = ParallelizeFileInFileOutTasks(options, ImageToEmblemGci);
+        GetIOFiles(options, out string[] inputFiles, out string[] outputFiles);
+        int gciCount = inputFiles.Length;
+        for (int i = 0; i < gciCount; i++)
+        {
+            string inputFile = inputFiles[i];
+            string outputFile = outputFiles[i];
+            EnsureDirectoriesExist(outputFile);
+            ImageToEmblemGci(options, new(inputFile), new(outputFile));
+            // Because emblems use timestamp for filesystem things,
+            // make gap so that internal file names don't overlap.
+            System.Threading.Thread.Sleep(100);
+        }
+        Terminal.WriteLine($"{options.ActionStr}: done converting {gciCount} image{Plural(gciCount)}.");
 
         static void ImageToEmblemGci(Options options, OSPath inputFile, OSPath outputFile)
         {
@@ -1172,47 +1189,34 @@ public static class CliActions
             Image<Rgba32> iconImage = emblemImage.Clone();
             // Get resize targets
             ResizeOptions emblemResize = options.GetEmblemResizeOptions(emblemImage.Width, emblemImage.Height, Emblem.Width, Emblem.Height, options.EmblemHasAlphaBorder);
-            ResizeOptions iconResize = options.GetEmblemResizeOptions(emblemImage.Width, emblemImage.Height, EmblemGCI.IconWidth, EmblemGCI.IconHeight, false);
+            ResizeOptions iconResize = options.GetEmblemResizeOptions(emblemImage.Width, emblemImage.Height, Icons.IconWidth, Icons.IconHeight, false);
             // Resize images
             emblemImage.Mutate(ipc => ipc.Resize(emblemResize));
             iconImage.Mutate(ipc => ipc.Resize(iconResize));
 
             // Construct data for GCI
             Texture emblemTexture = ImageAsCenteredTexture(emblemImage, Emblem.Width, Emblem.Height);
-            Texture iconTexture = ImageAsCenteredTexture(iconImage, EmblemGCI.IconWidth, EmblemGCI.IconHeight);
-            Texture banner = new(EmblemGCI.BannerWidth, EmblemGCI.BannerHeight, EmblemGCI.DirectFormat);
-            // todo: blank banner!
-            Texture[] icons = [iconTexture];
-            Emblem emblem = new(emblemTexture);
-            EmblemGCI emblemGci = new(options.Region);
+            Texture iconTexture = ImageAsCenteredTexture(iconImage, Icons.IconWidth, Icons.IconHeight);
+            Texture banner = new(Banner.BannerWidth, Banner.BannerHeight, Banner.DirectFormat);
+            // todo: blank banner! ^^^
+            GfzGciMetadata metadata = GfzGciMetadataDB.Emblem;
+            metadata.Banner.Texture = banner;
+            metadata.Icons.Textures[0] = iconTexture;
+            EmblemGCIv2 emblemGci = new()
+            {
+                GciFstEntry = GciFstEntryDB.GetEmblemByRegion(options.Region),
+                GfzGciMetadata = metadata,
+                Emblem = new Emblem(emblemTexture),
+                AutoComment1 = true,
+                AutoComment2 = true,
+                AutoInternalFileName = true,
+                AutoModificationTime = true,
+            };
 
             // Get name for output file
-            string gciFileName = EmblemGCI.FormatGciFileName(GfzGciFileType.Emblem, options.Region, inputFile.FileName, out string fileName);
-            OSPath gciPath = new(gciFileName);
-            outputFile.SetFileName(gciPath.FileName);
-            outputFile.SetExtensions(gciPath.Extensions);
-
-            // Assign data
-            emblemGci.Header.BannerAndIconFlags = GameCube.GCI.GciBannerIconFlags.DirectColorRGB5A3;
-            // 2026/04/26: Key insight, internal file name is what hangs up game...
-            //              Must be .dat extension in file. Causes file loading hang otherwise.
-            //              Must have fze020 for whatever reason. Causes pointer issues.
-            //              To that point. file is fze_02000_02000 (no _ in actual). 02000 repeats twice.
-            emblemGci.Header.SafeSetInternalFileName(outputFile.FileNameAndExtensions[8..^4]); // so hack
-            emblemGci.Header.ModificationTime = 0x317f79bb;
-            emblemGci.Header.ImageDataOffset = 0x60;
-            emblemGci.Header.ImageFormat = GameCube.GCI.GciImageFormat.DirectColor;
-            emblemGci.Header.AnimationSpeed = GameCube.GCI.GciAnimationSpeed.Icon0_FrameCount12;
-            emblemGci.Header.PermissionFlags = GameCube.GCI.GciPermissionFlags.IsPublic;
-            emblemGci.Header.CopyCount = 0;
-            emblemGci.Header.FirstBlockIndex = 0x0000; // 0xABCD; //gen by patch tool
-            emblemGci.Header.BlockCount = 3;
-            emblemGci.Header.CommentOffset = 0x00000004;
-            //
-            emblemGci.Emblem = emblem;
-            emblemGci.SetBanner(banner);
-            emblemGci.SetIcons(icons);
-            emblemGci.SetFileName(fileName);
+            string regionChar = emblemGci.GciFstEntry.GetRegionChar().ToString().ToLower();
+            outputFile.SetFileName($"fz{regionChar}-{inputFile.FileName}");
+            outputFile.SetExtensions(EmblemGCIv2.extension);
 
             // Write file
             bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
@@ -1221,7 +1225,7 @@ public static class CliActions
             {
                 // Save emblem
                 using var fileStream = File.Create(outputFile);
-                using var writer = new EndianBinaryWriter(fileStream, EmblemGCI.endianness);
+                using var writer = new EndianBinaryWriter(fileStream, EmblemGCIv2.endianness);
                 emblemGci.Serialize(writer);
             }
         }
