@@ -1204,7 +1204,7 @@ public static class CliActions
             metadata.Icons.Textures[0] = iconTexture;
             EmblemGCIv2 emblemGci = new()
             {
-                GciFstEntry = GciFstEntryDB.GetEmblemByRegion(options.Region),
+                GciFstEntry = GfzGciFstEntryDB.GetEmblemByRegion(options.Region),
                 GfzGciMetadata = metadata,
                 Emblem = new Emblem(emblemTexture),
                 AutoComment1 = true,
