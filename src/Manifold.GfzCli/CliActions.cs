@@ -1184,35 +1184,7 @@ public static class CliActions
 
         static void ImageToEmblemGci(Options options, OSPath inputFile, OSPath outputFile)
         {
-            // Load image
-            Image<Rgba32> emblemImage = Image.Load<Rgba32>(inputFile);
-            Image<Rgba32> iconImage = emblemImage.Clone();
-            // Get resize targets
-            ResizeOptions emblemResize = options.GetEmblemResizeOptions(emblemImage.Width, emblemImage.Height, Emblem.Width, Emblem.Height, options.EmblemHasAlphaBorder);
-            ResizeOptions iconResize = options.GetEmblemResizeOptions(emblemImage.Width, emblemImage.Height, Icons.IconWidth, Icons.IconHeight, false);
-            // Resize images
-            emblemImage.Mutate(ipc => ipc.Resize(emblemResize));
-            iconImage.Mutate(ipc => ipc.Resize(iconResize));
-
-            // Construct data for GCI
-            Texture emblemTexture = ImageAsCenteredTexture(emblemImage, Emblem.Width, Emblem.Height);
-            Texture iconTexture = ImageAsCenteredTexture(iconImage, Icons.IconWidth, Icons.IconHeight);
-            Texture banner = new(Banner.BannerWidth, Banner.BannerHeight, Banner.DirectFormat);
-            // todo: blank banner! ^^^
-            GfzGciMetadata metadata = GfzGciMetadataDB.Emblem;
-            metadata.Banner.Texture = banner;
-            metadata.Icons.Textures[0] = iconTexture;
-            EmblemGCI emblemGci = new()
-            {
-                GciFstEntry = GfzGciFstEntryDB.GetEmblemByRegion(options.Region),
-                GfzGciMetadata = metadata,
-                Emblem = new Emblem(emblemTexture),
-                AutoComment1 = true,
-                AutoComment2 = true,
-                AutoInternalFileName = true,
-                AutoModificationTime = true,
-            };
-
+            // Output file
             outputFile.SetFileName($"{options.GameCode}-emblem-{inputFile.FileName}");
             outputFile.SetExtensions(EmblemGCI.extension);
 
@@ -1221,6 +1193,35 @@ public static class CliActions
             PrintFileWriteResult(result, outputFile, options.ActionStr);
             if (doWriteFile)
             {
+                // Load image
+                Image<Rgba32> emblemImage = Image.Load<Rgba32>(inputFile);
+                Image<Rgba32> iconImage = emblemImage.Clone();
+                // Get resize targets
+                ResizeOptions emblemResize = options.GetEmblemResizeOptions(emblemImage.Width, emblemImage.Height, Emblem.Width, Emblem.Height, options.EmblemHasAlphaBorder);
+                ResizeOptions iconResize = options.GetEmblemResizeOptions(emblemImage.Width, emblemImage.Height, Icons.IconWidth, Icons.IconHeight, false);
+                // Resize images
+                emblemImage.Mutate(ipc => ipc.Resize(emblemResize));
+                iconImage.Mutate(ipc => ipc.Resize(iconResize));
+
+                // Construct data for GCI
+                Texture emblemTexture = ImageAsCenteredTexture(emblemImage, Emblem.Width, Emblem.Height);
+                Texture iconTexture = ImageAsCenteredTexture(iconImage, Icons.IconWidth, Icons.IconHeight);
+                Texture banner = new(Banner.BannerWidth, Banner.BannerHeight, Banner.DirectFormat);
+                // todo: blank banner! ^^^
+                GfzGciMetadata metadata = GfzGciMetadataDB.Emblem;
+                metadata.Banner.Texture = banner;
+                metadata.Icons.Textures[0] = iconTexture;
+                EmblemGCI emblemGci = new()
+                {
+                    GciFstEntry = GfzGciFstEntryDB.GetEmblemByRegion(options.Region),
+                    GfzGciMetadata = metadata,
+                    Emblem = new Emblem(emblemTexture),
+                    AutoComment1 = true,
+                    AutoComment2 = true,
+                    AutoInternalFileName = true,
+                    AutoModificationTime = true,
+                };
+
                 // Save emblem
                 using var fileStream = File.Create(outputFile);
                 using var writer = new EndianBinaryWriter(fileStream, EmblemGCI.endianness);
