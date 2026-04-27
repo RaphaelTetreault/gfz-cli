@@ -1178,7 +1178,7 @@ public static class CliActions
             ImageToEmblemGci(options, new(inputFile), new(outputFile));
             // Because emblems use timestamp for filesystem things,
             // make gap so that internal file names don't overlap.
-            System.Threading.Thread.Sleep(100);
+            System.Threading.Thread.Sleep(50);
         }
         Terminal.WriteLine($"{options.ActionStr}: done converting {gciCount} image{Plural(gciCount)}.");
 
@@ -1213,9 +1213,7 @@ public static class CliActions
                 AutoModificationTime = true,
             };
 
-            // Get name for output file
-            string regionChar = emblemGci.GciFstEntry.GetRegionChar().ToString().ToLower();
-            outputFile.SetFileName($"fz{regionChar}-{inputFile.FileName}");
+            outputFile.SetFileName($"{options.GameCode}-emblem-{inputFile.FileName}");
             outputFile.SetExtensions(EmblemGCI.extension);
 
             // Write file
