@@ -11,6 +11,14 @@ public static class CliArgumentDB
 {
     #region General
 
+    internal static readonly CliArgument SearchPattern = new()
+    {
+        ArgumentName = $"{CliArgumentText.SearchPattern} -{CliArgumentText.Short.SearchPattern}",
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = "OVERRIDE NOT SET.",
+        Help = "Defeault search pattern.",
+    };
+
     internal static readonly CliArgument Backup = new()
     {
         ArgumentName = CliArgumentText.Backup,

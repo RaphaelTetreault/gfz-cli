@@ -116,4 +116,25 @@ public static class CliArgumentText
         //    "\tEnabled only when called.";
     }
 
+    public static class SearchPatterns
+    {
+        public const string Anything = "*";
+        public const string ARC = "*.arc";
+        public const string Colicourse = "COLI_COURSE???";
+        public const string FMI = "*.fmi";
+        public const string FmiPlaintext = "*.fmi.txt";
+        public const string GciGameSave = "f_zero.dat.gci";
+        public const string GciEmblem = "*fze*.gci";
+        public const string GciReplay = "*fzr*.gci";
+        public const string GciGarage = "*fzc*.gci";
+        public const string GciGhost = "*fzg*.gci";
+        public const string GMA = "*.gma";
+        public const string GMAREF = $"*.{GameCube.GFZ.Asset.GmaRef.Extension}";
+        public const string ImagePNG = "*.png";
+        public const string LivecamStage = "livecam_stage*.bin";
+        public const string LineBIN = "*line__.bin";
+        public const string LineREL = "*line__.rel";
+        public const string TPL = "*.tpl";
+        public const string TPLREF = $"*.{GameCube.GFZ.Asset.TplRef.Extension}";
+    }
 }

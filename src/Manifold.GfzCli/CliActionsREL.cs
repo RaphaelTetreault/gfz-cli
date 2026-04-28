@@ -36,9 +36,6 @@ public static class CliActionsREL
     /// </exception>
     public static void Patch(Options options, PatchLineREL patchLineRelAction)
     {
-        // Default search
-        options.OverrideSearchPatternIfUnset("*line__.rel");
-
         // Check to make sure we have expected input
         string[] inputFiles = GetInputFiles(options);
         if (inputFiles.Length != 1)

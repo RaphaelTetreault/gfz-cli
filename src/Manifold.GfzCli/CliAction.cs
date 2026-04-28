@@ -7,6 +7,8 @@ namespace Manifold.GfzCli;
 /// </summary>
 public readonly record struct CliAction()
 {
+    private const int PrintArgCursorPos = 54;
+
     /// <summary>
     ///     Represents a GFZ CLI Action (function call with <paramref name="options"/>).
     /// </summary>
@@ -21,6 +23,7 @@ public readonly record struct CliAction()
     public required CliActionIO OutputIO { get; init; }
     public required CliFileProcessArg FileProcessArgs { get; init; }
     public required bool IsOutputOptional { get; init; } = true;
+    public string DefaultSearchPattern { get; init; } = string.Empty;
     public required CliArgument[] RequiredArguments { get; init; }
     public required CliArgument[] OptionalArguments { get; init; }
 
@@ -96,6 +99,7 @@ public readonly record struct CliAction()
         PrintGeneralRequirements();
         foreach (var requiredArgument in RequiredArguments)
             PrintArgument(requiredArgument, true);
+        PrintDefaultSearchPatternIfExists();
         foreach (var optionalArgument in OptionalArguments)
             PrintArgument(optionalArgument, false);
         Terminal.WriteLine();
@@ -132,7 +136,7 @@ public readonly record struct CliAction()
         Terminal.Write($"<{argType}{argDefault}>", argColor);//, argParamColor);
         Terminal.Write($" ");
         // TEMP: move cursor / line up
-        Console.SetCursorPosition(50, Console.CursorTop);
+        Console.SetCursorPosition(PrintArgCursorPos, Console.CursorTop);
 
         if (!isRequired)
             Terminal.Write("Optional: ", descColor);
@@ -174,8 +178,9 @@ public readonly record struct CliAction()
                 default: throw new NotImplementedException(fileProcessArg.ToString());
             }
         }
-        // Close options and finish
+        // Close options
         builder.Append(']');
+        // Finish
         return builder.ToString();
     }
 
@@ -206,6 +211,19 @@ public readonly record struct CliAction()
             _ => throw new NotImplementedException(),
         };
         return output;
+    }
+
+    private void PrintDefaultSearchPatternIfExists()
+    {
+        if (!string.IsNullOrWhiteSpace(DefaultSearchPattern))
+        {
+            var searchPatternArgument = CliArgumentDB.SearchPattern with
+            {
+                ArgumentDefault = $"\"{DefaultSearchPattern}\""
+            };
+            // TODO: change this a bit to use a different color?
+            PrintArgument(searchPatternArgument, false);
+        }
     }
 
 }

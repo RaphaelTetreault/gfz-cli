@@ -38,12 +38,6 @@ namespace Manifold.GfzCli;
 /// </summary>
 public static class CliActions
 {
-    // TODO: Make const for search patterns.
-    public const string SearchPattern_Scene = "COLI_COURSE???";
-    public const string SearchPattern_GMA = "*.gma";
-    public const string SearchPattern_TPL = "*.tpl";
-
-
     /// <summary>
     ///     Archive a directory into a .arc file.
     /// </summary>
@@ -60,9 +54,6 @@ public static class CliActions
             Terminal.WriteLine(msg);
             return;
         }
-
-        // Force checking for any file if there is no defined search pattern
-        options.OverrideSearchPatternIfUnset("*");
 
         // Get files in directory with search pattern
         string[] inputFilePaths = GetInputFiles(options);
@@ -110,8 +101,6 @@ public static class CliActions
     /// </remarks>
     public static void ArcUnpack(Options options)
     {
-        // Force checking for .ARC only IF there is no defined search pattern
-        options.OverrideSearchPatternIfUnset($"*.arc");
         // Break out files into own threads
         Terminal.WriteLine($"{options.ActionStr}: decompressing file(s).");
         int taskCount = ParallelizeFileInFileOutTasks(options, ArcUnpackIO);
@@ -309,14 +298,13 @@ public static class CliActions
     /// </remarks>
     public static void FmiToPlainText(Options options)
     {
-        options.OverrideSearchPatternIfUnset("*.fmi");
         Terminal.WriteLine($"{options.ActionStr}: converting FMI to plain text files.");
         int binCount = ParallelizeFileInFileOutTasks(options, FmiToPlainText);
         Terminal.WriteLine($"{options.ActionStr}: done converting {binCount} file{Plural(binCount)}.");
 
         static void FmiToPlainText(Options options, OSPath inputFile, OSPath outputFile)
         {
-            // Set output extensions
+            // Set output extensions. TODO: use const
             outputFile.SetExtensions(".fmi.txt");
 
             // Write file
@@ -342,7 +330,6 @@ public static class CliActions
     /// </remarks>
     public static void FmiFromPlainText(Options options)
     {
-        options.OverrideSearchPatternIfUnset("*.fmi.txt");
         Terminal.WriteLine($"{options.ActionStr}: converting FMI from plain text files.");
         int binCount = ParallelizeFileInFileOutTasks(options, FmiFromPlainText);
         Terminal.WriteLine($"{options.ActionStr}: done converting {binCount} file{Plural(binCount)}.");
@@ -350,7 +337,7 @@ public static class CliActions
         static void FmiFromPlainText(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Set output extension
-            outputFile.SetExtensions(".fmi");
+            outputFile.SetExtensions(FmiFile.extension);
 
             // Write file
             bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
@@ -480,7 +467,6 @@ public static class CliActions
     /// </remarks>
     public static void LivecamToTsv(Options options)
     {
-        options.OverrideSearchPatternIfUnset("livecam_stage*.bin");
         Terminal.WriteLine($"{options.ActionStr}: converting livecam*.bin to TSV spreadsheet.");
         int binCount = ParallelizeFileInFileOutTasks(options, LivecamToTsvIO);
         Terminal.WriteLine($"{options.ActionStr}: done converting {binCount} file{Plural(binCount)}.");
@@ -509,7 +495,6 @@ public static class CliActions
     /// </remarks>
     public static void LivecamFromTsv(Options options)
     {
-        options.OverrideSearchPatternIfUnset("livecam_stage*.tsv");
         Terminal.WriteLine($"{options.ActionStr}: converting livecam.tsv to binary file.");
         int binCount = ParallelizeFileInFileOutTasks(options, LivecamFromTsvIO);
         Terminal.WriteLine($"{options.ActionStr}: done converting {binCount} file{Plural(binCount)}.");
@@ -877,7 +862,6 @@ public static class CliActions
     /// </remarks>
     public static void DecryptLineRel(Options options)
     {
-        options.OverrideSearchPatternIfUnset("*line__.bin");
         ParallelizeFileInFileOutTasks(options, DecryptLine);
 
         static void DecryptLine(Options options, OSPath inputFile, OSPath outputFile)
@@ -930,7 +914,6 @@ public static class CliActions
     /// </remarks>
     public static void EncryptLineRel(Options options)
     {
-        options.OverrideSearchPatternIfUnset("*line__.rel");
         ParallelizeFileInFileOutTasks(options, EncryptLine);
 
         static void EncryptLine(Options options, OSPath inputFile, OSPath outputFile)
@@ -1161,13 +1144,7 @@ public static class CliActions
     /// </remarks>
     public static void EmblemGciFromImage(Options options)
     {
-        // In this case where no search pattern is set, find *fze*.dat.gci (emblem) files.
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-            options.SearchPattern = "*fze*.dat.gci";
-
         Terminal.WriteLine($"{options.ActionStr}: converting image(s) to emblem.dat.gci.");
-        //int gciCount = ParallelizeFileInFileOutTasks(options, ImageToEmblemGci);
         GetIOFiles(options, out string[] inputFiles, out string[] outputFiles);
         int gciCount = inputFiles.Length;
         for (int i = 0; i < gciCount; i++)
@@ -1275,9 +1252,8 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="CliActionDB.ActionIOSceneNullComment"/>
     /// </remarks>
-    public static void PatchSceneNullComment(Options options)
+    public static void IOSceneNullComment(Options options)
     {
-        options.OverrideSearchPatternIfUnset("COLI_COURSE???");
         Terminal.WriteLine($"PATCH: patch scene file(s).");
         int taskCount = ParallelizeFileInFileOutTasks(options, PatchSceneComment);
         Terminal.WriteLine($"PATCH: patch {taskCount} scene file{Plural(taskCount)}.");
@@ -1425,7 +1401,7 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="CliActionDB.ActionIOGma"/>
     /// </remarks>
-    public static void InOutGMA(Options options) => options.InOutFiles<GmaFile>(SearchPattern_GMA);
+    public static void InOutGMA(Options options) => options.InOutFiles<GmaFile>();
 
     /// <summary>
     /// 
@@ -1433,7 +1409,7 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="CliActionDB.ActionIOTpl"/>
     /// </remarks>
-    public static void InOutTPL(Options options) => options.InOutFiles<TplFile>(SearchPattern_TPL);
+    public static void InOutTPL(Options options) => options.InOutFiles<TplFile>();
 
     /// <summary>
     /// 
@@ -1441,7 +1417,7 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="CliActionDB.ActionIOScene"/>
     /// </remarks>
-    public static void InOutScene(Options options) => options.InOutFiles<SceneFile>(SearchPattern_Scene);
+    public static void InOutScene(Options options) => options.InOutFiles<SceneFile>();
 
     /// <remarks>
     ///     Action: <see cref="CliActionDB.ActionLogStageAll"/>
@@ -1449,7 +1425,7 @@ public static class CliActions
     public static void LogStageAll(Options options)
     {
         foreach (TableLogger.LogFuncFile<SceneFile> logFuncFile in StageTableLogger.AllLogFunctionFiles)
-            options.Log(logFuncFile, SearchPattern_Scene);
+            options.Log(logFuncFile);
     }
 
     /// <remarks>
@@ -1458,12 +1434,12 @@ public static class CliActions
     public static void LogGmaAll(Options options)
     {
         foreach (TableLogger.LogFuncFile<GmaFile> logFuncFile in GmaTableLogger.AllLogFunctionFiles)
-            options.Log(logFuncFile, SearchPattern_GMA);
+            options.Log(logFuncFile);
     }
 
     /// <remarks>
     ///     Action: <see cref="CliActionDB.ActionLogStageTrackKeyablesAll"/>
     /// </remarks>
     public static void LogStageTrackKeyables(Options options)
-        => options.Log(StageTableLogger.LogTrackKeyablesAll, SearchPattern_Scene);
+        => options.Log(StageTableLogger.LogTrackKeyablesAll);
 }

@@ -54,6 +54,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.Anything,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -67,6 +68,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Directory,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.ARC,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -153,6 +155,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.TPL,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
@@ -168,6 +171,7 @@ public static class CliActionDB
         InputIO = CliActionIO.File,
         OutputIO = CliActionIO.File,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.TPLREF,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
@@ -183,6 +187,7 @@ public static class CliActionDB
         InputIO = CliActionIO.File,
         OutputIO = CliActionIO.File,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.GMAREF,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
@@ -202,6 +207,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LivecamStage,
         FileProcessArgs = CliFileProcessArg.FOPS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -215,6 +221,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LivecamStage,
         FileProcessArgs = CliFileProcessArg.FOPS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -262,6 +269,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.Colicourse,
         FileProcessArgs = CliFileProcessArg.FPS,
         RequiredArguments = [
             CliArgumentDB.Color,
@@ -285,6 +293,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.Colicourse,
         FileProcessArgs = CliFileProcessArg.FPS,
         RequiredArguments = [
             CliArgumentDB.Name_ColiCourse,
@@ -308,6 +317,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.GciEmblem,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
@@ -323,6 +333,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.ImagePNG,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [
             CliArgumentDB.ResamplerType,
@@ -414,6 +425,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.FmiPlaintext,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -427,6 +439,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.FMI,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -461,6 +474,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.GMA,
         FileProcessArgs = CliFileProcessArg.PS,
         RequiredArguments = [
             CliArgumentDB.Name_GMA,
@@ -482,6 +496,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.GMA,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -495,6 +510,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.TPL,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -508,6 +524,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.Colicourse,
         FileProcessArgs = CliFileProcessArg.OPRS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -517,11 +534,12 @@ public static class CliActionDB
     public static readonly CliAction ActionIOSceneNullComment = new()
     {
         Description = "Patch COLI_COURSE (scene) to null out auto-generate timestamp comment to help diff-ing.",
-        Action = CliActions.PatchSceneNullComment,
+        Action = CliActions.IOSceneNullComment,
         ActionID = CliActionID.io_scene_null_comment,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.Colicourse,
         FileProcessArgs = CliFileProcessArg.PS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -582,6 +600,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = false,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.Colicourse,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -595,6 +614,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = false,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.GMA,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -609,6 +629,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Directory,
         IsOutputOptional = false,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.Colicourse,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -656,6 +677,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.BgmIndex,
@@ -672,6 +694,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.BgmFinalLapIndex,
@@ -688,6 +711,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.BgmIndex,
@@ -705,6 +729,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.StageIndex,
@@ -721,6 +746,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.StageIndex,
@@ -737,6 +763,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -750,6 +777,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [CliArgumentDB.Value_CourseName],
         OptionalArguments = [],
@@ -763,6 +791,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.StageIndex,
@@ -779,6 +808,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.VenueIndex,
@@ -795,6 +825,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -808,6 +839,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [CliArgumentDB.Value_VenueName],
         OptionalArguments = [],
@@ -821,6 +853,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [CliArgumentDB.Value_CarData],
         OptionalArguments = [],
@@ -834,6 +867,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.PilotNumber,
@@ -850,6 +884,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [],
         OptionalArguments = [CliArgumentDB.Value_MaxSpeed],
@@ -863,6 +898,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.Cup,           // cup to modify
@@ -874,12 +910,13 @@ public static class CliActionDB
 
     public static readonly CliAction ActionDecryptLineREL = new()
     {
-        Description = "Decrypt line__.bin to line__.rel file.",
+        Description = "Decrypt line__.bin to line__.rel file.", // TODO: rename output
         Action = CliActions.DecryptLineRel,
         ActionID = CliActionID.fzrel_decrypt,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.OPRS,
         RequiredArguments = [],
         OptionalArguments = [],
@@ -887,12 +924,13 @@ public static class CliActionDB
 
     public static readonly CliAction ActionEncryptLineREL = new()
     {
-        Description = "Encrypt line__.rel to line__.bin file.",
+        Description = "Encrypt line__.rel to line__.bin file.", // TODO: rename output
         Action = CliActions.EncryptLineRel,
         ActionID = CliActionID.fzrel_encrypt,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.OPRS,
         RequiredArguments = [],
         OptionalArguments = [],

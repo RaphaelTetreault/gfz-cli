@@ -157,7 +157,6 @@ public static class CliActionsAsset
     /// </remarks>
     public static void TplUnpack(Options options)
     {
-        options.OverrideSearchPatternIfUnset("*.tpl");
         Terminal.WriteLine($"{options.ActionStr}: unpacking file(s).");
         int taskCount = ParallelizeFileInFileOutTasks(options, TplUnpackIO);
         Terminal.WriteLine($"{options.ActionStr}: done unpacking {taskCount} TPL file{Plural(taskCount)}.");
@@ -223,7 +222,6 @@ public static class CliActionsAsset
     /// </remarks>
     public static void TplrefPack(Options options)
     {
-        options.OverrideSearchPatternIfUnset($"*.{TplRef.Extension}");
         Terminal.WriteLine($"{options.ActionStr}: packing file(s).");
         int taskCount = ParallelizeFileInFileOutTasks(options, TplrefPackIO);
         Terminal.WriteLine($"{options.ActionStr}: done packing {taskCount} file{Plural(taskCount)} into TPL.");
@@ -254,7 +252,6 @@ public static class CliActionsAsset
     /// </remarks>
     public static void GmarefPack(Options options)
     {
-        options.OverrideSearchPatternIfUnset($"*.{GmaRef.Extension}");
         Terminal.WriteLine($"{options.ActionStr}: packing GMA file(s).");
         int taskCount = ParallelizeFileInFileOutTasks(options, GmarefPackIO);
         Terminal.WriteLine($"{options.ActionStr}: done packing {taskCount} file{Plural(taskCount)} into GMA and TPL.");

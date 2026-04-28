@@ -727,17 +727,6 @@ public sealed class Options
     }
 
     /// <summary>
-    ///     Override this <see cref="SearchPattern"/> with <paramref name="overrideSearchPattern"/> if otherwise unset.
-    /// </summary>
-    /// <param name="overrideSearchPattern"></param>
-    public void OverrideSearchPatternIfUnset(string overrideSearchPattern)
-    {
-        bool hasNoSearchPattern = string.IsNullOrEmpty(SearchPattern);
-        if (hasNoSearchPattern)
-            SearchPattern = overrideSearchPattern;
-    }
-
-    /// <summary>
     ///     Check to see if <see cref="OutputPath"/> is specified.
     /// </summary>
     /// <returns>
@@ -887,11 +876,9 @@ public sealed class Options
         }
     }
 
-    public void InOutFiles<TFile>(string searchPattern)
+    public void InOutFiles<TFile>()
         where TFile : IBinaryFileType, IBinarySerializable, new()
     {
-        OverrideSearchPatternIfUnset(searchPattern);
-
         string typeName = typeof(TFile).Name;
         Terminal.WriteLine($"IO {typeName}: in-out re-serialization of file(s).");
         int taskCount = ParallelizeFileInFileOutTasks(this, InOutFile);
@@ -920,21 +907,18 @@ public sealed class Options
         }
     }
 
-    public void Log<TBinarySerializable>(TableLogger.LogFuncFile<TBinarySerializable> logFuncFile, string searchPattern = "")
+    // TODO: this should be in Manifold.IO with TableLogger but OSPath needs to be move there, too!
+    public void Log<TBinarySerializable>(TableLogger.LogFuncFile<TBinarySerializable> logFuncFile)
         where TBinarySerializable : IBinarySerializable, IBinaryFileType, new()
     {
-        // Allow search pattern override if requested and unset
-        if (!string.IsNullOrWhiteSpace(searchPattern))
-            OverrideSearchPatternIfUnset(searchPattern);
-
         // Create output path for analysis
         OSPath outputFile = new(OutputPath);
         outputFile.SetFileNameAndExtensions(logFuncFile.FileName);
         if (CanWriteFileAndPrintResult(this, outputFile))
         {
             EnsureDirectoriesExist(outputFile);
-            IEnumerable<TBinarySerializable> scenes = BinarySerializableIO.LoadFile<TBinarySerializable>(GetInputFiles(this));
-            logFuncFile.AnalysisFunction.Invoke(scenes.ToArray(), outputFile);
+            IEnumerable<TBinarySerializable> serializable = BinarySerializableIO.LoadFile<TBinarySerializable>(GetInputFiles(this));
+            logFuncFile.AnalysisFunction.Invoke(serializable.ToArray(), outputFile);
         }
     }
 
