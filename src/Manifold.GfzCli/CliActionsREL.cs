@@ -269,14 +269,44 @@ public static class CliActionsREL
         options.AssertCourseIndexAllow0xFFFF();
 
         // Get needed data
-        CupIndex cup = options.Cup;                               // Which cup?
+        CupIndex cupIndex = options.Cup;                          // Which cup?
         byte cupCourseIndex = (byte)(options.CupCourseIndex - 1); // What "slot" in cup?
-        ushort courseIndex = options.CourseIndex;                 // What stage does that slot point to?
+        ushort courseIndex = options.CourseIndex;                 // What course does that slot point to?
 
         // Patch
-        PatchCupCourseIndex(writer, info, cup, cupCourseIndex, courseIndex);
-        PatchCupCourseGmaTplReference(writer, info, cup, cupCourseIndex, courseIndex);
-        PatchCupCourseUnknown(writer, info, cup, cupCourseIndex, courseIndex);
+        PatchCupCourseIndex(writer, info, cupIndex, cupCourseIndex, courseIndex);
+        PatchCupCourseGmaTplReference(writer, info, cupIndex, cupCourseIndex, courseIndex);
+        PatchCupCourseUnknown(writer, info, cupIndex, cupCourseIndex, courseIndex);
+
+        // Print message
+        Course courseOld = CupDB.DefaultCups[(int)cupIndex].Courses[cupCourseIndex];
+        Course courseNew = CourseDB.DefaultCourses[courseIndex];
+        //Venue venue = course.Venue;
+        string msg =
+            $"Set {cupIndex} course {cupCourseIndex} to {courseIndex} {courseNew.DisplayText(info.GameCode)}. " +
+            $"{info.GameCode} default: {courseOld.DisplayText(info.GameCode)})";
+        Terminal.WriteLine(msg);
+
+        // Inner functions
+        static void PatchCupCourseIndex(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
+            => PatchCupData(writer, info.CupCourseLut.Address, cup, cupCourseIndex, courseIndex);
+        static void PatchCupCourseGmaTplReference(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
+            => PatchCupData(writer, info.CupCourseLutAssets.Address, cup, cupCourseIndex, courseIndex);
+        static void PatchCupCourseUnknown(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
+            => PatchCupData(writer, info.CupCourseLutUnk.Address, cup, cupCourseIndex, courseIndex);
+        static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
+        {
+            Pointer initialAddress = writer.GetPositionAsPointer();
+
+            const int CupEntrySize = sizeof(ushort) * 6;
+            Offset cupOffset = (int)cup * CupEntrySize;
+            Offset courseOffset = cupCourseIndex * sizeof(ushort);
+            Pointer address = baseAddress + cupOffset + courseOffset;
+            writer.JumpToAddress(address);
+            writer.Write(courseIndex);
+
+            writer.JumpToAddress(initialAddress, true);
+        }
     }
     internal static void PatchCarData(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
@@ -355,25 +385,6 @@ public static class CliActionsREL
         writer.JumpToAddress(address);
         writer.Write(maxSpeed);
     }
-    internal static void PatchCupData(EndianBinaryWriter writer, Pointer baseAddress, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
-    {
-        Pointer initialAddress = writer.GetPositionAsPointer();
-
-        const int CupEntrySize = sizeof(ushort) * 6;
-        Offset cupOffset = (int)cup * CupEntrySize;
-        Offset courseOffset = cupCourseIndex * sizeof(ushort);
-        Pointer address = baseAddress + cupOffset + courseOffset;
-        writer.JumpToAddress(address);
-        writer.Write(courseIndex);
-
-        writer.JumpToAddress(initialAddress);
-    }
-    internal static void PatchCupCourseIndex(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
-        => PatchCupData(writer, info.CupCourseLut.Address, cup, cupCourseIndex, courseIndex);
-    internal static void PatchCupCourseGmaTplReference(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
-        => PatchCupData(writer, info.CupCourseLutAssets.Address, cup, cupCourseIndex, courseIndex);
-    internal static void PatchCupCourseUnknown(EndianBinaryWriter writer, FzMainRel info, CupIndex cup, byte cupCourseIndex, ushort courseIndex)
-        => PatchCupData(writer, info.CupCourseLutUnk.Address, cup, cupCourseIndex, courseIndex);
 
     private static int ClearStringTable(Options options, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)
     {

@@ -681,7 +681,7 @@ public static class CliActionDB
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.BgmIndex,
-            CliArgumentDB.StageIndex,
+            CliArgumentDB.CourseIndex,
             ],
         OptionalArguments = [],
     };
@@ -698,7 +698,7 @@ public static class CliActionDB
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.BgmFinalLapIndex,
-            CliArgumentDB.StageIndex,
+            CliArgumentDB.CourseIndex,
             ],
         OptionalArguments = [],
     };
@@ -716,7 +716,7 @@ public static class CliActionDB
         RequiredArguments = [
             CliArgumentDB.BgmIndex,
             CliArgumentDB.BgmFinalLapIndex,
-            CliArgumentDB.StageIndex,
+            CliArgumentDB.CourseIndex,
             ],
         OptionalArguments = [],
     };
@@ -732,7 +732,7 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            CliArgumentDB.StageIndex,
+            CliArgumentDB.CourseIndex,
             CliArgumentDB.Difficulty,
             ],
         OptionalArguments = [],
@@ -749,7 +749,7 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            CliArgumentDB.StageIndex,
+            CliArgumentDB.CourseIndex,
             CliArgumentDB.Value_CourseName,
             ],
         OptionalArguments = [],
@@ -794,7 +794,7 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            CliArgumentDB.StageIndex,
+            CliArgumentDB.CourseIndex,
             CliArgumentDB.VenueIndex,
             ],
         OptionalArguments = [],
@@ -903,7 +903,7 @@ public static class CliActionDB
         RequiredArguments = [
             CliArgumentDB.Cup,           // cup to modify
             CliArgumentDB.CupCourseIndex, // stage in cup to modify 0-5 (count: 6)
-            CliArgumentDB.StageIndex,    // stage index to use
+            CliArgumentDB.CourseIndex,    // stage index to use
             ],
         OptionalArguments = [],
     };
@@ -916,7 +916,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineBIN,
         FileProcessArgs = CliFileProcessArg.OPRS,
         RequiredArguments = [],
         OptionalArguments = [],

@@ -500,7 +500,7 @@ public sealed class Options
     ///     The numeric index of a stage.
     /// </summary>
     [Option(CliArgumentText.CourseIndex, Hidden = true)]
-    public ushort CourseIndex { get; set; } = CliArgumentDB.StageIndex.Default<ushort>();
+    public ushort CourseIndex { get; set; } = CliArgumentDB.CourseIndex.Default<ushort>();
 
     /// <summary>
     ///     The cup which references a number of stages (up to 6).

@@ -289,7 +289,7 @@ public static class CliArgumentDB
         Help = "The final lap background music index.",
     };
 
-    internal static readonly CliArgument StageIndex = new()
+    internal static readonly CliArgument CourseIndex = new()
     {
         ArgumentName = CliArgumentText.CourseIndex,
         ArgumentType = typeof(ushort).Name,
