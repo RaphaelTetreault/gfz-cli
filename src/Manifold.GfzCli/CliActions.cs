@@ -42,7 +42,7 @@ public static class CliActions
     ///     Archive a directory into a .arc file.
     /// </summary>
     /// <remarks>
-    ///     <see cref="CliActionDB.ActionArcPack"/>
+    ///     <see cref="CliActionDB.ArcPack"/>
     /// </remarks>
     public static void ArcPack(Options options)
     {
@@ -97,7 +97,7 @@ public static class CliActions
     ///     Unpack one or more .arc achives into directories of their contents.
     /// </summary>
     /// <remarks>
-    ///     <see cref="CliActionDB.ActionArcUnpack"/>
+    ///     <see cref="CliActionDB.ArcUnpack"/>
     /// </remarks>
     public static void ArcUnpack(Options options)
     {
@@ -140,7 +140,7 @@ public static class CliActions
     /// </summary>
     /// <exception cref="ArgumentException">Thrown if serialization format is AX.</exception>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionCarDataToTSV"/>
+    ///     Action: <see cref="CliActionDB.CarDataToTSV"/>
     /// </remarks>
     public static void CarDataToTsv(Options options)
     {
@@ -185,7 +185,7 @@ public static class CliActions
     /// </summary>
     /// <exception cref="ArgumentException">Thrown if serialization format is AX.</exception>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionCarDataToTSV"/>
+    ///     Action: <see cref="CliActionDB.CarDataFromTSV"/>
     /// </remarks>
     public static void CarDataFromTsv(Options options)
     {
@@ -231,6 +231,9 @@ public static class CliActions
     /// <summary>
     ///     
     /// </summary>
+    /// <remarks>
+    ///     
+    /// </remarks>
     public static void DumpHex32(Options options)
     {
         var inputFilePaths = GetInputFiles(options);
@@ -294,7 +297,7 @@ public static class CliActions
     ///     
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionFmiToPlainText"/>
+    ///     Action: <see cref="CliActionDB.FmiToPlainText"/>
     /// </remarks>
     public static void FmiToPlainText(Options options)
     {
@@ -326,7 +329,7 @@ public static class CliActions
     ///     
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionFmiFromPlainText"/>
+    ///     Action: <see cref="CliActionDB.FmiFromPlainText"/>
     /// </remarks>
     public static void FmiFromPlainText(Options options)
     {
@@ -357,6 +360,9 @@ public static class CliActions
     /// <summary>
     /// 
     /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="CliActionDB.GciExtractGhostFromGci"/>
+    /// </remarks>
     public static void ExtractGhostFromGci(Options options)
     {
         //string[] files = GetInputFiles(options);
@@ -395,9 +401,9 @@ public static class CliActions
     /// 
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionGmaPatchSubmeshRenderFlags"/>
+    ///     Action: <see cref="CliActionDB.GmaEditSubmeshRenderFlags"/>
     /// </remarks>
-    public static void PatchSubmeshRenderFlags(Options options)
+    public static void GmaEditSubmeshRenderFlags(Options options)
     {
         // Maybe what you need is a function just to get IO paths...?
         int count = ParallelizeFileInFileOutTasks(options, PatchSubmeshRenderFlags);
@@ -463,9 +469,9 @@ public static class CliActions
     ///     Create TSV from livecam binary.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionCameraLivecamToTSV"/>
+    ///     Action: <see cref="CliActionDB.CameraLivecamToTSV"/>
     /// </remarks>
-    public static void LivecamToTsv(Options options)
+    public static void CameraLivecamToTSV(Options options)
     {
         Terminal.WriteLine($"{options.ActionStr}: converting livecam*.bin to TSV spreadsheet.");
         int binCount = ParallelizeFileInFileOutTasks(options, LivecamToTsvIO);
@@ -491,9 +497,9 @@ public static class CliActions
     ///     Create livecam BIN file from livecam TSV spreadsheet.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionCameraLivecamFromTSV"/>
+    ///     Action: <see cref="CliActionDB.CameraLivecamFromTSV"/>
     /// </remarks>
-    public static void LivecamFromTsv(Options options)
+    public static void CameraLivecamFromTSV(Options options)
     {
         Terminal.WriteLine($"{options.ActionStr}: converting livecam.tsv to binary file.");
         int binCount = ParallelizeFileInFileOutTasks(options, LivecamFromTsvIO);
@@ -521,7 +527,7 @@ public static class CliActions
     ///     
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionLZDecompress"/>
+    ///     Action: <see cref="CliActionDB.LzDecompress"/>
     /// </remarks>
     public static void LzDecompress(Options options)
     {
@@ -547,7 +553,7 @@ public static class CliActions
     ///     
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionLZCompress"/>
+    ///     Action: <see cref="CliActionDB.LzCompress"/>
     /// </remarks>
     public static void LzCompress(Options options)
     {
@@ -569,9 +575,9 @@ public static class CliActions
     ///     Patch the fog parameters of scenes.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionColicoursePatchFog"/>
+    ///     Action: <see cref="CliActionDB.ColicourseEditFog"/>
     /// </remarks>
-    public static void PatchFog(Options options)
+    public static void ColicourseEditFog(Options options)
     {
         int count = ParallelizeFileInFileOutTasks(options, PatchFogIO);
         static void PatchFogIO(Options options, OSPath inputPath, OSPath _)
@@ -660,9 +666,9 @@ public static class CliActions
     ///     <see cref="Options.Name"/> in a scene.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionColicoursePatchObjectRenderFlags"/>
+    ///     Action: <see cref="CliActionDB.ColicourseEditObjectRenderFlags"/>
     /// </remarks>
-    public static void PatchSceneObjectDynamicRenderFlags(Options options)
+    public static void ColicourseEditObjectRenderFlags(Options options)
     {
         int count = ParallelizeFileInFileOutTasks(options, PatchSceneObjectDynamicRenderFlagsIO);
         static void PatchSceneObjectDynamicRenderFlagsIO(Options options, OSPath inputPath, OSPath outputPath)
@@ -722,18 +728,18 @@ public static class CliActions
     ///     Set <see cref="BgmMusic"/> in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchBgm"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchBgm"/>
     /// </remarks>
-    public static void PatchSetBgm(Options options)
+    public static void FzMainRelPatchBgm(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchBgm);
 
     /// <summary>
     ///     Set <see cref="BgmFinalLap"/> in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchBgmFinalLap"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchBgmFinalLap"/>
     /// </remarks>
-    public static void PatchSetBgmFinalLap(Options options)
+    public static void FzMainRelPatchBgmFinalLap(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchBgmFinalLap);
 
     /// <summary>
@@ -741,25 +747,25 @@ public static class CliActions
     ///     <see cref="BgmFinalLap"/> in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchBgmBoth"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchBgmBoth"/>
     /// </remarks>
-    public static void PatchSetBgmAndBgmFinalLap(Options options)
+    public static void FzMainRelPatchBgmBoth(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchBgmBoth);
 
     /// <summary>
     ///     Set individual course star difficulty rating in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchSetCourseDifficulty"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchSetCourseDifficulty"/>
     /// </remarks>
-    public static void PatchSetCourseDifficulty(Options options)
+    public static void FzMainRelPatchSetCourseDifficulty(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchCourseDifficulty);
 
     /// <summary>
     ///     Set individual course name in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchSetCourseName"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchSetCourseName"/>
     /// </remarks>
     public static void PatchSetCourseName(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchSetCourseName);
@@ -768,99 +774,99 @@ public static class CliActions
     ///     Set individual cup index course reference in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchSetCupCourse"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchSetCupCourse"/>
     /// </remarks>
-    public static void PatchSetCupCourse(Options options)
+    public static void FzMainRelPatchSetCupCourse(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchSetCupCourse);
 
     /// <summary>
     ///     Clear all course names in fz.main.rel to free up string table memory.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchClearAllCourseNames"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchClearAllCourseNames"/>
     /// </remarks>
-    public static void PatchClearAllCourseNames(Options options)
+    public static void FzMainRelPatchClearAllCourseNames(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchClearCourseNames);
 
     /// <summary>
     ///     Clear unused course names in fz.main.rel to free up string table memory.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchClearUnusedCourseNames"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchClearUnusedCourseNames"/>
     /// </remarks>
-    public static void PatchClearUnusedCourseNames(Options options)
+    public static void FzMainRelPatchClearUnusedCourseNames(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchClearUnusedCourseNames);
 
     /// <summary>
     ///     Clear all venue names in fz.main.rel to free up string table memory.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchClearAllVenueNames"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchClearAllVenueNames"/>
     /// </remarks>
-    public static void PatchClearAllVenueNames(Options options)
+    public static void FzMainRelPatchClearAllVenueNames(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchClearVenueNames);
 
     /// <summary>
     ///     Clear unused venue names in fz.main.rel to free up string table memory.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchClearUnusedVenueNames"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchClearUnusedVenueNames"/>
     /// </remarks>
-    public static void PatchClearUnusedVenueNames(Options options)
+    public static void FzMainRelPatchClearUnusedVenueNames(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchClearUnusedVenueNames);
 
     /// <summary>
     ///     Clear all venue names in fz.main.rel to free up string table memory.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchSetCourseVenueIndex"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchSetCourseVenueIndex"/>
     /// </remarks>
-    public static void PatchSetCourseVenueIndex(Options options)
+    public static void FzMainRelPatchSetCourseVenueIndex(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchSetCourseVenueIndex);
 
     /// <summary>
     ///     Set individual cup index venue reference in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchSetVenueName"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchSetVenueName"/>
     /// </remarks>
-    public static void PatchSetVenueName(Options options)
+    public static void FzMainRelPatchSetVenueName(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchSetVenueName);
 
     /// <summary>
     ///     Set <see cref="CarData"/> in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchSetCarData"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchSetCarData"/>
     /// </remarks>
-    public static void PatchSetCarData(Options options)
+    public static void FzMainRelPatchSetCarData(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchCarData);
 
     /// <summary>
     ///     Set individual machine letter rating in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchMachineRating"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchMachineRating"/>
     /// </remarks>
-    public static void PatchMachineRating(Options options)
+    public static void FzMainRelPatchMachineRating(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchMachineRating);
 
     /// <summary>
     ///     Set max speed cap in fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionPatchMaxSpeed"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchMaxSpeed"/>
     /// </remarks>
-    public static void PatchMaxSpeed(Options options)
+    public static void FzMainRelPatchMaxSpeed(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchMaxSpeed);
 
     /// <summary>
     ///     Decrypt ./enemy/line__.bin into ./fz.main.rel
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionDecryptLineREL"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelDecryptLineREL"/>
     /// </remarks>
-    public static void DecryptLineRel(Options options)
+    public static void FzMainRelDecryptLineREL(Options options)
     {
         ParallelizeFileInFileOutTasks(options, DecryptLine);
 
@@ -910,9 +916,9 @@ public static class CliActions
     ///     Encrypt ./fz.main.rel into ./enemy/line__.bin into 
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionEncryptLineREL"/>
+    ///     Action: <see cref="CliActionDB.FzMainRelEncryptLineREL"/>
     /// </remarks>
-    public static void EncryptLineRel(Options options)
+    public static void FzMainRelEncryptLineREL(Options options)
     {
         ParallelizeFileInFileOutTasks(options, EncryptLine);
 
@@ -947,7 +953,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionEmblemsBinToImages"/>
+    ///     Action: <see cref="CliActionDB.EmblemsBinToImages"/>
     /// </remarks>
     public static void EmblemsBinToImages(Options options)
     {
@@ -991,7 +997,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionEmblemsBinFromImages"/>
+    ///     Action: <see cref="CliActionDB.EmblemsBinFromImages"/>
     /// </remarks>
     public static void EmblemsBinFromImages(Options options)
     {
@@ -1063,7 +1069,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionEmblemGciToImage"/>
+    ///     Action: <see cref="CliActionDB.EmblemGciToImage"/>
     /// </remarks>
     public static void EmblemGciToImage(Options options)
     {
@@ -1140,7 +1146,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionEmblemGciFromImage"/>
+    ///     Action: <see cref="CliActionDB.EmblemGciFromImage"/>
     /// </remarks>
     public static void EmblemGciFromImage(Options options)
     {
@@ -1213,18 +1219,18 @@ public static class CliActions
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionAssetGenerateLibrary"/>
+    ///     Action: <see cref="CliActionDB.AssetGenerateLibrary"/>
     /// </remarks>
-    public static void GenerateLibrary(Options options) => CliActionsAsset.CreateGmaTplLibrary(options);
+    public static void AssetGenerateLibrary(Options options) => CliActionsAsset.CreateGmaTplLibrary(options);
 
     /// <summary>
     ///     Takes in hex-string of bytes and prints the Shift-JIS encoded version of the value.
     /// </summary>
     /// <param name="options">The options to parse.</param>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionEncodeBytesToShiftJis"/>
+    ///     Action: <see cref="CliActionDB.EncodeBytesToShiftJis"/>
     /// </remarks>
-    public static void PrintBytesToShiftJis(Options options)
+    public static void EncodeBytesToShiftJis(Options options)
     {
         options.AssertValueExists();
         string result = TextEncoding.ConvertBytesToEncoding(options.Value, TextEncoding.ShiftJIS);
@@ -1236,9 +1242,9 @@ public static class CliActions
     /// </summary>
     /// <param name="options">The options to parse.</param>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionEncodeWindows1252ToShiftJis"/>
+    ///     Action: <see cref="CliActionDB.EncodeWindows1252ToShiftJis"/>
     /// </remarks>
-    public static void PrintWindowsToShiftJis(Options options)
+    public static void EncodeWindows1252ToShiftJis(Options options)
     {
         options.AssertValueExists();
         string result = TextEncoding.ConvertEncodingToEncoding(options.Value, TextEncoding.Windows1252, TextEncoding.ShiftJIS);
@@ -1250,7 +1256,7 @@ public static class CliActions
     /// </summary>
     /// <param name="options"></param>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionIOSceneNullComment"/>
+    ///     Action: <see cref="CliActionDB.IOSceneNullComment"/>
     /// </remarks>
     public static void IOSceneNullComment(Options options)
     {
@@ -1278,7 +1284,7 @@ public static class CliActions
     /// <param name="options"></param>
     /// <exception cref="DirectoryNotFoundException"></exception>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionIsoExtract"/>
+    ///     Action: <see cref="CliActionDB.IsoExtract"/>
     /// </remarks>
     public static void IsoExtract(Options options)
     {
@@ -1399,7 +1405,7 @@ public static class CliActions
     /// 
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionIOGma"/>
+    ///     Action: <see cref="CliActionDB.IOGma"/>
     /// </remarks>
     public static void InOutGMA(Options options) => options.InOutFiles<GmaFile>();
 
@@ -1407,7 +1413,7 @@ public static class CliActions
     /// 
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionIOTpl"/>
+    ///     Action: <see cref="CliActionDB.IOTpl"/>
     /// </remarks>
     public static void InOutTPL(Options options) => options.InOutFiles<TplFile>();
 
@@ -1415,12 +1421,12 @@ public static class CliActions
     /// 
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionIOScene"/>
+    ///     Action: <see cref="CliActionDB.IOScene"/>
     /// </remarks>
     public static void InOutScene(Options options) => options.InOutFiles<SceneFile>();
 
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionLogStageAll"/>
+    ///     Action: <see cref="CliActionDB.LogStageAll"/>
     /// </remarks>
     public static void LogStageAll(Options options)
     {
@@ -1429,7 +1435,7 @@ public static class CliActions
     }
 
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionLogGmaAll"/>
+    ///     Action: <see cref="CliActionDB.LogGmaAll"/>
     /// </remarks>
     public static void LogGmaAll(Options options)
     {
@@ -1438,7 +1444,7 @@ public static class CliActions
     }
 
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.ActionLogStageTrackKeyablesAll"/>
+    ///     Action: <see cref="CliActionDB.LogStageTrackKeyablesAll"/>
     /// </remarks>
     public static void LogStageTrackKeyables(Options options)
         => options.Log(StageTableLogger.LogTrackKeyablesAll);

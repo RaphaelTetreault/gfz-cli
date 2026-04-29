@@ -46,7 +46,7 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionArcPack = new()
+    public static readonly CliAction ArcPack = new()
     {
         Description = "Archive a directory into a .arc file.",
         Action = CliActions.ArcPack,
@@ -60,7 +60,7 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionArcUnpack = new()
+    public static readonly CliAction ArcUnpack = new()
     {
         Description = "Unpack one or more .arc achives into directories of their contents.",
         Action = CliActions.ArcUnpack,
@@ -78,10 +78,10 @@ public static class CliActionDB
 
     #region Asset
 
-    public static readonly CliAction ActionAssetGenerateLibrary = new()
+    public static readonly CliAction AssetGenerateLibrary = new()
     {
         Description = "Create a text-reference-linked GMA and TPL library.",
-        Action = CliActions.GenerateLibrary,
+        Action = CliActions.AssetGenerateLibrary,
         ActionID = CliActionID.asset_generate_library,
         InputIO = CliActionIO.Directory,
         OutputIO = CliActionIO.Directory,
@@ -199,10 +199,10 @@ public static class CliActionDB
 
     #region Camera
 
-    public static readonly CliAction ActionCameraLivecamFromTSV = new()
+    public static readonly CliAction CameraLivecamFromTSV = new()
     {
         Description = "Create livecam BIN file from livecam TSV spreadsheet.",
-        Action = CliActions.LivecamFromTsv,
+        Action = CliActions.CameraLivecamFromTSV,
         ActionID = CliActionID.cam_livecamstage_from_tsv,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -213,10 +213,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionCameraLivecamToTSV = new()
+    public static readonly CliAction CameraLivecamToTSV = new()
     {
         Description = "Create TSV from livecam binary.",
-        Action = CliActions.LivecamToTsv,
+        Action = CliActions.CameraLivecamToTSV,
         ActionID = CliActionID.cam_livecamstage_to_tsv,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -231,7 +231,7 @@ public static class CliActionDB
 
     #region CarData
 
-    public static readonly CliAction ActionCarDataFromTSV = new()
+    public static readonly CliAction CarDataFromTSV = new()
     {
         Description = "Create a CarData.lz file from CarData TSV spreadsheet.",
         Action = CliActions.CarDataFromTsv,
@@ -244,7 +244,7 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionCarDataToTSV = new()
+    public static readonly CliAction CarDataToTSV = new()
     {
         Description = "Create a TSV from CarData binary (compressed or uncompressed).",
         Action = CliActions.CarDataToTsv,
@@ -261,10 +261,10 @@ public static class CliActionDB
 
     #region
 
-    public static readonly CliAction ActionColicoursePatchFog = new()
+    public static readonly CliAction ColicourseEditFog = new()
     {
         Description = "Patch the fog parameters of scenes.",
-        Action = CliActions.PatchFog,
+        Action = CliActions.ColicourseEditFog,
         ActionID = CliActionID.colicourse_patch_fog,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -285,10 +285,10 @@ public static class CliActionDB
             ],
     };
 
-    public static readonly CliAction ActionColicoursePatchObjectRenderFlags = new()
+    public static readonly CliAction ColicourseEditObjectRenderFlags = new()
     {
         Description = "Patch a scene object's render flags by name.",
-        Action = CliActions.PatchSceneObjectDynamicRenderFlags,
+        Action = CliActions.ColicourseEditObjectRenderFlags,
         ActionID = CliActionID.colicourse_patch_object_render_flags,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
@@ -309,7 +309,7 @@ public static class CliActionDB
 
     #region Emblem
 
-    internal static CliAction ActionEmblemGciToImage = new()
+    internal static CliAction EmblemGciToImage = new()
     {
         Description = "Extract images from GCI emblem save files.",
         Action = CliActions.EmblemGciToImage,
@@ -325,7 +325,7 @@ public static class CliActionDB
             ],
     };
 
-    internal static CliAction ActionEmblemGciFromImage = new()
+    internal static CliAction EmblemGciFromImage = new()
     {
         Description = "Create a GCI emblem save file from one image.",
         Action = CliActions.EmblemGciFromImage,
@@ -347,7 +347,7 @@ public static class CliActionDB
             ],
     };
 
-    internal static CliAction ActionEmblemsBinToImages = new()
+    internal static CliAction EmblemsBinToImages = new()
     {
         Description = "Extract images from emblem binary archives.",
         Action = CliActions.EmblemsBinToImages,
@@ -362,7 +362,7 @@ public static class CliActionDB
             ],
     };
 
-    internal static CliAction ActionEmblemsBinFromImages = new()
+    internal static CliAction EmblemsBinFromImages = new()
     {
         Description = "Compile an emblem binary archive from multiple images.",
         Action = CliActions.EmblemsBinFromImages,
@@ -387,10 +387,10 @@ public static class CliActionDB
 
     #region Encode Text
 
-    public static readonly CliAction ActionEncodeBytesToShiftJis = new()
+    public static readonly CliAction EncodeBytesToShiftJis = new()
     {
         Description = "Takes in hex-string of bytes and prints the Shift-JIS encoded version of the value.",
-        Action = CliActions.PrintBytesToShiftJis,
+        Action = CliActions.EncodeBytesToShiftJis,
         ActionID = CliActionID.encode_bytes_to_shift_jis,
         InputIO = CliActionIO.None,
         OutputIO = CliActionIO.None,
@@ -400,10 +400,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionEncodeWindows1252ToShiftJis = new()
+    public static readonly CliAction EncodeWindows1252ToShiftJis = new()
     {
         Description = "Takes in Windows code page 1252 string and prints the Shift-JIS encoded version of the value.",
-        Action = CliActions.PrintWindowsToShiftJis,
+        Action = CliActions.EncodeWindows1252ToShiftJis,
         ActionID = CliActionID.encode_windows_to_shift_jis,
         InputIO = CliActionIO.None,
         OutputIO = CliActionIO.None,
@@ -417,7 +417,7 @@ public static class CliActionDB
 
     #region FMI
 
-    public static readonly CliAction ActionFmiFromPlainText = new()
+    public static readonly CliAction FmiFromPlainText = new()
     {
         Description = "Create a FMI-plaintext file from FMI binary file.",
         Action = CliActions.FmiFromPlainText,
@@ -431,7 +431,7 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionFmiToPlainText = new()
+    public static readonly CliAction FmiToPlainText = new()
     {
         Description = "Create a FMI binary file from FMI-plaintext.",
         Action = CliActions.FmiToPlainText,
@@ -449,7 +449,7 @@ public static class CliActionDB
 
     #region Ghost
 
-    public static readonly CliAction ActionGciExtractGhost = new()
+    public static readonly CliAction GciExtractGhostFromGci = new()
     {
         Description = "Extract raw ghost data from GCI save file.",
         Action = CliActions.ExtractGhostFromGci,
@@ -466,10 +466,10 @@ public static class CliActionDB
 
     #region GMA
 
-    public static readonly CliAction ActionGmaPatchSubmeshRenderFlags = new()
+    public static readonly CliAction GmaEditSubmeshRenderFlags = new()
     {
         Description = "Patch render flags on model submesh.",
-        Action = CliActions.PatchSubmeshRenderFlags,
+        Action = CliActions.GmaEditSubmeshRenderFlags,
         ActionID = CliActionID.gma_patch_submesh_render_flags,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -488,7 +488,7 @@ public static class CliActionDB
 
     #region
 
-    public static readonly CliAction ActionIOGma = new()
+    public static readonly CliAction IOGma = new()
     {
         Description = "Round-trip serialize GMA files.",
         Action = CliActions.InOutGMA,
@@ -502,7 +502,7 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionIOTpl = new()
+    public static readonly CliAction IOTpl = new()
     {
         Description = "Round-trip serialize TPL files.",
         Action = CliActions.InOutTPL,
@@ -516,7 +516,7 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionIOScene = new()
+    public static readonly CliAction IOScene = new()
     {
         Description = "Round-trip serialize COLI_COURSE (scene) files.",
         Action = CliActions.InOutScene,
@@ -531,7 +531,7 @@ public static class CliActionDB
     };
 
     // TODO: probably belongs in ActionsColiCourse
-    public static readonly CliAction ActionIOSceneNullComment = new()
+    public static readonly CliAction IOSceneNullComment = new()
     {
         Description = "Patch COLI_COURSE (scene) to null out auto-generate timestamp comment to help diff-ing.",
         Action = CliActions.IOSceneNullComment,
@@ -549,7 +549,7 @@ public static class CliActionDB
 
     #region ISO
 
-    public static readonly CliAction ActionIsoExtract = new()
+    public static readonly CliAction IsoExtract = new()
     {
         Description = "Extract system data and files from GameCube ISO file.",
         Action = CliActions.IsoExtract,
@@ -592,7 +592,7 @@ public static class CliActionDB
 
     #region Log
 
-    public static readonly CliAction ActionLogStageAll = new()
+    public static readonly CliAction LogStageAll = new()
     {
         Description = "Create all possible analysis .TSVs of COLI_COURSE stage files.",
         Action = CliActions.LogStageAll,
@@ -606,7 +606,7 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionLogGmaAll = new()
+    public static readonly CliAction LogGmaAll = new()
     {
         Description = "Create all possible analysis .TSVs of GMA model files.",
         Action = CliActions.LogGmaAll,
@@ -621,7 +621,7 @@ public static class CliActionDB
     };
 
     // TODO: for each one individually
-    public static readonly CliAction ActionLogStageTrackKeyablesAll = new()
+    public static readonly CliAction LogStageTrackKeyablesAll = new()
     {
         Description = "Create a .tsv log of track keyables from COLI_COURSE stage files.",
         Action = CliActions.LogStageTrackKeyables,
@@ -639,7 +639,7 @@ public static class CliActionDB
 
     #region
 
-    public static readonly CliAction ActionLZCompress = new()
+    public static readonly CliAction LzCompress = new()
     {
         Description = "Compress files into an LZ file.",
         Action = CliActions.LzCompress,
@@ -652,7 +652,7 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionLZDecompress = new()
+    public static readonly CliAction LzDecompress = new()
     {
         Description = "Decompress an LZ file.",
         Action = CliActions.LzDecompress,
@@ -669,10 +669,10 @@ public static class CliActionDB
 
     #region REL
 
-    public static readonly CliAction ActionPatchBgm = new()
+    public static readonly CliAction FzMainRelPatchBgm = new()
     {
         Description = "Set the background music for a specific stage index.",
-        Action = CliActions.PatchSetBgm,
+        Action = CliActions.FzMainRelPatchBgm,
         ActionID = CliActionID.fzrel_set_bgm,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -686,10 +686,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchBgmFinalLap = new()
+    public static readonly CliAction FzMainRelPatchBgmFinalLap = new()
     {
         Description = "Set the final lap background music for a specific stage index.",
-        Action = CliActions.PatchSetBgmFinalLap,
+        Action = CliActions.FzMainRelPatchBgmFinalLap,
         ActionID = CliActionID.fzrel_set_bgmfl,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -703,10 +703,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchBgmBoth = new()
+    public static readonly CliAction FzMainRelPatchBgmBoth = new()
     {
         Description = "Set both default and final lap background music for a specific stage index.",
-        Action = CliActions.PatchSetBgmAndBgmFinalLap,
+        Action = CliActions.FzMainRelPatchBgmBoth,
         ActionID = CliActionID.fzrel_set_bgm_bgmfl,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -721,10 +721,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchSetCourseDifficulty = new()
+    public static readonly CliAction FzMainRelPatchSetCourseDifficulty = new()
     {
         Description = "Set course difficulty star rating for a specific stage.",
-        Action = CliActions.PatchSetCourseDifficulty,
+        Action = CliActions.FzMainRelPatchSetCourseDifficulty,
         ActionID = CliActionID.fzrel_set_course_difficulty,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -738,7 +738,7 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchSetCourseName = new()
+    public static readonly CliAction FzMainRelPatchSetCourseName = new()
     {
         Description = "Set course name for a specific stage index.",
         Action = CliActions.PatchSetCourseName,
@@ -755,10 +755,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchClearAllCourseNames = new()
+    public static readonly CliAction FzMainRelPatchClearAllCourseNames = new()
     {
         Description = "Clear all names in course name table.",
-        Action = CliActions.PatchClearAllCourseNames,
+        Action = CliActions.FzMainRelPatchClearAllCourseNames,
         ActionID = CliActionID.fzrel_clear_all_course_names,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -769,10 +769,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchClearUnusedCourseNames = new()
+    public static readonly CliAction FzMainRelPatchClearUnusedCourseNames = new()
     {
         Description = "Clear all unused course names in course name table.",
-        Action = CliActions.PatchClearUnusedCourseNames,
+        Action = CliActions.FzMainRelPatchClearUnusedCourseNames,
         ActionID = CliActionID.fzrel_clear_unused_course_names,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -783,10 +783,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchSetCourseVenueIndex = new()
+    public static readonly CliAction FzMainRelPatchSetCourseVenueIndex = new()
     {
         Description = "Set course venue for a specific stage index.",
-        Action = CliActions.PatchSetCourseVenueIndex,
+        Action = CliActions.FzMainRelPatchSetCourseVenueIndex,
         ActionID = CliActionID.fzrel_set_course_venue,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -800,10 +800,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchSetVenueName = new()
+    public static readonly CliAction FzMainRelPatchSetVenueName = new()
     {
         Description = "Set venue name for a specific venue index.",
-        Action = CliActions.PatchSetVenueName,
+        Action = CliActions.FzMainRelPatchSetVenueName,
         ActionID = CliActionID.fzrel_set_venue_name,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -817,10 +817,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchClearAllVenueNames = new()
+    public static readonly CliAction FzMainRelPatchClearAllVenueNames = new()
     {
         Description = "Clear all names in venue name table.",
-        Action = CliActions.PatchClearAllVenueNames,
+        Action = CliActions.FzMainRelPatchClearAllVenueNames,
         ActionID = CliActionID.fzrel_clear_all_venue_names,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -831,10 +831,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchClearUnusedVenueNames = new()
+    public static readonly CliAction FzMainRelPatchClearUnusedVenueNames = new()
     {
         Description = "Clear all unused course names in course name table.",
-        Action = CliActions.PatchClearUnusedVenueNames,
+        Action = CliActions.FzMainRelPatchClearUnusedVenueNames,
         ActionID = CliActionID.fzrel_clear_unused_venue_names,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -845,10 +845,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchSetCarData = new()
+    public static readonly CliAction FzMainRelPatchSetCarData = new()
     {
         Description = "Set \"graph console performance settings\" machine stats.",
-        Action = CliActions.PatchSetCarData,
+        Action = CliActions.FzMainRelPatchSetCarData,
         ActionID = CliActionID.fzrel_set_cardata,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -859,10 +859,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchMachineRating = new()
+    public static readonly CliAction FzMainRelPatchMachineRating = new()
     {
         Description = "Set machine letter ratings (SABCDE).",
-        Action = CliActions.PatchMachineRating,
+        Action = CliActions.FzMainRelPatchMachineRating,
         ActionID = CliActionID.fzrel_set_machine_rating,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -876,10 +876,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionPatchMaxSpeed = new()
+    public static readonly CliAction FzMainRelPatchMaxSpeed = new()
     {
         Description = "Patch vehicle max speed.",
-        Action = CliActions.PatchMaxSpeed,
+        Action = CliActions.FzMainRelPatchMaxSpeed,
         ActionID = CliActionID.fzrel_set_max_speed,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -890,10 +890,10 @@ public static class CliActionDB
         OptionalArguments = [CliArgumentDB.Value_MaxSpeed],
     };
 
-    public static readonly CliAction ActionPatchSetCupCourse = new()
+    public static readonly CliAction FzMainRelPatchSetCupCourse = new()
     {
         Description = "Set an individual stage reference in a cup.",
-        Action = CliActions.PatchSetCupCourse,
+        Action = CliActions.FzMainRelPatchSetCupCourse,
         ActionID = CliActionID.fzrel_set_cup_course,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -908,10 +908,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionDecryptLineREL = new()
+    public static readonly CliAction FzMainRelDecryptLineREL = new()
     {
         Description = "Decrypt line__.bin to line__.rel file.", // TODO: rename output
-        Action = CliActions.DecryptLineRel,
+        Action = CliActions.FzMainRelDecryptLineREL,
         ActionID = CliActionID.fzrel_decrypt,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -922,10 +922,10 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
-    public static readonly CliAction ActionEncryptLineREL = new()
+    public static readonly CliAction FzMainRelEncryptLineREL = new()
     {
         Description = "Encrypt line__.rel to line__.bin file.", // TODO: rename output
-        Action = CliActions.EncryptLineRel,
+        Action = CliActions.FzMainRelEncryptLineREL,
         ActionID = CliActionID.fzrel_encrypt,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.None,
@@ -945,73 +945,73 @@ public static class CliActionDB
         ActionList,
         ActionUsage,
         // ARC
-        ActionArcPack,
-        ActionArcUnpack,
+        ArcPack,
+        ArcUnpack,
         // ASSET LIBRARY
-        ActionAssetGenerateLibrary,
+        AssetGenerateLibrary,
         ActionAssetCustomMipmapGxtex,
         ActionAssetGmarefPack,
         ActionAssetImageToGxtex,
         ActionAssetTplrefPack,
         ActionAssetTplUnpack,
         // CAMERA
-        ActionCameraLivecamFromTSV,
-        ActionCameraLivecamToTSV,
+        CameraLivecamFromTSV,
+        CameraLivecamToTSV,
         // CARDATA
-        ActionCarDataFromTSV,
-        ActionCarDataToTSV,
+        CarDataFromTSV,
+        CarDataToTSV,
         // COLICOURSE
-        ActionColicoursePatchFog,
-        ActionColicoursePatchObjectRenderFlags,
+        ColicourseEditFog,
+        ColicourseEditObjectRenderFlags,
         // ENCODE TEXT
-        ActionEncodeBytesToShiftJis,
-        ActionEncodeWindows1252ToShiftJis,
+        EncodeBytesToShiftJis,
+        EncodeWindows1252ToShiftJis,
         // EMBLEM
-        ActionEmblemGciFromImage,
-        ActionEmblemGciToImage,
-        ActionEmblemsBinFromImages,
-        ActionEmblemsBinToImages,
+        EmblemGciFromImage,
+        EmblemGciToImage,
+        EmblemsBinFromImages,
+        EmblemsBinToImages,
         // FMI
-        ActionFmiFromPlainText,
-        ActionFmiToPlainText,
+        FmiFromPlainText,
+        FmiToPlainText,
         // GCI
-        ActionGciExtractGhost,
+        GciExtractGhostFromGci,
         // GMA
-        ActionGmaPatchSubmeshRenderFlags,
+        GmaEditSubmeshRenderFlags,
         // ISO
-        ActionIsoExtract,
+        IsoExtract,
         ActionIsoExtractFiles,
         ActionIsoExtractSystem,
         // IO: IN-OUT TESTS
-        ActionIOGma,
-        ActionIOScene,
-        ActionIOSceneNullComment,
-        ActionIOTpl,
+        IOGma,
+        IOScene,
+        IOSceneNullComment,
+        IOTpl,
         // line__.rel
-        ActionDecryptLineREL,
-        ActionEncryptLineREL,
-        ActionPatchClearAllCourseNames,
-        ActionPatchClearAllVenueNames,
-        ActionPatchClearUnusedCourseNames,
-        ActionPatchClearUnusedVenueNames,
-        ActionPatchBgm,
-        ActionPatchBgmFinalLap,
-        ActionPatchBgmBoth,
-        ActionPatchSetCarData,
-        ActionPatchSetCourseName,
-        ActionPatchSetCupCourse,
-        ActionPatchMachineRating,
-        ActionPatchMaxSpeed,
-        ActionPatchSetCourseDifficulty,
-        ActionPatchSetCourseVenueIndex,
-        ActionPatchSetVenueName,
+        FzMainRelDecryptLineREL,
+        FzMainRelEncryptLineREL,
+        FzMainRelPatchClearAllCourseNames,
+        FzMainRelPatchClearAllVenueNames,
+        FzMainRelPatchClearUnusedCourseNames,
+        FzMainRelPatchClearUnusedVenueNames,
+        FzMainRelPatchBgm,
+        FzMainRelPatchBgmFinalLap,
+        FzMainRelPatchBgmBoth,
+        FzMainRelPatchSetCarData,
+        FzMainRelPatchSetCourseName,
+        FzMainRelPatchSetCupCourse,
+        FzMainRelPatchMachineRating,
+        FzMainRelPatchMaxSpeed,
+        FzMainRelPatchSetCourseDifficulty,
+        FzMainRelPatchSetCourseVenueIndex,
+        FzMainRelPatchSetVenueName,
         // Log
-        ActionLogGmaAll,
-        ActionLogStageAll,
-        ActionLogStageTrackKeyablesAll,
+        LogGmaAll,
+        LogStageAll,
+        LogStageTrackKeyablesAll,
         // LZ
-        ActionLZCompress,
-        ActionLZDecompress,
+        LzCompress,
+        LzDecompress,
     ];
 
 
