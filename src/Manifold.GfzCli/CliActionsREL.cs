@@ -137,6 +137,7 @@ public static class CliActionsREL
     }
     internal static void PatchSetCourseName(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
+        options.AssertNameExists();
         options.AssertCourseIndex();
 
         // Get course names from file. Yes, Shift-JIS only, no Windows1252 support.
@@ -146,7 +147,7 @@ public static class CliActionsREL
         int baseIndex = GetCourseNameBaseIndexByRegion(options.Region);
         int courseIndex = baseIndex + options.CourseIndex * info.CourseNameLanguages;
         // Convert all escape sequences into Unicode characters
-        string editedCourseName = Regex.Unescape(options.Value);
+        string editedCourseName = Regex.Unescape(options.Name);
         // Convert Unicode into Shift-JIS
         courseNames[courseIndex] = new ShiftJisCString(editedCourseName);
 
@@ -154,11 +155,11 @@ public static class CliActionsREL
         int remainingBytes = SetCourseNames(courseNames, info, writer);
 
         // Write out information
-        Terminal.Write($"Set course {options.CourseIndex} name to \"{options.Value}\". ");
+        Terminal.Write($"Set course {options.CourseIndex} name to \"{options.Name}\". ");
         Terminal.Write($"Bytes remaining: {remainingBytes}.");
         Terminal.WriteLine();
     }
-    internal static void PatchClearCourseNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    internal static void PatchClearCourseNames(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         DataBlock[] dataBlocks =
         [
@@ -173,24 +174,30 @@ public static class CliActionsREL
     }
     internal static void PatchClearUnusedCourseNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
-        options.AssertValueExists();
+        options.AssertNameExists();
 
+        // Get all course names
         ShiftJisCString[] courseNames = GetCourseNames(info, reader);
+        // Turn all unused course names into this value.
+        string unusedCourseNameValue = Regex.Unescape(options.Name);
 
+        // Get region index we want to process it, we will skip it
         int skipIndex = GetCourseNameBaseIndexByRegion(options.Region);
         for (int i = 0; i < courseNames.Length; i++)
         {
+            // Get language of this course name
             int languageIndex = i % info.CourseNameLanguages;
+            // If this course name is from the region we are processing, SKIP it
             bool doSkipEntry = languageIndex == skipIndex % info.CourseNameLanguages;
             if (doSkipEntry)
                 continue;
-
-            courseNames[i] = options.Value;
+            // Otherwise this course name is for another region, clear it out.
+            courseNames[i] = unusedCourseNameValue;
         }
-
+        // Assign values to REL
         int remainingBytes = SetCourseNames(courseNames, info, writer);
 
-        Terminal.Write($"Cleared non-region course names. ");
+        Terminal.Write($"Cleared unused {options.GameCode} course names. ");
         Terminal.Write($"Bytes available: {remainingBytes}.");
         Terminal.WriteLine();
     }
@@ -208,8 +215,10 @@ public static class CliActionsREL
     }
     internal static void PatchSetVenueName(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
+        // TODO: update comments here using PatchSetCourseName as reference
+
         // Currently using "venue" as index into table, including JP names.
-        //AssertVenueIndex(options);
+        options.AssertVenueIndex();
 
         //
         ShiftJisCString[] venueNames = GetVenueNames(info, reader);
@@ -217,7 +226,7 @@ public static class CliActionsREL
         //
         int venueIndex = options.VenueIndex.Byte;
         // Convert all escape sequences into Unicode characters
-        string editedVenueName = Regex.Unescape(options.Value);
+        string editedVenueName = Regex.Unescape(options.Name);
         // Convert Unicode into Shift-JIS
         venueNames[venueIndex] = new ShiftJisCString(editedVenueName);
 
@@ -225,7 +234,7 @@ public static class CliActionsREL
         int remainingBytes = SetVenueNames(venueNames, info, writer);
 
         // Write out information
-        Terminal.Write($"Set venue {options.VenueIndex} name to \"{options.Value}\". ");
+        Terminal.Write($"Set venue {options.VenueIndex} name to \"{options.Name}\". ");
         Terminal.Write($"Bytes remaining: {remainingBytes}.");
     }
     internal static void PatchClearVenueNames(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
@@ -242,24 +251,25 @@ public static class CliActionsREL
     }
     internal static void PatchClearUnusedVenueNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
-        //
+        // Get all venue names. English names SHOULD be first. Assert?
+        // Note: all games use the English venue names.
         ShiftJisCString[] venueNames = GetVenueNames(info, reader);
 
-        // Convert all escape sequences into Unicode characters
-        string editedVenueName = Regex.Unescape(options.Value);
+        // Turn all unused venue names into this value.
+        string unusedVenueNameValue = Regex.Unescape(options.Name);
 
         // Clear all unused strings.
         // TODO: assumptions made here.
         int start = info.VenueNamesEnglishOffsets.length;
         for (int i = start; i < venueNames.Length; i++)
-            venueNames[i] = new ShiftJisCString(editedVenueName);
-
-        //
+            venueNames[i] = new ShiftJisCString(unusedVenueNameValue);
+        // Then assign values to REL
         int remainingBytes = SetVenueNames(venueNames, info, writer);
 
         // Write out information
-        Terminal.Write($"Cleared unused venue names. ");
+        Terminal.Write($"Cleared unused {options.GameCode} venue names. ");
         Terminal.Write($"Bytes remaining: {remainingBytes}.");
+        Terminal.WriteLine();
     }
     internal static void PatchSetCupCourse(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
@@ -281,7 +291,6 @@ public static class CliActionsREL
         // Print message
         Course courseOld = CupDB.DefaultCups[(int)cupIndex].Courses[cupCourseIndex];
         Course courseNew = CourseDB.DefaultCourses[courseIndex];
-        //Venue venue = course.Venue;
         string msg =
             $"Set {cupIndex} course {cupCourseIndex} to {courseIndex} {courseNew.DisplayText(info.GameCode)}. " +
             $"{info.GameCode} default: {courseOld.DisplayText(info.GameCode)})";
@@ -388,13 +397,13 @@ public static class CliActionsREL
 
     private static int ClearStringTable(Options options, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)
     {
-        options.AssertValueExists();
+        options.AssertNameExists();
 
         // Set all strings to same value
         int stringCount = strArrPtr.length;
         ShiftJisCString[] strings = new ShiftJisCString[stringCount];
         for (int i = 0; i < strings.Length; i++)
-            strings[i] = options.Value;
+            strings[i] = options.Name;
 
         int remainingBytes = SetStrings(strings, writer, stringTableBaseAddress, strArrPtr, dataBlocks);
         return remainingBytes;
@@ -405,8 +414,10 @@ public static class CliActionsREL
         {
             Region.Japan => 6,
             Region.NorthAmerica => 1,
-            //Region.Europe => 1,
-            //Region.RegionFree => 1,
+            // TODO: either use Language enum for this (eg pick Deutsch then clear all others)
+            //       OR you could return an array of language indexes. EU uses 1-5, but not 6.
+            Region.Europe => throw new NotImplementedException($"Region {region} not yet properly handled."),
+            Region.RegionFree => throw new ArgumentException($"Region {region} is invalid."),
             Region _ => throw new NotImplementedException($"Region: {region}"),
         };
     }

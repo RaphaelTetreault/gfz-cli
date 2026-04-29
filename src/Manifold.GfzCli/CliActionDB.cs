@@ -750,7 +750,7 @@ public static class CliActionDB
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.CourseIndex,
-            CliArgumentDB.Value_CourseName,
+            CliArgumentDB.Name_CourseName,
             ],
         OptionalArguments = [],
     };
@@ -779,7 +779,7 @@ public static class CliActionDB
         IsOutputOptional = true,
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
-        RequiredArguments = [CliArgumentDB.Value_CourseName],
+        RequiredArguments = [CliArgumentDB.Name_CourseName],
         OptionalArguments = [],
     };
 
@@ -812,7 +812,7 @@ public static class CliActionDB
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.VenueIndex,
-            CliArgumentDB.Value_VenueName,
+            CliArgumentDB.Name_VenueName,
             ],
         OptionalArguments = [],
     };
@@ -841,7 +841,7 @@ public static class CliActionDB
         IsOutputOptional = true,
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
-        RequiredArguments = [CliArgumentDB.Value_VenueName],
+        RequiredArguments = [CliArgumentDB.Name_VenueName],
         OptionalArguments = [],
     };
 

@@ -804,6 +804,14 @@ public sealed class Options
         return resizeOptions;
     }
 
+    internal void AssertNameExists()
+    {
+        if (string.IsNullOrEmpty(Name))
+        {
+            string msg = $"Argument --{CliArgumentText.Name} must be set.";
+            throw new ArgumentException(msg);
+        }
+    }
     internal void AssertValueExists()
     {
         if (string.IsNullOrEmpty(Value))

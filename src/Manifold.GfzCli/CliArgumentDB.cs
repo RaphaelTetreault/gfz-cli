@@ -339,9 +339,10 @@ public static class CliArgumentDB
 
     #endregion
 
-    internal static readonly CliArgument Value_EncodeText = Value with
+    internal static readonly CliArgument Name_CourseName = Name with
     {
-        Help = "The text to encode.",
+        Help = "The name of the course.",
+        //Assert = Options.AssertNameExists,
     };
 
     internal static readonly CliArgument Name_GMA = Name with
@@ -349,20 +350,20 @@ public static class CliArgumentDB
         Help = "The model to modify.",
     };
 
+    internal static readonly CliArgument Name_VenueName = Name with
+    {
+        Help = "The name of the venue.",
+    };
+
+    internal static readonly CliArgument Value_EncodeText = Value with
+    {
+        Help = "The text to encode.",
+    };
+
     internal static readonly CliArgument Value_GMA = Value with
     {
         ArgumentType = typeof(GameCube.GFZ.GMA.RenderFlags).Name,
         Help = "The model render flags to set.",
-    };
-
-    internal static readonly CliArgument Value_CourseName = Value with
-    {
-        Help = "The name of the course.",
-    };
-
-    internal static readonly CliArgument Value_VenueName = Value with
-    {
-        Help = "The name of the venue.",
     };
 
     internal static readonly CliArgument Value_CarData = Value with
