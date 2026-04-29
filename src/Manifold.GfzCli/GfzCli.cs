@@ -121,14 +121,8 @@ public static class GfzCli
         bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
         bool hasDefaultSearchPattern = !string.IsNullOrWhiteSpace(gfzCliAction.DefaultSearchPattern);
         if (hasNoSearchPattern && hasDefaultSearchPattern)
-        {
             options.SearchPattern = gfzCliAction.DefaultSearchPattern;
-            string msg =
-                $"Search pattern -{CliArgumentText.Short.SearchPattern} " +
-                $"--{CliArgumentText.SearchPattern} unset. {options.ActionStr} default " +
-                $"\"{gfzCliAction.DefaultSearchPattern}\" set.";
-            Terminal.WriteLine(msg);
-        }
+
         // Invoke action
         gfzCliAction.Action.Invoke(options);
     }
