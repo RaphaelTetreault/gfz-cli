@@ -861,6 +861,16 @@ public static class CliActions
         => CliActionsREL.Patch(options, CliActionsREL.PatchMaxSpeed);
 
     /// <summary>
+    ///     Set max speed cap in fz.main.rel
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="CliActionDB.FzMainRelCommunityMod1"/>
+    /// </remarks>
+    public static void FzMainRelCommunityMod1(Options options)
+        => CliActionsREL.Patch(options, CliActionsREL.PatchGfzCommunityMod1);
+
+
+    /// <summary>
     ///     Decrypt ./enemy/line__.bin into ./fz.main.rel
     /// </summary>
     /// <remarks>

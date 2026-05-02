@@ -51,6 +51,7 @@ public enum CliActionID
     fzrel_set_max_speed,
     fzrel_set_course_venue,
     fzrel_set_venue_name,
+    fzrel_community_mod1,
     gci_extract_ghost,
     gma_patch_submesh_render_flags,
     io_gma,

@@ -268,7 +268,7 @@ public static class CliActionsREL
 
         // Write out information
         Terminal.Write($"Cleared unused {options.GameCode} venue names. ");
-        Terminal.Write($"Bytes remaining: {remainingBytes}.");
+        Terminal.Write($"Bytes available: {remainingBytes}.");
         Terminal.WriteLine();
     }
     internal static void PatchSetCupCourse(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
@@ -292,7 +292,7 @@ public static class CliActionsREL
         Course courseOld = CupDB.DefaultCups[(int)cupIndex].Courses[cupCourseIndex];
         Course courseNew = CourseDB.DefaultCourses[courseIndex];
         string msg =
-            $"Set {cupIndex} course {cupCourseIndex} to {courseIndex} {courseNew.DisplayText(info.GameCode)}. " +
+            $"Set {cupIndex} course {options.CupCourseIndex} to index {courseIndex} {courseNew.DisplayText(info.GameCode)}. " +
             $"{info.GameCode} default: {courseOld.DisplayText(info.GameCode)})";
         Terminal.WriteLine(msg);
 
@@ -393,6 +393,38 @@ public static class CliActionsREL
         Pointer address = info.VehicleMaxSpeedCap9990KmhPtr;
         writer.JumpToAddress(address);
         writer.Write(maxSpeed);
+    }
+    internal static void PatchGfzCommunityMod1(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    {
+        // Make some room for strings
+        options.Name = "---";
+        PatchClearUnusedCourseNames(options, info, reader, writer);
+        PatchClearUnusedVenueNames(options, info, reader, writer);
+        // Make course #6 of these cups a story mode circuit course
+        MutatePatchCourse(options, info, reader, writer, CupIndex.RubyCup, 39, 3);
+        MutatePatchCourse(options, info, reader, writer, CupIndex.SapphireCup, 43, 4);
+        MutatePatchCourse(options, info, reader, writer, CupIndex.EmeraldCup, 44, 5);
+        MutatePatchCourse(options, info, reader, writer, CupIndex.DiamondCup, 45, 6);
+        // Set Story 8 name to "UNDERWORLD"
+        options.Name = VenueDB.Names.Story8.ToUpper();
+        options.VenueIndex = VenueIndex.FireFieldStory;
+        PatchSetVenueName(options, info, reader, writer);
+
+        static void MutatePatchCourse(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer, CupIndex cup, ushort courseIndex, byte difficulty)
+        {
+            // const
+            options.CupCourseIndex = 6;
+            // auto
+            options.Name = CourseDB.DefaultCourses[courseIndex].Name[options.GameCode].Replace("  ", "\\n");
+            // params
+            options.CourseIndex = courseIndex;
+            options.Cup = cup;
+            options.Difficulty = difficulty;
+            // patch
+            PatchSetCupCourse(options, info, reader, writer);
+            PatchSetCourseName(options, info, reader, writer);
+            PatchCourseDifficulty(options, info, reader, writer);
+        }
     }
 
     private static int ClearStringTable(Options options, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)

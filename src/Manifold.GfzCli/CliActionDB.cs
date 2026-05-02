@@ -901,10 +901,24 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            CliArgumentDB.Cup,           // cup to modify
+            CliArgumentDB.Cup,            // cup to modify
             CliArgumentDB.CupCourseIndex, // stage in cup to modify 0-5 (count: 6)
             CliArgumentDB.CourseIndex,    // stage index to use
             ],
+        OptionalArguments = [],
+    };
+
+    public static readonly CliAction FzMainRelCommunityMod1 = new()
+    {
+        Description = "Set an individual stage reference in a cup.",
+        Action = CliActions.FzMainRelCommunityMod1,
+        ActionID = CliActionID.fzrel_community_mod1,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
+        FileProcessArgs = CliFileProcessArg.PRS,
+        RequiredArguments = [],
         OptionalArguments = [],
     };
 
@@ -988,6 +1002,7 @@ public static class CliActionDB
         IOSceneNullComment,
         IOTpl,
         // line__.rel
+        FzMainRelCommunityMod1,
         FzMainRelDecryptLineREL,
         FzMainRelEncryptLineREL,
         FzMainRelPatchClearAllCourseNames,
