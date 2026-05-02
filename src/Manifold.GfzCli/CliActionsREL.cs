@@ -401,16 +401,16 @@ public static class CliActionsREL
         PatchClearUnusedCourseNames(options, info, reader, writer);
         PatchClearUnusedVenueNames(options, info, reader, writer);
         // Make course #6 of these cups a story mode circuit course
-        MutatePatchCourse(options, info, reader, writer, CupIndex.RubyCup, 39, 3);
-        MutatePatchCourse(options, info, reader, writer, CupIndex.SapphireCup, 43, 4);
-        MutatePatchCourse(options, info, reader, writer, CupIndex.EmeraldCup, 44, 5);
-        MutatePatchCourse(options, info, reader, writer, CupIndex.DiamondCup, 45, 6);
+        MutatePatchCourse(CupIndex.RubyCup, 39, 3);
+        MutatePatchCourse(CupIndex.SapphireCup, 43, 4);
+        MutatePatchCourse(CupIndex.EmeraldCup, 44, 5);
+        MutatePatchCourse(CupIndex.DiamondCup, 45, 6);
         // Set Story 8 name to "UNDERWORLD"
         options.Name = VenueDB.Names.Story8.ToUpper();
         options.VenueIndex = VenueIndex.FireFieldStory;
         PatchSetVenueName(options, info, reader, writer);
 
-        static void MutatePatchCourse(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer, CupIndex cup, ushort courseIndex, byte difficulty)
+        void MutatePatchCourse(CupIndex cup, ushort courseIndex, byte difficulty)
         {
             // const
             options.CupCourseIndex = 6;
