@@ -46,24 +46,71 @@ public static class CliActionsREL
         OSPath inputFilePath = new(inputFiles[0]);
         inputFilePath.ThrowIfFileDoesNotExist();
 
+        // check to see if we enabled overwrite. It is necessary to patch.
+        if (!options.OverwriteFiles)
+        {
+            options.OverwriteFiles = true;
+            options.BackupPatchFile = true;
+            string msg = $"-{CliArgumentText.Short.OverwriteFiles} --{CliArgumentText.OverwriteFiles} " +
+                $"and --{CliArgumentText.Backup} automatically set to {true}.";
+            Terminal.WriteLine(msg, GfzCli.NotificationColor);
+        }
+
+        // Copy input to output if needed
+        string newTempFile = CreateBackupFileIfAble(options, inputFilePath);
+
+        // AUTO DETECT
+        bool doEncryptAfterPatch = false;
+        //
+        using var fileRead = File.OpenRead(inputFilePath);
+        bool success = FzMainRelDB.DetectFzMainRel(fileRead, out string md5Hash, out FzMainRel info);
+        fileRead.Close();
+        //
+        if (success)
+        {
+            options.GameCodeStr = info.GameCode.ToString();
+
+            doEncryptAfterPatch = FzMainRelDB.IsFzMainRelEncrypted(md5Hash, info);
+            if (doEncryptAfterPatch)
+            {
+                // Decrypt file inplace
+                CryptLineRelFzMainRel(options, inputFilePath, inputFilePath);
+                Lz.DecompressFile(inputFilePath, inputFilePath, options.OverwriteFiles);
+                string msg = $"{options.ActionStr}: decrypted {inputFilePath} in-place.";
+                Terminal.WriteLine(msg, GfzCli.NotificationColor);
+            }
+        }
+        else
+        {
+            // Open file, set up writer, get action to patch file through writer
+            GameCode gameCode = options.GameCode;
+            info = FzMainRelDB.GetInfo(gameCode);
+        }
+
         // Give user a little hint as to what is going on. Useful for debuging.
         Terminal.Write($"{options.ActionStr}: opening file ");
         Terminal.Write(inputFilePath, GfzCli.FileNameColor);
-        Terminal.Write($" with region {options.Region}. ");
+        Terminal.Write($" for game {options.GameCode}. ");
         Terminal.WriteLine();
 
-        // Open file, set up writer, get action to patch file through writer
-        GameCode gameCode = options.GameCode;
-        FzMainRel fzMainRel = FzMainRelDB.Get(gameCode);
-        // Copy input to output if needed
-        string newTempFile = CreateBackupFileIfAble(options, inputFilePath);
         try
         {
-            // Do patch action
+            //
             using var file = File.Open(inputFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             using var reader = new EndianBinaryReader(file, FzMainRel.Endianness);
             using var writer = new EndianBinaryWriter(file, FzMainRel.Endianness);
-            patchLineRelAction.Invoke(options, fzMainRel, reader, writer);
+            patchLineRelAction.Invoke(options, info, reader, writer);
+            file.Close();
+            //
+            bool fileNameEndsInBIN = inputFilePath.IsOfExtension("bin");
+            if (doEncryptAfterPatch || fileNameEndsInBIN)
+            {
+                // Encrypt file inplace
+                Lz.CompressFile(inputFilePath, inputFilePath, Lz.GfzGameCodeToLzHeaderType(options.GameCode), options.OverwriteFiles);
+                CryptLineRelFzMainRel(options, inputFilePath, inputFilePath);
+                string msg = $"{options.ActionStr}: encrypted {inputFilePath} in-place.";
+                Terminal.WriteLine(msg, GfzCli.NotificationColor);
+            }
         }
         catch
         {
@@ -82,19 +129,21 @@ public static class CliActionsREL
     /// <param name="inputFile"></param>
     /// <param name="outputFile"></param>
     /// <param name="extension"></param>
-    internal static void CryptLineRelFzMainRel(Options options, OSPath inputFile, OSPath outputFile, string extension)
+    internal static void CryptLineRelFzMainRel(Options options, OSPath inputFile, OSPath outputFile)
     {
-        // Remove extension
-        outputFile.SetExtensions(extension);
-
         // Write file
         if (CanWriteFileAndPrintResult(options, outputFile))
         {
             GameCode gameCode = options.GameCode;
             FzMainCrypter fzMainCrypter = FzMainCrypterDB.Get(gameCode);
+
             using var stream = fzMainCrypter.Crypt(inputFile);
+            byte[] data = stream.ToArray();
+            stream.Close();
+
             using var writer = File.Create(outputFile);
-            writer.Write(stream.ToArray());
+            writer.Write(data);
+            writer.Close();
         }
     }
 
@@ -216,7 +265,7 @@ public static class CliActionsREL
             // Get language of this course name
             int languageIndex = (i - info.CourseNameLocalizationsStartIndex + 1) % info.CourseNameLanguages;
             // If this course name is from the region we are processing, SKIP it
-            bool doContinue = false; 
+            bool doContinue = false;
             foreach (byte skipIndex in skipIndexes)
             {
                 bool doSkipEntry = languageIndex == skipIndex % info.CourseNameLanguages;

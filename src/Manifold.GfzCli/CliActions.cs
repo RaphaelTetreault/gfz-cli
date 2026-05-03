@@ -12,6 +12,7 @@ using GameCube.GFZ.FMI;
 using GameCube.GFZ.GameData;
 using GameCube.GFZ.Ghosts;
 using GameCube.GFZ.GMA;
+using GameCube.GFZ.REL;
 using GameCube.GFZ.Stage;
 using GameCube.GFZ.TPL;
 using GameCube.GX.Texture;
@@ -891,14 +892,34 @@ public static class CliActions
                 return;
             }
 
+            // AUTO DETECT
+            using Stream file = File.OpenRead(inputFile);
+            if (FzMainRelDB.DetectFzMainRel(file, out string md5Hash, out FzMainRel info))
+            {
+                options.GameCodeStr = info.GameCode.ToString();
+                string msg = $"{options.ActionStr}: Auto detected file for {info.GameCode}. " +
+                    $"Required options set accordingly.";
+                Terminal.WriteLine(msg);
+            }
+            file.Close();
+
             // Step 1: Decrypt line__.bin into line__.rel.lz
-            CliActionsREL.CryptLineRelFzMainRel(options, inputFile, outputFile, "rel.lz");
+            if (string.IsNullOrWhiteSpace(outputFile))
+                outputFile = inputFile.Copy();
+            outputFile.SetExtensions("rel.lz");
+            CliActionsREL.CryptLineRelFzMainRel(options, inputFile, outputFile);
 
             // Step 2: Get path to line__.rel.lz
+            string regionChar = options.GameCode switch
+            {
+                GameCode.GFZE01 => "e",
+                GameCode.GFZJ01 => "",
+                GameCode.GFZP01 => "p",
+                _ => throw new NotImplementedException(),
+            };
             OSPath lzInputFile = new(outputFile);
-            lzInputFile.SetExtensions("rel.lz");
             OSPath lzOutputFile = new(lzInputFile);
-            lzOutputFile.SetExtensions("rel");
+            lzOutputFile.SetFileNameAndExtensions($"fz{regionChar}.main.rel");
 
             // Step 3: Decompress line__.rel.lz into line__.rel
             try
@@ -943,18 +964,29 @@ public static class CliActions
                 return;
             }
 
-            // Step 1: Compress line__.rel to line__.rel.lz
+            // AUTO DETECT
+            using Stream file = File.OpenRead(inputFile);
+            if (FzMainRelDB.DetectFzMainRel(file, out string md5Hash, out FzMainRel info))
+            {
+                options.GameCodeStr = info.GameCode.ToString();
+                string msg = $"{options.ActionStr}: Auto detected file for {info.GameCode}. " +
+                    $"Required options set accordingly.";
+                Terminal.WriteLine(msg);
+            }
+            file.Close();
+
+            // Step 1: Compress fz?.main.rel to fz?.main.rel.lz
             outputFile.PushExtension("lz");
             if (CanWriteFileAndPrintResult(options, outputFile))
                 Lz.CompressFile(inputFile, outputFile, Lz.GfzGameCodeToLzHeaderType(options.GameCode), options.OverwriteFiles);
 
-            // Step 2: Get path to line__.rel.lz
+            // Step 2: Get path to fz?.main.rel.lz
             OSPath lzInputFile = new(outputFile);
             OSPath binOutputFile = new(lzInputFile);
-            binOutputFile.SetExtensions("bin");
+            binOutputFile.SetFileNameAndExtensions("line__.bin");
 
             // Step 3: Encrypt line_rel.lz into line__.bin
-            CliActionsREL.CryptLineRelFzMainRel(options, lzInputFile, binOutputFile, "bin");
+            CliActionsREL.CryptLineRelFzMainRel(options, lzInputFile, binOutputFile);
         }
     }
 
