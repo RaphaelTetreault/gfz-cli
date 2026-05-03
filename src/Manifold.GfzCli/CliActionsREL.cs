@@ -141,18 +141,42 @@ public static class CliActionsREL
         options.AssertCourseIndex();
 
         // Get course names from file. Yes, Shift-JIS only, no Windows1252 support.
-        ShiftJisCString[] courseNames = GetCourseNames(info, reader);
+        ShiftJisCString[] allCourseNames = GetCourseNames(info, reader);
 
-        // Modify course name
-        int baseIndex = GetCourseNameBaseIndexByRegion(options.Region);
-        int courseIndex = baseIndex + options.CourseIndex * info.CourseNameLanguages;
         // Convert all escape sequences into Unicode characters
-        string editedCourseName = Regex.Unescape(options.Name);
-        // Convert Unicode into Shift-JIS
-        courseNames[courseIndex] = new ShiftJisCString(editedCourseName);
+        ShiftJisCString editedCourseName = Regex.Unescape(options.Name);
+
+        // Handle PAL versus other regions
+        if (options.Region == Region.Europe)
+        {
+            // GOAL:
+            //  For PAL, first 111 entries are ENG course names linearly.
+            //  The next 666 are interleaved region.
+            //  These 6 pointers share the string. Make sure they are all the same.
+
+            // Set the string in the lower 111 linear ENG section.
+            allCourseNames[options.CourseIndex] = new ShiftJisCString(editedCourseName);
+
+            // The next 666 are interleaved region.
+            int baseIndex = info.CourseNameLocalizationsStartIndex;
+            // 5 languages in this order: ENG, GER, FRE, SPA, ITA
+            for (int languageIndex = 0; languageIndex < 5; languageIndex++)
+            {
+                int courseIndex = baseIndex + languageIndex + options.CourseIndex * info.CourseNameLanguages;
+                allCourseNames[courseIndex] = editedCourseName;
+            }
+        }
+        else
+        {
+            // The 666 values are interleaved region ENG, GER, FRE, SPA, ITA, JPN
+            // Only 1 language, so [0] gets it. Then we compute the name index.
+            int baseIndex = GetCourseNameBaseIndexByRegion(options.Region)[0];
+            int courseIndex = baseIndex + options.CourseIndex * info.CourseNameLanguages;
+            allCourseNames[courseIndex] = editedCourseName;
+        }
 
         // Set course names
-        int remainingBytes = SetCourseNames(courseNames, info, writer);
+        int remainingBytes = SetCourseNames(allCourseNames, info, writer);
 
         // Write out information
         Terminal.Write($"Set course {options.CourseIndex} name to \"{options.Name}\". ");
@@ -174,6 +198,7 @@ public static class CliActionsREL
     }
     internal static void PatchClearUnusedCourseNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
+        //PatchClearCourseNames(options, info, reader, writer);
         options.AssertNameExists();
 
         // Get all course names
@@ -182,14 +207,26 @@ public static class CliActionsREL
         string unusedCourseNameValue = Regex.Unescape(options.Name);
 
         // Get region index we want to process it, we will skip it
-        int skipIndex = GetCourseNameBaseIndexByRegion(options.Region);
-        for (int i = 0; i < courseNames.Length; i++)
+        byte[] skipIndexes = GetCourseNameBaseIndexByRegion(options.Region);
+        // E/J: Start at index 1. Index 0 is the true "---" string, leave it be!
+        // P: First 111 course names are ENG copy (seemingly), followed by localization interleave.
+        //    These 111 entries are the same references to ENG text from localization interleave.
+        for (int i = info.CourseNameLocalizationsStartIndex; i < courseNames.Length; i++)
         {
             // Get language of this course name
-            int languageIndex = i % info.CourseNameLanguages;
+            int languageIndex = (i - info.CourseNameLocalizationsStartIndex + 1) % info.CourseNameLanguages;
             // If this course name is from the region we are processing, SKIP it
-            bool doSkipEntry = languageIndex == skipIndex % info.CourseNameLanguages;
-            if (doSkipEntry)
+            bool doContinue = false; 
+            foreach (byte skipIndex in skipIndexes)
+            {
+                bool doSkipEntry = languageIndex == skipIndex % info.CourseNameLanguages;
+                if (doSkipEntry)
+                {
+                    doContinue = true;
+                    break;
+                }
+            }
+            if (doContinue)
                 continue;
             // Otherwise this course name is for another region, clear it out.
             courseNames[i] = unusedCourseNameValue;
@@ -440,15 +477,14 @@ public static class CliActionsREL
         int remainingBytes = SetStrings(strings, writer, stringTableBaseAddress, strArrPtr, dataBlocks);
         return remainingBytes;
     }
-    private static int GetCourseNameBaseIndexByRegion(Region region)
+    private static byte[] GetCourseNameBaseIndexByRegion(Region region)
     {
+        /// <see cref="Language"/> for more details
         return region switch
         {
-            Region.Japan => 6,
-            Region.NorthAmerica => 1,
-            // TODO: either use Language enum for this (eg pick Deutsch then clear all others)
-            //       OR you could return an array of language indexes. EU uses 1-5, but not 6.
-            Region.Europe => throw new NotImplementedException($"Region {region} not yet properly handled."),
+            Region.Japan => [6],
+            Region.NorthAmerica => [1],
+            Region.Europe => [1, 2, 3, 4, 5],
             Region.RegionFree => throw new ArgumentException($"Region {region} is invalid."),
             Region _ => throw new NotImplementedException($"Region: {region}"),
         };
