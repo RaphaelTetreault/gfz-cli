@@ -124,12 +124,12 @@ public static class GfzCli
             options.SearchPattern = gfzCliAction.DefaultSearchPattern;
 
         // Run assertions
-        foreach (var optionalArgument in gfzCliAction.OptionalArguments)
-            if (optionalArgument.Assert is not null)
-                optionalArgument.Assert(options);
-        foreach (var requiredArgument in gfzCliAction.OptionalArguments)
+        foreach (CliArgument requiredArgument in gfzCliAction.OptionalArguments)
             if (requiredArgument.Assert is not null)
                 requiredArgument.Assert(options);
+        foreach (CliArgument optionalArgument in gfzCliAction.OptionalArguments)
+            if (optionalArgument.Assert is not null)
+                optionalArgument.Assert(options);
 
         // Invoke action
         gfzCliAction.Action.Invoke(options);
