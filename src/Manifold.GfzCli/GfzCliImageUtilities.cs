@@ -1,4 +1,5 @@
 ﻿using GameCube.GX.Texture;
+using Manifold.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
