@@ -33,6 +33,7 @@ public static class CliArgumentDB
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "OVERRIDE NOT SET.",
+        Assert = CliArgumentAsserts.AssertNameExists,
     };
 
     private static readonly CliArgument Value = new()
@@ -41,6 +42,7 @@ public static class CliArgumentDB
         ArgumentType = typeof(string).Name,
         ArgumentDefault = null,
         Help = "OVERRIDE NOT SET.",
+        Assert = CliArgumentAsserts.AssertValueExists,
     };
 
     #endregion
@@ -279,6 +281,7 @@ public static class CliArgumentDB
         ArgumentType = typeof(byte).Name,
         ArgumentDefault = (byte)GameCube.GFZ.GameData.BgmIndex.metadata_invalid_id_end, // default to invalid state
         Help = "The background music index.",
+        Assert = CliArgumentAsserts.AssertBgmIndex,
     };
 
     internal static readonly CliArgument BgmFinalLapIndex = new()
@@ -287,6 +290,7 @@ public static class CliArgumentDB
         ArgumentType = typeof(byte).Name,
         ArgumentDefault = (byte)GameCube.GFZ.GameData.BgmIndex.metadata_invalid_id_end, // default to invalid state
         Help = "The final lap background music index.",
+        Assert = CliArgumentAsserts.AssertBgmFinalLapIndex,
     };
 
     internal static readonly CliArgument CourseIndex = new()
@@ -295,6 +299,12 @@ public static class CliArgumentDB
         ArgumentType = typeof(ushort).Name,
         ArgumentDefault = (ushort)0xFFFF, // 0xFFFF is unassigned stage index
         Help = "The index of the stage (0-110).",
+        Assert = CliArgumentAsserts.AssertCourseIndex,
+    };
+
+    internal static readonly CliArgument CourseIndexAllow0xFFFF = CourseIndex with
+    {
+        Assert = CliArgumentAsserts.AssertCourseIndexAllow0xFFFF,
     };
 
     internal static readonly CliArgument Cup = new()
@@ -303,6 +313,7 @@ public static class CliArgumentDB
         ArgumentType = typeof(CupIndex).Name,
         ArgumentDefault = (CupIndex)255, // default to invalid state
         Help = "Grand prix cup index (0-10).",
+        Assert = CliArgumentAsserts.AssertCup,
     };
 
     internal static readonly CliArgument CupCourseIndex = new()
@@ -311,22 +322,25 @@ public static class CliArgumentDB
         ArgumentType = typeof(ushort).Name,
         ArgumentDefault = Course.UnassignedCourseIndex,
         Help = "The index of the cup course to modify (0-5).",
+        Assert = CliArgumentAsserts.AssertCupCourseIndex,
     };
 
-    internal static readonly CliArgument Difficulty = new()
+    internal static readonly CliArgument DifficultyStars = new()
     {
         ArgumentName = CliArgumentText.Difficulty,
         ArgumentType = typeof(byte).Name,
         ArgumentDefault = (byte)0xFF, // default to invalid state
         Help = "Stage difficulty rating in number of stars ★. Max 24 visible.",
+        Assert = CliArgumentAsserts.AssertDifficultyStars,
     };
 
     internal static readonly CliArgument PilotNumber = new()
     {
         ArgumentName = CliArgumentText.PilotNumber,
-        ArgumentType = $"{typeof(byte).Name}|{typeof(PilotName).Name}",
-        ArgumentDefault = (PilotName)0xFF, // default to invalid state
+        ArgumentType = $"{typeof(byte).Name}",
+        ArgumentDefault = (byte)0xFF, // default to invalid state
         Help = "Vehicle pilot number (0-40).", // face-value, not internal
+        Assert = CliArgumentAsserts.AssertPilotNumber,
     };
 
     internal static readonly CliArgument VenueIndex = new()
@@ -335,6 +349,7 @@ public static class CliArgumentDB
         ArgumentType = $"{typeof(byte).Name}|{typeof(VenueIndex).Name}",
         ArgumentDefault = (VenueIndex)0xFF, // default to invalid state
         Help = "A stage's venue index (0-20).",
+        Assert = CliArgumentAsserts.AssertVenueIndex,
     };
 
     #endregion

@@ -518,13 +518,13 @@ public sealed class Options
     ///     The stage's star difficulty rating.
     /// </summary>
     [Option(CliArgumentText.Difficulty, Hidden = true)]
-    public byte Difficulty { get; set; } = CliArgumentDB.Difficulty.Default<byte>();
+    public byte Difficulty { get; set; } = CliArgumentDB.DifficultyStars.Default<byte>();
 
     /// <summary>
     ///     A pilot's racing number.
     /// </summary>
     [Option(CliArgumentText.PilotNumber, Hidden = true)]
-    public PilotName PilotNumber { get; set; } = CliArgumentDB.PilotNumber.Default<PilotName>();
+    public byte PilotNumber { get; set; } = CliArgumentDB.PilotNumber.Default<byte>();
 
     /// <summary>
     ///     A stage's venue index.
@@ -802,86 +802,6 @@ public sealed class Options
         resizeOptions.Size = GetResizeSize(defaultX, defaultY);
 
         return resizeOptions;
-    }
-
-    internal void AssertNameExists()
-    {
-        if (string.IsNullOrEmpty(Name))
-        {
-            string msg = $"Argument --{CliArgumentText.Name} must be set.";
-            throw new ArgumentException(msg);
-        }
-    }
-    internal void AssertValueExists()
-    {
-        if (string.IsNullOrEmpty(Value))
-        {
-            string msg = $"Argument --{CliArgumentText.Value} must be set.";
-            throw new ArgumentException(msg);
-        }
-    }
-    internal void AssertCup()
-    {
-        // Validate index
-        if (!Enum.IsDefined(Cup))
-        {
-            string msg =
-                $"Argument --{CliArgumentText.Cup} " +
-                $"must be a valid cup value.";
-            throw new ArgumentException(msg);
-        }
-    }
-    internal void AssertCupCourseIndex()
-    {
-        // Validate index
-        const int minCupCourseIndex = 1;
-        if (CupCourseIndex < minCupCourseIndex || CupCourseIndex > GameDataConsts.MaxCupCourseIndex)
-        {
-            string msg =
-                $"Argument --{nameof(CliArgumentText.CupCourseIndex)} " +
-                $"must be a value in the range {minCupCourseIndex}-{GameDataConsts.MaxCupCourseIndex}.";
-            throw new ArgumentException(msg);
-        }
-    }
-    internal void AssertCourseIndex()
-    {
-        // Validate index
-        if (CourseIndex > GameDataConsts.MaxCourseIndex)
-        {
-            string msg = $"Argument --{CliArgumentText.CourseIndex} must be a value in the range 0-{GameDataConsts.MaxCourseIndex}.";
-            throw new ArgumentException(msg);
-        }
-    }
-    internal void AssertCourseIndexAllow0xFFFF()
-    {
-        // Validate index
-        bool isValidIndex = CourseIndex <= GameDataConsts.MaxCourseIndex;
-        bool isValidException = CourseIndex == Course.UnassignedCourseIndex;
-        bool isInvalid = !(isValidIndex || isValidException);
-        if (isInvalid)
-        {
-            string msg =
-                $"Argument --{CliArgumentText.CourseIndex} " +
-                $"must be a value in the range 0-{GameDataConsts.MaxCourseIndex} or exactly {Course.UnassignedCourseIndex}.";
-            throw new Exception(msg);
-        }
-    }
-    internal void AssertVenueIndex()
-    {
-        // Validate index
-        if (VenueIndex.Byte > GameDataConsts.MaxVenueIndex)
-        {
-            string msg = $"Argument --{CliArgumentText.VenueIndex} must be a value in the range 0-{GameDataConsts.MaxVenueIndex}.";
-            throw new ArgumentException(msg);
-        }
-    }
-    internal void AssertDifficultyStars()
-    {
-        if (Difficulty > GameDataConsts.MaxDifficultyStars)
-        {
-            string msg = $"Argument --{CliArgumentText.Difficulty} must a value in the range 0-{GameDataConsts.MaxDifficultyStars}.";
-            throw new ArgumentException(msg);
-        }
     }
 
     public void InOutFiles<TFile>()

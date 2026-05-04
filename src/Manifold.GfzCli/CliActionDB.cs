@@ -733,7 +733,7 @@ public static class CliActionDB
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
             CliArgumentDB.CourseIndex,
-            CliArgumentDB.Difficulty,
+            CliArgumentDB.DifficultyStars,
             ],
         OptionalArguments = [],
     };
@@ -901,9 +901,9 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [
-            CliArgumentDB.Cup,            // cup to modify
-            CliArgumentDB.CupCourseIndex, // stage in cup to modify 0-5 (count: 6)
-            CliArgumentDB.CourseIndex,    // stage index to use
+            CliArgumentDB.Cup,                    // cup to modify
+            CliArgumentDB.CupCourseIndex,         // stage in cup to modify 0-5 (count: 6)
+            CliArgumentDB.CourseIndexAllow0xFFFF, // stage index to use
             ],
         OptionalArguments = [],
     };

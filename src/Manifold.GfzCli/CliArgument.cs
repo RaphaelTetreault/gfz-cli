@@ -29,6 +29,11 @@ public readonly record struct CliArgument()
     public required string Help { get; init; }
 
     /// <summary>
+    ///     Argument assertion
+    /// </summary>
+    public Action<Options>? Assert { get; init; }
+
+    /// <summary>
     ///     Get <see cref="ArgumentDefault"/> formatted as string for display in
     ///     help/usage window.
     /// </summary>

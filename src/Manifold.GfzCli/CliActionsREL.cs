@@ -166,7 +166,7 @@ public static class CliActionsREL
             loopPointDataOffset = BgmMusicDB.GetBgmLoopPointOffset(bgmflIndex),
         };
         // Patch
-        FzMainRelUtility.PatchStageBgmFinalLap(writer, info, courseIndex, bgmfl);
+        FzMainRelUtility.PatchCourseBgmFinalLap(writer, info, courseIndex, bgmfl);
         Terminal.Write($"Set course {courseIndex} final lap bgm to {bgmflIndex} ({(BgmIndex)bgmflIndex}).");
     }
     internal static void PatchBgmBoth(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
@@ -176,9 +176,6 @@ public static class CliActionsREL
     }
     internal static void PatchCourseDifficulty(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        options.AssertDifficultyStars();
-        options.AssertCourseIndex();
-
         Offset offset = options.CourseIndex;
         Pointer pointer = info.CourseDifficulty.Address + offset;
         writer.JumpToAddress(pointer);
@@ -186,9 +183,6 @@ public static class CliActionsREL
     }
     internal static void PatchSetCourseName(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
-        options.AssertNameExists();
-        options.AssertCourseIndex();
-
         // Get course names from file. Yes, Shift-JIS only, no Windows1252 support.
         ShiftJisCString[] allCourseNames = GetCourseNames(info, reader);
 
@@ -247,9 +241,6 @@ public static class CliActionsREL
     }
     internal static void PatchClearUnusedCourseNames(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
-        //PatchClearCourseNames(options, info, reader, writer);
-        options.AssertNameExists();
-
         // Get all course names
         ShiftJisCString[] courseNames = GetCourseNames(info, reader);
         // Turn all unused course names into this value.
@@ -289,9 +280,6 @@ public static class CliActionsREL
     }
     internal static void PatchSetCourseVenueIndex(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        options.AssertCourseIndex();
-        options.AssertVenueIndex();
-
         Offset offset = options.CourseIndex;
         Pointer pointer = info.CourseVenueIndex.Address + offset;
         writer.JumpToAddress(pointer);
@@ -302,9 +290,6 @@ public static class CliActionsREL
     internal static void PatchSetVenueName(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         // TODO: update comments here using PatchSetCourseName as reference
-
-        // Currently using "venue" as index into table, including JP names.
-        options.AssertVenueIndex();
 
         //
         ShiftJisCString[] venueNames = GetVenueNames(info, reader);
@@ -359,11 +344,6 @@ public static class CliActionsREL
     }
     internal static void PatchSetCupCourse(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        // Assertions
-        options.AssertCupCourseIndex();
-        options.AssertCup();
-        options.AssertCourseIndexAllow0xFFFF();
-
         // Get needed data
         CupIndex cupIndex = options.Cup;                          // Which cup?
         byte cupCourseIndex = (byte)(options.CupCourseIndex - 1); // What "slot" in cup?
@@ -451,12 +431,10 @@ public static class CliActionsREL
     }
     internal static void PatchMachineRating(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        options.AssertValueExists();
-
         string rating = options.Value;
         VehicleRating vehicleRating = VehicleRating.FromString(rating);
 
-        int pilotIndex = GameDataMap.GetPilotIndexFromPilotNumber(options.PilotNumber.Byte);
+        int pilotIndex = GameDataMap.GetPilotIndexFromPilotNumber(options.PilotNumber);
         Pointer address = info.MachineLetterRatingsPtr + VehicleRating.Size * pilotIndex;
         writer.JumpToAddress(address);
         writer.Write(vehicleRating);
@@ -470,8 +448,6 @@ public static class CliActionsREL
     /// </remarks>
     internal static void PatchMaxSpeed(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
-        options.AssertValueExists();
-
         double maxSpeed = string.IsNullOrEmpty(options.Value)
             ? CliArgumentDB.Value_MaxSpeed.Default<float>() // default max value (should be positive infinity)
             : double.Parse(options.Value);                     // user defined value
@@ -515,8 +491,6 @@ public static class CliActionsREL
 
     private static int ClearStringTable(Options options, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)
     {
-        options.AssertNameExists();
-
         // Set all strings to same value
         int stringCount = strArrPtr.length;
         ShiftJisCString[] strings = new ShiftJisCString[stringCount];

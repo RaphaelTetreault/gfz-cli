@@ -1274,7 +1274,6 @@ public static class CliActions
     /// </remarks>
     public static void EncodeBytesToShiftJis(Options options)
     {
-        options.AssertValueExists();
         string result = TextEncoding.ConvertBytesToEncoding(options.Value, TextEncoding.ShiftJIS);
         Terminal.WriteLine(result);
     }
@@ -1288,7 +1287,6 @@ public static class CliActions
     /// </remarks>
     public static void EncodeWindows1252ToShiftJis(Options options)
     {
-        options.AssertValueExists();
         string result = TextEncoding.ConvertEncodingToEncoding(options.Value, TextEncoding.Windows1252, TextEncoding.ShiftJIS);
         Terminal.WriteLine(result);
     }
