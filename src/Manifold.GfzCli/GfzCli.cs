@@ -136,15 +136,6 @@ public static class GfzCli
     }
 
     /// <summary>
-    ///     Force print --help text.
-    /// </summary>
-    public static void PrintHelp()
-    {
-        // Force show --help menu
-        Parser.Default.ParseArguments<Options>(HelpArg).WithParsed(ExecuteAction);
-    }
-
-    /// <summary>
     ///     Print action description and parameters in <paramref name="options"/>.
     /// </summary>
     /// <param name="options">The action and related arguments.</param>
