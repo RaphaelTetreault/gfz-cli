@@ -684,13 +684,6 @@ public static class CliActions
                 // Make backup if desired, then open file
                 CreateBackupFileIfAble(options, inputPath);
 
-                // Open stream to modify file
-                const FileMode fileMode = FileMode.OpenOrCreate;
-                const FileAccess fileAccess = FileAccess.ReadWrite;
-                const FileShare fileShare = FileShare.ReadWrite;
-                using var colicourseFile = File.Open(inputPath, fileMode, fileAccess, fileShare);
-                using EndianBinaryWriter writer = new(colicourseFile, SceneFile.endianness);
-
                 // Read data in new stream
                 Scene scene = new SceneFile(inputPath);
 
@@ -710,6 +703,13 @@ public static class CliActions
                         dynamicSceneObject.ObjectRenderFlags0x00 &= ~renderFlags;
                     else // set flags on
                         dynamicSceneObject.ObjectRenderFlags0x00 |= renderFlags;
+
+                    // Open stream to modify file
+                    const FileMode fileMode = FileMode.OpenOrCreate;
+                    const FileAccess fileAccess = FileAccess.ReadWrite;
+                    const FileShare fileShare = FileShare.ReadWrite;
+                    using var colicourseFile = File.Open(inputPath, fileMode, fileAccess, fileShare);
+                    using EndianBinaryWriter writer = new(colicourseFile, SceneFile.endianness);
 
                     Pointer ptr = dynamicSceneObject.GetPointer();
                     writer.JumpToAddress(ptr);
