@@ -1447,7 +1447,7 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="CliActionDB.IOGma"/>
     /// </remarks>
-    public static void InOutGMA(Options options) => options.InOutFiles<GmaFile>();
+    public static void InOutGMA(Options options) => options.InOutFiles<GmaFile>(options);
 
     /// <summary>
     /// 
@@ -1455,7 +1455,7 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="CliActionDB.IOTpl"/>
     /// </remarks>
-    public static void InOutTPL(Options options) => options.InOutFiles<TplFile>();
+    public static void InOutTPL(Options options) => options.InOutFiles<TplFile>(options);
 
     /// <summary>
     /// 
@@ -1463,7 +1463,7 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="CliActionDB.IOScene"/>
     /// </remarks>
-    public static void InOutScene(Options options) => options.InOutFiles<SceneFile>();
+    public static void InOutScene(Options options) => options.InOutFiles<SceneFile>(options);
 
     /// <remarks>
     ///     Action: <see cref="CliActionDB.LogStageAll"/>

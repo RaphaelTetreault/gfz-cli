@@ -804,13 +804,12 @@ public sealed class Options
         return resizeOptions;
     }
 
-    public void InOutFiles<TFile>()
+    public void InOutFiles<TFile>(Options options)
         where TFile : IBinaryFileType, IBinarySerializable, new()
     {
-        string typeName = typeof(TFile).Name;
-        Terminal.WriteLine($"IO {typeName}: in-out re-serialization of file(s).");
+        Terminal.WriteLine($"{options.ActionStr}: in-out re-serialization of file(s).");
         int taskCount = ParallelizeFileInFileOutTasks(this, InOutFile);
-        Terminal.WriteLine($"IO {typeName}: in-out re-serialization of {taskCount} file{Plural(taskCount)}.");
+        Terminal.WriteLine($"{options.ActionStr}: in-out re-serialization of {taskCount} file{Plural(taskCount)}.");
 
         static void InOutFile(Options options, OSPath inputFile, OSPath outputFile)
         {
