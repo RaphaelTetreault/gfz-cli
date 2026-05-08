@@ -1210,7 +1210,7 @@ public static class CliActions
         static void ImageToEmblemGci(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Output file
-            outputFile.SetFileName($"{options.GameCode}-emblem-{inputFile.FileName}");
+            outputFile.SetFileName($"{options.GameCode}-emblem-fze-{inputFile.FileName}");
             outputFile.SetExtensions(EmblemGCI.extension);
 
             // Write file
