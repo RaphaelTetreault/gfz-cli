@@ -1,5 +1,7 @@
 echo on
 
+set progname="gfz-cli"
+
 :: Delete old builds folder and contents
 :: /s	Deletes a directory tree (the specified directory and all its subdirectories, including all files).
 :: /q	Specifies quiet mode. Does not prompt for confirmation when deleting a directory tree.
@@ -11,7 +13,7 @@ pushd .
 cd src/gfz-cli
 
 :: Build all targets
-dotnet publish -r win-x64   -o ../../builds/win-x64
+dotnet publish -r win-x64   -o ../../builds/%progname%-win-x64
 
 :: Go back to root folder
 popd
@@ -20,7 +22,7 @@ popd
 pushd .
 cd builds/
 
-tar.exe -a -c -f	win-x64.zip	win-x64
+tar.exe -a -c -f	%progname%-win-x64.zip	%progname%-win-x64
 
 popd
 
