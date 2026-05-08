@@ -835,18 +835,29 @@ public sealed class Options
         }
     }
 
-    // TODO: this should be in Manifold.IO with TableLogger but OSPath needs to be move there, too!
-    public void Log<TBinarySerializable>(TableLogger.LogFuncFile<TBinarySerializable> logFuncFile)
+
+    public void LogSingle<TBinarySerializable>(TableLogger.LogFuncFile<TBinarySerializable> logFuncFile)
+        where TBinarySerializable : IBinarySerializable, IBinaryFileType, new()
+        => LogMultiple([logFuncFile]);
+
+    public void LogMultiple<TBinarySerializable>(TableLogger.LogFuncFile<TBinarySerializable>[] logFuncFiles)
         where TBinarySerializable : IBinarySerializable, IBinaryFileType, new()
     {
-        // Create output path for analysis
-        OSPath outputFile = new(OutputPath);
-        outputFile.SetFileNameAndExtensions(logFuncFile.FileName);
-        if (CanWriteFileAndPrintResult(this, outputFile))
+        // Load all ONLY ONCE
+        IEnumerable<TBinarySerializable> serializables = BinarySerializableIO.LoadFile<TBinarySerializable>(GetInputFiles(this));
+        TBinarySerializable[] array = [..serializables];
+
+        // Iterate over values
+        foreach (var logFuncFile in logFuncFiles)
         {
-            EnsureDirectoriesExist(outputFile);
-            IEnumerable<TBinarySerializable> serializable = BinarySerializableIO.LoadFile<TBinarySerializable>(GetInputFiles(this));
-            logFuncFile.AnalysisFunction.Invoke(serializable.ToArray(), outputFile);
+            // Create output path for analysis
+            OSPath outputFile = new(OutputPath);
+            outputFile.SetFileNameAndExtensions(logFuncFile.FileName);
+            if (CanWriteFileAndPrintResult(this, outputFile))
+            {
+                EnsureDirectoriesExist(outputFile);
+                logFuncFile.AnalysisFunction.Invoke(array, outputFile);
+            }
         }
     }
 

@@ -1470,8 +1470,9 @@ public static class CliActions
     /// </remarks>
     public static void LogStageAll(Options options)
     {
-        foreach (TableLogger.LogFuncFile<SceneFile> logFuncFile in StageTableLogger.AllLogFunctionFiles)
-            options.Log(logFuncFile);
+        //foreach (TableLogger.LogFuncFile<SceneFile> logFuncFile in StageTableLogger.AllLogFunctionFiles)
+        //    options.Log(logFuncFile);
+        options.LogMultiple(StageTableLogger.AllLogFunctionFiles);
     }
 
     /// <remarks>
@@ -1479,13 +1480,16 @@ public static class CliActions
     /// </remarks>
     public static void LogGmaAll(Options options)
     {
-        foreach (TableLogger.LogFuncFile<GmaFile> logFuncFile in GmaTableLogger.AllLogFunctionFiles)
-            options.Log(logFuncFile);
+        //foreach (TableLogger.LogFuncFile<GmaFile> logFuncFile in GmaTableLogger.AllLogFunctionFiles)
+        //    options.Log(logFuncFile);
+        options.LogMultiple(GmaTableLogger.AllLogFunctionFiles);
     }
 
     /// <remarks>
     ///     Action: <see cref="CliActionDB.LogStageTrackKeyablesAll"/>
     /// </remarks>
     public static void LogStageTrackKeyables(Options options)
-        => options.Log(StageTableLogger.LogTrackKeyablesAll);
+    { 
+        options.LogSingle(StageTableLogger.LogTrackKeyablesAll);
+    }
 }
