@@ -52,8 +52,8 @@ public static class CliArgumentDB
     public static readonly CliArgument TextureFormat = new()
     {
         ArgumentName = CliArgumentText.TextureFormat,
-        ArgumentType = typeof(TextureFormat).Name,
-        ArgumentDefault = GameCube.GX.Texture.TextureFormat.CMPR,
+        ArgumentType = typeof(DirectTextureFormat).Name,
+        ArgumentDefault = DirectTextureFormat.CMPR,
         Help = "GameCube GX direct-color texture format to use. " +
            "(I4, I8, IA4, IA8, RGB565, RGB5A3, RGBA8, CMPR)",
     };

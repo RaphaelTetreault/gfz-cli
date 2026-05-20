@@ -174,7 +174,7 @@ public sealed class Options
     ///     
     /// </summary>
     [Option(CliArgumentText.TextureFormat, Hidden = true)]
-    public TextureFormat TextureFormat { get; set; } = CliArgumentDB.TextureFormat.Default<TextureFormat>();
+    public DirectTextureFormat TextureFormat { get; set; } = CliArgumentDB.TextureFormat.Default<DirectTextureFormat>();
 
     /// <summary>
     ///     
@@ -814,7 +814,8 @@ public sealed class Options
         static void InOutFile(Options options, OSPath inputFile, OSPath outputFile)
         {
             // Mutate name
-            outputFile.SetFileName(outputFile.FileName + "_copy");
+            //outputFile.SetFileName(outputFile.FileName + "_copy");
+            outputFile.SetFileName(outputFile.FileName);
 
             // Read in file, write out file
             bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
@@ -827,8 +828,14 @@ public sealed class Options
                 using EndianBinaryReader reader = new(File.OpenRead(inputFile), source.Endianness);
                 reader.Read(ref source);
 
+                // Lemme hack something up
+                if (source is SceneFile scene)
+                    scene.Value.SerializeVerbose = true;
+
                 // Out
                 using EndianBinaryWriter writer = new(File.OpenWrite(outputFile), source.Endianness);
+                writer.Write(source);
+                writer.JumpToZero();
                 writer.Write(source);
             }
         }

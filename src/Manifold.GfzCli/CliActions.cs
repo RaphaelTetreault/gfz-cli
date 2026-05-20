@@ -1231,7 +1231,7 @@ public static class CliActions
                 // Construct data for GCI
                 Texture emblemTexture = ImageAsCenteredTexture(emblemImage, Emblem.Width, Emblem.Height);
                 Texture iconTexture = ImageAsCenteredTexture(iconImage, Icons.IconWidth, Icons.IconHeight);
-                Texture banner = new(Banner.BannerWidth, Banner.BannerHeight, Banner.DirectFormat);
+                Texture banner = new(Banner.BannerWidth, Banner.BannerHeight);
                 // todo: blank banner! ^^^
                 GfzGciMetadata metadata = GfzGciMetadataDB.Emblem;
                 metadata.Banner.Texture = banner;

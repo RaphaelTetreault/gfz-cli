@@ -760,10 +760,10 @@ public static class CliActionsAsset
     {
         // Break outy some data
         var description = textureSequence.Description;
-        var textureEncoding = TextureEncoding.GetEncoding(description.TextureFormat);
+        var textureEncoding = DirectEncoding.MapFormatToEncoding[description.TextureFormat];
 
         // Get main texture if CMPR, will need to fix texture
-        bool isCMPR = description.TextureFormat == TextureFormat.CMPR;
+        bool isCMPR = description.TextureFormat == DirectTextureFormat.CMPR;
         Image<Rgba32> mainTexture = isCMPR
             ? TextureToImage(textureSequence.Elements[0].Texture)
             : new Image<Rgba32>(1, 1);

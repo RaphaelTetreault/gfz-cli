@@ -44,9 +44,9 @@ public static class GfzCliImageUtilities
     /// <returns>
     ///     New instance of <see cref="Texture"/> from <see cref="Image"/> data.
     /// </returns>
-    public static Texture ImageToTexture(Image<Rgba32> image, TextureFormat textureFormat = TextureFormat.RGBA8)
+    public static Texture ImageToTexture(Image<Rgba32> image)
     {
-        var texture = new Texture(image.Width, image.Height, textureFormat);
+        var texture = new Texture(image.Width, image.Height);
 
         for (int y = 0; y < image.Height; y++)
         {
@@ -97,8 +97,8 @@ public static class GfzCliImageUtilities
             throw new ArgumentException(msg);
         }
 
-        Texture imageAsTexture = ImageToTexture(image, TextureFormat.RGB5A3);
-        Texture centeredTexture = new(boundsX, boundsY, TextureColor.Clear, TextureFormat.RGB5A3);
+        Texture imageAsTexture = ImageToTexture(image);
+        Texture centeredTexture = new(boundsX, boundsY, TextureColor.Clear);
 
         // Copy image texture to emblem center
         // Only works if image is less than bounds!
