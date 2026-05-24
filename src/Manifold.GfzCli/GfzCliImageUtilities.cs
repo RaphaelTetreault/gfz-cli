@@ -28,7 +28,7 @@ public static class GfzCliImageUtilities
         {
             for (int x = 0; x < texture.Width; x++)
             {
-                TextureColor pixel = texture[x, y];
+                TexturePixel pixel = texture[x, y];
                 image[x, y] = new Rgba32(pixel.r, pixel.g, pixel.b, pixel.a);
             }
         }
@@ -53,7 +53,7 @@ public static class GfzCliImageUtilities
             for (int x = 0; x < image.Width; x++)
             {
                 Rgba32 pixel = image[x, y];
-                texture[x, y] = new TextureColor(pixel.R, pixel.G, pixel.B, pixel.A);
+                texture[x, y] = new TexturePixel(pixel.R, pixel.G, pixel.B, pixel.A);
             }
         }
 
@@ -98,7 +98,7 @@ public static class GfzCliImageUtilities
         }
 
         Texture imageAsTexture = ImageToTexture(image);
-        Texture centeredTexture = new(boundsX, boundsY, TextureColor.Clear);
+        Texture centeredTexture = new(boundsX, boundsY, TexturePixel.Clear);
 
         // Copy image texture to emblem center
         // Only works if image is less than bounds!
