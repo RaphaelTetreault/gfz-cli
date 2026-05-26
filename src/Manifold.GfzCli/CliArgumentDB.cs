@@ -1,4 +1,6 @@
-﻿using GameCube.GFZ.CarData;
+﻿using GameCube.DiskImage;
+using GameCube.GFZ;
+using GameCube.GFZ.CarData;
 using GameCube.GFZ.GameData;
 using GameCube.GFZ.Stage;
 using GameCube.GX.Texture;
@@ -9,15 +11,59 @@ namespace Manifold.GfzCli;
 
 public static class CliArgumentDB
 {
-    #region General
+    #region Defaults
+
+    internal static readonly CliArgument GameCode = new()
+    {
+        ArgumentName = $"{CliArgumentText.GameCode} -{CliArgumentText.Short.GameCode}",
+        ArgumentType = typeof(GameCode).Name,
+        ArgumentDefault = GameCube.GFZ.GameCode.GFZJ01,
+        Help = "Game code (GFZJ01, GFZE01, GFZP01, GGGE6E)",
+    };
+
+    internal static readonly CliArgument GameFileFormat = new()
+    {
+        ArgumentName = $"{CliArgumentText.GameFileFormat} -{CliArgumentText.Short.GameFileFormat}",
+        ArgumentType = typeof(GameFileFormat).Name,
+        ArgumentDefault = "OVERRIDE NOT SET.",
+        Help = "Game file format to serialize for (AX, GX) = (GGG, GFZ).",
+    };
+
+    internal static readonly CliArgument Region = new()
+    {
+        ArgumentName = $"{CliArgumentText.Region} -{CliArgumentText.Short.Region}",
+        ArgumentType = typeof(Region).Name,
+        ArgumentDefault = "OVERRIDE NOT SET.",
+        Help = "Game region (E, J, P).",
+    };
+
+    internal static readonly CliArgument OverwriteFiles = new()
+    {
+        ArgumentName = $"{CliArgumentText.OverwriteFiles} -{CliArgumentText.Short.OverwriteFiles}",
+        ArgumentType = typeof(bool).Name,
+        ArgumentDefault = false,
+        Help = "Whether or not output overwrites files.",
+    };
 
     internal static readonly CliArgument SearchPattern = new()
     {
         ArgumentName = $"{CliArgumentText.SearchPattern} -{CliArgumentText.Short.SearchPattern}",
         ArgumentType = typeof(string).Name,
-        ArgumentDefault = "OVERRIDE NOT SET.",
+        ArgumentDefault = "SEARCH PATTERN OVERRIDE NOT SET.",
         Help = "Defeault search pattern.",
     };
+
+    internal static readonly CliArgument SearchSubdirectories = new()
+    {
+        ArgumentName = $"{CliArgumentText.SearchSubdirectories} -{CliArgumentText.Short.SearchSubdirectories}",
+        ArgumentType = typeof(bool).Name,
+        ArgumentDefault = false,
+        Help = "Whether or not to search",
+    };
+
+    #endregion
+
+    #region General
 
     internal static readonly CliArgument Backup = new()
     {
@@ -229,11 +275,14 @@ public static class CliArgumentDB
         ArgumentType = typeof(ObjectRenderFlags0x00).Name,
         ArgumentDefault = null,
         Help = "The render flag value in decimal to apply.",
+        // TODO: assert value is enum match
     };
 
     internal static readonly CliArgument Name_ColiCourse = Name with
     {
         Help = "The name of the target.",
+        //Assert = Options.AssertNameExists,
+        // but also that name is shift-jis compatible. eg ö does not map into shift-jis.
     };
 
     internal static readonly CliArgument FogViewRangeNear = new()
@@ -258,7 +307,7 @@ public static class CliArgumentDB
         Help = "The GX fog interpolation mode.",
     };
 
-    internal static readonly CliArgument Color  = _Color  with { ArgumentName = CliArgumentText.Color };
+    internal static readonly CliArgument Color = _Color with { ArgumentName = CliArgumentText.Color };
     internal static readonly CliArgument ColorR = _ColorR with { ArgumentName = CliArgumentText.ColorR };
     internal static readonly CliArgument ColorG = _ColorR with { ArgumentName = CliArgumentText.ColorG };
     internal static readonly CliArgument ColorB = _ColorR with { ArgumentName = CliArgumentText.ColorB };
@@ -363,27 +412,32 @@ public static class CliArgumentDB
     internal static readonly CliArgument Name_GMA = Name with
     {
         Help = "The model to modify.",
+        //Assert = Options.AssertNameExists,
     };
 
     internal static readonly CliArgument Name_VenueName = Name with
     {
         Help = "The name of the venue.",
+        //Assert = Options.AssertNameExists,
     };
 
     internal static readonly CliArgument Value_EncodeText = Value with
     {
         Help = "The text to encode.",
+        // TODO: assert values? 
     };
 
     internal static readonly CliArgument Value_GMA = Value with
     {
         ArgumentType = typeof(GameCube.GFZ.GMA.RenderFlags).Name,
         Help = "The model render flags to set.",
+        // TODO: assert value is enum match
     };
 
     internal static readonly CliArgument Value_CarData = Value with
     {
         Help = "The file path to cardata (compressed, decompressed, or tsv).",
+        // TODO: assert file path? or is that implicit?
     };
 
     internal static readonly CliArgument Value_MaxSpeed = Value with
@@ -391,11 +445,13 @@ public static class CliArgumentDB
         ArgumentType = typeof(float).Name,
         ArgumentDefault = float.PositiveInfinity,
         Help = "Vehicle max speed cap.",
+        // TODO: assert value is int / float
     };
 
     internal static readonly CliArgument Value_MachineRating = Value with
     {
         Help = "The machine rating as 3 consecutive numbers. Letters SABCDE maps to 012345. 123 is ABC.",
+        // TODO: assert value is above range
     };
 
 }

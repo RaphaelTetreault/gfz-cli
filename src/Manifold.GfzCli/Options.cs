@@ -80,7 +80,7 @@ public sealed class Options
     /// <summary>
     ///     Input string for enum. Which game to serialize.
     /// </summary>
-    [Option(CliArgumentText.Short.SerializationFormat, CliArgumentText.SerializationFormat, HelpText = CliArgumentText.Help.SerializationFormat)]
+    [Option(CliArgumentText.Short.GameFileFormat, CliArgumentText.GameFileFormat, HelpText = CliArgumentText.Help.GameFileFormat)]
     public string GameCodeGame
     {
         set
@@ -129,7 +129,7 @@ public sealed class Options
     /// <summary>
     ///     Which game to serialize.
     /// </summary>
-    public SerializeFormat SerializeFormat => GameCodeToSerializeFormat(GameCode);
+    public GameFileFormat GameFileFormat => GameCodeToSerializeFormat(GameCode);
 
     /// <summary>
     ///     <see cref="GameCodeFlags"/> Region flags.
@@ -681,15 +681,15 @@ public sealed class Options
     /// <param name="gameCode"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    private static SerializeFormat GameCodeToSerializeFormat(GameCode gameCode)
+    private static GameFileFormat GameCodeToSerializeFormat(GameCode gameCode)
     {
         return gameCode switch
         {
             GameCode.GFZE01 or
             GameCode.GFZJ01 or
-            GameCode.GFZP01 => SerializeFormat.GX,
+            GameCode.GFZP01 => GameFileFormat.GX,
             GameCode.GFZJ8P or
-            GameCode.GGGE6E => SerializeFormat.AX,
+            GameCode.GGGE6E => GameFileFormat.AX,
             _ => throw new NotImplementedException($"Unhandled {nameof(GameCode)} {gameCode}."),
         };
     }
@@ -722,8 +722,8 @@ public sealed class Options
         Terminal.Write($"{GameCode}  ");
         Terminal.Write($"{nameof(Region)}:", GfzCli.FileNameColor);
         Terminal.Write($"{Region}  ");
-        Terminal.Write($"{nameof(SerializeFormat)}:", GfzCli.FileNameColor);
-        Terminal.Write($"{SerializeFormat} \n");
+        Terminal.Write($"{nameof(GameFileFormat)}:", GfzCli.FileNameColor);
+        Terminal.Write($"{GameFileFormat} \n");
     }
 
     /// <summary>

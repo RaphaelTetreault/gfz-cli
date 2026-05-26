@@ -146,7 +146,7 @@ public static class CliActions
     public static void CarDataToTsv(Options options)
     {
         // Stop if desired file format is AX
-        bool isInvalidFormat = options.SerializeFormat == GameCube.GFZ.Stage.SerializeFormat.AX;
+        bool isInvalidFormat = options.GameFileFormat == GameCube.GFZ.Stage.GameFileFormat.AX;
         if (isInvalidFormat)
         {
             string msg = $"Cannot convert F-Zero AX cardata file '{options.InputPath}'";
@@ -191,7 +191,7 @@ public static class CliActions
     public static void CarDataFromTsv(Options options)
     {
         // Stop if desired file format is AX
-        bool isInvalidFormat = options.SerializeFormat == GameCube.GFZ.Stage.SerializeFormat.AX;
+        bool isInvalidFormat = options.GameFileFormat == GameCube.GFZ.Stage.GameFileFormat.AX;
         if (isInvalidFormat)
         {
             string msg = $"Cannot convert '{options.InputPath}' for use in F-Zero AX.";

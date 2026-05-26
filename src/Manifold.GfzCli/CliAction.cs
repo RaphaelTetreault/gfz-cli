@@ -173,7 +173,7 @@ public readonly record struct CliAction()
                 case CliFileProcessArg.P: builder.Append(CliArgumentText.Short.SearchPattern); break;
                 case CliFileProcessArg.S: builder.Append(CliArgumentText.Short.SearchSubdirectories); break;
                 case CliFileProcessArg.G: builder.Append(CliArgumentText.Short.GameCode); break;
-                case CliFileProcessArg.F: builder.Append(CliArgumentText.Short.SerializationFormat); break;
+                case CliFileProcessArg.F: builder.Append(CliArgumentText.Short.GameFileFormat); break;
                 case CliFileProcessArg.R: builder.Append(CliArgumentText.Short.Region); break;
                 default: throw new NotImplementedException(fileProcessArg.ToString());
             }

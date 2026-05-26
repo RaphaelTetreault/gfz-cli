@@ -11,7 +11,7 @@ public static class CliArgumentText
     public const string OverwriteFiles = "overwrite";
     public const string SearchPattern = "search-pattern";
     public const string SearchSubdirectories = "search-subdirs";
-    public const string SerializationFormat = "format";
+    public const string GameFileFormat = "format";
     public const string Region = "region";
     //public const string Verbose = "verbose";
 
@@ -71,7 +71,7 @@ public static class CliArgumentText
         public const char OverwriteFiles = 'o';
         public const char SearchPattern = 'p';
         public const char SearchSubdirectories = 's';
-        public const char SerializationFormat = 'f';
+        public const char GameFileFormat = 'f';
         public const char Region = 'r';
     }
 
@@ -103,8 +103,8 @@ public static class CliArgumentText
         public const string SearchSubdirectories =
             "Whether or not to search subdirectories for files when using the directory mode.\n" +
             "Enabled only when called.";
-        public const string SerializationFormat =
-            "The format used when serializing.\n" +
+        public const string GameFileFormat =
+            "The game file format used when serializing.\n" +
             "Options: \"ax\", \"gx\".\n" +
             "Set to \"gx\" by default.";
         public const string Region =
