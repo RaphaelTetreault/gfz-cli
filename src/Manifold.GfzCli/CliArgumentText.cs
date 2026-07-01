@@ -42,11 +42,12 @@ public static class CliArgumentText
     public const string ImageFormat = "image-format"; // six labors
 
     // Stage
-    public const string Color = "color";
-    public const string ColorR = "color-r";
-    public const string ColorG = "color-g";
-    public const string ColorB = "color-b";
-    public const string ColorA = "color-a";
+    //public const string Color = "color";
+    //public const string ColorR = "color-r";
+    //public const string ColorG = "color-g";
+    //public const string ColorB = "color-b";
+    //public const string ColorA = "color-a";
+    public const string FogColor = "fog-color";
     public const string FogInterpolationMode = "fog-interpolation-mode";
     public const string FogViewRangeNear = "fog-view-range-near";
     public const string FogViewRangeFar = "fog-view-range-far";

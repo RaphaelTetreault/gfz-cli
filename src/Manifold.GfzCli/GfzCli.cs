@@ -121,7 +121,7 @@ public static class GfzCli
         bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
         bool hasDefaultSearchPattern = !string.IsNullOrWhiteSpace(gfzCliAction.DefaultSearchPattern);
         if (hasNoSearchPattern && hasDefaultSearchPattern)
-            options.SearchPattern = gfzCliAction.DefaultSearchPattern;
+            options = options with { SearchPattern = gfzCliAction.DefaultSearchPattern };
 
         // Run assertions
         foreach (CliArgument requiredArgument in gfzCliAction.OptionalArguments)

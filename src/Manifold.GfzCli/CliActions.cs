@@ -532,11 +532,6 @@ public static class CliActions
     /// </remarks>
     public static void LzDecompress(Options options)
     {
-        // Force checking for .LZ only IF there is no defined search pattern
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-            options.SearchPattern = $"*.lz";
-
         Terminal.WriteLine($"{options.ActionStr}: decompressing file(s).");
         int taskCount = ParallelizeFileInFileOutTasks(options, LzDecompressFile);
         Terminal.WriteLine($"{options.ActionStr}: done decompressing {taskCount} file{Plural(taskCount)}.");
@@ -585,8 +580,13 @@ public static class CliActions
         {
             inputPath.ThrowIfFileDoesNotExist();
 
+            // TODO: at base call
+            if (!options.OverwriteFiles)
+                throw new ArgumentException("Ptach function must be able to overwrite output");
+            // or
+            //options = options with { OverwriteFiles = true };
+
             // Patch COLI_COURSE file
-            options.OverwriteFiles = true;
             bool doWriteFile = CheckWillFileWrite(options, inputPath, out FileResult result);
             PrintFileWriteResult(result, inputPath, options.ActionStr);
             if (doWriteFile)
@@ -616,16 +616,14 @@ public static class CliActions
                     ? scene.fog.FogRange.far
                     : options.FogViewRangeFar;
                 // Get color value from either components or single color
-                byte r = options.UnionColorR;
-                byte g = options.UnionColorG;
-                byte b = options.UnionColorB;
-
+                var fogColor = options.Color.ToPixel<RgbaVector>();
+                var fogColorVector3 = fogColor.ToVector4().AsVector3();
                 // Create new fog
                 Fog fog = new()
                 {
                     Interpolation = fogInterpolationMode,
-                    FogRange = new ViewRange(fogViewRangeNear, fogViewRangeFar),
-                    ColorRGB = new Vector3(r, g, b) / 255f,
+                    FogRange = options.FogViewRange,
+                    ColorRGB = fogColorVector3,
                 };
                 // Create curves from values
                 FogCurves fogCurves = fog.ToFogCurves();
@@ -881,8 +879,11 @@ public static class CliActions
     {
         ParallelizeFileInFileOutTasks(options, DecryptLine);
 
-        static void DecryptLine(Options options, OSPath inputFile, OSPath outputFile)
+        static void DecryptLine(Options inputOptions, OSPath inputFile, OSPath outputFile)
         {
+            // Get "mutable" copy
+            Options options = inputOptions;
+
             // Skip processing for AX
             if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFlags.AX)
             {
@@ -896,7 +897,7 @@ public static class CliActions
             using Stream file = File.OpenRead(inputFile);
             if (FzMainRelDB.DetectFzMainRel(file, out string md5Hash, out FzMainRel info))
             {
-                options.GameCodeStr = info.GameCode.ToString();
+                options = options with { GameCode = info.GameCode };
                 string msg = $"{options.ActionStr}: Auto detected file for {info.GameCode}. " +
                     $"Required options set accordingly.";
                 Terminal.WriteLine(msg);
@@ -953,8 +954,11 @@ public static class CliActions
     {
         ParallelizeFileInFileOutTasks(options, EncryptLine);
 
-        static void EncryptLine(Options options, OSPath inputFile, OSPath outputFile)
+        static void EncryptLine(Options inputOptions, OSPath inputFile, OSPath outputFile)
         {
+            // Get "mutable" copy
+            Options options = inputOptions;
+
             // Skip processing for AX
             if (GameCodeUtility.GetGame(options.GameCode) == GameCodeFlags.AX)
             {
@@ -968,7 +972,7 @@ public static class CliActions
             using Stream file = File.OpenRead(inputFile);
             if (FzMainRelDB.DetectFzMainRel(file, out string md5Hash, out FzMainRel info))
             {
-                options.GameCodeStr = info.GameCode.ToString();
+                options = options with { GameCode = info.GameCode };
                 string msg = $"{options.ActionStr}: Auto detected file for {info.GameCode}. " +
                     $"Required options set accordingly.";
                 Terminal.WriteLine(msg);
@@ -1069,6 +1073,7 @@ public static class CliActions
             // Return emblems to caller
             return emblems;
         }
+
         static Emblem ImageToEmblemBin(Options options, OSPath inputFile)
         {
             // Make sure some option parameters are appropriate
@@ -1083,7 +1088,7 @@ public static class CliActions
 
             // Load image, get resize parameters, resize image
             Image<Rgba32> image = Image.Load<Rgba32>(inputFile);
-            ResizeOptions resizeOptions = options.GetEmblemResizeOptions(image.Width, image.Height, Emblem.Width, Emblem.Height, options.EmblemHasAlphaBorder);
+            ResizeOptions resizeOptions = options.GetEmblemResizeOptions(image.Width, image.Height, Emblem.Width, Emblem.Height);
             image.Mutate(ipc => ipc.Resize(resizeOptions));
             // Create emblem, convert image to texture
             Emblem emblem = new()
@@ -1115,11 +1120,6 @@ public static class CliActions
     /// </remarks>
     public static void EmblemGciToImage(Options options)
     {
-        // In this case where no search pattern is set, find *FZE*.GCI (emblem) files.
-        bool hasNoSearchPattern = string.IsNullOrEmpty(options.SearchPattern);
-        if (hasNoSearchPattern)
-            options.SearchPattern = "*fze*.dat.gci";
-
         Terminal.WriteLine("Emblem: converting emblems from GCI files.");
         int gciCount = ParallelizeFileInFileOutTasks(options, EmblemGciToImage);
         Terminal.WriteLine($"Emblem: done converting {gciCount} file{Plural(gciCount)}.");
@@ -1222,8 +1222,9 @@ public static class CliActions
                 Image<Rgba32> emblemImage = Image.Load<Rgba32>(inputFile);
                 Image<Rgba32> iconImage = emblemImage.Clone();
                 // Get resize targets
-                ResizeOptions emblemResize = options.GetEmblemResizeOptions(emblemImage.Width, emblemImage.Height, Emblem.Width, Emblem.Height, options.EmblemHasAlphaBorder);
-                ResizeOptions iconResize = options.GetEmblemResizeOptions(emblemImage.Width, emblemImage.Height, Icons.IconWidth, Icons.IconHeight, false);
+                ResizeOptions emblemResize = options.GetEmblemResizeOptions(emblemImage.Width, emblemImage.Height, Emblem.Width, Emblem.Height);
+                options = options with { EmblemHasAlphaBorder = false }; // disable for icon
+                ResizeOptions iconResize = options.GetEmblemResizeOptions(emblemImage.Width, emblemImage.Height, Icons.IconWidth, Icons.IconHeight);
                 // Resize images
                 emblemImage.Mutate(ipc => ipc.Resize(emblemResize));
                 iconImage.Mutate(ipc => ipc.Resize(iconResize));
@@ -1447,7 +1448,7 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="CliActionDB.IOGma"/>
     /// </remarks>
-    public static void InOutGMA(Options options) => options.InOutFiles<GmaFile>(options);
+    public static void InOutGMA(Options options) => InOutFiles<GmaFile>(options);
 
     /// <summary>
     /// 
@@ -1455,7 +1456,7 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="CliActionDB.IOTpl"/>
     /// </remarks>
-    public static void InOutTPL(Options options) => options.InOutFiles<TplFile>(options);
+    public static void InOutTPL(Options options) => InOutFiles<TplFile>(options);
 
     /// <summary>
     /// 
@@ -1463,7 +1464,7 @@ public static class CliActions
     /// <remarks>
     ///     Action: <see cref="CliActionDB.IOScene"/>
     /// </remarks>
-    public static void InOutScene(Options options) => options.InOutFiles<SceneFile>(options);
+    public static void InOutScene(Options options) => InOutFiles<SceneFile>(options);
 
     /// <remarks>
     ///     Action: <see cref="CliActionDB.LogStageAll"/>
@@ -1472,7 +1473,7 @@ public static class CliActions
     {
         //foreach (TableLogger.LogFuncFile<SceneFile> logFuncFile in StageTableLogger.AllLogFunctionFiles)
         //    options.Log(logFuncFile);
-        options.LogMultiple(StageTableLogger.AllLogFunctionFiles);
+        LogMultiple(options, StageTableLogger.AllLogFunctionFiles);
     }
 
     /// <remarks>
@@ -1482,7 +1483,7 @@ public static class CliActions
     {
         //foreach (TableLogger.LogFuncFile<GmaFile> logFuncFile in GmaTableLogger.AllLogFunctionFiles)
         //    options.Log(logFuncFile);
-        options.LogMultiple(GmaTableLogger.AllLogFunctionFiles);
+        LogMultiple(options, GmaTableLogger.AllLogFunctionFiles);
     }
 
     /// <remarks>
@@ -1490,6 +1491,73 @@ public static class CliActions
     /// </remarks>
     public static void LogStageTrackKeyables(Options options)
     { 
-        options.LogSingle(StageTableLogger.LogTrackKeyablesAll);
+        LogSingle(options, StageTableLogger.LogTrackKeyablesAll);
     }
+
+    #region Log Functions
+
+    public static void InOutFiles<TFile>(Options options)
+    where TFile : IBinaryFileType, IBinarySerializable, new()
+    {
+        Terminal.WriteLine($"{options.ActionStr}: in-out re-serialization of file(s).");
+        int taskCount = ParallelizeFileInFileOutTasks(options, InOutFile);
+        Terminal.WriteLine($"{options.ActionStr}: in-out re-serialization of {taskCount} file{Plural(taskCount)}.");
+
+        static void InOutFile(Options options, OSPath inputFile, OSPath outputFile)
+        {
+            // Mutate name
+            //outputFile.SetFileName(outputFile.FileName + "_copy");
+            outputFile.SetFileName(outputFile.FileName);
+
+            // Read in file, write out file
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
+            PrintFileWriteResult(result, outputFile, options.ActionStr);
+            if (doWriteFile)
+            {
+                // In
+                TFile source = new();
+                source.FileName = inputFile.FileName;
+                using EndianBinaryReader reader = new(File.OpenRead(inputFile), source.Endianness);
+                reader.Read(ref source);
+
+                // Lemme hack something up
+                if (source is SceneFile scene)
+                    scene.Value.SerializeVerbose = true;
+
+                // Out
+                using EndianBinaryWriter writer = new(File.OpenWrite(outputFile), source.Endianness);
+                writer.Write(source);
+                writer.JumpToZero();
+                writer.Write(source);
+            }
+        }
+    }
+
+    public static void LogSingle<TBinarySerializable>(Options options, TableLogger.LogFuncFile<TBinarySerializable> logFuncFile)
+        where TBinarySerializable : IBinarySerializable, IBinaryFileType, new()
+        => LogMultiple(options, [logFuncFile]);
+
+    public static void LogMultiple<TBinarySerializable>(Options options, TableLogger.LogFuncFile<TBinarySerializable>[] logFuncFiles)
+        where TBinarySerializable : IBinarySerializable, IBinaryFileType, new()
+    {
+        // Load all ONLY ONCE
+        IEnumerable<TBinarySerializable> serializables = BinarySerializableIO.LoadFile<TBinarySerializable>(GetInputFiles(options));
+        TBinarySerializable[] array = [.. serializables];
+
+        // Iterate over values
+        foreach (var logFuncFile in logFuncFiles)
+        {
+            // Create output path for analysis
+            OSPath outputFile = new(options.OutputPath);
+            outputFile.SetFileNameAndExtensions(logFuncFile.FileName);
+            if (CanWriteFileAndPrintResult(options, outputFile))
+            {
+                EnsureDirectoriesExist(outputFile);
+                logFuncFile.AnalysisFunction.Invoke(array, outputFile);
+            }
+        }
+    }
+
+    #endregion
+
 }

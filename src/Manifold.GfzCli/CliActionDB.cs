@@ -272,10 +272,7 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.Colicourse,
         FileProcessArgs = CliFileProcessArg.FPS,
         RequiredArguments = [
-            CliArgumentDB.Color,
-            CliArgumentDB.ColorR,
-            CliArgumentDB.ColorG,
-            CliArgumentDB.ColorB,
+            CliArgumentDB.FogColor,
             ],
         OptionalArguments = [
             CliArgumentDB.Backup,
@@ -339,6 +336,8 @@ public static class CliActionDB
             CliArgumentDB.ResamplerType,
             ],
         OptionalArguments = [
+            CliArgumentDB.EmblemHasAlphaBorder,
+            //
             CliArgumentDB.Compand,
             CliArgumentDB.ResizeMode,
             CliArgumentDB.PadColor,
@@ -375,6 +374,8 @@ public static class CliActionDB
             CliArgumentDB.ResamplerType,
             ],
         OptionalArguments = [
+            CliArgumentDB.EmblemHasAlphaBorder,
+            //
             CliArgumentDB.Compand,
             CliArgumentDB.ResizeMode,
             CliArgumentDB.PadColor,

@@ -69,7 +69,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.Backup,
         ArgumentType = typeof(bool).Name,
-        ArgumentDefault = true,
+        ArgumentDefault = Options.Default.BackupPatchFile,
         Help = "Create backup of patched file.",
     };
 
@@ -77,7 +77,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.Name,
         ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
+        ArgumentDefault = Options.Default.Name,
         Help = "OVERRIDE NOT SET.",
         Assert = CliArgumentAsserts.AssertNameExists,
     };
@@ -86,7 +86,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.Value,
         ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
+        ArgumentDefault = Options.Default.Value,
         Help = "OVERRIDE NOT SET.",
         Assert = CliArgumentAsserts.AssertValueExists,
     };
@@ -99,7 +99,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.TextureFormat,
         ArgumentType = typeof(DirectTextureFormat).Name,
-        ArgumentDefault = DirectTextureFormat.CMPR,
+        ArgumentDefault = Options.Default.TextureFormat,
         Help = "GameCube GX direct-color texture format to use. " +
            "(I4, I8, IA4, IA8, RGB565, RGB5A3, RGBA8, CMPR)",
     };
@@ -108,7 +108,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.MipmapCount,
         ArgumentType = typeof(int).Name,
-        ArgumentDefault = -1,
+        ArgumentDefault = Options.Default.MipmapCount,
         Help = "The number of mipmaps to generate. -1 means max mipmaps generated.",
     };
 
@@ -116,7 +116,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.MipmapFiles,
         ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
+        ArgumentDefault = Options.Default.MipmapFiles,
         Help = "The mipmaps image(s) to use. Separate values with ; semicolon.",
     };
 
@@ -124,7 +124,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.MipmapMode,
         ArgumentType = typeof(MipmapGenerationMode).Name,
-        ArgumentDefault = MipmapGenerationMode.Last,
+        ArgumentDefault = Options.Default.MipmapMode,
         Help = "How missing mipmaps are generated.",
     };
 
@@ -132,7 +132,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.AssetLibraryRoot,
         ArgumentType = typeof(string).Name,
-        ArgumentDefault = null,
+        ArgumentDefault = Options.Default.AssetLibraryRoot,
         Help = "The asset library root path.",
     };
 
@@ -140,7 +140,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.DirFormat,
         ArgumentType = typeof(string).Name,
-        ArgumentDefault = "<DIR>",
+        ArgumentDefault = Options.Default.DirFormat,
         Help = "String format for output directory. Use <DIR> for default folder name.",
     };
 
@@ -150,44 +150,10 @@ public static class CliArgumentDB
 
     internal static readonly CliArgument _Color = new()
     {
-        ArgumentName = string.Empty,
+        ArgumentName = "UNDEFINED",
         ArgumentType = $"{typeof(Color).Name}",
-        ArgumentDefault = "00000000",
-        Help = "The color's hexadecimal value. Can be defined via each component individually.",
-    };
-
-    private static readonly string ColorComponentType = $"{typeof(byte).Name}|Hex|{typeof(float).Name}";
-
-    internal static readonly CliArgument _ColorR = new()
-    {
-        ArgumentName = string.Empty,
-        ArgumentType = ColorComponentType,
-        ArgumentDefault = null,
-        Help = "The color's red value.",
-    };
-
-    internal static readonly CliArgument _ColorG = new()
-    {
-        ArgumentName = string.Empty,
-        ArgumentType = ColorComponentType,
-        ArgumentDefault = null,
-        Help = "The color's green value.",
-    };
-
-    internal static readonly CliArgument _ColorB = new()
-    {
-        ArgumentName = string.Empty,
-        ArgumentType = ColorComponentType,
-        ArgumentDefault = null,
-        Help = "The color's blue value.",
-    };
-
-    internal static readonly CliArgument _ColorA = new()
-    {
-        ArgumentName = string.Empty,
-        ArgumentType = ColorComponentType,
-        ArgumentDefault = null,
-        Help = "The color's alpha value.",
+        ArgumentDefault = Options.Default.Color.ToHex(), // "00000000",
+        Help = "UNDEFEINED",
     };
 
     #endregion
@@ -198,7 +164,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.Compand,
         ArgumentType = typeof(bool).Name,
-        ArgumentDefault = false,
+        ArgumentDefault = Options.Default.Compand,
         Help = "Whether to compress and expand the image color-space to gamma correct the image during processing.",
     };
 
@@ -206,23 +172,21 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.ResizeMode,
         ArgumentType = typeof(ResizeMode).Name,
-        ArgumentDefault = SixLabors.ImageSharp.Processing.ResizeMode.Max,
+        ArgumentDefault = Options.Default.ResizeMode,
         Help = "How the image should be resized.",
     };
 
-    public static readonly CliArgument PadColor = CliArgumentDB.Color with
+    public static readonly CliArgument PadColor = _Color with
     {
         ArgumentName = CliArgumentText.PadColor,
         Help = "The padding color when scaling image.",
     };
 
-    // TODO: add color components, eg. pad-color-r, pad-color-g, etc...
-
     public static readonly CliArgument Position = new()
     {
         ArgumentName = CliArgumentText.Position,
         ArgumentType = typeof(AnchorPositionMode).Name,
-        ArgumentDefault = AnchorPositionMode.Center,
+        ArgumentDefault = Options.Default.Position,
         Help = "Anchor positions to apply to resize image.",
     };
 
@@ -230,7 +194,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.PremultiplyAlpha,
         ArgumentType = typeof(bool).Name,
-        ArgumentDefault = false,
+        ArgumentDefault = Options.Default.PremultiplyAlpha,
         Help = "Whether to use premultiplied alpha when scaling image.",
     };
 
@@ -238,7 +202,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.Resampler,
         ArgumentType = typeof(ResamplerType).Name,
-        ArgumentDefault = Manifold.GfzCli.ResamplerType.Bicubic,
+        ArgumentDefault = Options.Default.ResamplerType,
         Help = "The resampler to use when scaling images.",
     };
 
@@ -246,7 +210,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.Width,
         ArgumentType = typeof(int).Name,
-        ArgumentDefault = null,
+        ArgumentDefault = Options.Default.Width, //null
         Help = "The desired image width. May not be result width depending on 'resize-mode' option.",
     };
 
@@ -254,7 +218,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.Height,
         ArgumentType = typeof(int).Name,
-        ArgumentDefault = null,
+        ArgumentDefault = Options.Default.Height, //null
         Help = "The desired image height. May not be result height depending on 'resize-mode' option.",
     };
 
@@ -262,8 +226,16 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.ImageFormat,
         ArgumentType = typeof(ImageFormat).Name,
-        ArgumentDefault = Manifold.GfzCli.ImageFormat.Png,
+        ArgumentDefault = Options.Default.ImageFormat,
         Help = "Supported image formats include BMP, GIF, JPEG, PBM, PNG, QOI, TIFF, TGA, and WebP.",
+    };
+
+    public static readonly CliArgument EmblemHasAlphaBorder = new()
+    {
+        ArgumentName = CliArgumentText.EmblemHasAlphaBorder,
+        ArgumentType = typeof(bool).Name,
+        ArgumentDefault = Options.Default.EmblemHasAlphaBorder,
+        Help = "----------TODO-----------",
     };
 
     #endregion
@@ -285,38 +257,41 @@ public static class CliArgumentDB
         // but also that name is shift-jis compatible. eg ö does not map into shift-jis.
     };
 
+    internal static readonly CliArgument FogColor = _Color with
+    {
+        ArgumentName = CliArgumentText.FogColor,
+        Help = "Fog color.",
+    };
+
     internal static readonly CliArgument FogViewRangeNear = new()
     {
         ArgumentName = CliArgumentText.FogViewRangeNear,
         ArgumentType = typeof(float).Name,
-        ArgumentDefault = float.MaxValue,
+        ArgumentDefault = Options.Default.FogViewRangeNear,
         Help = "Fog view range near plane distance.",
     };
+
     internal static readonly CliArgument FogViewRangeFar = new()
     {
         ArgumentName = CliArgumentText.FogViewRangeFar,
         ArgumentType = typeof(float).Name,
-        ArgumentDefault = float.MinValue,
+        ArgumentDefault = Options.Default.FogViewRangeFar,
         Help = "Fog view range far plane distance.",
     };
+
     internal static readonly CliArgument FogInterpolationMode = new()
     {
         ArgumentName = CliArgumentText.FogInterpolationMode,
         ArgumentType = typeof(FogType).Name,
-        ArgumentDefault = FogType.None,
+        ArgumentDefault = Options.Default.FogInterpolationMode,
         Help = "The GX fog interpolation mode.",
     };
-
-    internal static readonly CliArgument Color = _Color with { ArgumentName = CliArgumentText.Color };
-    internal static readonly CliArgument ColorR = _ColorR with { ArgumentName = CliArgumentText.ColorR };
-    internal static readonly CliArgument ColorG = _ColorR with { ArgumentName = CliArgumentText.ColorG };
-    internal static readonly CliArgument ColorB = _ColorR with { ArgumentName = CliArgumentText.ColorB };
 
     internal static readonly CliArgument SetFlagsOff = new()
     {
         ArgumentName = CliArgumentText.SetFlagsOff,
         ArgumentType = typeof(bool).Name,
-        ArgumentDefault = false,
+        ArgumentDefault = Options.Default.SetFlagsOff,
         Help = "Whether to set flags off rather than on.",
     };
 
@@ -327,8 +302,8 @@ public static class CliArgumentDB
     internal static readonly CliArgument BgmIndex = new()
     {
         ArgumentName = CliArgumentText.BgmIndex,
-        ArgumentType = typeof(byte).Name,
-        ArgumentDefault = (byte)GameCube.GFZ.GameData.BgmIndex.metadata_invalid_id_end, // default to invalid state
+        ArgumentType = typeof(BgmIndex).Name,
+        ArgumentDefault = Options.Default.BgmIndex,
         Help = "The background music index.",
         Assert = CliArgumentAsserts.AssertBgmIndex,
     };
@@ -337,7 +312,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.BgmFinalLapIndex,
         ArgumentType = typeof(byte).Name,
-        ArgumentDefault = (byte)GameCube.GFZ.GameData.BgmIndex.metadata_invalid_id_end, // default to invalid state
+        ArgumentDefault = Options.Default.BgmFinalLapIndex,
         Help = "The final lap background music index.",
         Assert = CliArgumentAsserts.AssertBgmFinalLapIndex,
     };
@@ -346,11 +321,10 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.CourseIndex,
         ArgumentType = typeof(ushort).Name,
-        ArgumentDefault = (ushort)0xFFFF, // 0xFFFF is unassigned stage index
+        ArgumentDefault = Options.Default.CourseIndex,
         Help = "The index of the stage (0-110).",
         Assert = CliArgumentAsserts.AssertCourseIndex,
     };
-
     internal static readonly CliArgument CourseIndexAllow0xFFFF = CourseIndex with
     {
         Assert = CliArgumentAsserts.AssertCourseIndexAllow0xFFFF,
@@ -360,7 +334,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.Cup,
         ArgumentType = typeof(CupIndex).Name,
-        ArgumentDefault = (CupIndex)255, // default to invalid state
+        ArgumentDefault = Options.Default.CourseIndex,
         Help = "Grand prix cup index (0-10).",
         Assert = CliArgumentAsserts.AssertCup,
     };
@@ -369,8 +343,8 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.CupCourseIndex,
         ArgumentType = typeof(ushort).Name,
-        ArgumentDefault = Course.UnassignedCourseIndex,
-        Help = "The index of the cup course to modify (0-5).",
+        ArgumentDefault = Options.Default.CupCourseIndex,
+        Help = "The index of the cup course to modify (0-5). TODO: do you auto-decrement?",
         Assert = CliArgumentAsserts.AssertCupCourseIndex,
     };
 
@@ -378,7 +352,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.Difficulty,
         ArgumentType = typeof(byte).Name,
-        ArgumentDefault = (byte)0xFF, // default to invalid state
+        ArgumentDefault = Options.Default.Difficulty,
         Help = "Stage difficulty rating in number of stars ★. Max 24 visible.",
         Assert = CliArgumentAsserts.AssertDifficultyStars,
     };
@@ -386,8 +360,8 @@ public static class CliArgumentDB
     internal static readonly CliArgument PilotNumber = new()
     {
         ArgumentName = CliArgumentText.PilotNumber,
-        ArgumentType = $"{typeof(byte).Name}",
-        ArgumentDefault = (byte)0xFF, // default to invalid state
+        ArgumentType = typeof(PilotIndex).Name,
+        ArgumentDefault = Options.Default.PilotNumber,
         Help = "Vehicle pilot number (0-40).", // face-value, not internal
         Assert = CliArgumentAsserts.AssertPilotNumber,
     };
@@ -396,7 +370,7 @@ public static class CliArgumentDB
     {
         ArgumentName = CliArgumentText.VenueIndex,
         ArgumentType = $"{typeof(byte).Name}|{typeof(VenueIndex).Name}",
-        ArgumentDefault = (VenueIndex)0xFF, // default to invalid state
+        ArgumentDefault = Options.Default.VenueIndex,
         Help = "A stage's venue index (0-20).",
         Assert = CliArgumentAsserts.AssertVenueIndex,
     };

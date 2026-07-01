@@ -64,7 +64,7 @@ public static class CliActionsAsset
         {
             string msg = "Disabled overwrite files as it would write duplicate files to disk thousands of times.";
             Terminal.WriteLine(msg);
-            options.OverwriteFiles = false;
+            options = options with { OverwriteFiles = false };
         }
 
         Terminal.WriteLine($"{options.ActionStr}: generating asset library.");
@@ -75,16 +75,12 @@ public static class CliActionsAsset
         // Library includes files which correlate textures to each model using named references.
         static void CreateGmaTplLibraryIO(Options options, OSPath _, OSPath outputPath)
         {
-            // Copy original argument
-            string searchPattern = options.SearchPattern;
             // Get GMA file paths
-            options.SearchPattern = "*.gma";
-            string[] gmaFiles = GetInputFiles(options);
+            Options gmaOptions = options with { SearchPattern = CliArgumentText.SearchPatterns.GMA };
+            string[] gmaFiles = GetInputFiles(gmaOptions);
             // Get TPL file paths
-            options.SearchPattern = "*.tpl";
-            List<string> tplFiles = [.. GetInputFiles(options)];
-            // Restore search pattern
-            options.SearchPattern = searchPattern;
+            Options tplOptions = options with { SearchPattern = CliArgumentText.SearchPatterns.TPL };
+            List<string> tplFiles = [.. GetInputFiles(tplOptions)];
 
             // Clear file paths of extension since it's implied in variable names
             for (int i = 0; i < gmaFiles.Length; i++)
@@ -167,7 +163,7 @@ public static class CliActionsAsset
 
             // input path is file
             // output path is file, convert to folder
-            string outputDir = options.FormatOutputDirectory(outputPath.FileName);
+            string outputDir = FormatOutputDirectory(options, outputPath.FileName);
             OSPath tplTextureOutputDir = outputPath.Copy();
             tplTextureOutputDir.PushDirectory(outputDir);
             tplTextureOutputDir.ClearFileName();
@@ -210,6 +206,17 @@ public static class CliActionsAsset
                 tplref.Textures = tplEntryInfosNumbered.GetCrc32Names();
                 tplref.Serialize(writer);
             }
+        }
+
+        static string FormatOutputDirectory(Options options, string value)
+        {
+            // Nothing to format
+            if (string.IsNullOrWhiteSpace(options.DirFormat))
+                return value;
+
+            string replaceTag = Options.Default.DirFormat;
+            string result = options.DirFormat.Replace(replaceTag, value);
+            return result;
         }
     }
 
@@ -436,7 +443,7 @@ public static class CliActionsAsset
         var mainImage = images[0];
 
         // Get output texture size for main texture
-        var resizeOptions = options.GetResizeOptions();
+        var resizeOptions = options.ResizeOptions;
         resizeOptions.Size = options.GetResizeSize(mainImage);
 
         // Create texture + texture sequence

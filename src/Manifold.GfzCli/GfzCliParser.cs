@@ -244,7 +244,7 @@ public static class GfzCliParser
     public static byte GetUnionColorComponent(string component, string color, Range range)
     {
         byte value;
-        if (color != CliArgumentDB.Color.Default<string>())
+        if (color != CliArgumentDB._Color.Default<string>())
         {
             // Doing the conversion here sanitizes the value and normilazes the length.
             string hex = GetColorFromHexString(color).ToHex();

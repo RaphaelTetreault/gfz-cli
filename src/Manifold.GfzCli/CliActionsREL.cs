@@ -49,8 +49,11 @@ public static class CliActionsREL
         // check to see if we enabled overwrite. It is necessary to patch.
         if (!options.OverwriteFiles)
         {
-            options.OverwriteFiles = true;
-            options.BackupPatchFile = true;
+            options = options with
+            {
+                OverwriteFiles = true,
+                BackupPatchFile = true, // TODO: comment out? Was this for testing only?
+            };
             string msg = $"-{CliArgumentText.Short.OverwriteFiles} --{CliArgumentText.OverwriteFiles} " +
                 $"and --{CliArgumentText.Backup} automatically set to {true}.";
             Terminal.WriteLine(msg, GfzCli.NotificationColor);
@@ -68,8 +71,7 @@ public static class CliActionsREL
         //
         if (success)
         {
-            options.GameCodeStr = info.GameCode.ToString();
-
+            options = options with { GameCode = info.GameCode };
             doEncryptAfterPatch = FzMainRelDB.IsFzMainRelEncrypted(md5Hash, info);
             if (doEncryptAfterPatch)
             {
@@ -151,23 +153,23 @@ public static class CliActionsREL
     internal static void PatchBgm(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         int courseIndex = options.CourseIndex;
-        byte bgmIndex = options.BgmIndex;
-        FzMainRelUtility.PatchCourseBgm(writer, info, courseIndex, bgmIndex);
-        Terminal.Write($"Set course {courseIndex} bgm to {bgmIndex} ({(BgmIndex)bgmIndex}).");
+        BgmIndex bgmIndex = options.BgmIndex;
+        FzMainRelUtility.PatchCourseBgm(writer, info, courseIndex, bgmIndex.Byte);
+        Terminal.Write($"Set course {courseIndex} bgm to {bgmIndex.Byte} ({bgmIndex}).");
     }
     internal static void PatchBgmFinalLap(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
         // Prepare BGM FL data
         int courseIndex = options.CourseIndex;
-        byte bgmflIndex = options.BgmFinalLapIndex;
+        BgmIndex bgmflIndex = options.BgmFinalLapIndex;
         BgmFinalLap bgmfl = new()
         {
-            songIndex = bgmflIndex,
+            songIndex = bgmflIndex.Byte,
             loopPointDataOffset = BgmMusicDB.GetBgmLoopPointOffset(bgmflIndex),
         };
         // Patch
         FzMainRelUtility.PatchCourseBgmFinalLap(writer, info, courseIndex, bgmfl);
-        Terminal.Write($"Set course {courseIndex} final lap bgm to {bgmflIndex} ({(BgmIndex)bgmflIndex}).");
+        Terminal.Write($"Set course {courseIndex} final lap bgm to {bgmflIndex.Byte} ({bgmflIndex}).");
     }
     internal static void PatchBgmBoth(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
     {
@@ -434,7 +436,7 @@ public static class CliActionsREL
         string rating = options.Value;
         VehicleRating vehicleRating = VehicleRating.FromString(rating);
 
-        int pilotIndex = GameDataMap.GetPilotIndexFromPilotNumber(options.PilotNumber);
+        int pilotIndex = GameDataMap.GetPilotIndexFromPilotNumber(options.PilotNumber.Byte);
         Pointer address = info.MachineLetterRatingsPtr + VehicleRating.Size * pilotIndex;
         writer.JumpToAddress(address);
         writer.Write(vehicleRating);
@@ -459,7 +461,7 @@ public static class CliActionsREL
     internal static void PatchGfzCommunityMod1(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
     {
         // Make some room for strings
-        options.Name = "---";
+        options = options with { Name = "---" };
         PatchClearUnusedCourseNames(options, info, reader, writer);
         PatchClearUnusedVenueNames(options, info, reader, writer);
         // Make course #6 of these cups a story mode circuit course
@@ -468,20 +470,26 @@ public static class CliActionsREL
         MutatePatchCourse(CupIndex.EmeraldCup, 44, 5);
         MutatePatchCourse(CupIndex.DiamondCup, 45, 6);
         // Set Story 8 name to "UNDERWORLD"
-        options.Name = VenueDB.Names.Story8.ToUpper();
-        options.VenueIndex = VenueIndex.FireFieldStory;
+        options = options with
+        {
+            Name = VenueDB.Names.Story8.ToUpper(),
+            VenueIndex = VenueIndex.FireFieldStory,
+        };
         PatchSetVenueName(options, info, reader, writer);
 
         void MutatePatchCourse(CupIndex cup, ushort courseIndex, byte difficulty)
         {
-            // const
-            options.CupCourseIndex = 6;
-            // auto
-            options.Name = CourseDB.DefaultCourses[courseIndex].Name[options.GameCode].Replace("  ", "\\n");
-            // params
-            options.CourseIndex = courseIndex;
-            options.Cup = cup;
-            options.Difficulty = difficulty;
+            options = options with
+            {
+                // const
+                CupCourseIndex = 6,
+                // Course name = Chapter X (newline) Chapter Title
+                Name = CourseDB.DefaultCourses[courseIndex].Name[options.GameCode].Replace("  ", "\\n"),
+                // params
+                CourseIndex = courseIndex,
+                Cup = cup,
+                Difficulty = difficulty,
+            };
             // patch
             PatchSetCupCourse(options, info, reader, writer);
             PatchSetCourseName(options, info, reader, writer);
