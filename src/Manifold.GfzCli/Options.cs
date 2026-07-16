@@ -312,8 +312,6 @@ public readonly record struct Options()
 
 
 
-
-
     // DEFAULTS
     public static readonly Options Default = new() { };
 
@@ -375,16 +373,6 @@ public readonly record struct Options()
         new(ImageFormat.WebP, ".webp"),
     ]);
 
-    public static string GetImageExtension(ImageFormat imageFormat)
-    {
-        return imageFormat switch
-        {
-
-            _ => throw new System.NotImplementedException(),
-        };
-    }
-
-
     /// <summary>
     ///     Check to see if <see cref="OutputPath"/> is specified.
     /// </summary>
@@ -430,7 +418,5 @@ public readonly record struct Options()
 
         return resizeOptions;
     }
-
-
 
 };
