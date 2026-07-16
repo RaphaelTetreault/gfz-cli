@@ -1,30 +1,11 @@
 ﻿using CommandLine;
-using GameCube.Common;
-using GameCube.DiskImage;
 using GameCube.GFZ;
-using GameCube.GFZ.CarData;
 using GameCube.GFZ.GameData;
 using GameCube.GFZ.Stage;
 using GameCube.GX.Texture;
-using Manifold.IO;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats;
-using SixLabors.ImageSharp.Formats.Bmp;
-using SixLabors.ImageSharp.Formats.Gif;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Formats.Pbm;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.Formats.Qoi;
-using SixLabors.ImageSharp.Formats.Tga;
-using SixLabors.ImageSharp.Formats.Tiff;
-using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using static Manifold.GfzCli.GfzCliUtilities;
 
 namespace Manifold.GfzCli;
 
@@ -34,12 +15,12 @@ public sealed class OptionsCliArgs
     {
         Options options = new()
         {
-            //
+            // Required / Default
             ActionStr = ActionStr,
             Action = GfzCliParser.EnumParseUnderscoreToDash<CliActionID>(ActionStr),
             InputPath = InputPath,
             OutputPath = OutputPath,
-            //
+
             OverwriteFiles = OverwriteFiles,
             SearchOption = SearchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly,
             SearchPattern = SearchPattern,
@@ -47,17 +28,49 @@ public sealed class OptionsCliArgs
             GameCode = GameCode,
             //Region = GameCodeToRegion(GameCode),
             //GameFileFormat = GameCodeToSerializeFormat(GameCode),
-            //
+
+            // Assets
             AssetLibraryRoot = AssetLibraryRoot,
             MipmapCount = MipmapCount,
             MipmapFiles = MipmapFiles,
             MipmapMode = MipmapMode,
             TextureFormat = TextureFormat,
             DirFormat = DirFormat,
-            //
+
+            // Image Sharp
+            Compand = Compand,
+            ResizeMode = ResizeMode,
+            Position = Position,
+            PremultiplyAlpha = PremultiplyAlpha,
+            ResamplerType = ResamplerType,
+            Width = Width,
+            Height = Height,
+            ImageFormat = ImageFormat,
+
+            // General
+            BackupPatchFile = BackupPatchFile,
+            Name = Name,
+            Value = Value,
+
+            // REL
+            BgmIndex = BgmIndex,
+            BgmFinalLapIndex = BgmFinalLapIndex,
+            CourseIndex = CourseIndex,
+            Cup = Cup,
+            CupCourseIndex = CupCourseIndex,
+            Difficulty = Difficulty,
+            PilotNumber = PilotNumber,
+            VenueIndex = VenueIndex,
+
+            // Stage
+            FogViewRangeNear = FogViewRangeNear,
+            FogViewRangeFar = FogViewRangeFar,
+            FogInterpolationMode = FogInterpolationMode,
+            SetFlagsOff = SetFlagsOff,
+
+            // Unsorted
             Color = GfzCliParser.GetColorFromHexString(ColorStr),
-            // TODO all of the otehr 100 million subelements
-            //
+            EmblemHasAlphaBorder = EmblemHasAlphaBorder,
 
         };
         return options;
@@ -182,92 +195,6 @@ public sealed class OptionsCliArgs
     /// </summary>
     [Option(CliArgumentText.DirFormat, Hidden = true)]
     public string DirFormat { get => WithoutQuotes(field); set; } = Options.Default.DirFormat;
-
-    #endregion
-
-    #region Color
-
-    /// <summary>
-    ///     The color's value.
-    /// </summary>
-    [Option(CliArgumentText.PadColor, Hidden = true)] //TODO fog color...
-    public string ColorStr { get => WithoutQuotes(field); set; } = Options.Default.Color.ToHex();
-
-    ///// <summary>
-    /////     The color's value.
-    ///// </summary>
-    //public Color Color => GfzCliParser.GetColorFromHexString(ColorStr);
-
-    ///// <summary>
-    /////     The color's value either from <see cref="ColorStr"/> or
-    /////     individual color components.
-    ///// </summary>
-    //public Color UnionColor => GfzCliParser.GetUnionColor(ColorStr, ColorRStr, ColorGStr, ColorBStr, ColorAStr);
-
-    ///// <summary>
-    /////     The color's red value.
-    ///// </summary>
-    //public string ColorRStr { get => WithoutQuotes(field); set; } = string.Empty;
-
-    ///// <summary>
-    /////     The color's red value.
-    ///// </summary>
-    //public byte ColorR => GfzCliParser.GetColorComponent(ColorRStr);
-
-    ///// <summary>
-    /////     The color's R value either from <see cref="ColorStr"/> or
-    /////     individual color components.
-    ///// </summary>
-    //public byte UnionColorR => GfzCliParser.GetUnionColorComponent(ColorRStr, ColorStr, 0..2);
-
-    ///// <summary>
-    /////     The color's green value.
-    ///// </summary>
-    //public string ColorGStr { get => WithoutQuotes(field); set; } = string.Empty;
-
-    ///// <summary>
-    /////     The color's green value.
-    ///// </summary>
-    //public byte ColorG => GfzCliParser.GetColorComponent(ColorGStr);
-
-    ///// <summary>
-    /////     The color's G value either from <see cref="ColorStr"/> or
-    /////     individual color components.
-    ///// </summary>
-    //public byte UnionColorG => GfzCliParser.GetUnionColorComponent(ColorGStr, ColorStr, 2..4);
-
-    ///// <summary>
-    /////     The color's blue value.
-    ///// </summary>
-    //public string ColorBStr { get => WithoutQuotes(field); set; } = string.Empty;
-
-    ///// <summary>
-    /////     The color's blue value.
-    ///// </summary>
-    //public byte ColorB => GfzCliParser.GetColorComponent(ColorBStr);
-
-    ///// <summary>
-    /////     The color's B value either from <see cref="ColorStr"/> or
-    /////     individual color components.
-    ///// </summary>
-    //public byte UnionColorB => GfzCliParser.GetUnionColorComponent(ColorBStr, ColorStr, 4..6);
-
-    ///// <summary>
-    /////     The color's alpha value.
-    ///// </summary>
-    //public string ColorAStr { get => WithoutQuotes(field); set; } = string.Empty;
-
-    ///// <summary>
-    /////     The color's alpha value.
-    ///// </summary>
-    //public byte ColorA => GfzCliParser.GetColorComponent(ColorAStr);
-
-    ///// <summary>
-    /////     The color's A value either from <see cref="ColorStr"/> or
-    /////     individual color components.
-    ///// </summary>
-    //public byte UnionColorA => GfzCliParser.GetUnionColorComponent(ColorAStr, ColorStr, 6..8);
-
 
     #endregion
 
@@ -429,13 +356,20 @@ public sealed class OptionsCliArgs
     #endregion
 
     // UNSORTED
+
+    /// <summary>
+    ///     The color's value.
+    /// </summary>
+    [Option(CliArgumentText.PadColor, Hidden = true)] //TODO fog color...
+    public string ColorStr { get => WithoutQuotes(field); set; } = Options.Default.Color.ToHex();
+
+
     [Option(CliArgumentText.EmblemHasAlphaBorder, Hidden = true)]
     public bool EmblemHasAlphaBorder { get; set; } = Options.Default.EmblemHasAlphaBorder;
 
     #endregion
 
 
-    #region FUNCTIONS
 
     /// <summary>
     /// 
@@ -498,47 +432,6 @@ public sealed class OptionsCliArgs
     }
 
     /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="gameCode"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    private static Region GameCodeToRegion(GameCode gameCode)
-    {
-        return gameCode switch
-        {
-            GameCode.GFZE01 => Region.NorthAmerica,
-            GameCode.GFZJ01 => Region.Japan,
-            GameCode.GFZP01 => Region.Europe,
-            GameCode.GFZJ8P or
-            GameCode.GGGE6E => Region.NorthAmerica,
-            _ => throw new NotImplementedException($"Unhandled {nameof(GameCode)} {gameCode}."),
-        };
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="gameCode"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    private static GameFileFormat GameCodeToSerializeFormat(GameCode gameCode)
-    {
-        return gameCode switch
-        {
-            GameCode.GFZE01 or
-            GameCode.GFZJ01 or
-            GameCode.GFZP01 => GameFileFormat.GX,
-            GameCode.GFZJ8P or
-            GameCode.GGGE6E => GameFileFormat.AX,
-            _ => throw new NotImplementedException($"Unhandled {nameof(GameCode)} {gameCode}."),
-        };
-    }
-
-
-
-
-    /// <summary>
     ///     For sanitizing any string argument inputs.
     ///     Get string value without "quotes" at either end.
     /// </summary>
@@ -556,10 +449,5 @@ public sealed class OptionsCliArgs
             .Trim('"'); // remove quotation marks
         return sanitized;
     }
-
-
-
-
-    #endregion
 
 }

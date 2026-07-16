@@ -1,5 +1,4 @@
-﻿using BCnEncoder.Shared;
-using GameCube.Common;
+﻿using GameCube.Common;
 using GameCube.DiskImage;
 using GameCube.GFZ;
 using GameCube.GFZ.CarData;
@@ -122,19 +121,12 @@ public readonly record struct Options()
     /// <summary>
     ///     The color's value.
     /// </summary>
-    public SixLabors.ImageSharp.Color Color { get; init; } = new();
+    public Color Color { get; init; } = new();
 
     #region RESIZE OPTIONS
-    //public ResizeOptions tmep;
-
-    //public ResizeMode Mode { get; set; } = ResizeMode.Crop;
-    //public AnchorPositionMode Position { get; set; } = AnchorPositionMode.Center;
+    // Not directly embeded in options here (below from ResizeOptions structure)
     //public PointF? CenterCoordinates { get; set; }
-    //public Size Size { get; set; }
-    //public IResampler Sampler { get; set; } = KnownResamplers.Bicubic;
-    //public bool Compand { get; set; }
     //public Rectangle? TargetRectangle { get; set; }
-    //public bool PremultiplyAlpha { get; set; } = true;
     //public Color PadColor { get; set; }
 
     /// <summary>
