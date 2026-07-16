@@ -443,7 +443,7 @@ public static class CliActionsAsset
         var mainImage = images[0];
 
         // Get output texture size for main texture
-        var resizeOptions = options.ResizeOptions;
+        var resizeOptions = options.ConstructResizeOptions();
         resizeOptions.Size = options.GetResizeSize(mainImage);
 
         // Create texture + texture sequence

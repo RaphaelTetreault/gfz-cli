@@ -153,7 +153,7 @@ public readonly record struct Options()
     ///     The resampler to use when scaling image.
     /// </summary>
     public ResamplerType ResamplerType { get; init; } = ResamplerType.Bicubic;
-    public IResampler Resampler => GetResampler(ResamplerType);
+    public IResampler Resampler => MapResampler[ResamplerType];
 
 
     /// <summary>
@@ -171,20 +171,26 @@ public readonly record struct Options()
     public bool RequestingResize => Width > 0 || Height > 0;
 
     /// <summary>
-    ///     TODO: GetResizeOptions()
+    ///     
     /// </summary>
-    public ResizeOptions ResizeOptions => new()
+    /// <returns>
+    ///     
+    /// </returns>
+    public ResizeOptions ConstructResizeOptions()
     {
-        Compand = this.Compand,
-        Mode = this.ResizeMode,
-        PadColor = this.Color,
-        Position = this.Position,
-        PremultiplyAlpha = this.PremultiplyAlpha,
-        Sampler = this.Resampler,
-        Size = new(this.Width, this.Height),
-        //CenterCoordinates = ,
-        //TargetRectangle = ,
-    };
+        return new()
+        {
+            Compand = this.Compand,
+            Mode = this.ResizeMode,
+            PadColor = this.Color,
+            Position = this.Position,
+            PremultiplyAlpha = this.PremultiplyAlpha,
+            Sampler = this.Resampler,
+            Size = new(this.Width, this.Height),
+            //CenterCoordinates = ,
+            //TargetRectangle = ,
+        };
+    }
 
     public Size GetResizeSize(Image image) => GetResizeSize(image.Width, image.Height);
     public Size GetResizeSize(int defaultX, int defaultY)
@@ -215,8 +221,8 @@ public readonly record struct Options()
     ///     Image format, such as PNG, JPG, TGA, etc.
     /// </summary>
     public ImageFormat ImageFormat { get; init; } = ImageFormat.Png;
-    public ImageEncoder ImageEncoder => GetImageEncoder(ImageFormat);
-    public string ImageExtension => GetImageExtension(ImageFormat);
+    public ImageEncoder ImageEncoder => MapImageEncoder[ImageFormat];
+    public string ImageExtension => MapImageExtension[ImageFormat];
 
 
     /// <summary>
@@ -309,58 +315,27 @@ public readonly record struct Options()
 
 
     // DEFAULTS
-    public static readonly Options Default = new() { };
 
+    public static readonly ImmutableDictionary<ResamplerType, IResampler> MapResampler =
+    ImmutableDictionary.CreateRange<ResamplerType, IResampler>(
+    [
+        new(ResamplerType.Bicubic, KnownResamplers.Bicubic),
+        new(ResamplerType.Box, KnownResamplers.Box),
+        new(ResamplerType.CatmullRom, KnownResamplers.CatmullRom),
+        new(ResamplerType.Hermite, KnownResamplers.Hermite),
+        new(ResamplerType.Lanczos2, KnownResamplers.Lanczos2),
+        new(ResamplerType.Lanczos3, KnownResamplers.Lanczos3),
+        new(ResamplerType.Lanczos5, KnownResamplers.Lanczos5),
+        new(ResamplerType.Lanczos8, KnownResamplers.Lanczos8),
+        new(ResamplerType.MitchellNetravali, KnownResamplers.MitchellNetravali),
+        new(ResamplerType.NearestNeighbor, KnownResamplers.NearestNeighbor),
+        new(ResamplerType.Robidoux, KnownResamplers.Robidoux),
+        new(ResamplerType.RobidouxSharp, KnownResamplers.RobidouxSharp),
+        new(ResamplerType.Spline, KnownResamplers.Spline),
+        new(ResamplerType.Triangle, KnownResamplers.Triangle),
+        new(ResamplerType.Welch, KnownResamplers.Welch),
+    ]);
 
-    //public static readonly ImmutableDictionary<ResamplerType, IResampler> MapResampler =
-    //    ImmutableDictionary.Create<ResamplerType, IResampler>(
-    //[
-    //    new(ResamplerType.Bicubic, KnownResamplers.Bicubic),
-    //    new(ResamplerType.Box, KnownResamplers.Box),
-    //    new(ResamplerType.CatmullRom, KnownResamplers.CatmullRom),
-    //    new(ResamplerType.Hermite, KnownResamplers.Hermite),
-    //    new(ResamplerType.Lanczos2, KnownResamplers.Lanczos2),
-    //    new(ResamplerType.Lanczos3, KnownResamplers.Lanczos3),
-    //    new(ResamplerType.Lanczos5, KnownResamplers.Lanczos5),
-    //    new(ResamplerType.Lanczos8, KnownResamplers.Lanczos8),
-    //    new(ResamplerType.MitchellNetravali, KnownResamplers.MitchellNetravali),
-    //    new(ResamplerType.NearestNeighbor, KnownResamplers.NearestNeighbor),
-    //    new(ResamplerType.Robidoux, KnownResamplers.Robidoux),
-    //    new(ResamplerType.RobidouxSharp, KnownResamplers.RobidouxSharp),
-    //    new(ResamplerType.Spline, KnownResamplers.Spline),
-    //    new(ResamplerType.Triangle, KnownResamplers.Triangle),
-    //    new(ResamplerType.Welch, KnownResamplers.Welch),
-    //]);
-
-    public static IResampler GetResampler(ResamplerType resampler)
-    {
-        switch (resampler)
-        {
-            case ResamplerType.Bicubic: return KnownResamplers.Bicubic;
-            case ResamplerType.Box: return KnownResamplers.Box;
-            case ResamplerType.CatmullRom: return KnownResamplers.CatmullRom;
-            case ResamplerType.Hermite: return KnownResamplers.Hermite;
-            case ResamplerType.Lanczos2: return KnownResamplers.Lanczos2;
-            case ResamplerType.Lanczos3: return KnownResamplers.Lanczos3;
-            case ResamplerType.Lanczos5: return KnownResamplers.Lanczos5;
-            case ResamplerType.Lanczos8: return KnownResamplers.Lanczos8;
-            case ResamplerType.MitchellNetravali: return KnownResamplers.MitchellNetravali;
-            case ResamplerType.NearestNeighbor: return KnownResamplers.NearestNeighbor;
-            case ResamplerType.Robidoux: return KnownResamplers.Robidoux;
-            case ResamplerType.RobidouxSharp: return KnownResamplers.RobidouxSharp;
-            case ResamplerType.Spline: return KnownResamplers.Spline;
-            case ResamplerType.Triangle: return KnownResamplers.Triangle;
-            case ResamplerType.Welch: return KnownResamplers.Welch;
-
-            default:
-                string msg = $"Unknown resampler '{resampler}'.";
-                throw new System.NotImplementedException(msg);
-        }
-    }
-
-
-    // UTILITY FUNCTIONS
-    // Default Encoders
     private static readonly BmpEncoder BmpEncoder = new();
     private static readonly GifEncoder GifEncoder = new();
     private static readonly JpegEncoder JpegEncoder = new();
@@ -370,43 +345,43 @@ public readonly record struct Options()
     private static readonly TiffEncoder TiffEncoder = new();
     private static readonly TgaEncoder TgaEncoder = new();
     private static readonly WebpEncoder WebpEncoder = new();
-    public static ImageEncoder GetImageEncoder(ImageFormat imageFormat)
-    {
-        return imageFormat switch
-        {
-            ImageFormat.Bmp => BmpEncoder,
-            ImageFormat.Gif => GifEncoder,
-            ImageFormat.Jpeg => JpegEncoder,
-            ImageFormat.Pbm => PbmEncoder,
-            ImageFormat.Png => PngEncoder,
-            ImageFormat.Qoi => QoiEncoder,
-            ImageFormat.Tiff => TiffEncoder,
-            ImageFormat.Tga => TgaEncoder,
-            ImageFormat.WebP => WebpEncoder,
-            _ => throw new System.NotImplementedException(),
-        };
-    }
+
+    public static readonly ImmutableDictionary<ImageFormat, ImageEncoder> MapImageEncoder =
+    ImmutableDictionary.CreateRange<ImageFormat, ImageEncoder>(
+    [
+        new(ImageFormat.Bmp, BmpEncoder),
+        new(ImageFormat.Gif, GifEncoder),
+        new(ImageFormat.Jpeg, JpegEncoder),
+        new(ImageFormat.Pbm, PbmEncoder),
+        new(ImageFormat.Png, PngEncoder),
+        new(ImageFormat.Qoi, QoiEncoder),
+        new(ImageFormat.Tiff, TiffEncoder),
+        new(ImageFormat.Tga, TgaEncoder),
+        new(ImageFormat.WebP, WebpEncoder),
+    ]);
+
+    public static readonly ImmutableDictionary<ImageFormat, string> MapImageExtension =
+    ImmutableDictionary.CreateRange<ImageFormat, string>(
+    [
+        new(ImageFormat.Bmp, ".bmp"),
+        new(ImageFormat.Gif, ".gif"),
+        new(ImageFormat.Jpeg, ".jpeg"),
+        new(ImageFormat.Pbm, ".pbm"),
+        new(ImageFormat.Png, ".png"),
+        new(ImageFormat.Qoi, ".qoi"),
+        new(ImageFormat.Tiff, ".tiff"),
+        new(ImageFormat.Tga, ".tga"),
+        new(ImageFormat.WebP, ".webp"),
+    ]);
 
     public static string GetImageExtension(ImageFormat imageFormat)
     {
         return imageFormat switch
         {
-            ImageFormat.Bmp => ".bmp",
-            ImageFormat.Gif => ".gif",
-            ImageFormat.Jpeg => ".jpeg",
-            ImageFormat.Pbm => ".pbm",
-            ImageFormat.Png => ".png",
-            ImageFormat.Qoi => ".qoi",
-            ImageFormat.Tiff => ".tiff",
-            ImageFormat.Tga => ".tga",
-            ImageFormat.WebP => ".webp",
+
             _ => throw new System.NotImplementedException(),
         };
     }
-
-
-
-
 
 
     /// <summary>
@@ -438,7 +413,7 @@ public readonly record struct Options()
     {
         // Resize image to fit inside bounds of image.
         // eg: emblem is 64x64
-        ResizeOptions resizeOptions = ResizeOptions;
+        ResizeOptions resizeOptions = ConstructResizeOptions();
 
         // Emblem size is either 62x62 (1px alpha border, as intended) or 64x64 ("hacker" option)
         if (EmblemHasAlphaBorder)
