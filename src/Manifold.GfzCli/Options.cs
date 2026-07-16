@@ -315,6 +315,7 @@ public readonly record struct Options()
 
 
     // DEFAULTS
+    public static readonly Options Default = new() { };
 
     public static readonly ImmutableDictionary<ResamplerType, IResampler> MapResampler =
     ImmutableDictionary.CreateRange<ResamplerType, IResampler>(
