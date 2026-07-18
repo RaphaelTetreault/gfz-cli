@@ -524,6 +524,53 @@ public static class CliActions
         }
     }
 
+    /// <remarks>
+    ///     Action: <see cref="CliActionDB.CameraLivecamDemoTemp"/>
+    /// </remarks>
+    public static void CameraLivecamDemoTemp(Options options)
+    {
+        Terminal.WriteLine($"{options.ActionStr}: elongating {CliArgumentText.SearchPatterns.LivecamStage} files.");
+        int binCount = ParallelizeFileInFileOutTasks(options, LivecamStageDemoElongate);
+        Terminal.WriteLine($"{options.ActionStr}: done processing {binCount} file{Plural(binCount)}.");
+
+        static void LivecamStageDemoElongate(Options options, OSPath inputFile, OSPath outputFile)
+        {
+            // Use to select between demo files and livecamstage (ax intro is demo file!)
+            //if (inputFile.FileName.Contains("demo") == false)
+            //    return;
+
+            // Load camera BIN
+            LiveCameraStage lcs = new LiveCameraStageFile(inputFile);
+            // Write file as livecam_stage (intro) in subdirectory
+            outputFile.PushDirectory("elongated");
+            outputFile.SetFileName(inputFile.FileName.Replace("demo_", ""));
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
+            PrintFileWriteResult(result, outputFile, options.ActionStr);
+            if (doWriteFile)
+            {
+                // Get list of pans, extend them and adjust lerp speed
+                int panInSeconds = 20;
+                int frameCount = panInSeconds * 60;
+                List<CameraPan> pans = [.. lcs.Pans];
+                foreach (var pan in pans)
+                {
+                    pan.LerpSpeed = pan.LerpSpeed * pan.FrameCount / frameCount;
+                    pan.FrameCount = frameCount;
+                }
+                // Insert a stub camera pan at the beginning and end for clarity.
+                CameraPan deadPan = new() { FrameCount = 180 };
+                pans.Insert(0, deadPan);
+                pans.Add(deadPan);
+                // Reassign
+                lcs.Pans = [.. pans];
+                // Serialize out
+                EnsureDirectoriesExist(outputFile);
+                var lcsf = new LiveCameraStageFile() { Value = lcs };
+                lcsf.WriteFile(outputFile);
+            }
+        }
+    }
+
     /// <summary>
     ///     
     /// </summary>
@@ -1490,7 +1537,7 @@ public static class CliActions
     ///     Action: <see cref="CliActionDB.LogStageTrackKeyablesAll"/>
     /// </remarks>
     public static void LogStageTrackKeyables(Options options)
-    { 
+    {
         LogSingle(options, StageTableLogger.LogTrackKeyablesAll);
     }
 

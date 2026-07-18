@@ -133,6 +133,7 @@ public static class CliArgumentText
         public const string GMAREF = $"*.{GameCube.GFZ.Asset.GmaRef.Extension}";
         public const string ImagePNG = "*.png";
         public const string LivecamStage = "livecam_stage*.bin";
+        public const string LivecamStageDemo = "livecam_stage_demo_*.bin";
         public const string LineBIN = "*line__.bin";
         public const string LineREL = "*line__.rel";
         public const string TPL = "*.tpl";

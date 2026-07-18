@@ -93,8 +93,9 @@ public static class GfzCli
         }
 
         // Run program with options
-        var parseResult = Parser.Default.ParseArguments<Options>(args)
-            .WithParsed(ExecuteAction);
+        ParserResult<OptionsCliArgs> parseCliOptions = Parser.Default.ParseArguments<OptionsCliArgs>(args);
+        Options options = parseCliOptions.Value.CreateOptions();
+        ExecuteAction(options);
 
         // If user did not pass any arguments, pause application so they can read Console.
         // This will happen when users double-click application.
@@ -124,7 +125,7 @@ public static class GfzCli
             options = options with { SearchPattern = gfzCliAction.DefaultSearchPattern };
 
         // Run assertions
-        foreach (CliArgument requiredArgument in gfzCliAction.OptionalArguments)
+        foreach (CliArgument requiredArgument in gfzCliAction.RequiredArguments)
             if (requiredArgument.Assert is not null)
                 requiredArgument.Assert(options);
         foreach (CliArgument optionalArgument in gfzCliAction.OptionalArguments)

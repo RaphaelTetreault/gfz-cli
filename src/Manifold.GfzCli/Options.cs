@@ -81,11 +81,11 @@ public readonly record struct Options()
     /// <summary>
     ///     Which region to serialize to.
     /// </summary>
-    public Region Region { get; } ////////// TODO //////////////////////////////////////
+    public Region Region { get; init; }
     /// <summary>
     ///     Which game to serialize.
     /// </summary>
-    public GameFileFormat GameFileFormat { get; } ////////// TODO //////////////////////////////////////
+    public GameFileFormat GameFileFormat { get; init; }
 
 
     /// <summary>

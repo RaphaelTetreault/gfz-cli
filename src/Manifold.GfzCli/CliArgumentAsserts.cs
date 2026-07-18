@@ -5,9 +5,18 @@ namespace Manifold.GfzCli;
 
 internal class CliArgumentAsserts
 {
-    internal static void AssertNameExists(Options options)
+    internal static void AssertNameIsNotNullOrWhitespace(Options options)
     {
         if (string.IsNullOrWhiteSpace(options.Name))
+        {
+            string msg = $"Argument --{CliArgumentText.Name} must be set.";
+            throw new ArgumentException(msg);
+        }
+    }
+
+    internal static void AssertNameIsNotNull(Options options)
+    {
+        if (options.Name is null)
         {
             string msg = $"Argument --{CliArgumentText.Name} must be set.";
             throw new ArgumentException(msg);

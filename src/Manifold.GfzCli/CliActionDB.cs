@@ -101,6 +101,7 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = false,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.ImagePNG,
         FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [
@@ -218,6 +219,20 @@ public static class CliActionDB
         Description = "Create TSV from livecam binary.",
         Action = CliActions.CameraLivecamToTSV,
         ActionID = CliActionID.cam_livecamstage_to_tsv,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LivecamStage,
+        FileProcessArgs = CliFileProcessArg.FOPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly CliAction CameraLivecamDemoTemp = new()
+    {
+        Description = "Elongate livecam stage binary.",
+        Action = CliActions.CameraLivecamDemoTemp,
+        ActionID = CliActionID.cam_livecamstagedemo_temp,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
@@ -767,7 +782,7 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [],
-        OptionalArguments = [],
+        OptionalArguments = [CliArgumentDB.Name_ClearCourseName],
     };
 
     public static readonly CliAction FzMainRelPatchClearUnusedCourseNames = new()
@@ -972,6 +987,7 @@ public static class CliActionDB
         // CAMERA
         CameraLivecamFromTSV,
         CameraLivecamToTSV,
+        CameraLivecamDemoTemp,
         // CARDATA
         CarDataFromTSV,
         CarDataToTSV,

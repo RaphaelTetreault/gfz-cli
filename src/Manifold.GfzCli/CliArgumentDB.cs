@@ -79,7 +79,7 @@ public static class CliArgumentDB
         ArgumentType = typeof(string).Name,
         ArgumentDefault = Options.Default.Name,
         Help = "OVERRIDE NOT SET.",
-        Assert = CliArgumentAsserts.AssertNameExists,
+        Assert = CliArgumentAsserts.AssertNameIsNotNullOrWhitespace,
     };
 
     private static readonly CliArgument Value = new()
@@ -377,10 +377,17 @@ public static class CliArgumentDB
 
     #endregion
 
+    internal static readonly CliArgument Name_ClearCourseName = Name with
+    {
+        Help = "The template name for each course.",
+        ArgumentDefault = string.Empty,
+        Assert = null,
+    };
+
     internal static readonly CliArgument Name_CourseName = Name with
     {
         Help = "The name of the course.",
-        //Assert = Options.AssertNameExists,
+        Assert = CliArgumentAsserts.AssertNameIsNotNull,
     };
 
     internal static readonly CliArgument Name_GMA = Name with

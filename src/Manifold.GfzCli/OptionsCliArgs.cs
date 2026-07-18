@@ -1,10 +1,12 @@
 ﻿using CommandLine;
+using GameCube.DiskImage;
 using GameCube.GFZ;
 using GameCube.GFZ.GameData;
 using GameCube.GFZ.Stage;
 using GameCube.GX.Texture;
 using SixLabors.ImageSharp.Processing;
 using System;
+using System.Collections.Immutable;
 using System.IO;
 
 namespace Manifold.GfzCli;
@@ -26,8 +28,8 @@ public sealed class OptionsCliArgs
             SearchPattern = SearchPattern,
             SearchSubdirectories = SearchSubdirectories,
             GameCode = GameCode,
-            //Region = GameCodeToRegion(GameCode),
-            //GameFileFormat = GameCodeToSerializeFormat(GameCode),
+            Region = MapGameCodeToRegion[GameCodeUtility.GetRegion(GameCode)],
+            GameFileFormat = MapGameCodeToGameFileFormat[GameCodeUtility.GetGame(GameCode)],
 
             // Assets
             AssetLibraryRoot = AssetLibraryRoot,
@@ -449,5 +451,20 @@ public sealed class OptionsCliArgs
             .Trim('"'); // remove quotation marks
         return sanitized;
     }
+
+    private static ImmutableDictionary<GameCodeFlags, GameFileFormat> MapGameCodeToGameFileFormat =
+    ImmutableDictionary.CreateRange<GameCodeFlags, GameFileFormat>(
+    [
+        new(GameCodeFlags.AX, GameFileFormat.AX),
+        new(GameCodeFlags.GX, GameFileFormat.GX),
+    ]);
+
+    private static ImmutableDictionary<GameCodeFlags, Region> MapGameCodeToRegion =
+    ImmutableDictionary.CreateRange<GameCodeFlags, Region>(
+    [
+        new(GameCodeFlags.Japan, Region.Japan),
+        new(GameCodeFlags.NorthAmerica, Region.NorthAmerica),
+        new(GameCodeFlags.Europe, Region.Europe),
+    ]);
 
 }

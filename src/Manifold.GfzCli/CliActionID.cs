@@ -19,6 +19,7 @@ public enum CliActionID
     asset_tplref_pack,
     cam_livecamstage_from_tsv,
     cam_livecamstage_to_tsv,
+    cam_livecamstagedemo_temp,
     cardata_from_tsv,
     cardata_to_tsv,
     colicourse_patch_fog,

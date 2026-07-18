@@ -362,7 +362,7 @@ public static class CliActionsAsset
     {
         Terminal.WriteLine($"{options.ActionStr}: converting image to GameCube GX texture.");
         int taskCount = ParallelizeFileInFileOutTasks(options, ImageToGxTexture);
-        Terminal.WriteLine($"{options.ActionStr}: done unpacking {taskCount} TPL file{Plural(taskCount)}.");
+        Terminal.WriteLine($"{options.ActionStr}: done processing {taskCount} image file{Plural(taskCount)}.");
     }
 
 
@@ -436,10 +436,10 @@ public static class CliActionsAsset
     /// <param name="options"></param>
     /// <param name="_">Input image path.</param>
     /// <param name="outputPath">Output .GXTEX and .PNG path.</param>
-    private static void ImageToGxTexture(Options options, OSPath _, OSPath outputPath)
+    private static void ImageToGxTexture(Options options, OSPath inputPath, OSPath outputPath)
     {
         // Load main texture, mipmap paths
-        var images = GetMainTextureAndMipmapImages(options);
+        var images = GetMainTextureAndMipmapImages(options, inputPath);
         var mainImage = images[0];
 
         // Get output texture size for main texture
@@ -500,10 +500,11 @@ public static class CliActionsAsset
         return [.. validPaths];
     }
 
-    private static Image<Rgba32>[] GetMainTextureAndMipmapImages(Options options)
+    private static Image<Rgba32>[] GetMainTextureAndMipmapImages(Options options, OSPath inputPath)
     {
         // Get textures as images
-        OSPath inputPath = new(options.InputPath);
+        //OSPath imageInputPath = new(options.InputPath);
+        OSPath imageInputPath = inputPath.Copy();
         OSPath[] mipmapPaths = GetMipmapPaths(options);
         // Load images
         Image<Rgba32>[] images = new Image<Rgba32>[1 + mipmapPaths.Length];
@@ -765,7 +766,7 @@ public static class CliActionsAsset
     /// <param name="resampler"></param>
     private static void WriteTextureSequenceAsGxTexture(TextureSequence textureSequence, string fullOutputPath, IResampler resampler)
     {
-        // Break outy some data
+        // Break out some data
         var description = textureSequence.Description;
         var textureEncoding = DirectEncoding.MapDirectFormatToEncoding[description.TextureFormat];
 
