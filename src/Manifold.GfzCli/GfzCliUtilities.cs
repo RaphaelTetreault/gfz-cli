@@ -16,7 +16,7 @@ public static class GfzCliUtilities
 
     // TODO: CONSIDER: make version of function but for single file (map input -> output)
     // TODO: make versions of this but without input, without output for cases that discard...?
-    public static int ParallelizeFileInFileOutTasks(Options options, FileInFileOutTask fileTask)
+    public static int ParallelizeFileInFileOutTasks(Options options, FileInFileOutTask fileTask, bool waitForComplete = false)
     {
         // Get the file or all files at 'path'
         GetIOFiles(options, out string[] inputFilePaths, out string[] outputFilePaths);
@@ -32,6 +32,9 @@ public static class GfzCliUtilities
             void Action() { fileTask(options, inputFile, outputFile); }
             var task = Task.Factory.StartNew(Action);
             tasks.Add(task);
+
+            if (waitForComplete)
+                task.Wait(10_000);
         }
 
         // Wait for tasks to finish before returning

@@ -75,7 +75,16 @@ public readonly record struct Options()
     /// <summary>
     ///     Which game to serialize.
     /// </summary>
-    public GameCode GameCode { get; init; } = GameCode.GFZJ01;
+    public GameCode GameCode {
+        get;
+        init
+        {
+            // todo. union of this and region, file format...
+            field = value;
+            Region = OptionsCliArgs.MapGameCodeToRegion[GameCodeUtility.GetRegion(GameCode)];
+            GameFileFormat = OptionsCliArgs.MapGameCodeToGameFileFormat[GameCodeUtility.GetGame(GameCode)];
+        }
+    } = GameCode.GFZJ01;
     public GameCodeFlags GameCodeRegion => GameCodeUtility.GetRegion(GameCode);
     public GameCodeFlags GameCodeGame => GameCodeUtility.GetGame(GameCode);
     /// <summary>

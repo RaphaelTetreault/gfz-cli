@@ -38,14 +38,15 @@ internal class CliArgumentAsserts
         const int maxBgmIndex = (byte)BgmIndex.metadata_invalid_id_start;
         const int bgmExceptionIndex = (byte)BgmIndex.metadata_random;
         // Validate
-        bool isValidIndex = options.CourseIndex <= maxBgmIndex;
-        bool isValidException = options.CourseIndex == bgmExceptionIndex;
+        bool isValidIndex = options.BgmIndex.Byte <= maxBgmIndex;
+        bool isValidException = options.BgmIndex.Byte == bgmExceptionIndex;
         bool isInvalid = !(isValidIndex || isValidException);
         if (isInvalid)
         {
             string msg =
                 $"Argument --{nameof(CliArgumentText.BgmIndex)} " +
-                $"must be a value in the range {0}-{maxBgmIndex}.";
+                $"must be a value in the range {0}-{maxBgmIndex}. " +
+                $"Value was {(int)options.BgmIndex} \"{options.BgmIndex}\".";
             throw new ArgumentException(msg);
         }
     }
@@ -87,7 +88,7 @@ internal class CliArgumentAsserts
                 Terminal.WriteLine($"{value} {(byte)value}");
             string msg =
                 $"Argument --{nameof(CliArgumentText.CupCourseIndex)} " +
-                $"must be a valid value. Value was {options.Value}.";
+                $"must be a valid value. Value was \"{options.CupCourseIndex}\".";
             throw new ArgumentException(msg);
         }
     }

@@ -235,7 +235,7 @@ public static class CliActions
     /// <remarks>
     ///     
     /// </remarks>
-    public static void DumpHex32(Options options)
+    public static void DumpHexSideBySide(Options options)
     {
         var inputFilePaths = GetInputFiles(options);
         var readers = new EndianBinaryReader[inputFilePaths.Length];
@@ -246,7 +246,7 @@ public static class CliActions
 
         string outputPath = GetOutputDirectory(options);
         OSPath fileOutputPath = new(outputPath);
-        fileOutputPath.SetFileName("test");
+        fileOutputPath.SetFileName($"dump-hex-side-by-side-output-{DateTime.Now:yyyy-MM-dd--HH-mm-ss}");
         fileOutputPath.PushExtension("tsv");
         using var writer = new StreamWriter(File.Create(fileOutputPath));
 
@@ -267,7 +267,8 @@ public static class CliActions
             {
                 // Write address
                 if (i == 0)
-                    writer.WriteNextCol($"0x{address:x4}");
+                    //writer.WriteNextCol($"0x{address:x4}");
+                    writer.WriteNextCol($"0x{address:x8}");
 
                 // Only write if able
                 var reader = readers[i];
@@ -279,8 +280,10 @@ public static class CliActions
                 }
 
                 // Write data
-                var value = reader.ReadUInt16();
-                writer.WriteNextCol($"0x{value:x4}");
+                //var value = reader.ReadUInt16();
+                //writer.WriteNextCol($"0x{value:x4}");
+                var value = reader.ReadFloat();
+                writer.WriteNextCol(value);
                 // hack
                 address = reader.GetPositionAsPointer();
 
@@ -470,9 +473,45 @@ public static class CliActions
     ///     Create TSV from livecam binary.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.CameraLivecamToTSV"/>
+    ///     Action: <see cref="CliActionDB.CameraLivecamTest"/>
     /// </remarks>
-    public static void CameraLivecamToTSV(Options options)
+    public static void CameraLivecamTest(Options options)
+    {
+        Terminal.WriteLine($"{options.ActionStr}: converting livecam*.bin to TSV spreadsheet.");
+        int binCount = ParallelizeFileInFileOutTasks(options, LivecamTest, true);
+        Terminal.WriteLine($"{options.ActionStr}: done converting {binCount} file{Plural(binCount)}.");
+
+        static void LivecamTest(Options options, OSPath inputFile, OSPath outputFile)
+        {
+            // Load camera BIN
+            LiveCamera livecam = new LiveCameraFile(inputFile);
+            //Console.WriteLine(inputFile);
+            int count = 0;
+            foreach (var cameraPoint in livecam.Shots)
+                if (cameraPoint.Type == LiveCameraType.FollowZoomInOutOnceAndMoveTowards)
+                    count++;
+            Console.WriteLine($"{inputFile} \t{count}");
+                //Console.WriteLine($"{cameraPoint.BallIndex.PadLeft(2,' ')}: {cameraPoint.Type}");
+        }
+        //foreach (var variant in CameraPoint.Variants)
+        //    Console.WriteLine($"{(uint)variant.Key:x8} {variant.Value}");
+    }
+
+    /// <remarks>
+    ///     Action: <see cref="CliActionDB.CameraLivecamBallTest"/>
+    /// </remarks>
+    public static void CameraLivecamBallTest(Options options)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    ///     Create TSV from livecam binary.
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="CliActionDB.CameraLivecamStageToTSV"/>
+    /// </remarks>
+    public static void CameraLivecamStageToTSV(Options options)
     {
         Terminal.WriteLine($"{options.ActionStr}: converting livecam*.bin to TSV spreadsheet.");
         int binCount = ParallelizeFileInFileOutTasks(options, LivecamToTsvIO);
@@ -485,12 +524,15 @@ public static class CliActions
             // Write TSV file
             outputFile.SetExtensions(".tsv");
             bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
-            PrintFileWriteResult(result, outputFile, options.ActionStr);
+            //PrintFileWriteResult(result, outputFile, options.ActionStr);
             if (doWriteFile)
             {
                 using var fs = new StreamWriter(File.Create(outputFile));
                 lcs.Serialize(fs);
             }
+            foreach (var pan in lcs.Shots)
+                Console.WriteLine($"{outputFile.FileName.PadRight(30)}: in:{pan.From.Mode} out:{pan.To.Mode}");
+
         }
     }
 
@@ -498,9 +540,9 @@ public static class CliActions
     ///     Create livecam BIN file from livecam TSV spreadsheet.
     /// </summary>
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.CameraLivecamFromTSV"/>
+    ///     Action: <see cref="CliActionDB.CameraLivecamStageFromTSV"/>
     /// </remarks>
-    public static void CameraLivecamFromTSV(Options options)
+    public static void CameraLivecamStageFromTSV(Options options)
     {
         Terminal.WriteLine($"{options.ActionStr}: converting livecam.tsv to binary file.");
         int binCount = ParallelizeFileInFileOutTasks(options, LivecamFromTsvIO);
@@ -551,18 +593,18 @@ public static class CliActions
                 // Get list of pans, extend them and adjust lerp speed
                 int panInSeconds = 20;
                 int frameCount = panInSeconds * 60;
-                List<CameraPan> pans = [.. lcs.Pans];
+                List<PreviewCameraShot> pans = [.. lcs.Shots];
                 foreach (var pan in pans)
                 {
                     pan.LerpSpeed = pan.LerpSpeed * pan.FrameCount / frameCount;
                     pan.FrameCount = frameCount;
                 }
                 // Insert a stub camera pan at the beginning and end for clarity.
-                CameraPan deadPan = new() { FrameCount = 180 };
+                PreviewCameraShot deadPan = new() { FrameCount = 180 };
                 pans.Insert(0, deadPan);
                 pans.Add(deadPan);
                 // Reassign
-                lcs.Pans = [.. pans];
+                lcs.Shots = [.. pans];
                 // Serialize out
                 EnsureDirectoriesExist(outputFile);
                 var lcsf = new LiveCameraStageFile() { Value = lcs };
@@ -915,6 +957,14 @@ public static class CliActions
     public static void FzMainRelCommunityMod1(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchGfzCommunityMod1);
 
+    /// <summary>
+    ///     
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchCourseMinimapCamera"/>
+    /// </remarks>
+    public static void FzMainRelPatchCourseMinimapCamera(Options options)
+        => CliActionsREL.Patch(options, CliActionsREL.PatchCourseMinimapCamera);
 
     /// <summary>
     ///     Decrypt ./enemy/line__.bin into ./fz.main.rel
@@ -1342,6 +1392,92 @@ public static class CliActions
     /// <summary>
     ///     
     /// </summary>
+    /// <param name="options">The options to parse.</param>
+    /// <remarks>
+    ///     Action: <see cref="CliActionDB.EncodeWindows1252ToShiftJis"/>
+    /// </remarks>
+    public static void DumpHex(Options options)
+    {
+        Terminal.WriteLine($"{options.ActionStr}: dumping binary.");
+        int taskCount = ParallelizeFileInFileOutTasks(options, PrintoutHex);
+        Terminal.WriteLine($"{options.ActionStr}: dumped binary of {taskCount} file{Plural(taskCount)}.");
+
+        static void PrintoutHex(Options options, OSPath inputFile, OSPath outputFile)
+        {
+            outputFile.SetExtension("tsv");
+            // Read in file, edit
+            bool doWriteFile = CheckWillFileWrite(options, outputFile, out FileResult result);
+            PrintFileWriteResult(result, outputFile, options.ActionStr);
+            if (doWriteFile)
+            {
+                using var reader = new BinaryReader(File.OpenRead(inputFile));
+                using var writer = new StreamWriter(File.OpenWrite(outputFile));
+
+                // HEADER
+                writer.WriteNextCol($"Address");
+                //
+                var endianness = BitConverter.IsLittleEndian ? "LE" : "BE";
+                writer.WriteNextCol($"Hex 32 ({endianness})");
+                writer.WriteNextCol("Integer 32");
+                writer.WriteNextCol("Integer 16 (R)");
+                writer.WriteNextCol("Integer 16 (L)");
+                writer.WriteNextCol("Float");
+                writer.WriteNextCol(); // intentional gap
+                //
+                endianness = !BitConverter.IsLittleEndian ? "LE" : "BE";
+                writer.WriteNextCol($"Hex 32 ({endianness})");
+                writer.WriteNextCol("Integer 32");
+                writer.WriteNextCol("Integer 16 (R)");
+                writer.WriteNextCol("Integer 16 (L)");
+                writer.WriteNextRow("Float");
+
+                int stride = 4;
+                while (reader.BaseStream.Position < reader.BaseStream.Length)
+                {
+                    writer.WriteNextCol("0x" + reader.BaseStream.Position.ToString("X8"));
+
+                    var bytes32 = reader.ReadBytes(stride);
+                    var bytes16_1 = new byte[] { bytes32[0], bytes32[1] };
+                    var bytes16_2 = new byte[] { bytes32[2], bytes32[3] };
+
+                    // take into consideration:
+                    // if we reverse bits for 4byte int, we lose proper
+                    // order for 2 byte ints.
+
+                    var uint32 = BitConverter.ToUInt32(bytes32, 0);
+                    var uint16_1 = BitConverter.ToUInt16(bytes16_1, 0);
+                    var uint16_2 = BitConverter.ToUInt16(bytes16_2, 0);
+                    var @float = BitConverter.ToSingle(bytes32, 0);
+
+                    writer.WriteNextCol("0x" + uint32.ToString("X8"));
+                    writer.WriteNextCol(uint32.ToString());
+                    writer.WriteNextCol(uint16_1.ToString());
+                    writer.WriteNextCol(uint16_2.ToString());
+                    writer.WriteNextCol(@float.ToString());
+                    writer.WriteNextCol();
+
+                    Array.Reverse(bytes32);
+                    Array.Reverse(bytes16_1);
+                    Array.Reverse(bytes16_2);
+
+                    uint32 = BitConverter.ToUInt32(bytes32, 0);
+                    uint16_1 = BitConverter.ToUInt16(bytes16_1, 0);
+                    uint16_2 = BitConverter.ToUInt16(bytes16_2, 0);
+                    @float = BitConverter.ToSingle(bytes32, 0);
+                    writer.WriteNextCol("0x" + uint32.ToString("X8"));
+                    writer.WriteNextCol(uint32.ToString());
+                    writer.WriteNextCol(uint16_1.ToString());
+                    writer.WriteNextCol(uint16_2.ToString());
+                    writer.WriteNextRow(@float.ToString());
+                }
+            }
+        }
+    }
+
+
+    /// <summary>
+    ///     
+    /// </summary>
     /// <param name="options"></param>
     /// <remarks>
     ///     Action: <see cref="CliActionDB.IOSceneNullComment"/>
@@ -1365,6 +1501,55 @@ public static class CliActions
             }
         }
     }
+
+    public static void IOSceneSniffCheckpoints(Options options)
+    {
+        Terminal.WriteLine($"PATCH: patch scene file(s).");
+        int taskCount = ParallelizeFileInFileOutTasks(options, PatchSceneComment);
+        Terminal.WriteLine($"PATCH: patch {taskCount} scene file{Plural(taskCount)}.");
+
+        static void PatchSceneComment(Options options, OSPath inputFile, OSPath _)
+        {
+            // Read in file, edit
+            bool doWriteFile = CheckWillFileWrite(options, inputFile, out FileResult result);
+            PrintFileWriteResult(result, inputFile, options.ActionStr);
+            if (doWriteFile)
+            {
+                GameCube.Common.Plane start = new()
+                {
+                    origin = Vector3.One * +0.333333333f,
+                    normal = Vector3.One * +0.71f,
+                    distance = 0.333333333f,
+                };
+                GameCube.Common.Plane end = new()
+                {
+                    origin = Vector3.One * +0.333333333f + new Vector3(0, 0, -1),
+                    normal = Vector3.One * -0.71f,
+                    distance = 1.333333333f,
+                };
+
+                var scene = new SceneFile(inputFile).Value;
+                foreach (var trackNode in scene.trackNodes.Iterate())
+                {
+                    foreach (var checkpoint in trackNode.Value.Checkpoints.Iterate())
+                    {
+                        checkpoint.Value.CurveTimeStart = trackNode.Index;
+                        checkpoint.Value.CurveTimeEnd = checkpoint.Index;
+                        checkpoint.Value.PlaneStart = start;
+                        checkpoint.Value.PlaneEnd = end;
+                        checkpoint.Value.TrackWidth = 1000;
+                    }
+                }
+
+                scene.SerializeVerbose = true;
+                using var writer = new EndianBinaryWriter(File.Create(inputFile), SceneFile.endianness);
+                scene.Serialize(writer);
+
+                //Console.WriteLine($"{inputFile}: {writer.BaseStream.Length}");
+            }
+        }
+    }
+
 
     /// <summary>
     ///     Extract files and/or system from GameCube ISO.

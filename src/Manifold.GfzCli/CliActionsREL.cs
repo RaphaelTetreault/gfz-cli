@@ -497,6 +497,28 @@ public static class CliActionsREL
         }
     }
 
+    internal static void PatchCourseMinimapCamera(Options options, FzMainRel info, EndianBinaryReader reader, EndianBinaryWriter writer)
+    {
+        string[] args = options.Value.Split(";");
+        float[] values = new float[7];
+        for (int i = 0; i < 7; i++)
+            values[i] = float.Parse(args[i]);
+
+        MinimapProjection minimapProjection = new()
+        {
+            CameraPosition = new System.Numerics.Vector3(values[0], values[1], values[2]),
+            LookatPosition = new System.Numerics.Vector3(values[3], values[4], values[5]),
+            FOV = values[6],
+        };
+
+        int structSize = MinimapProjection.StructSize;
+        Offset offset = structSize * options.CourseIndex;
+        Pointer address = info.CourseMinimapParameterStructs.Address + offset;
+        writer.JumpToAddress(address);
+        writer.Write(minimapProjection);
+        Console.WriteLine($"Patching address: {address:x8}");
+    }
+
     private static int ClearStringTable(Options options, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)
     {
         // Set all strings to same value
@@ -623,5 +645,4 @@ public static class CliActionsREL
         int remainingBytes = SetStrings(venueNames, writer, info.StringTableBaseAddress, info.VenueNameOffsets, dataBlocks);
         return remainingBytes;
     }
-
 }

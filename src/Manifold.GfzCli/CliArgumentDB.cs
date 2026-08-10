@@ -306,6 +306,7 @@ public static class CliArgumentDB
         ArgumentDefault = Options.Default.BgmIndex,
         Help = "The background music index.",
         Assert = CliArgumentAsserts.AssertBgmIndex,
+        Assert = CliArgumentAsserts.AssertBgmIndex,
     };
 
     internal static readonly CliArgument BgmFinalLapIndex = new()
@@ -433,6 +434,12 @@ public static class CliArgumentDB
     {
         Help = "The machine rating as 3 consecutive numbers. Letters SABCDE maps to 012345. 123 is ABC.",
         // TODO: assert value is above range
+    };
+
+    internal static readonly CliArgument Value_MinimapCamera= Value with
+    {
+        Help = "Semicolon ; separated args for minimap camera (pos.xyz, lookat.xyz, fov).",
+        // TODO: assert file path? or is that implicit?
     };
 
 }

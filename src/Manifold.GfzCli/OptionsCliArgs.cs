@@ -452,14 +452,14 @@ public sealed class OptionsCliArgs
         return sanitized;
     }
 
-    private static ImmutableDictionary<GameCodeFlags, GameFileFormat> MapGameCodeToGameFileFormat =
+    internal static ImmutableDictionary<GameCodeFlags, GameFileFormat> MapGameCodeToGameFileFormat =
     ImmutableDictionary.CreateRange<GameCodeFlags, GameFileFormat>(
     [
         new(GameCodeFlags.AX, GameFileFormat.AX),
         new(GameCodeFlags.GX, GameFileFormat.GX),
     ]);
 
-    private static ImmutableDictionary<GameCodeFlags, Region> MapGameCodeToRegion =
+    internal static ImmutableDictionary<GameCodeFlags, Region> MapGameCodeToRegion =
     ImmutableDictionary.CreateRange<GameCodeFlags, Region>(
     [
         new(GameCodeFlags.Japan, Region.Japan),

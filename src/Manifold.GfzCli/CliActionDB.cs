@@ -200,30 +200,58 @@ public static class CliActionDB
 
     #region Camera
 
-    public static readonly CliAction CameraLivecamFromTSV = new()
+    public static readonly CliAction CameraLivecamTest = new()
+    {
+        Description = "TEST.",
+        Action = CliActions.CameraLivecamTest,
+        ActionID = CliActionID.cam_livecam_test,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.Livecam,
+        FileProcessArgs = CliFileProcessArg.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly CliAction CameraLivecamBallTest = new()
+    {
+        Description = "TEST.",
+        Action = CliActions.CameraLivecamBallTest,
+        ActionID = CliActionID.cam_livecamball_test,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LivecamBall,
+        FileProcessArgs = CliFileProcessArg.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly CliAction CameraLivecamStageFromTSV = new()
     {
         Description = "Create livecam BIN file from livecam TSV spreadsheet.",
-        Action = CliActions.CameraLivecamFromTSV,
+        Action = CliActions.CameraLivecamStageFromTSV,
         ActionID = CliActionID.cam_livecamstage_from_tsv,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LivecamStage,
-        FileProcessArgs = CliFileProcessArg.FOPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
 
-    public static readonly CliAction CameraLivecamToTSV = new()
+    public static readonly CliAction CameraLivecamStageToTSV = new()
     {
         Description = "Create TSV from livecam binary.",
-        Action = CliActions.CameraLivecamToTSV,
+        Action = CliActions.CameraLivecamStageToTSV,
         ActionID = CliActionID.cam_livecamstage_to_tsv,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LivecamStage,
-        FileProcessArgs = CliFileProcessArg.FOPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -236,8 +264,8 @@ public static class CliActionDB
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
-        DefaultSearchPattern = CliArgumentText.SearchPatterns.LivecamStage,
-        FileProcessArgs = CliFileProcessArg.FOPS,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LivecamStageDemo,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -424,8 +452,34 @@ public static class CliActionDB
         InputIO = CliActionIO.None,
         OutputIO = CliActionIO.None,
         IsOutputOptional = true,
-        FileProcessArgs = CliFileProcessArg.None,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [CliArgumentDB.Value_EncodeText],
+        OptionalArguments = [],
+    };
+
+    public static readonly CliAction DumpHex = new()
+    {
+        Description = "Dump file binary as hex TSV.",
+        Action = CliActions.DumpHex,
+        ActionID = CliActionID.dump_hex,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        FileProcessArgs = CliFileProcessArg.OPS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly CliAction DumpHexSideBySide = new()
+    {
+        Description = "Dump multiple file binaries as hex into a single TSV spreadsheet.",
+        Action = CliActions.DumpHexSideBySide,
+        ActionID = CliActionID.dump_hex_side_by_side,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        FileProcessArgs = CliFileProcessArg.None,
+        RequiredArguments = [],
         OptionalArguments = [],
     };
 
@@ -552,6 +606,20 @@ public static class CliActionDB
         Description = "Patch COLI_COURSE (scene) to null out auto-generate timestamp comment to help diff-ing.",
         Action = CliActions.IOSceneNullComment,
         ActionID = CliActionID.io_scene_null_comment,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.Path,
+        IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.Colicourse,
+        FileProcessArgs = CliFileProcessArg.PS,
+        RequiredArguments = [],
+        OptionalArguments = [],
+    };
+
+    public static readonly CliAction IOSceneSniffCheckpoints = new()
+    {
+        Description = "Patch COLI_COURSE (scene) checkpoints for runtime-patch analysis.",
+        Action = CliActions.IOSceneSniffCheckpoints,
+        ActionID = CliActionID.io_scene_cp,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
@@ -938,6 +1006,23 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
+    public static readonly CliAction FzMainRelPatchCourseMinimapCamera = new()
+    {
+        Description = "Modify course minimap camera angle and FOV.",
+        Action = CliActions.FzMainRelPatchCourseMinimapCamera,
+        ActionID = CliActionID.fzrel_set_minimap_camera,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
+        FileProcessArgs = CliFileProcessArg.PRS,
+        RequiredArguments = [
+            CliArgumentDB.CourseIndex,
+            CliArgumentDB.Value_MinimapCamera
+            ],
+        OptionalArguments = [],
+    };
+
     public static readonly CliAction FzMainRelDecryptLineREL = new()
     {
         Description = "Decrypt line__.bin to line__.rel file.", // TODO: rename output
@@ -985,8 +1070,10 @@ public static class CliActionDB
         ActionAssetTplrefPack,
         ActionAssetTplUnpack,
         // CAMERA
-        CameraLivecamFromTSV,
-        CameraLivecamToTSV,
+        CameraLivecamTest,
+        CameraLivecamBallTest,
+        CameraLivecamStageFromTSV,
+        CameraLivecamStageToTSV,
         CameraLivecamDemoTemp,
         // CARDATA
         CarDataFromTSV,
@@ -994,6 +1081,9 @@ public static class CliActionDB
         // COLICOURSE
         ColicourseEditFog,
         ColicourseEditObjectRenderFlags,
+        //
+        DumpHex,
+        DumpHexSideBySide,
         // ENCODE TEXT
         EncodeBytesToShiftJis,
         EncodeWindows1252ToShiftJis,
@@ -1017,6 +1107,7 @@ public static class CliActionDB
         IOGma,
         IOScene,
         IOSceneNullComment,
+        IOSceneSniffCheckpoints,
         IOTpl,
         // line__.rel
         FzMainRelCommunityMod1,
@@ -1032,6 +1123,7 @@ public static class CliActionDB
         FzMainRelPatchSetCarData,
         FzMainRelPatchSetCourseName,
         FzMainRelPatchSetCupCourse,
+        FzMainRelPatchCourseMinimapCamera,
         FzMainRelPatchMachineRating,
         FzMainRelPatchMaxSpeed,
         FzMainRelPatchSetCourseDifficulty,
