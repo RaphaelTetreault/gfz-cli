@@ -209,7 +209,7 @@ public static class CliActionDB
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LivecamStage,
-        FileProcessArgs = CliFileProcessArg.FOPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -223,21 +223,21 @@ public static class CliActionDB
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LivecamStage,
-        FileProcessArgs = CliFileProcessArg.FOPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
 
-    public static readonly CliAction CameraLivecamDemoTemp = new()
+    public static readonly CliAction CameraLivecamDemoElongate = new()
     {
         Description = "Elongate livecam stage binary.",
         Action = CliActions.CameraLivecamDemoTemp,
-        ActionID = CliActionID.cam_livecamstagedemo_temp,
+        ActionID = CliActionID.cam_livecamstage_elongate_demo,
         InputIO = CliActionIO.Path,
         OutputIO = CliActionIO.Path,
         IsOutputOptional = true,
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LivecamStage,
-        FileProcessArgs = CliFileProcessArg.FOPS,
+        FileProcessArgs = CliFileProcessArg.OPS,
         RequiredArguments = [],
         OptionalArguments = [],
     };
@@ -987,7 +987,7 @@ public static class CliActionDB
         // CAMERA
         CameraLivecamFromTSV,
         CameraLivecamToTSV,
-        CameraLivecamDemoTemp,
+        CameraLivecamDemoElongate,
         // CARDATA
         CarDataFromTSV,
         CarDataToTSV,

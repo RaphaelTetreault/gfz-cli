@@ -525,7 +525,7 @@ public static class CliActions
     }
 
     /// <remarks>
-    ///     Action: <see cref="CliActionDB.CameraLivecamDemoTemp"/>
+    ///     Action: <see cref="CliActionDB.CameraLivecamDemoElongate"/>
     /// </remarks>
     public static void CameraLivecamDemoTemp(Options options)
     {
@@ -551,18 +551,18 @@ public static class CliActions
                 // Get list of pans, extend them and adjust lerp speed
                 int panInSeconds = 20;
                 int frameCount = panInSeconds * 60;
-                List<CameraPan> pans = [.. lcs.Pans];
-                foreach (var pan in pans)
+                List<PreviewCameraShot> shots = [.. lcs.Shots];
+                foreach (var panShot in shots)
                 {
-                    pan.LerpSpeed = pan.LerpSpeed * pan.FrameCount / frameCount;
-                    pan.FrameCount = frameCount;
+                    panShot.LerpSpeed = panShot.LerpSpeed * panShot.FrameCount / frameCount;
+                    panShot.FrameCount = frameCount;
                 }
                 // Insert a stub camera pan at the beginning and end for clarity.
-                CameraPan deadPan = new() { FrameCount = 180 };
-                pans.Insert(0, deadPan);
-                pans.Add(deadPan);
+                PreviewCameraShot empty = new() { FrameCount = 180 };
+                shots.Insert(0, empty);
+                shots.Add(empty);
                 // Reassign
-                lcs.Pans = [.. pans];
+                lcs.Shots = [.. shots];
                 // Serialize out
                 EnsureDirectoriesExist(outputFile);
                 var lcsf = new LiveCameraStageFile() { Value = lcs };
