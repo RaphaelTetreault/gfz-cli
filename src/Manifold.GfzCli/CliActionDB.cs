@@ -938,6 +938,23 @@ public static class CliActionDB
         OptionalArguments = [],
     };
 
+    public static readonly CliAction FzMainRelPatchMinimapCamera = new()
+    {
+        Description = "Set a course minimap camera projection.",
+        Action = CliActions.FzMainRelPatchMinimapCamera,
+        ActionID = CliActionID.fzrel_set_minimap_camera,
+        InputIO = CliActionIO.Path,
+        OutputIO = CliActionIO.None,
+        IsOutputOptional = true,
+        DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
+        FileProcessArgs = CliFileProcessArg.PRS,
+        RequiredArguments = [
+            CliArgumentDB.CourseIndex,
+            CliArgumentDB.Value_Minimap,
+            ],
+        OptionalArguments = [],
+    };
+
     public static readonly CliAction FzMainRelDecryptLineREL = new()
     {
         Description = "Decrypt line__.bin to line__.rel file.", // TODO: rename output

@@ -429,6 +429,14 @@ public static class CliArgumentDB
         // TODO: assert value is int / float
     };
 
+    internal static readonly CliArgument Value_Minimap = Value with
+    {
+        ArgumentType = typeof(string).Name,
+        ArgumentDefault = string.Empty,
+        Help = "Minimap float values (position.xyz, lookat.xyz, fov) separated by semicolons ;",
+        // TODO: assert value is int / float
+    };
+
     internal static readonly CliArgument Value_MachineRating = Value with
     {
         Help = "The machine rating as 3 consecutive numbers. Letters SABCDE maps to 012345. 123 is ABC.",

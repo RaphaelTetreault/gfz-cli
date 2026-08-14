@@ -55,7 +55,7 @@ public enum CliActionID
     fzrel_set_course_venue,
     fzrel_set_venue_name,
     fzrel_community_mod1,
-    fzrel_set_minimap_projection,
+    fzrel_set_minimap_camera,
     gci_extract_ghost,
     gma_patch_submesh_render_flags,
     io_gma,

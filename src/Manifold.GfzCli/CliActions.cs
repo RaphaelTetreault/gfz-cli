@@ -915,6 +915,14 @@ public static class CliActions
     public static void FzMainRelCommunityMod1(Options options)
         => CliActionsREL.Patch(options, CliActionsREL.PatchGfzCommunityMod1);
 
+    /// <summary>
+    ///     
+    /// </summary>
+    /// <remarks>
+    ///     Action: <see cref="CliActionDB.FzMainRelPatchMinimapCamera"/>
+    /// </remarks>
+    public static void FzMainRelPatchMinimapCamera(Options options)
+        => CliActionsREL.Patch(options, CliActionsREL.FzMainRelPatchMinimapCamera);
 
     /// <summary>
     ///     Decrypt ./enemy/line__.bin into ./fz.main.rel

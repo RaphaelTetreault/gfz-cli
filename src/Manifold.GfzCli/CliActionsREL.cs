@@ -497,6 +497,27 @@ public static class CliActionsREL
         }
     }
 
+    internal static void FzMainRelPatchMinimapCamera(Options options, FzMainRel info, EndianBinaryReader _, EndianBinaryWriter writer)
+    {
+        string[] args = options.Value.Split(';');
+        float[] values = new float[7];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = float.Parse(args[i]);
+
+        MinimapProjection minimapProjection = new()
+        {
+            CameraPosition = new System.Numerics.Vector3(values[0], values[1], values[2]),
+            LookatPosition = new System.Numerics.Vector3(values[3], values[4], values[5]),
+            FOV = values[6],
+        };
+
+        Offset offset = options.CourseIndex * MinimapProjection.StructSize;
+        Pointer address = info.CourseMinimapParameterStructs.Address + offset;
+        writer.JumpToAddress(address);
+        writer.Write(minimapProjection);
+        Console.WriteLine($"Patching minimap values at address {address:x8}");
+    }
+
     private static int ClearStringTable(Options options, EndianBinaryWriter writer, Pointer stringTableBaseAddress, ArrayPointer32 strArrPtr, params DataBlock[] dataBlocks)
     {
         // Set all strings to same value
