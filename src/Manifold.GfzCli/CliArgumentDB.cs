@@ -443,4 +443,10 @@ public static class CliArgumentDB
         // TODO: assert value is above range
     };
 
+    internal static readonly CliArgument Value_MinimapCamera= Value with
+    {
+        Help = "Semicolon ; separated args for minimap camera (pos.xyz, lookat.xyz, fov).",
+        // TODO: assert file path? or is that implicit?
+    };
+
 }
