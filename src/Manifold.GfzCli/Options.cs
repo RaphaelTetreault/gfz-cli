@@ -228,7 +228,7 @@ public readonly record struct Options()
     /// <summary>
     ///     Create backup of patched file.
     /// </summary>
-    public bool BackupPatchFile { get; init; } = true;
+    public bool BackupPatchFile { get; init; } = false;// = true;
 
     /// <summary>
     ///     A generic name parameter.

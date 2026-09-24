@@ -53,8 +53,8 @@ public static class GfzCli
 
         foreach (CliActionID cliActionID in Enum.GetValues<CliActionID>())
         {
-            bool doesCLiMapEnum = GfzCliActionsLibrary.ContainsKey(cliActionID);
-            if (!doesCLiMapEnum)
+            bool doesCliMapEnum = GfzCliActionsLibrary.ContainsKey(cliActionID);
+            if (!doesCliMapEnum)
             {
                 string msg = $"WARNING: {nameof(CliActionDB.GfzCliActions)} missing map to enum {cliActionID}.";
                 Terminal.WriteLine(msg, WarningColor);
@@ -94,7 +94,12 @@ public static class GfzCli
 
         // Run program with options
         ParserResult<OptionsCliArgs> parseCliOptions = Parser.Default.ParseArguments<OptionsCliArgs>(args);
+        //foreach (var str in args)
+        //    Console.WriteLine($"\t{str}");
         Options options = parseCliOptions.Value.CreateOptions();
+        // WTF man
+        options = options with { BackupPatchFile = false };
+        //Console.WriteLine($"HEY: backup = {options.BackupPatchFile}, cliargs = {parseCliOptions.Value.BackupPatchFile}");
         ExecuteAction(options);
 
         // If user did not pass any arguments, pause application so they can read Console.

@@ -699,7 +699,9 @@ public static class CliActionDB
             CliArgumentDB.BgmIndex,
             CliArgumentDB.CourseIndex,
             ],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchBgmFinalLap = new()
@@ -716,7 +718,9 @@ public static class CliActionDB
             CliArgumentDB.BgmFinalLapIndex,
             CliArgumentDB.CourseIndex,
             ],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchBgmBoth = new()
@@ -734,7 +738,9 @@ public static class CliActionDB
             CliArgumentDB.BgmFinalLapIndex,
             CliArgumentDB.CourseIndex,
             ],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchSetCourseDifficulty = new()
@@ -751,7 +757,9 @@ public static class CliActionDB
             CliArgumentDB.CourseIndex,
             CliArgumentDB.DifficultyStars,
             ],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchSetCourseName = new()
@@ -768,7 +776,9 @@ public static class CliActionDB
             CliArgumentDB.CourseIndex,
             CliArgumentDB.Name_CourseName,
             ],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchClearAllCourseNames = new()
@@ -782,7 +792,10 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [],
-        OptionalArguments = [CliArgumentDB.Name_ClearCourseName],
+        OptionalArguments = [
+            CliArgumentDB.Backup,
+            CliArgumentDB.Name_ClearCourseName
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchClearUnusedCourseNames = new()
@@ -796,7 +809,7 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [CliArgumentDB.Name_CourseName],
-        OptionalArguments = [],
+        OptionalArguments = [CliArgumentDB.Backup],
     };
 
     public static readonly CliAction FzMainRelPatchSetCourseVenueIndex = new()
@@ -813,7 +826,9 @@ public static class CliActionDB
             CliArgumentDB.CourseIndex,
             CliArgumentDB.VenueIndex,
             ],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchSetVenueName = new()
@@ -830,7 +845,9 @@ public static class CliActionDB
             CliArgumentDB.VenueIndex,
             CliArgumentDB.Name_VenueName,
             ],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchClearAllVenueNames = new()
@@ -844,7 +861,9 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchClearUnusedVenueNames = new()
@@ -858,7 +877,9 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [CliArgumentDB.Name_VenueName],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchSetCarData = new()
@@ -872,7 +893,9 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [CliArgumentDB.Value_CarData],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchMachineRating = new()
@@ -889,7 +912,9 @@ public static class CliActionDB
             CliArgumentDB.PilotNumber,
             CliArgumentDB.Value_MachineRating,
             ],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchMaxSpeed = new()
@@ -903,7 +928,9 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [],
-        OptionalArguments = [CliArgumentDB.Value_MaxSpeed],
+        OptionalArguments = [
+            CliArgumentDB.Backup,
+            CliArgumentDB.Value_MaxSpeed],
     };
 
     public static readonly CliAction FzMainRelPatchSetCupCourse = new()
@@ -921,7 +948,9 @@ public static class CliActionDB
             CliArgumentDB.CupCourseIndex,         // stage in cup to modify 0-5 (count: 6)
             CliArgumentDB.CourseIndexAllow0xFFFF, // stage index to use
             ],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelCommunityMod1 = new()
@@ -935,7 +964,9 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.PRS,
         RequiredArguments = [],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelPatchMinimapCamera = new()
@@ -952,7 +983,9 @@ public static class CliActionDB
             CliArgumentDB.CourseIndex,
             CliArgumentDB.Value_Minimap,
             ],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelDecryptLineREL = new()
@@ -966,7 +999,9 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineBIN,
         FileProcessArgs = CliFileProcessArg.OPRS,
         RequiredArguments = [],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     public static readonly CliAction FzMainRelEncryptLineREL = new()
@@ -980,7 +1015,9 @@ public static class CliActionDB
         DefaultSearchPattern = CliArgumentText.SearchPatterns.LineREL,
         FileProcessArgs = CliFileProcessArg.OPRS,
         RequiredArguments = [],
-        OptionalArguments = [],
+        OptionalArguments = [
+            CliArgumentDB.Backup
+            ],
     };
 
     #endregion
@@ -1044,13 +1081,14 @@ public static class CliActionDB
         FzMainRelPatchClearUnusedCourseNames,
         FzMainRelPatchClearUnusedVenueNames,
         FzMainRelPatchBgm,
-        FzMainRelPatchBgmFinalLap,
         FzMainRelPatchBgmBoth,
+        FzMainRelPatchBgmFinalLap,
+        FzMainRelPatchMinimapCamera,
+        FzMainRelPatchMachineRating,
+        FzMainRelPatchMaxSpeed,
         FzMainRelPatchSetCarData,
         FzMainRelPatchSetCourseName,
         FzMainRelPatchSetCupCourse,
-        FzMainRelPatchMachineRating,
-        FzMainRelPatchMaxSpeed,
         FzMainRelPatchSetCourseDifficulty,
         FzMainRelPatchSetCourseVenueIndex,
         FzMainRelPatchSetVenueName,

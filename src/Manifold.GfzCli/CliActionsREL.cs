@@ -52,10 +52,11 @@ public static class CliActionsREL
             options = options with
             {
                 OverwriteFiles = true,
-                BackupPatchFile = true, // TODO: comment out? Was this for testing only?
+                //BackupPatchFile = true, // TODO: comment out? Was this for testing only?
             };
             string msg = $"-{CliArgumentText.Short.OverwriteFiles} --{CliArgumentText.OverwriteFiles} " +
-                $"and --{CliArgumentText.Backup} automatically set to {true}.";
+                //$"and --{CliArgumentText.Backup} " +
+                $"automatically set to {true}.";
             Terminal.WriteLine(msg, GfzCli.NotificationColor);
         }
 
